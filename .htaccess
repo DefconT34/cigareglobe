@@ -1,0 +1,48 @@
+# CigarOdyssey — Performance & Sécurité
+# o2switch / Apache 2.4
+
+# ── Compression Gzip/Deflate ──────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml application/xml
+</IfModule>
+
+# ── Brotli (si disponible) ────────────────────────────────
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css
+  AddOutputFilterByType BROTLI_COMPRESS application/javascript application/json
+</IfModule>
+
+# ── Cache navigateur ──────────────────────────────────────
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html              "access plus 1 hour"
+  ExpiresByType text/css               "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+  ExpiresByType application/json       "access plus 5 minutes"
+  ExpiresByType image/svg+xml          "access plus 1 month"
+  ExpiresByType image/jpeg             "access plus 1 month"
+  ExpiresByType image/png              "access plus 1 month"
+  ExpiresByType image/webp             "access plus 1 month"
+  ExpiresByType font/woff2             "access plus 1 year"
+</IfModule>
+
+# ── Headers sécurité ──────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options  "nosniff"
+  Header always set X-Frame-Options         "SAMEORIGIN"
+  Header always set Referrer-Policy         "strict-origin-when-cross-origin"
+  # CORS pour data.php (CDN fonts, Leaflet)
+  Header set Access-Control-Allow-Origin    "*"
+</IfModule>
+
+# ── Réécriture HTTPS ──────────────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ── Page d'erreur personnalisée ───────────────────────────
+ErrorDocument 404 /index.html

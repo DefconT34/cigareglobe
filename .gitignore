@@ -1,0 +1,28 @@
+# ═══════════════════════════════════════════════════════════
+# CigarGlobe — fichiers à ne jamais versionner
+# ═══════════════════════════════════════════════════════════
+
+# Secrets — config réelle (utiliser backend/config.example.php comme modèle)
+backend/config.php
+
+# Logs serveur
+backend/error_log
+*.log
+
+# Cache généré
+backend/cache/*
+!backend/cache/.gitkeep
+
+# Contenu uploadé par les utilisateurs (à sauvegarder séparément, pas dans Git)
+uploads/*
+!uploads/.gitkeep
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Archives
+*.rar
+*.zip

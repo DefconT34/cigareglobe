@@ -1,0 +1,18 @@
+{
+  "name": "CigarOdyssey",
+  "short_name": "CigarOdyssey",
+  "description": "The World's Premium Cigar Atlas — Producing countries, global markets & 198 verified lounges in 75 countries",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F0803",
+  "theme_color": "#C9A227",
+  "orientation": "any",
+  "lang": "fr",
+  "categories": ["lifestyle", "travel", "food"],
+  "icons": [
+    { "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Ccircle cx='96' cy='96' r='96' fill='%230F0803'/%3E%3Ctext x='96' y='130' text-anchor='middle' font-size='110' fill='%23C9A227'%3E%F0%9F%A5%83%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192", "type": "image/svg+xml" },
+    { "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%230F0803'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='300' fill='%23C9A227'%3E%F0%9F%A5%83%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
