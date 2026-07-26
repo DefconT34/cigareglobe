@@ -4408,6 +4408,7 @@ function _renderLoungeCards(c, list, body) {
         '<div class="lc-desc">' + desc + '</div>' +
         (links ? '<div class="lc-links">'+links+'</div>' : '') +
         '<div class="lc-rating-section">'+ratingHtml+'</div>' +
+        (l.id ? '<div class="lc-fav" id="lc-fav-'+l.id+'"></div>' : '') +
         (l.id ? '<div class="lc-photos" id="lc-photos-'+l.id+'"></div>' : '') +
         (l.id ? '<div class="lc-reviews" id="lc-reviews-'+l.id+'"></div>' : '') +
       '</div>'
@@ -4430,6 +4431,12 @@ function _renderLoungeCards(c, list, body) {
   if (typeof window._loadLoungeReviews === 'function') {
     list.forEach(function(l) {
       if (l.id) setTimeout(function() { window._loadLoungeReviews(l.id); }, 120);
+    });
+  }
+  // Charger les contrôles de favoris lazily (module favorites.js)
+  if (typeof window._loadLoungeFavs === 'function') {
+    list.forEach(function(l) {
+      if (l.id) setTimeout(function() { window._loadLoungeFavs(l.id); }, 90);
     });
   }
 }
@@ -7704,5 +7711,7 @@ if ('serviceWorker' in navigator) {
 <script src="assets/js/account.js"></script>
 <!-- Avis texte des lounges (Étape B2) -->
 <script src="assets/js/reviews.js"></script>
+<!-- Favoris & listes (Étape C) -->
+<script src="assets/js/favorites.js"></script>
 </body>
 </html>

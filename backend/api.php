@@ -60,7 +60,7 @@ $action = clean($_GET['action'] ?? '', 30);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Les actions qui écrivent au nom de l'utilisateur exigent un jeton CSRF
-$CSRF_ACTIONS = ['submit','rate','review','review_delete'];
+$CSRF_ACTIONS = ['submit','rate','review','review_delete','fav_toggle'];
 if (in_array($action, $CSRF_ACTIONS, true) && $method === 'POST') {
     csrf_verify();
 }
@@ -76,6 +76,9 @@ try {
     elseif ($action === 'reviews' && $method === 'GET')  { action_reviews(); }
     elseif ($action === 'my_ratings'     && $method === 'GET') { action_my_ratings(); }
     elseif ($action === 'my_contributions' && $method === 'GET') { action_my_contributions(); }
+    elseif ($action === 'fav_toggle' && $method === 'POST') { action_fav_toggle(); }
+    elseif ($action === 'fav_states' && $method === 'GET')  { action_fav_states(); }
+    elseif ($action === 'fav_list'   && $method === 'GET')  { action_fav_list(); }
     elseif ($action === 'approve' && $method === 'POST') { action_approve(); }
     elseif ($action === 'reject'  && $method === 'POST') { action_reject(); }
     elseif ($action === 'export'  && $method === 'GET')  { action_export(); }
@@ -541,4 +544,74 @@ function action_my_contributions(): void {
     $stmt->execute([$u['id']]);
     header('Cache-Control: no-store');
     json_out(['contributions' => $stmt->fetchAll()]);
+}
+
+// ════════════════════════════════════════════════════════════
+// FAVORIS & LISTES
+// ════════════════════════════════════════════════════════════
+
+/** POST ?action=fav_toggle — Body : { target_type, target_id, list, on } */
+function action_fav_toggle(): void {
+    $db   = getDB();
+    $user = require_verified($db);
+
+    $body = json_decode(file_get_contents('php://input'), true) ?? [];
+    $type = (($body['target_type'] ?? '') === 'country') ? 'country' : 'lounge';
+    $tid  = clean((string)($body['target_id'] ?? ''), 50);
+    $list = in_array($body['list'] ?? '', ['to_visit','visited','favorite'], true) ? $body['list'] : '';
+    $on   = !empty($body['on']);
+    if ($tid === '' || $list === '') json_out(['error' => 'Paramètres invalides'], 400);
+
+    if ($type === 'lounge') {
+        $c = $db->prepare('SELECT id FROM lounges WHERE id = ? AND is_verified = 1');
+        $c->execute([(int)$tid]);
+        if (!$c->fetch()) json_out(['error' => 'Lounge introuvable'], 404);
+    }
+
+    if ($on) {
+        $db->prepare("INSERT IGNORE INTO favorites (user_id, target_type, target_id, list) VALUES (?, ?, ?, ?)")
+           ->execute([$user['id'], $type, $tid, $list]);
+    } else {
+        $db->prepare("DELETE FROM favorites WHERE user_id = ? AND target_type = ? AND target_id = ? AND list = ?")
+           ->execute([$user['id'], $type, $tid, $list]);
+    }
+
+    $q = $db->prepare("SELECT list FROM favorites WHERE user_id = ? AND target_type = ? AND target_id = ?");
+    $q->execute([$user['id'], $type, $tid]);
+    json_out(['success' => true, 'lists' => array_column($q->fetchAll(), 'list')]);
+}
+
+/** GET ?action=fav_states — état des favoris du compte (léger, pour enrichir l'UI) */
+function action_fav_states(): void {
+    $db = getDB();
+    $u  = current_user($db);
+    $out = ['lounge' => (object)[], 'country' => (object)[]];
+    if ($u) {
+        $acc = ['lounge' => [], 'country' => []];
+        $q = $db->prepare("SELECT target_type, target_id, list FROM favorites WHERE user_id = ?");
+        $q->execute([$u['id']]);
+        foreach ($q->fetchAll() as $r) {
+            $acc[$r['target_type']][$r['target_id']][] = $r['list'];
+        }
+        $out = ['lounge' => $acc['lounge'] ?: (object)[], 'country' => $acc['country'] ?: (object)[]];
+    }
+    header('Cache-Control: no-store');
+    json_out(['favorites' => $out]);
+}
+
+/** GET ?action=fav_list — favoris du compte, enrichis (nom du lounge) */
+function action_fav_list(): void {
+    $db = getDB();
+    $u  = require_auth($db);
+    $q = $db->prepare(
+        "SELECT f.list, f.target_type, f.target_id, f.created_at,
+                l.name AS lounge_name, l.city AS lounge_city, l.country_id AS lounge_country
+         FROM favorites f
+         LEFT JOIN lounges l ON f.target_type = 'lounge' AND l.id = f.target_id
+         WHERE f.user_id = ?
+         ORDER BY f.list, f.created_at DESC"
+    );
+    $q->execute([$u['id']]);
+    header('Cache-Control: no-store');
+    json_out(['items' => $q->fetchAll()]);
 }

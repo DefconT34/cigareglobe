@@ -163,6 +163,21 @@ body.mobile-mode .account-btn { padding: 6px; }
   background: var(--ember); border: 1px solid var(--panel-bg);
 }
 
+/* ── Favoris & listes (favorites.js) ── */
+.lc-fav { margin-top: 8px; }
+.lc-fav-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.lc-fav-chip {
+  font-size: 11px; padding: 5px 9px; border-radius: 14px; cursor: pointer;
+  border: 1px solid var(--panel-border); background: transparent; color: var(--text2);
+  transition: all .15s; white-space: nowrap;
+}
+.lc-fav-chip:hover { border-color: var(--gold); color: var(--gold); }
+.lc-fav-chip.on { background: var(--gold); color: #fff; border-color: var(--gold); }
+.lc-fav-chip:disabled { opacity: .5; cursor: default; }
+
+.cg-fav-group { margin-bottom: 14px; }
+.cg-fav-group-title { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin: 8px 0 4px; }
+
 /* ── Avis texte des lounges (reviews.js) ── */
 .lc-reviews { margin-top: 8px; }
 .lc-rev-head { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--text2); margin-bottom: 6px; }

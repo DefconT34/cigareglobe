@@ -71,6 +71,7 @@
         '<div class="mm-user"><b>' + escapeHtml(user.display_name) + '</b>' +
         '<span>' + escapeHtml(user.email) + '</span></div>' +
         '<button data-act="contribs">📋 Mes contributions</button>' +
+        '<button data-act="favs">❤ Mes listes</button>' +
         (user.email_verified ? '' : '<button data-act="resend">✉ Renvoyer la vérification</button>') +
         '<button data-act="logout">↪ Se déconnecter</button>';
     } else {
@@ -84,6 +85,7 @@
         else if (act === 'logout') doLogout();
         else if (act === 'resend') doResend();
         else if (act === 'contribs') openMyContributions();
+        else if (act === 'favs') { if (window.openMyFavorites) window.openMyFavorites(); }
       });
     });
   }
@@ -104,6 +106,7 @@
           '<div class="cg-menu-email">' + escapeHtml(user.email) + '</div>' +
         '</div>' +
         '<button class="cg-menu-item" data-act="contribs">📋 Mes contributions</button>' +
+        '<button class="cg-menu-item" data-act="favs">❤ Mes listes</button>' +
         (user.email_verified ? '' :
           '<button class="cg-menu-item" data-act="resend">✉ Renvoyer la vérification</button>') +
         '<button class="cg-menu-item" data-act="logout">↪ Se déconnecter</button>' +
@@ -117,6 +120,7 @@
       if (act === 'logout') doLogout();
       if (act === 'resend') doResend();
       if (act === 'contribs') { menu.classList.add('hidden'); openMyContributions(); }
+      if (act === 'favs') { menu.classList.add('hidden'); if (window.openMyFavorites) window.openMyFavorites(); }
     });
   }
 
@@ -245,6 +249,7 @@
         user = res.data.user;
         renderHeader();
         if (window._resetMyRatings) window._resetMyRatings();
+        if (window._resetFavStates) window._resetFavStates();
         closeModal();
         if (menu) { menu.remove(); menu = null; }
         if (kind === 'register') {
@@ -269,6 +274,7 @@
       renderHeader();
       removeVerifyBanner();
       if (window._resetMyRatings) window._resetMyRatings();
+      if (window._resetFavStates) window._resetFavStates();
       toast('Vous êtes déconnecté.', 'ok');
     });
   }
