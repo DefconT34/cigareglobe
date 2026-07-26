@@ -226,7 +226,7 @@ html, body {
   -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
   transition:background .4s, border-color .4s; gap:8px;
 }
-.hdr-left  { display:flex; align-items:center; gap:10px; flex-shrink:0; overflow:hidden; }
+.hdr-left  { display:flex; align-items:center; gap:10px; flex-shrink:1; min-width:0; overflow:hidden; }
 .hdr-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
 .hdr-divider { width:1px; height:36px; background:var(--panel-border); opacity:.5; flex-shrink:0; }
 .title-block { flex-shrink:0; }
@@ -947,8 +947,21 @@ body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 1
   #lex   { width:240px; }
   #lounge-panel { width:360px; }
   .stat-item:nth-child(3) { display:none; }
-  
-  
+}
+
+/* ── Collapse en-tête → menu ☰ sous 1200px ──────────────
+   L'en-tête complet (barres thème + langue) exige ~1427px. Sous 1200px
+   on déplace thème/langue/compte dans le menu ☰ déjà présent, sans
+   déclencher le mode mobile complet (réservé à ≤640px). */
+@media (min-width:641px) and (max-width:1200px) {
+  #theme-bar, #lang-bar, .hdr-divider, .stat-item { display:none; }
+  #mobile-menu-btn { display:flex; }
+}
+@media (min-width:641px) and (max-width:1024px) {
+  #mobile-menu { top:70px; }
+}
+@media (min-width:1025px) and (max-width:1200px) {
+  #mobile-menu { top:82px; }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1272,7 +1285,7 @@ body.mobile-mode[dir="rtl"] #zoom-ctrl { left:8px; right:auto; }
     </button>
 
     <!-- Compte / espace membre -->
-    <button id="accountBtn" class="account-btn" aria-label="Compte"><span aria-hidden="true">👤</span><span>Se connecter</span></button>
+    <button id="accountBtn" class="account-btn" aria-label="Compte"><span class="ab-icon" aria-hidden="true">👤</span><span class="ab-label">Se connecter</span></button>
 
     <!-- Mobile hamburger -->
     <button id="mobile-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">☰</button>
@@ -1283,6 +1296,8 @@ body.mobile-mode[dir="rtl"] #zoom-ctrl { left:8px; right:auto; }
 
 <!-- ══ MOBILE MENU ══════════════════════════════════════ -->
 <nav id="mobile-menu" role="navigation" aria-label="Mobile settings">
+  <div class="mmenu-sec">Compte</div>
+  <div id="mm-account"><!-- rempli par account.js selon l'état de connexion --></div>
   <div class="mmenu-sec" data-i18n="theme">Thème</div>
   <div id="mobile-theme-bar">
     <button class="mtheme-btn active" data-theme="light">☀ Light</button>

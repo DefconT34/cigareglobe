@@ -141,3 +141,40 @@
 @media (max-width: 640px) {
   .cg-modal { padding: 24px 20px; }
 }
+
+/* ── Bouton compte compact (icône/avatar seul) ── */
+/* En largeur réduite ou en mode mobile, on masque le libellé et le
+   badge pour éviter que l'en-tête ne déborde ; le bouton reste cliquable. */
+@media (max-width: 1200px) {
+  .account-btn .ab-label,
+  .account-btn .cg-badge-unverified { display: none; }
+  .account-btn { padding: 6px; }
+}
+body.mobile-mode .account-btn .ab-label,
+body.mobile-mode .account-btn .cg-badge-unverified { display: none; }
+body.mobile-mode .account-btn { padding: 6px; }
+
+/* Pastille de rappel « email non vérifié » sur l'avatar quand le
+   texte est masqué (petit point d'alerte) */
+.account-btn.is-unverified { position: relative; }
+.account-btn.is-unverified::after {
+  content: ''; position: absolute; top: 2px; right: 2px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ember); border: 1px solid var(--panel-bg);
+}
+
+/* ── Section compte dans le menu mobile (#mm-account) ── */
+#mm-account { margin-bottom: 4px; }
+#mm-account .mm-user {
+  font-size: 12px; color: var(--text); padding: 4px 2px 8px;
+  border-bottom: 1px solid var(--panel-border); margin-bottom: 8px;
+}
+#mm-account .mm-user b { display: block; font-size: 13px; }
+#mm-account .mm-user span { font-size: 10px; color: var(--text2); word-break: break-all; }
+#mm-account button {
+  width: 100%; text-align: left; padding: 9px 10px; margin-bottom: 4px;
+  border: 1px solid var(--panel-border); background: var(--bg3);
+  color: var(--text); font-size: 12px; border-radius: 8px; cursor: pointer;
+}
+#mm-account button.primary { background: var(--gold); color: #fff; border-color: var(--gold); }
+#mm-account button:hover { border-color: var(--gold); }

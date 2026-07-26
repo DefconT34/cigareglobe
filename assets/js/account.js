@@ -40,15 +40,50 @@
   // ── Bandeau / bouton d'en-tête selon l'état ─────────────
   function renderHeader() {
     var btn = $('#accountBtn');
-    if (!btn) return;
-    if (user) {
-      var initial = (user.display_name || '?').charAt(0);
-      btn.innerHTML = '<span class="ab-avatar">' + escapeHtml(initial) + '</span>'
-        + '<span>' + escapeHtml(user.display_name) + '</span>'
-        + (user.email_verified ? '' : '<span class="cg-badge-unverified">non vérifié</span>');
-    } else {
-      btn.innerHTML = '<span aria-hidden="true">👤</span><span>Se connecter</span>';
+    if (btn) {
+      if (user) {
+        var initial = (user.display_name || '?').charAt(0);
+        btn.className = 'account-btn' + (user.email_verified ? '' : ' is-unverified');
+        btn.innerHTML = '<span class="ab-avatar">' + escapeHtml(initial) + '</span>'
+          + '<span class="ab-label">' + escapeHtml(user.display_name) + '</span>'
+          + (user.email_verified ? '' : '<span class="cg-badge-unverified">non vérifié</span>');
+      } else {
+        btn.className = 'account-btn';
+        btn.innerHTML = '<span class="ab-icon" aria-hidden="true">👤</span><span class="ab-label">Se connecter</span>';
+      }
     }
+    renderMobileMenu();
+  }
+
+  // ── Section compte dans le menu mobile (#mm-account) ────
+  function closeMobileMenu() {
+    var m = document.getElementById('mobile-menu');
+    if (m) m.classList.remove('open');
+    var b = document.getElementById('mobile-menu-btn');
+    if (b) b.setAttribute('aria-expanded', 'false');
+  }
+
+  function renderMobileMenu() {
+    var box = document.getElementById('mm-account');
+    if (!box) return;
+    if (user) {
+      box.innerHTML =
+        '<div class="mm-user"><b>' + escapeHtml(user.display_name) + '</b>' +
+        '<span>' + escapeHtml(user.email) + '</span></div>' +
+        (user.email_verified ? '' : '<button data-act="resend">✉ Renvoyer la vérification</button>') +
+        '<button data-act="logout">↪ Se déconnecter</button>';
+    } else {
+      box.innerHTML = '<button class="primary" data-act="login">👤 Se connecter / S\'inscrire</button>';
+    }
+    box.querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var act = b.getAttribute('data-act');
+        closeMobileMenu();
+        if (act === 'login') openModal('login');
+        else if (act === 'logout') doLogout();
+        else if (act === 'resend') doResend();
+      });
+    });
   }
 
   function escapeHtml(s) {
