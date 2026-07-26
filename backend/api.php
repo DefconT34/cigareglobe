@@ -5,16 +5,29 @@
 // ════════════════════════════════════════════════════════
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/auth_lib.php';
+
+auth_session_start();
 
 // ── Headers ───────────────────────────────────────────────
 header('Access-Control-Allow-Origin: '  . ALLOWED_ORIGIN);
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
+}
+
+// ── Auth : exige un compte avec email vérifié ─────────────
+function require_verified(PDO $db): array {
+    $u = require_auth($db);            // 401 si non connecté
+    if (!$u['email_verified']) {
+        respond(['error' => 'Vérifiez votre email pour contribuer ou noter.', 'need_verify' => true], 403);
+    }
+    return $u;
 }
 
 // ── Helpers ───────────────────────────────────────────────
@@ -46,13 +59,23 @@ function clean(string $s, int $max = 500): string {
 $action = clean($_GET['action'] ?? '', 30);
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Les actions qui écrivent au nom de l'utilisateur exigent un jeton CSRF
+$CSRF_ACTIONS = ['submit','rate','review','review_delete'];
+if (in_array($action, $CSRF_ACTIONS, true) && $method === 'POST') {
+    csrf_verify();
+}
+
 try {
     if     ($action === 'list'    && $method === 'GET')  { action_list(); }
     elseif ($action === 'all'     && $method === 'GET')  { action_all(); }
     elseif ($action === 'submit'  && $method === 'POST') { action_submit(); }
     elseif ($action === 'vote'    && $method === 'POST') { action_vote(); }
     elseif ($action === 'rate'    && $method === 'POST') { action_rate(); }
-    elseif ($action === 'my_ratings' && $method === 'GET') { action_my_ratings(); }
+    elseif ($action === 'review'  && $method === 'POST') { action_review(); }
+    elseif ($action === 'review_delete' && $method === 'POST') { action_review_delete(); }
+    elseif ($action === 'reviews' && $method === 'GET')  { action_reviews(); }
+    elseif ($action === 'my_ratings'     && $method === 'GET') { action_my_ratings(); }
+    elseif ($action === 'my_contributions' && $method === 'GET') { action_my_contributions(); }
     elseif ($action === 'approve' && $method === 'POST') { action_approve(); }
     elseif ($action === 'reject'  && $method === 'POST') { action_reject(); }
     elseif ($action === 'export'  && $method === 'GET')  { action_export(); }
@@ -119,6 +142,9 @@ function action_all(): void {
 // POST submit — soumettre une contribution
 // ════════════════════════════════════════════════════════
 function action_submit(): void {
+    $db   = getDB();
+    $user = require_verified($db);      // compte + email vérifié obligatoires
+
     $raw  = file_get_contents('php://input');
     $body = json_decode($raw, true) ?? [];
     if (empty($body)) $body = $_POST;
@@ -131,14 +157,13 @@ function action_submit(): void {
     }
 
     $ip = get_ip();
-    $db = getDB();
 
-    // Anti-spam : max 3 contributions par IP par 24h
+    // Anti-spam : max 3 contributions par compte par 24h
     $spam = $db->prepare(
         "SELECT COUNT(*) FROM contributions
-         WHERE contributor_ip = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+         WHERE user_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)"
     );
-    $spam->execute([$ip]);
+    $spam->execute([$user['id']]);
     if ((int)$spam->fetchColumn() >= 3) {
         json_out(['error' => 'Limite atteinte : 3 contributions par jour maximum.'], 429);
     }
@@ -153,13 +178,14 @@ function action_submit(): void {
         json_out(['error' => 'Cet établissement a déjà été signalé pour ce pays.'], 409);
     }
 
-    // Insertion
+    // Insertion (attribuée au compte)
     $stmt = $db->prepare(
         "INSERT INTO contributions
-         (country_id, country_name, name, city, type, phone, description, source_url, contributor_email, contributor_ip)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+         (user_id, country_id, country_name, name, city, type, phone, description, source_url, contributor_email, contributor_ip)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
     $stmt->execute([
+        (int)$user['id'],
         clean($body['country_id'],    50),
         clean($body['country_name'], 100),
         clean($body['name'],         200),
@@ -168,7 +194,7 @@ function action_submit(): void {
         clean($body['phone']       ?? '', 50),
         clean($body['description'], 2000),
         clean($body['source_url']  ?? '', 500),
-        clean($body['email']       ?? '', 200),
+        $user['email'],
         $ip,
     ]);
 
@@ -377,75 +403,109 @@ function action_export(): void {
  * Body JSON : { "id": 42, "rating": 4 }
  * Retourne  : { "rating": 4.2, "rating_count": 15, "my_rating": 4 }
  */
+// Recalcule et enregistre la note moyenne d'un lounge depuis les avis.
+function recompute_lounge_rating(PDO $db, int $lounge_id): array {
+    $avg = $db->prepare(
+        "SELECT ROUND(AVG(rating), 2) AS avg_rating, COUNT(*) AS total
+         FROM reviews WHERE lounge_id = ? AND status = 'published'"
+    );
+    $avg->execute([$lounge_id]);
+    $s = $avg->fetch();
+    $new_avg   = (float)($s['avg_rating'] ?? 0);
+    $new_count = (int)  ($s['total']      ?? 0);
+    try {
+        $db->prepare('UPDATE lounges SET rating = ?, rating_count = ? WHERE id = ?')
+           ->execute([$new_avg, $new_count, $lounge_id]);
+    } catch (Throwable $e) { /* colonnes rating absentes — ignorer */ }
+    return ['rating' => round($new_avg, 1), 'rating_count' => $new_count];
+}
+
+// Vérifie qu'un lounge existe et est publié.
+function assert_lounge(PDO $db, int $lounge_id): void {
+    $check = $db->prepare('SELECT id FROM lounges WHERE id = ? AND is_verified = 1');
+    $check->execute([$lounge_id]);
+    if (!$check->fetch()) json_out(['error' => 'Lounge introuvable'], 404);
+}
+
 function action_rate(): void {
-    $db = getDB();
+    $db   = getDB();
+    $user = require_verified($db);      // compte + email vérifié
 
     $body      = json_decode(file_get_contents('php://input'), true) ?? [];
-    $lounge_id = isset($body['id'])     ? (int)$body['id']     : 0;
-    $rating    = isset($body['rating']) ? (int)$body['rating'] : 0;
-
+    $lounge_id = (int)($body['id']     ?? 0);
+    $rating    = (int)($body['rating'] ?? 0);
     if ($lounge_id <= 0 || $rating < 1 || $rating > 5) {
         json_out(['error' => 'Paramètres invalides (id requis, rating 1-5)'], 400);
     }
+    assert_lounge($db, $lounge_id);
 
-    // Vérifier que le lounge existe
-    $check = $db->prepare('SELECT id FROM lounges WHERE id = ? AND is_verified = 1');
-    $check->execute([$lounge_id]);
-    if (!$check->fetch()) {
-        json_out(['error' => 'Lounge introuvable'], 404);
+    // Upsert de la note seule (préserve un éventuel avis texte existant)
+    $db->prepare(
+        "INSERT INTO reviews (user_id, lounge_id, rating) VALUES (?, ?, ?)
+         ON DUPLICATE KEY UPDATE rating = VALUES(rating), updated_at = NOW()"
+    )->execute([$user['id'], $lounge_id, $rating]);
+
+    $stats = recompute_lounge_rating($db, $lounge_id);
+    json_out(['rating' => $stats['rating'], 'rating_count' => $stats['rating_count'], 'my_rating' => $rating]);
+}
+
+/**
+ * POST ?action=review — avis complet (note + titre + texte)
+ * Body : { id, rating, title?, body? }
+ */
+function action_review(): void {
+    $db   = getDB();
+    $user = require_verified($db);
+
+    $body      = json_decode(file_get_contents('php://input'), true) ?? [];
+    $lounge_id = (int)($body['id']     ?? 0);
+    $rating    = (int)($body['rating'] ?? 0);
+    $title     = clean($body['title'] ?? '', 120);
+    $text      = clean($body['body']  ?? '', 2000);
+    if ($lounge_id <= 0 || $rating < 1 || $rating > 5) {
+        json_out(['error' => 'Une note (1-5) est requise.'], 400);
     }
+    assert_lounge($db, $lounge_id);
 
-    // IP du votant (IPv4 + IPv6 supportés)
-    $ip = $_SERVER['HTTP_X_FORWARDED_FOR']
-        ?? $_SERVER['HTTP_X_REAL_IP']
-        ?? $_SERVER['REMOTE_ADDR']
-        ?? '0.0.0.0';
-    // Normaliser : prendre la première IP en cas de liste
-    $ip = trim(explode(',', $ip)[0]);
-    $ip = substr($ip, 0, 45);
+    $db->prepare(
+        "INSERT INTO reviews (user_id, lounge_id, rating, title, body) VALUES (?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE rating = VALUES(rating), title = VALUES(title),
+                                 body = VALUES(body), updated_at = NOW()"
+    )->execute([$user['id'], $lounge_id, $rating, $title ?: null, $text ?: null]);
 
-    // INSERT ou UPDATE du vote — try/catch si table lounge_ratings absente
-    try {
-        $stmt = $db->prepare(
-            'INSERT INTO lounge_ratings (lounge_id, voter_ip, rating)
-             VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE rating = VALUES(rating), rated_at = NOW()'
-        );
-        $stmt->execute([$lounge_id, $ip, $rating]);
+    $stats = recompute_lounge_rating($db, $lounge_id);
+    json_out(['success' => true, 'rating' => $stats['rating'], 'rating_count' => $stats['rating_count'], 'my_rating' => $rating]);
+}
 
-        // Recalculer la moyenne depuis les votes
-        $avg = $db->prepare(
-            'SELECT ROUND(AVG(rating), 2) AS avg_rating, COUNT(*) AS total
-             FROM lounge_ratings WHERE lounge_id = ?'
-        );
-        $avg->execute([$lounge_id]);
-        $stats     = $avg->fetch();
-        $new_avg   = (float)($stats['avg_rating'] ?? 0);
-        $new_count = (int)  ($stats['total']      ?? 0);
+/** POST ?action=review_delete — Body : { id } (lounge_id) */
+function action_review_delete(): void {
+    $db   = getDB();
+    $user = require_verified($db);
+    $body = json_decode(file_get_contents('php://input'), true) ?? [];
+    $lounge_id = (int)($body['id'] ?? 0);
+    if ($lounge_id <= 0) json_out(['error' => 'id requis'], 400);
 
-        // Mettre à jour lounges si la colonne rating existe
-        try {
-            $db->prepare('UPDATE lounges SET rating = ?, rating_count = ? WHERE id = ?')
-               ->execute([$new_avg, $new_count, $lounge_id]);
-        } catch (Throwable $e) {
-            // Colonne rating absente — noter quand même via lounge_ratings
-        }
+    $db->prepare("DELETE FROM reviews WHERE user_id = ? AND lounge_id = ?")
+       ->execute([$user['id'], $lounge_id]);
+    $stats = recompute_lounge_rating($db, $lounge_id);
+    json_out(['success' => true, 'rating' => $stats['rating'], 'rating_count' => $stats['rating_count']]);
+}
 
-        json_out([
-            'rating'       => round($new_avg, 1),
-            'rating_count' => $new_count,
-            'my_rating'    => $rating,
-        ]);
+/** GET ?action=reviews&id=42 — avis texte publics d'un lounge */
+function action_reviews(): void {
+    $db = getDB();
+    $lounge_id = (int)($_GET['id'] ?? 0);
+    if ($lounge_id <= 0) json_out(['error' => 'id requis'], 400);
 
-    } catch (Throwable $e) {
-        // Table lounge_ratings absente → retourner la note locale sans persister
-        json_out([
-            'rating'       => (float)$rating,
-            'rating_count' => 1,
-            'my_rating'    => $rating,
-            'warning'      => 'Table lounge_ratings manquante — importer cigar-rating-system.sql',
-        ]);
-    }
+    $stmt = $db->prepare(
+        "SELECT r.rating, r.title, r.body, r.created_at, u.display_name
+         FROM reviews r JOIN users u ON u.id = r.user_id
+         WHERE r.lounge_id = ? AND r.status = 'published'
+               AND r.body IS NOT NULL AND r.body <> ''
+         ORDER BY r.updated_at DESC LIMIT 50"
+    );
+    $stmt->execute([$lounge_id]);
+    json_out(['reviews' => $stmt->fetchAll()]);
 }
 
 /**
@@ -454,24 +514,31 @@ function action_rate(): void {
  */
 function action_my_ratings(): void {
     $db = getDB();
-
-    $ip = $_SERVER['HTTP_X_FORWARDED_FOR']
-        ?? $_SERVER['HTTP_X_REAL_IP']
-        ?? $_SERVER['REMOTE_ADDR']
-        ?? '0.0.0.0';
-    $ip = trim(explode(',', $ip)[0]);
-    $ip = substr($ip, 0, 45);
-
-    $stmt = $db->prepare(
-        'SELECT lounge_id, rating FROM lounge_ratings WHERE voter_ip = ?'
-    );
-    $stmt->execute([$ip]);
+    $u  = current_user($db);            // pas d'erreur si déconnecté
 
     $ratings = [];
-    foreach ($stmt->fetchAll() as $row) {
-        $ratings[(int)$row['lounge_id']] = (int)$row['rating'];
+    if ($u) {
+        $stmt = $db->prepare('SELECT lounge_id, rating FROM reviews WHERE user_id = ?');
+        $stmt->execute([$u['id']]);
+        foreach ($stmt->fetchAll() as $row) {
+            $ratings[(int)$row['lounge_id']] = (int)$row['rating'];
+        }
     }
-
     header('Cache-Control: no-store'); // personnel → jamais mis en cache
-    json_out(['ratings' => $ratings, 'ip' => substr($ip, 0, 10) . '…']);
+    json_out(['ratings' => $ratings]);
+}
+
+/** GET ?action=my_contributions — contributions du compte connecté */
+function action_my_contributions(): void {
+    $db = getDB();
+    $u  = require_auth($db);
+
+    $stmt = $db->prepare(
+        "SELECT id, country_id, country_name, name, city, type, status,
+                votes_up, votes_down, created_at
+         FROM contributions WHERE user_id = ? ORDER BY created_at DESC LIMIT 200"
+    );
+    $stmt->execute([$u['id']]);
+    header('Cache-Control: no-store');
+    json_out(['contributions' => $stmt->fetchAll()]);
 }

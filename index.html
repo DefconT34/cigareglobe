@@ -4261,12 +4261,14 @@ function _loadMyRatings(callback) {
     if (callback) callback(_myRatings);
     return;
   }
-  fetch(API_BASE + '?action=my_ratings')
+  fetch(API_BASE + '?action=my_ratings', { credentials: 'include' })
     .then(function(r) { return r.ok ? r.json() : {}; })
     .then(function(d) { _myRatings = (d && d.ratings) ? d.ratings : {}; })
     .catch(function()  { _myRatings = {}; })
     .finally(function() { if (callback) callback(_myRatings); });
 }
+// Réinitialise le cache des notes (appelé par account.js à la connexion/déconnexion)
+window._resetMyRatings = function() { _myRatings = null; };
 
 // Enrichir les lounges avec my_rating depuis le cache
 function _enrichWithMyRatings(list) {
@@ -4433,6 +4435,9 @@ document.addEventListener('click', function(e) {
   var val = parseInt(star.dataset.val, 10);
   if (!lid || !val) return;
 
+  // Compte à l'email vérifié requis pour noter
+  if (window.CGAccount && !window.CGAccount.requireVerified()) return;
+
   // Vérifier que API_BASE est disponible (exposée par contrib.js)
   var _apiBase = window.API_BASE || (typeof API_BASE !== 'undefined' ? API_BASE : null);
   if (!_apiBase || _apiBase.indexOf('VOTRE_DOMAINE') !== -1) {
@@ -4455,12 +4460,17 @@ document.addEventListener('click', function(e) {
   // Envoi au serveur
   fetch(_apiBase + '?action=rate', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (window.CGAccount ? window.CGAccount.csrf : '') },
     body: JSON.stringify({ id: lid, rating: val })
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
-    if (data.error) { console.warn('Rating error:', data.error); return; }
+    if (data.error) {
+      if (data.need_verify && window.CGAccount) window.CGAccount.toast('Vérifiez votre email pour noter.', 'err');
+      else console.warn('Rating error:', data.error);
+      return;
+    }
 
     // Warning : table lounge_ratings absente (SQL pas encore importé)
     if (data.warning) {
@@ -6794,6 +6804,9 @@ window.openContribModal = function(prefilledCountry) {
   var modal = document.getElementById('contrib-modal');
   if (!modal) return;
 
+  // Compte à l'email vérifié requis pour contribuer
+  if (window.CGAccount && !window.CGAccount.requireVerified()) return;
+
   // Reset
   document.getElementById('contrib-form-wrap').style.display = '';
   document.getElementById('contrib-success').classList.remove('show');
@@ -6962,13 +6975,17 @@ function submitContribution() {
   }
   fetch(API_BASE + '?action=submit', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (window.CGAccount ? window.CGAccount.csrf : '') },
     body: JSON.stringify({ country_id:country, country_name:country_name, name:name, city:city, type:type, phone:phone, description:desc, source_url:source, email:email })
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
     btn.disabled = false; btn.textContent = 'Envoyer ›';
-    if (data.error) { alert('⚠ ' + data.error); return; }
+    if (data.error) {
+      if (data.need_verify && window.CGAccount) { closeContribModal(); window.CGAccount.toast('Vérifiez votre email pour contribuer.', 'err'); return; }
+      alert('⚠ ' + data.error); return;
+    }
     // Show success
     document.getElementById('contrib-form-wrap').style.display = 'none';
     document.getElementById('contrib-success').classList.add('show');

@@ -70,6 +70,7 @@
       box.innerHTML =
         '<div class="mm-user"><b>' + escapeHtml(user.display_name) + '</b>' +
         '<span>' + escapeHtml(user.email) + '</span></div>' +
+        '<button data-act="contribs">📋 Mes contributions</button>' +
         (user.email_verified ? '' : '<button data-act="resend">✉ Renvoyer la vérification</button>') +
         '<button data-act="logout">↪ Se déconnecter</button>';
     } else {
@@ -82,6 +83,7 @@
         if (act === 'login') openModal('login');
         else if (act === 'logout') doLogout();
         else if (act === 'resend') doResend();
+        else if (act === 'contribs') openMyContributions();
       });
     });
   }
@@ -101,6 +103,7 @@
           '<div class="cg-menu-name">' + escapeHtml(user.display_name) + '</div>' +
           '<div class="cg-menu-email">' + escapeHtml(user.email) + '</div>' +
         '</div>' +
+        '<button class="cg-menu-item" data-act="contribs">📋 Mes contributions</button>' +
         (user.email_verified ? '' :
           '<button class="cg-menu-item" data-act="resend">✉ Renvoyer la vérification</button>') +
         '<button class="cg-menu-item" data-act="logout">↪ Se déconnecter</button>' +
@@ -113,6 +116,7 @@
       var act = e.target.getAttribute('data-act');
       if (act === 'logout') doLogout();
       if (act === 'resend') doResend();
+      if (act === 'contribs') { menu.classList.add('hidden'); openMyContributions(); }
     });
   }
 
@@ -240,6 +244,7 @@
       if (kind === 'login' || kind === 'register') {
         user = res.data.user;
         renderHeader();
+        if (window._resetMyRatings) window._resetMyRatings();
         closeModal();
         if (menu) { menu.remove(); menu = null; }
         if (kind === 'register') {
@@ -263,6 +268,7 @@
       if (menu) { menu.remove(); menu = null; }
       renderHeader();
       removeVerifyBanner();
+      if (window._resetMyRatings) window._resetMyRatings();
       toast('Vous êtes déconnecté.', 'ok');
     });
   }
@@ -272,6 +278,74 @@
       if (menu) menu.classList.add('hidden');
       toast(res.ok ? 'Email de vérification renvoyé.' : ((res.data && res.data.error) || 'Erreur.'), res.ok ? 'ok' : 'err');
     });
+  }
+
+  // ── Mes contributions ───────────────────────────────────
+  var contribOverlay;
+  function apiBase() { return window.API_BASE || (window.CG_BACKEND_BASE || '/backend') + '/api.php'; }
+
+  function openMyContributions() {
+    if (!user) { openModal('login'); return; }
+    if (!contribOverlay) buildContribOverlay();
+    contribOverlay.classList.remove('hidden');
+    requestAnimationFrame(function () { contribOverlay.classList.add('show'); });
+    loadMyContributions();
+  }
+
+  function buildContribOverlay() {
+    contribOverlay = el(
+      '<div class="cg-overlay hidden" role="dialog" aria-modal="true" aria-label="Mes contributions">' +
+        '<div class="cg-modal cg-modal-wide">' +
+          '<button class="cg-modal-close" aria-label="Fermer">✕</button>' +
+          '<div class="cg-modal-logo"><div class="m">MES CONTRIBUTIONS</div></div>' +
+          '<div id="cgContribList" class="cg-contrib-list"></div>' +
+        '</div>' +
+      '</div>'
+    );
+    document.body.appendChild(contribOverlay);
+    $('.cg-modal-close', contribOverlay).addEventListener('click', closeContribOverlay);
+    contribOverlay.addEventListener('click', function (e) { if (e.target === contribOverlay) closeContribOverlay(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && contribOverlay && !contribOverlay.classList.contains('hidden')) closeContribOverlay();
+    });
+  }
+  function closeContribOverlay() {
+    contribOverlay.classList.remove('show');
+    setTimeout(function () { contribOverlay.classList.add('hidden'); }, 200);
+  }
+
+  function statusBadge(s) {
+    var map = { pending: 'En attente', approved: 'Approuvé', rejected: 'Rejeté' };
+    return '<span class="cg-status cg-status-' + s + '">' + (map[s] || s) + '</span>';
+  }
+
+  function loadMyContributions() {
+    var box = $('#cgContribList', contribOverlay);
+    box.innerHTML = '<div class="cg-contrib-empty">Chargement…</div>';
+    fetch(apiBase() + '?action=my_contributions', { credentials: 'include' })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var list = (data && data.contributions) || [];
+        if (data && data.error) { box.innerHTML = '<div class="cg-contrib-empty">' + escapeHtml(data.error) + '</div>'; return; }
+        if (!list.length) { box.innerHTML = '<div class="cg-contrib-empty">Vous n\'avez pas encore proposé d\'établissement.</div>'; return; }
+        box.innerHTML = list.map(function (c) {
+          return '<div class="cg-contrib-item">' +
+            '<div class="cg-contrib-main">' +
+              '<div class="cg-contrib-name">' + escapeHtml(c.name) + ' ' + statusBadge(c.status) + '</div>' +
+              '<div class="cg-contrib-sub">📍 ' + escapeHtml(c.city || '') + ' · ' + escapeHtml(c.country_name || c.country_id) + '</div>' +
+            '</div>' +
+            '<div class="cg-contrib-date">' + String(c.created_at || '').slice(0, 10) + '</div>' +
+          '</div>';
+        }).join('');
+      })
+      .catch(function () { box.innerHTML = '<div class="cg-contrib-empty">Erreur réseau.</div>'; });
+  }
+
+  // Exige un compte à l'email vérifié ; sinon invite à agir. Retourne bool.
+  function requireVerified() {
+    if (!user) { openModal('login'); return false; }
+    if (!user.email_verified) { toast('Vérifiez votre email pour contribuer ou noter.', 'err'); maybeVerifyBanner(); return false; }
+    return true;
   }
 
   // ── Toast ───────────────────────────────────────────────
@@ -346,6 +420,9 @@
       get csrf() { return csrf; },
       open: openModal,
       require: function () { if (!user) { openModal('login'); return false; } return true; },
+      requireVerified: requireVerified,
+      openMyContributions: openMyContributions,
+      toast: toast,
       api: api
     };
   }

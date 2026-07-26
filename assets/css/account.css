@@ -163,6 +163,25 @@ body.mobile-mode .account-btn { padding: 6px; }
   background: var(--ember); border: 1px solid var(--panel-bg);
 }
 
+/* ── Panneau « Mes contributions » ── */
+.cg-modal-wide { max-width: 560px; }
+.cg-contrib-list { max-height: 60vh; overflow-y: auto; margin-top: 4px; }
+.cg-contrib-empty { color: var(--text2); font-size: 13px; text-align: center; padding: 28px 10px; }
+.cg-contrib-item {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+  padding: 12px 4px; border-bottom: 1px solid var(--panel-border);
+}
+.cg-contrib-name { font-size: 13px; color: var(--text); font-weight: 500; }
+.cg-contrib-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+.cg-contrib-date { font-size: 11px; color: var(--text2); white-space: nowrap; flex-shrink: 0; }
+.cg-status {
+  display: inline-block; font-size: 9px; letter-spacing: .04em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 8px; margin-left: 4px; vertical-align: middle;
+}
+.cg-status-pending  { background: rgba(201,162,39,.16); color: var(--gold-l, var(--gold)); }
+.cg-status-approved { background: rgba(46,82,56,.16);   color: var(--grn); }
+.cg-status-rejected { background: rgba(160,48,21,.16);  color: var(--ember); }
+
 /* ── Section compte dans le menu mobile (#mm-account) ── */
 #mm-account { margin-bottom: 4px; }
 #mm-account .mm-user {
