@@ -2562,8 +2562,16 @@ function animateFlags(id,bgCvs,panelCvs,lexCvs){
 // ne provoque jamais deux appels réseau.
 // ════════════════════════════════════════════════════════
 
-// ⚠ Configurez cette URL avant de mettre en ligne :
-var DATA_API = 'https://cigareglobecom.qffk5199.odns.fr/backend/data.php';
+// ════════════════════════════════════════════════════════
+// Endpoints backend — SOURCE UNIQUE (window.CG_BACKEND_BASE)
+// URL relative à l'origine : fonctionne sur n'importe quel
+// domaine (odns temporaire, cigareglobe.com, localhost…) sans
+// rien changer, et évite le cross-origin (même origine que le site).
+// Pour cibler un backend distant, définir window.CG_BACKEND_BASE
+// AVANT ce script, ex : '<https://api.cigareglobe.com/backend>'.
+// ════════════════════════════════════════════════════════
+window.CG_BACKEND_BASE = window.CG_BACKEND_BASE || '/backend';
+var DATA_API = window.CG_BACKEND_BASE + '/data.php';
 
 // ── Guard : détecte si l'URL n'a pas encore été configurée ─
 var _API_READY = (DATA_API.indexOf('VOTRE_DOMAINE') === -1);
@@ -2676,7 +2684,7 @@ if (_API_READY) {
 // on réutilise cette valeur ici plutôt que de la redéclarer.
 var DATA_API = (typeof DATA_API !== 'undefined' && DATA_API)
   ? DATA_API
-  : 'https://cigareglobecom.qffk5199.odns.fr/backend/data.php';
+  : (window.CG_BACKEND_BASE || '/backend') + '/data.php';
 
 // Globals — initialisés seulement si pas déjà définis par data.inline.js
 if(typeof COUNTRIES        ==='undefined') var COUNTRIES        = (typeof COUNTRIES!=="undefined"&&COUNTRIES.length) ? COUNTRIES : [];
@@ -5983,7 +5991,7 @@ document.querySelectorAll('.lang-btn,.mlang-btn').forEach(function(btn) {
 </script>
 <script>/* photos.js */
 (function() {
-var PHOTOS_API = 'https://cigareglobecom.qffk5199.odns.fr/backend/photos.php';
+var PHOTOS_API = (window.CG_BACKEND_BASE || '/backend') + '/photos.php';
 var _cache = {};
 var _loading = {};
 
@@ -6730,7 +6738,7 @@ window.expFilter = function() {
 
 (function() {
 
-var API_BASE = 'https://cigareglobecom.qffk5199.odns.fr/backend/api.php'; // ← à configurer
+var API_BASE = (window.CG_BACKEND_BASE || '/backend') + '/api.php';
 var _CONTRIB_READY = (API_BASE.indexOf('VOTRE_DOMAINE') === -1);
 // Exposer globalement pour app.js (notation) et autres modules
 window.API_BASE      = API_BASE;
