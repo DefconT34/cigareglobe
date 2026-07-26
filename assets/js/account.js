@@ -42,7 +42,7 @@
     var btn = $('#accountBtn');
     if (btn) {
       if (user) {
-        var initial = (user.display_name || '?').charAt(0);
+        var initial = user.avatar_url || (user.display_name || '?').charAt(0);
         btn.className = 'account-btn' + (user.email_verified ? '' : ' is-unverified');
         btn.innerHTML = '<span class="ab-avatar">' + escapeHtml(initial) + '</span>'
           + '<span class="ab-label">' + escapeHtml(user.display_name) + '</span>'
@@ -70,6 +70,7 @@
       box.innerHTML =
         '<div class="mm-user"><b>' + escapeHtml(user.display_name) + '</b>' +
         '<span>' + escapeHtml(user.email) + '</span></div>' +
+        '<button data-act="profile">👤 Mon profil</button>' +
         '<button data-act="contribs">📋 Mes contributions</button>' +
         '<button data-act="favs">❤ Mes listes</button>' +
         (user.email_verified ? '' : '<button data-act="resend">✉ Renvoyer la vérification</button>') +
@@ -86,6 +87,7 @@
         else if (act === 'resend') doResend();
         else if (act === 'contribs') openMyContributions();
         else if (act === 'favs') { if (window.openMyFavorites) window.openMyFavorites(); }
+        else if (act === 'profile') { if (window.openMyProfile) window.openMyProfile(); }
       });
     });
   }
@@ -105,6 +107,7 @@
           '<div class="cg-menu-name">' + escapeHtml(user.display_name) + '</div>' +
           '<div class="cg-menu-email">' + escapeHtml(user.email) + '</div>' +
         '</div>' +
+        '<button class="cg-menu-item" data-act="profile">👤 Mon profil</button>' +
         '<button class="cg-menu-item" data-act="contribs">📋 Mes contributions</button>' +
         '<button class="cg-menu-item" data-act="favs">❤ Mes listes</button>' +
         (user.email_verified ? '' :
@@ -121,6 +124,7 @@
       if (act === 'resend') doResend();
       if (act === 'contribs') { menu.classList.add('hidden'); openMyContributions(); }
       if (act === 'favs') { menu.classList.add('hidden'); if (window.openMyFavorites) window.openMyFavorites(); }
+      if (act === 'profile') { menu.classList.add('hidden'); if (window.openMyProfile) window.openMyProfile(); }
     });
   }
 
@@ -428,6 +432,7 @@
       require: function () { if (!user) { openModal('login'); return false; } return true; },
       requireVerified: requireVerified,
       openMyContributions: openMyContributions,
+      updateUser: function (u) { if (u) { user = u; renderHeader(); } },
       toast: toast,
       api: api
     };

@@ -163,6 +163,44 @@ body.mobile-mode .account-btn { padding: 6px; }
   background: var(--ember); border: 1px solid var(--panel-bg);
 }
 
+/* ── Profil & passeport (profile.js) ── */
+.cg-prof-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.cg-prof-avatar {
+  width: 54px; height: 54px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gold); color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700;
+}
+.cg-prof-id { flex: 1; min-width: 0; }
+.cg-prof-name { font-size: 17px; font-weight: 600; color: var(--text); }
+.cg-prof-since { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.cg-prof-edit {
+  font-size: 11px; padding: 6px 12px; border-radius: 14px; cursor: pointer;
+  border: 1px solid var(--panel-border); background: transparent; color: var(--gold);
+}
+.cg-prof-edit:hover { border-color: var(--gold); }
+.cg-prof-bio { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 16px; white-space: pre-wrap; }
+
+.cg-prof-stats { display: flex; gap: 10px; margin-bottom: 16px; }
+.cg-prof-tile { flex: 1; text-align: center; background: var(--bg3); border: 1px solid var(--panel-border); border-radius: 10px; padding: 12px 6px; }
+.cg-prof-num { font-size: 22px; font-weight: 700; color: var(--gold); font-family: 'Cinzel', serif; }
+.cg-prof-lbl { font-size: 10px; letter-spacing: .05em; text-transform: uppercase; color: var(--text2); margin-top: 3px; }
+
+.cg-prof-section { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin: 14px 0 8px; }
+.cg-prof-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.cg-prof-badges .cg-badge {
+  font-size: 12px; padding: 5px 10px; border-radius: 14px; background: var(--bg3);
+  border: 1px solid var(--panel-border); color: var(--text); letter-spacing: 0; text-transform: none;
+}
+.cg-prof-passport { display: flex; flex-wrap: wrap; gap: 6px; font-size: 24px; line-height: 1.4; }
+.cg-pass-flag { cursor: default; }
+.cg-prof-empty { font-size: 12px; color: var(--text2); font-style: italic; }
+
+.cg-prof-edit-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+.cg-prof-cancel, .cg-prof-save { padding: 9px 16px; font-size: 12px; border-radius: 8px; cursor: pointer; border: 1px solid var(--panel-border); }
+.cg-prof-cancel { background: transparent; color: var(--text2); }
+.cg-prof-save { background: var(--gold); color: #fff; border-color: var(--gold); }
+.cg-prof-save:disabled { opacity: .5; cursor: default; }
+
 /* ── Favoris & listes (favorites.js) ── */
 .lc-fav { margin-top: 8px; }
 .lc-fav-row { display: flex; flex-wrap: wrap; gap: 6px; }

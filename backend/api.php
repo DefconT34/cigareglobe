@@ -60,7 +60,7 @@ $action = clean($_GET['action'] ?? '', 30);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Les actions qui écrivent au nom de l'utilisateur exigent un jeton CSRF
-$CSRF_ACTIONS = ['submit','rate','review','review_delete','fav_toggle'];
+$CSRF_ACTIONS = ['submit','rate','review','review_delete','fav_toggle','profile_update'];
 if (in_array($action, $CSRF_ACTIONS, true) && $method === 'POST') {
     csrf_verify();
 }
@@ -79,6 +79,8 @@ try {
     elseif ($action === 'fav_toggle' && $method === 'POST') { action_fav_toggle(); }
     elseif ($action === 'fav_states' && $method === 'GET')  { action_fav_states(); }
     elseif ($action === 'fav_list'   && $method === 'GET')  { action_fav_list(); }
+    elseif ($action === 'profile'        && $method === 'GET')  { action_profile(); }
+    elseif ($action === 'profile_update' && $method === 'POST') { action_profile_update(); }
     elseif ($action === 'approve' && $method === 'POST') { action_approve(); }
     elseif ($action === 'reject'  && $method === 'POST') { action_reject(); }
     elseif ($action === 'export'  && $method === 'GET')  { action_export(); }
@@ -614,4 +616,106 @@ function action_fav_list(): void {
     $q->execute([$u['id']]);
     header('Cache-Control: no-store');
     json_out(['items' => $q->fetchAll()]);
+}
+
+// ════════════════════════════════════════════════════════════
+// PROFIL & PASSEPORT (Étape D)
+// ════════════════════════════════════════════════════════════
+
+// Badges dérivés de l'activité du membre.
+function compute_badges(array $s): array {
+    $b = [];
+    if ($s['contributions_approved'] >= 1)  $b[] = ['icon' => '✒️', 'label' => 'Contributeur'];
+    if ($s['contributions_approved'] >= 5)  $b[] = ['icon' => '🏅', 'label' => 'Contributeur confirmé'];
+    if ($s['reviews_count'] >= 1)           $b[] = ['icon' => '📝', 'label' => 'Critique'];
+    if ($s['reviews_count'] >= 10)          $b[] = ['icon' => '🎖️', 'label' => 'Critique aguerri'];
+    if ($s['countries_visited'] >= 3)       $b[] = ['icon' => '🌍', 'label' => 'Globe-trotter'];
+    if ($s['countries_visited'] >= 10)      $b[] = ['icon' => '✈️', 'label' => 'Grand voyageur'];
+    return $b;
+}
+
+/**
+ * GET ?action=profile            → profil du compte connecté (privé)
+ * GET ?action=profile&user=42    → profil public d'un membre
+ * Retourne : profile, stats, passport (codes pays), badges
+ */
+function action_profile(): void {
+    $db  = getDB();
+    $uid = (int)($_GET['user'] ?? 0);
+
+    if ($uid > 0) {
+        $stmt = $db->prepare("SELECT id, display_name, avatar_url, bio, role, created_at
+                              FROM users WHERE id = ? AND status = 'active'");
+        $stmt->execute([$uid]);
+        $u = $stmt->fetch();
+        if (!$u) json_out(['error' => 'Profil introuvable'], 404);
+    } else {
+        $u   = require_auth($db);
+        $uid = (int)$u['id'];
+    }
+
+    // Statistiques
+    $ct = $db->prepare("SELECT COUNT(*) FROM contributions WHERE user_id = ?");
+    $ct->execute([$uid]); $contribTotal = (int)$ct->fetchColumn();
+    $ca = $db->prepare("SELECT COUNT(*) FROM contributions WHERE user_id = ? AND status = 'approved'");
+    $ca->execute([$uid]); $contribApproved = (int)$ca->fetchColumn();
+    $rv = $db->prepare("SELECT COUNT(*) FROM reviews WHERE user_id = ?");
+    $rv->execute([$uid]); $reviews = (int)$rv->fetchColumn();
+
+    // Passeport : pays « visités » (favoris pays + pays des lounges visités)
+    $passport = [];
+    try {
+        // COLLATE explicite : favorites.target_id et lounges.country_id
+        // peuvent avoir des collations différentes → sans ça, l'UNION échoue.
+        $pass = $db->prepare(
+            "SELECT DISTINCT c FROM (
+                 SELECT target_id COLLATE utf8mb4_unicode_ci AS c FROM favorites
+                 WHERE user_id = ? AND list = 'visited' AND target_type = 'country'
+                 UNION
+                 SELECT l.country_id COLLATE utf8mb4_unicode_ci AS c FROM favorites f
+                 JOIN lounges l ON l.id = f.target_id
+                 WHERE f.user_id = ? AND f.list = 'visited' AND f.target_type = 'lounge'
+             ) t WHERE c IS NOT NULL AND c <> ''"
+        );
+        $pass->execute([$uid, $uid]);
+        $passport = array_column($pass->fetchAll(), 'c');
+    } catch (Throwable $e) { /* tables favoris/lounges absentes — passeport vide */ }
+
+    $stats = [
+        'contributions_total'    => $contribTotal,
+        'contributions_approved' => $contribApproved,
+        'reviews_count'          => $reviews,
+        'countries_visited'      => count($passport),
+    ];
+
+    json_out([
+        'profile' => [
+            'id'           => (int)$u['id'],
+            'display_name' => $u['display_name'],
+            'avatar_url'   => $u['avatar_url'] ?? null,
+            'bio'          => $u['bio'] ?? null,
+            'role'         => $u['role'],
+            'created_at'   => $u['created_at'],
+        ],
+        'stats'    => $stats,
+        'passport' => $passport,
+        'badges'   => compute_badges($stats),
+    ]);
+}
+
+/** POST ?action=profile_update — Body : { display_name, bio, avatar } */
+function action_profile_update(): void {
+    $db = getDB();
+    $u  = require_auth($db);
+
+    $body   = json_decode(file_get_contents('php://input'), true) ?? [];
+    $name   = clean($body['display_name'] ?? '', 80);
+    $bio    = clean($body['bio']    ?? '', 500);
+    $avatar = clean($body['avatar'] ?? '', 16);   // emoji ou courte chaîne
+    if ($name === '') json_out(['error' => 'Nom d\'affichage requis.'], 400);
+
+    $db->prepare("UPDATE users SET display_name = ?, bio = ?, avatar_url = ? WHERE id = ?")
+       ->execute([$name, $bio ?: null, $avatar ?: null, $u['id']]);
+
+    json_out(['success' => true, 'user' => user_public(current_user($db))]);
 }
