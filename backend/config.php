@@ -1,0 +1,86 @@
+<?php
+// ════════════════════════════════════════════════════════
+// config.php — Configuration CigarGlobe
+// ────────────────────────────────────────────────────────
+// Ce fichier ne contient AUCUN secret : il lit les accès depuis
+// le fichier .env (à la racine du projet, ignoré par Git).
+// Modèle : .env.example → copier vers .env et renseigner.
+// ════════════════════════════════════════════════════════
+
+// ── Chargeur .env minimal ─────────────────────────────────
+(function () {
+    $path = __DIR__ . '/../.env';
+    if (!is_file($path)) return;
+    foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#') continue;
+        $pos = strpos($line, '=');
+        if ($pos === false) continue;
+        $k = trim(substr($line, 0, $pos));
+        $v = trim(substr($line, $pos + 1));
+        // Retirer les guillemets englobants
+        if (strlen($v) >= 2 && ($v[0] === '"' || $v[0] === "'") && substr($v, -1) === $v[0]) {
+            $v = substr($v, 1, -1);
+        }
+        $_ENV[$k] = $v;
+        putenv("$k=$v");
+    }
+})();
+
+function env(string $key, ?string $default = null): ?string {
+    $v = $_ENV[$key] ?? getenv($key);
+    return ($v === false || $v === null || $v === '') ? $default : $v;
+}
+
+// ── Base de données ───────────────────────────────────────
+define('DB_HOST',    env('DB_HOST', 'localhost'));
+define('DB_PORT',    env('DB_PORT', '3306'));
+define('DB_NAME',    env('DB_NAME', ''));
+define('DB_USER',    env('DB_USER', ''));
+define('DB_PASS',    env('DB_PASS', ''));
+define('DB_CHARSET', env('DB_CHARSET', 'utf8mb4'));
+
+// ── Seuils de vote ────────────────────────────────────────
+define('VOTES_TO_APPROVE', (int)env('VOTES_TO_APPROVE', '3'));
+define('VOTES_TO_REJECT',  (int)env('VOTES_TO_REJECT',  '3'));
+
+// ── Administration ────────────────────────────────────────
+define('ADMIN_KEY',   env('ADMIN_KEY', ''));
+define('ADMIN_EMAIL', env('ADMIN_EMAIL', 'vous@example.com'));
+
+// ── CORS ──────────────────────────────────────────────────
+define('ALLOWED_ORIGIN', env('ALLOWED_ORIGIN', '*'));
+
+// ── Espace client / emails ────────────────────────────────
+if (env('SITE_URL') !== null)       define('SITE_URL',       env('SITE_URL'));
+define('MAIL_FROM',      env('MAIL_FROM', 'noreply@cigareglobe.com'));
+define('MAIL_FROM_NAME', env('MAIL_FROM_NAME', 'CigarGlobe'));
+if (strtolower((string)env('MAIL_LOG_ONLY', 'false')) === 'true') define('MAIL_LOG_ONLY', true);
+if (strtolower((string)env('MAIL_DEBUG',    'false')) === 'true') define('MAIL_DEBUG', true);
+
+// ── Connexion PDO ─────────────────────────────────────────
+function getDB(): PDO {
+    static $pdo = null;
+    if ($pdo !== null) return $pdo;
+
+    $dsn = sprintf(
+        'mysql:host=%s;port=%s;dbname=%s;charset=%s',
+        DB_HOST, DB_PORT, DB_NAME, DB_CHARSET
+    );
+
+    try {
+        $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+        ]);
+    } catch (PDOException $e) {
+        http_response_code(500);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Connexion base de données impossible.']);
+        exit;
+    }
+
+    return $pdo;
+}

@@ -37,6 +37,15 @@
   Header set Access-Control-Allow-Origin    "*"
 </IfModule>
 
+# ── Blocage des fichiers cachés (.env, .git, .htaccess…) ──
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+# Bloquer aussi les sauvegardes de config
+<FilesMatch "\.(bak|prod\.bak)$">
+  Require all denied
+</FilesMatch>
+
 # ── Réécriture HTTPS ──────────────────────────────────────
 <IfModule mod_rewrite.c>
   RewriteEngine On

@@ -2,8 +2,11 @@
 # CigarGlobe — fichiers à ne jamais versionner
 # ═══════════════════════════════════════════════════════════
 
-# Secrets — config réelle (utiliser backend/config.example.php comme modèle)
-backend/config.php
+# Secrets — variables d'environnement (utiliser .env.example comme modèle)
+.env
+# Sauvegardes locales de config (accès prod)
+*.bak
+backend/config.php.prod.bak
 
 # Logs serveur
 backend/error_log
