@@ -163,6 +163,43 @@ body.mobile-mode .account-btn { padding: 6px; }
   background: var(--ember); border: 1px solid var(--panel-bg);
 }
 
+/* ── Avis texte des lounges (reviews.js) ── */
+.lc-reviews { margin-top: 8px; }
+.lc-rev-head { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--text2); margin-bottom: 6px; }
+.lc-rev-head.lc-rev-none { color: var(--text3, var(--text2)); font-style: italic; text-transform: none; letter-spacing: 0; }
+.lc-rev { padding: 7px 0; border-top: 1px solid var(--panel-border); }
+.lc-rev-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lc-rev-author { font-size: 12px; font-weight: 600; color: var(--text); }
+.lc-rev-stars { font-size: 11px; color: var(--gold); letter-spacing: 1px; }
+.lc-rev-title { font-size: 12px; font-weight: 500; color: var(--text); margin-top: 2px; }
+.lc-rev-body { font-size: 12px; color: var(--text2); line-height: 1.45; margin-top: 2px; white-space: pre-wrap; }
+
+.lc-rev-cta {
+  margin-top: 8px; width: 100%; padding: 8px; font-size: 11px;
+  background: transparent; color: var(--gold); cursor: pointer;
+  border: 1px dashed var(--panel-border); border-radius: 8px; transition: all .2s;
+}
+.lc-rev-cta:hover { border-color: var(--gold); background: var(--bg3); }
+
+.lc-rev-form { margin-top: 8px; padding: 10px; background: var(--bg3); border: 1px solid var(--panel-border); border-radius: 8px; }
+.lc-rev-fstars { font-size: 20px; color: var(--gold); letter-spacing: 3px; cursor: pointer; margin-bottom: 8px; }
+.lc-rev-fstar { transition: transform .1s; }
+.lc-rev-fstar:hover { transform: scale(1.15); }
+.lc-rev-form input, .lc-rev-form textarea {
+  width: 100%; box-sizing: border-box; padding: 8px 10px; margin-bottom: 8px;
+  background: var(--bg2); border: 1px solid var(--panel-border); border-radius: 6px;
+  color: var(--text); font-size: 13px; font-family: inherit; outline: none; resize: vertical;
+}
+.lc-rev-form input:focus, .lc-rev-form textarea:focus { border-color: var(--gold); }
+.lc-rev-form-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.lc-rev-cancel, .lc-rev-send {
+  padding: 7px 14px; font-size: 12px; border-radius: 6px; cursor: pointer; border: 1px solid var(--panel-border);
+}
+.lc-rev-cancel { background: transparent; color: var(--text2); }
+.lc-rev-send { background: var(--gold); color: #fff; border-color: var(--gold); }
+.lc-rev-send:disabled { opacity: .5; cursor: default; }
+.lc-rev-msg { font-size: 11px; color: var(--ember); margin-top: 6px; }
+
 /* ── Panneau « Mes contributions » ── */
 .cg-modal-wide { max-width: 560px; }
 .cg-contrib-list { max-height: 60vh; overflow-y: auto; margin-top: 4px; }

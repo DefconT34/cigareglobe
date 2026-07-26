@@ -4409,6 +4409,7 @@ function _renderLoungeCards(c, list, body) {
         (links ? '<div class="lc-links">'+links+'</div>' : '') +
         '<div class="lc-rating-section">'+ratingHtml+'</div>' +
         (l.id ? '<div class="lc-photos" id="lc-photos-'+l.id+'"></div>' : '') +
+        (l.id ? '<div class="lc-reviews" id="lc-reviews-'+l.id+'"></div>' : '') +
       '</div>'
     );
   }).join('');
@@ -4423,6 +4424,12 @@ function _renderLoungeCards(c, list, body) {
   if (typeof _loadLoungePhotos === 'function') {
     list.forEach(function(l) {
       if (l.id) setTimeout(function() { _loadLoungePhotos(l.id); }, 100);
+    });
+  }
+  // Charger les avis lazily (module reviews.js)
+  if (typeof window._loadLoungeReviews === 'function') {
+    list.forEach(function(l) {
+      if (l.id) setTimeout(function() { window._loadLoungeReviews(l.id); }, 120);
     });
   }
 }
@@ -7695,5 +7702,7 @@ if ('serviceWorker' in navigator) {
 </script>
 <!-- Espace client (Étape A) -->
 <script src="assets/js/account.js"></script>
+<!-- Avis texte des lounges (Étape B2) -->
+<script src="assets/js/reviews.js"></script>
 </body>
 </html>
