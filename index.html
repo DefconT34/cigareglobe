@@ -1180,6 +1180,7 @@ body.mobile-mode[dir="rtl"] #zoom-ctrl { left:8px; right:auto; }
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"CigarOdyssey","description":"Atlas interactif mondial du cigare premium","url":"https://cigareglobecom.qffk5199.odns.fr/"}</script>
   <meta property="og:type" content="website">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥃</text></svg>">
+<link rel="stylesheet" href="assets/css/account.css">
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 <script>
@@ -1269,6 +1270,9 @@ body.mobile-mode[dir="rtl"] #zoom-ctrl { left:8px; right:auto; }
       <span aria-hidden="true">🥃</span>
       <span>Lounges</span>
     </button>
+
+    <!-- Compte / espace membre -->
+    <button id="accountBtn" class="account-btn" aria-label="Compte"><span aria-hidden="true">👤</span><span>Se connecter</span></button>
 
     <!-- Mobile hamburger -->
     <button id="mobile-menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">☰</button>
@@ -7657,5 +7661,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<!-- Espace client (Étape A) -->
+<script src="assets/js/account.js"></script>
 </body>
 </html>
