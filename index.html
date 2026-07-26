@@ -1188,9 +1188,9 @@ body.mobile-mode[dir="rtl"] #zoom-ctrl { left:8px; right:auto; }
   <!-- Open Graph pour le partage -->
   <meta property="og:title" content="CigarOdyssey">
   <meta property="og:description" content="CigarOdyssey — L'atlas mondial interactif du cigare premium. Pays producteurs, marchés, 198 lounges dans 75 pays.">
-  <meta property="og:image" content="https://cigareglobecom.qffk5199.odns.fr/og-image.jpg">
+  <meta property="og:image" content="http://localhost/og-image.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"CigarOdyssey","description":"Atlas interactif mondial du cigare premium","url":"https://cigareglobecom.qffk5199.odns.fr/"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"CigarOdyssey","description":"Atlas interactif mondial du cigare premium","url":"http://localhost/"}</script>
   <meta property="og:type" content="website">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥃</text></svg>">
 <link rel="stylesheet" href="assets/css/account.css">
@@ -2584,10 +2584,10 @@ function animateFlags(id,bgCvs,panelCvs,lexCvs){
 // ════════════════════════════════════════════════════════
 // Endpoints backend — SOURCE UNIQUE (window.CG_BACKEND_BASE)
 // URL relative à l'origine : fonctionne sur n'importe quel
-// domaine (odns temporaire, cigareglobe.com, localhost…) sans
-// rien changer, et évite le cross-origin (même origine que le site).
+// domaine (localhost, production…) sans rien changer, et évite le
+// cross-origin (même origine que le site).
 // Pour cibler un backend distant, définir window.CG_BACKEND_BASE
-// AVANT ce script, ex : '<https://api.cigareglobe.com/backend>'.
+// AVANT ce script.
 // ════════════════════════════════════════════════════════
 window.CG_BACKEND_BASE = window.CG_BACKEND_BASE || '/backend';
 var DATA_API = window.CG_BACKEND_BASE + '/data.php';
