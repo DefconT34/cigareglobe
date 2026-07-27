@@ -1444,6 +1444,9 @@ try {
 // Horloge d'animation : figée (valeur stable) si reduced-motion.
 function animNow(){ return _reduceMotion ? 0 : Date.now(); }
 
+// ── Inertie du drag (momentum au relâché) ────────────────
+var velX = 0, velY = 0, _inertia = false, _lastMoveT = 0;
+
 function easeInOut(t){ return t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
 
 // ── Canvas resize — DPR avec compatibilité Safari iOS ────────────
@@ -1600,7 +1603,9 @@ function drawMarkets(){
   MARKETS.forEach(function(m){
     var p = ll2xyz(m.lat, m.lon, R);
     var pj = proj(p.x, p.y, p.z);
-    if(pj.z < -10) return;
+    var fade = limbFade(pj.z, R);
+    if(fade <= 0) return;
+    gc.globalAlpha = fade;
     var isSel = selMarket && selMarket.id===m.id;
     var isHov = hoverMarket && hoverMarket.id===m.id;
     var pulse = Math.sin(now*.0018+m.lat*.4)*.5+.5;
@@ -1641,6 +1646,7 @@ function drawMarkets(){
       gc.beginPath(); gc.arc(pj.x,pj.y,size+6,0,Math.PI*2);
       gc.strokeStyle='#1A6BB5'; gc.lineWidth=2; gc.stroke();
     }
+    gc.globalAlpha = 1;
   });
 }
 
@@ -1682,7 +1688,9 @@ function drawLoungeCountries(){
   allLounge.forEach(function(lc){
     var p  = ll2xyz(lc.lat, lc.lon, R);
     var pj = proj(p.x, p.y, p.z);
-    if(pj.z < -10) return;
+    var fade = limbFade(pj.z, R);
+    if(fade <= 0) return;
+    gc.globalAlpha = fade;
 
     var isSel = selLoungeCountry && selLoungeCountry.id === lc.id;
     var isHov = hoverLoungeCountry && hoverLoungeCountry.id === lc.id;
@@ -1739,10 +1747,20 @@ function drawLoungeCountries(){
       gc.beginPath(); gc.arc(pj.x, pj.y, size+5, 0, Math.PI*2);
       gc.strokeStyle = '#C060FF'; gc.lineWidth = 2; gc.stroke();
     }
+    gc.globalAlpha = 1;
   });
 }
 
 // ── Main globe render ────────────────────────────────────
+// Opacité d'un marqueur selon sa profondeur : plein sur la face avant,
+// fondu progressif à l'approche du limbe (bord du globe), 0 derrière.
+function limbFade(z, R){
+  var start = R * 0.12, end = -R * 0.03;
+  if (z <= end)   return 0;
+  if (z >= start) return 1;
+  return (z - end) / (start - end);
+}
+
 // Étiquette lisible sur le globe (texte + halo), aux couleurs du thème.
 function drawGlobeLabel(text, x, y, strong, tc){
   gc.save();
@@ -1846,7 +1864,9 @@ function drawGlobe(){
   });
   COUNTRIES.forEach(function(c){
     var p=ll2xyz(c.lat,c.lon,R), pj=proj(p.x,p.y,p.z);
-    if(pj.z<-10) return;
+    var fade=limbFade(pj.z,R);
+    if(fade<=0) return;
+    gc.globalAlpha=fade;
     var isActive=selCountry&&selCountry.id===c.id;
     var isHov=hoverCountry&&hoverCountry.id===c.id;
     var now2=animNow();
@@ -1874,6 +1894,7 @@ function drawGlobe(){
     if(isActive||isHov||zoomScale>1.4){
       drawGlobeLabel(c.name, pj.x, pj.y + size2 + 5, isActive, tc);
     }
+    gc.globalAlpha=1;
   });
 
   // Market diamonds (on top)
@@ -2094,6 +2115,13 @@ function loop(){
     // reduced-motion : gel total (ni rotation auto, ni inertie résiduelle).
     // Le drag (mousemove) et flyTo (branche animating) restent opérants.
     targetX=rotX; targetY=rotY;
+  } else if(_inertia && !drag){
+    // Momentum : on prolonge la rotation avec la vélocité du drag, en décroissant.
+    rotY += velY; rotX += velX;
+    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+    velX *= 0.94; velY *= 0.94;
+    targetX = rotX; targetY = rotY;
+    if(Math.hypot(velX, velY) < 0.00018) _inertia = false;
   } else {
     if(autoRot&&!drag)rotY+=.0008;
     rotX+=(targetX-rotX)*.08;rotY+=(targetY-rotY)*.08;
@@ -2259,8 +2287,19 @@ function handleSelect(clientX, clientY) {
 // ── Mouse drag + click ───────────────────────────────────
 var _mouseMoved = false;
 
+// Déclenche l'inertie au relâché si le geste était un mouvement récent.
+function _maybeInertia() {
+  if (_reduceMotion) { _inertia = false; return; }
+  if (performance.now() - _lastMoveT > 90) return;   // pause avant le lâcher → pas de lancer
+  var sp = Math.hypot(velX, velY);
+  if (sp < 0.0009) { _inertia = false; return; }
+  var cap = 0.06;                                     // vitesse max (évite un spin fou)
+  if (sp > cap) { velX *= cap / sp; velY *= cap / sp; }
+  _inertia = true;
+}
+
 globe.addEventListener('mousedown', e => {
-  drag = true; autoRot = false; animating = false;
+  drag = true; autoRot = false; animating = false; _inertia = false;
   lastX = e.clientX; lastY = e.clientY;
   _mouseMoved = false;
 });
@@ -2273,6 +2312,7 @@ window.addEventListener('mousemove', e => {
     rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotX));
     lastX = e.clientX; lastY = e.clientY;
     targetX = rotX; targetY = rotY;
+    velY = dx * .007; velX = dy * .007; _lastMoveT = performance.now();
   }
 
   // Hover detection (desktop only)
@@ -2298,7 +2338,7 @@ window.addEventListener('mousemove', e => {
   }
 });
 
-window.addEventListener('mouseup', () => { drag = false; });
+window.addEventListener('mouseup', () => { drag = false; _maybeInertia(); });
 
 globe.addEventListener('click', e => {
   if (_mouseMoved) return; // was a drag, not a click
@@ -2315,7 +2355,7 @@ var _touchStartX = 0, _touchStartY = 0, _touchMoved = false;
 var _lastTouchEnd = 0;
 
 globe.addEventListener('touchstart', e => {
-  drag = true; autoRot = false; animating = false;
+  drag = true; autoRot = false; animating = false; _inertia = false;
   lastX = _touchStartX = e.touches[0].clientX;
   lastY = _touchStartY = e.touches[0].clientY;
   _touchMoved = false;
@@ -2336,12 +2376,14 @@ globe.addEventListener('touchmove', e => {
   lastX = e.touches[0].clientX;
   lastY = e.touches[0].clientY;
   targetX = rotX; targetY = rotY;
+  velY = dx * .007; velX = dy * .007; _lastMoveT = performance.now();
   e.preventDefault();
 }, { passive: false });
 
 globe.addEventListener('touchend', e => {
   drag = false;
   _lastTouchEnd = Date.now(); // suppress subsequent click event (Safari double-fire)
+  _maybeInertia();            // momentum si le doigt était en mouvement au lâcher
 
   if (_touchMoved) return; // was a drag — ignore
 
