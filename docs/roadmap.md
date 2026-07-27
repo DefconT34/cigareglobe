@@ -13,6 +13,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - Globe : perf (cache thème) · a11y (reduced-motion) · pause boucle · halo · étiquettes · inertie · fondu limbe
 - **C2** : vrai schéma SQL (`sql/schema.sql` via mysqldump, 19 tables) + `sql/README.md` à jour
 - **C3** : README projet (lancement local, structure, endpoints, base, déploiement)
+- **C1** : externalisation du front — CSS (3 fichiers) + JS (23 modules) sortis d'index.html (7826 → 373 lignes), 27 fichiers dans assets/. Zéro régression.
 
 ## ⏳ À faire
 
@@ -27,10 +28,11 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **B3** — Nom & domaine unifiés (CigarOdyssey/Globe/World → un seul + SEO/manifest/MAIL_FROM) · P→M · débloque A2/B2
 
 ### C. Qualité & structure
-- [ ] **C1** — Découpe du front monolithique en modules + Vite (par tranches) · G
+- [x] ~~**C1** — Externalisation du front (CSS + 23 modules JS hors index.html)~~ ✅
+- [ ] **C1b** — (optionnel) Migration Vite/ESM (build + import/export) · G · à évaluer, non prioritaire
 - [x] ~~**C2** — Vrai schéma SQL versionné~~ ✅
 - [x] ~~**C3** — README + doc d'architecture~~ ✅
-- [ ] **C4** — Tests smoke API + CI · M · filet avant C1
+- [ ] **C4** — Tests smoke API + CI · M
 
 ### D. Fonctionnel / produit
 - [ ] **D1** — Modération des avis (statut reviews + UI admin) · M
@@ -45,4 +47,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **E2** — Auto-héberger topojson / retirer le tag GA placeholder · P
 
 ## Ordre suggéré
-~~C2+C3~~ → **B3** → A1+A2+A3 → B2+B1 → C4 → C1 → D1–D5 → D6/E
+~~C2+C3~~ → ~~C1~~ → **B3** → A1+A2+A3 → B2+B1 → C4 → D1–D5 → D6/E
