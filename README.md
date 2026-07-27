@@ -1,0 +1,94 @@
+# CigarGlobe
+
+Atlas interactif mondial du cigare premium : globe des pays producteurs
+et marchés, annuaire de lounges & caves (avec photos, notes et avis), et
+espace membre (contributions, favoris, profil). PWA multilingue
+(fr/en/es/de/zh/ar).
+
+> Le projet apparaît sous plusieurs noms dans le code (CigarGlobe /
+> CigarOdyssey) — unification prévue (voir `docs/roadmap.md`, chantier B3).
+
+## Stack
+
+- **Front** : `index.html` (application monolithique en JavaScript vanilla —
+  globe en canvas 2D, carte Leaflet pour l'Explorer) + modules de l'espace
+  client dans `assets/js/` (`account`, `reviews`, `favorites`, `profile`)
+  et `assets/css/account.css`. PWA (`manifest.json`, `sw.js`).
+- **Backend** : PHP 8, dossier `backend/`. MySQL (`utf8mb4`).
+- **Config** : via `.env` (aucun secret dans le code).
+
+## Prérequis
+
+- PHP 8.x avec l'extension **pdo_mysql**
+- MySQL 8+ (ex. via **WAMP**)
+
+## Lancer en local
+
+1. **Base de données** — créer la base et importer le schéma :
+   ```bash
+   mysql -u root -p -e "CREATE DATABASE cigareglobe CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+   mysql -u root -p cigareglobe < sql/schema.sql
+   ```
+   (puis importer un jeu de données si disponible — voir `sql/README.md`).
+
+2. **Configuration** — copier le modèle et renseigner les accès :
+   ```bash
+   cp .env.example .env
+   # éditer .env : DB_NAME, DB_USER, DB_PASS, etc.
+   # en dev, mettre MAIL_LOG_ONLY=true (les emails vont dans backend/cache/mail_outbox.log)
+   ```
+
+3. **Serveur** — servir la racine du projet (le PHP doit avoir pdo_mysql) :
+   ```bash
+   php -S 127.0.0.1:8099 -t .
+   # avec WAMP : C:\wamp64\bin\php\php8.x\php.exe -S 127.0.0.1:8099 -t .
+   ```
+   → http://127.0.0.1:8099/index.html
+
+> Les endpoints backend sont relatifs (`/backend/…`) : le front et l'API
+> sont servis depuis la même origine, aucune configuration d'URL à faire.
+
+## Structure
+
+```
+index.html            Application front (globe, panneaux, PWA)
+assets/js/            Modules espace client (account, reviews, favorites, profile)
+assets/css/           Styles espace client (theme-aware)
+backend/
+  config.php          Chargeur .env + connexion PDO (sans secret)
+  auth.php            Authentification (register, verify, login, reset…)
+  auth_lib.php        Session sécurisée, CSRF, rate-limit, utilisateur courant
+  mailer.php          Envoi d'email (send_email, mode LOG_ONLY en dev)
+  api.php             Contributions, avis, favoris, profil, modération
+  data.php            Données de l'atlas (globe, pays, lounges, marques…)
+  photos.php          Upload & gestion des photos de lounges
+  admin.php           Interface de modération
+  .htaccess           Protection de config.php
+sql/
+  schema.sql          Schéma de référence (structure complète)
+  migrations/         Évolutions incrémentales (001→003)
+docs/
+  roadmap.md          Feuille de route (chantiers restants + ordre)
+  espace-client.md    Cahier des charges de l'espace membre
+uploads/lounges/      Photos uploadées (hors Git)
+```
+
+## API (aperçu)
+
+- `auth.php?action=` : `me` · `register` · `verify` · `login` · `logout` · `forgot` · `reset` · `resend`
+- `api.php?action=` : `submit` · `vote` · `rate` · `review` · `reviews` · `my_contributions` · `my_ratings` · `fav_toggle` · `fav_states` · `fav_list` · `profile` · `profile_update` (+ modération admin)
+- `data.php?action=` : `globe` · `country` · `lounges` · `brand` · `market` · `all`
+- `photos.php?action=` : upload / gestion (admin)
+
+Les actions qui écrivent au nom de l'utilisateur exigent une session et un
+jeton **CSRF** (obtenu via `auth.php?action=me`), et un compte à l'email vérifié.
+
+## Base de données
+
+Voir `sql/README.md` (schéma de référence, migrations, régénération, seed).
+
+## Déploiement
+
+Non couvert ici pour l'instant — étapes détaillées dans `docs/roadmap.md`
+(chantiers B1/B2/B3 : `.env` serveur, rotation des secrets, email
+transactionnel, domaine).

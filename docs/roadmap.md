@@ -1,0 +1,48 @@
+# CigarGlobe — feuille de route
+
+Suivi des chantiers. Après chaque chantier terminé : cocher ici, puis
+re-présenter la liste restante et suggérer le point suivant.
+Effort : P = Petit · M = Moyen · G = Gros.
+
+## ✅ Fait
+- Phase 0 : mise sous Git, `.gitignore`, schéma reconstruit, retrait OLD/debug, bugs B1/B2
+- Phase 1 : centralisation des URLs API (relatives `/backend`)
+- Config par `.env` (secrets hors code)
+- Espace client A→D : auth · contributions/avis · favoris/listes · profil/passeport/badges
+- Local sur base réelle `qffk5199_cigare` (aucun lien o2switch)
+- Globe : perf (cache thème) · a11y (reduced-motion) · pause boucle · halo · étiquettes · inertie · fondu limbe
+- **C2** : vrai schéma SQL (`sql/schema.sql` via mysqldump, 19 tables) + `sql/README.md` à jour
+- **C3** : README projet (lancement local, structure, endpoints, base, déploiement)
+
+## ⏳ À faire
+
+### A. Sécurité & robustesse
+- [ ] **A1** — Clé admin hors URL (session admin, plus de `?key=`) · M
+- [ ] **A2** — Restreindre le CORS au domaine réel (garder `*` en local) · P · dépend de B3
+- [ ] **A3** — Revue de sécurité complète (CSP, admin.php, fuite d'erreurs data.php) · M · après A1
+
+### B. Déploiement
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→003) · M
+- [ ] **B2** — Délivrabilité email (service transactionnel derrière send_email) · M · décision tierce
+- [ ] **B3** — Nom & domaine unifiés (CigarOdyssey/Globe/World → un seul + SEO/manifest/MAIL_FROM) · P→M · débloque A2/B2
+
+### C. Qualité & structure
+- [ ] **C1** — Découpe du front monolithique en modules + Vite (par tranches) · G
+- [x] ~~**C2** — Vrai schéma SQL versionné~~ ✅
+- [x] ~~**C3** — README + doc d'architecture~~ ✅
+- [ ] **C4** — Tests smoke API + CI · M · filet avant C1
+
+### D. Fonctionnel / produit
+- [ ] **D1** — Modération des avis (statut reviews + UI admin) · M
+- [ ] **D2** — Contributeur de confiance (rôle trusted + auto-approbation) · P→M
+- [ ] **D3** — Retirer le champ email redondant du modal contribution · P
+- [ ] **D4** — Globe : navigation clavier + ARIA · M
+- [ ] **D5** — Globe : zoom centré sur le curseur · P
+- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+
+### E. Dette technique
+- [ ] **E1** — Simplifier `data.php` (retirer les DESCRIBE défensifs une fois le schéma figé) · P · après C2
+- [ ] **E2** — Auto-héberger topojson / retirer le tag GA placeholder · P
+
+## Ordre suggéré
+~~C2+C3~~ → **B3** → A1+A2+A3 → B2+B1 → C4 → C1 → D1–D5 → D6/E
