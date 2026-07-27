@@ -1743,6 +1743,21 @@ function drawLoungeCountries(){
 }
 
 // ── Main globe render ────────────────────────────────────
+// Étiquette lisible sur le globe (texte + halo), aux couleurs du thème.
+function drawGlobeLabel(text, x, y, strong, tc){
+  gc.save();
+  gc.font = (strong ? 'bold 12px' : '11px') + " Georgia, serif";
+  gc.textAlign = 'center';
+  gc.textBaseline = 'top';
+  gc.lineJoin = 'round';
+  gc.lineWidth = 3.5;
+  gc.strokeStyle = tc.zoneHalo || 'rgba(255,255,255,0.92)';
+  gc.strokeText(text, x, y);
+  gc.fillStyle = tc.zoneLabel || '#2A1F14';
+  gc.fillText(text, x, y);
+  gc.restore();
+}
+
 function drawGlobe(){
   var tc = getThemeColors();
   // Appliquer le scale DPR à chaque frame — plus fiable sur Safari iOS
@@ -1751,6 +1766,16 @@ function drawGlobe(){
   gc.clearRect(0, 0, W, H);
 
   var R = getR();
+
+  // Halo d'atmosphère (glow externe) — dessiné avant la sphère (opaque)
+  // qui recouvre la partie interne, ne laissant que l'anneau lumineux.
+  var haloR = R * 1.13;
+  var haGrd = gc.createRadialGradient(W/2, H/2, R*0.94, W/2, H/2, haloR);
+  haGrd.addColorStop(0,    'rgba(130,190,235,0.30)');
+  haGrd.addColorStop(0.45, 'rgba(130,190,235,0.10)');
+  haGrd.addColorStop(1,    'rgba(130,190,235,0)');
+  gc.beginPath(); gc.arc(W/2, H/2, haloR, 0, Math.PI*2);
+  gc.fillStyle = haGrd; gc.fill();
 
   // Ocean sphere
   var oGrd = gc.createRadialGradient(W/2-R*.25, H/2-R*.2, R*.1, W/2, H/2, R);
@@ -1844,6 +1869,10 @@ function drawGlobe(){
       gc.textAlign='center'; gc.textBaseline='middle';
       gc.fillText(c.flag, pj.x, pj.y);
       gc.restore();
+    }
+    // Étiquette du pays : au survol/sélection, ou dès qu'on zoome (>1.4×)
+    if(isActive||isHov||zoomScale>1.4){
+      drawGlobeLabel(c.name, pj.x, pj.y + size2 + 5, isActive, tc);
     }
   });
 
