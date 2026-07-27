@@ -1431,6 +1431,19 @@ var zoomScale = 1;
 animating = false; animStartTime = 0; animDuration = 1200;
 var animFromX = 0, animFromY = 0, animToX = 0, animToY = 0;
 
+// ── Accessibilité : respect de prefers-reduced-motion ────
+// Fige la rotation auto et les pulsations des marqueurs pour les
+// utilisateurs qui demandent moins d'animations.
+var _reduceMotion = false;
+try {
+  var _rmMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  _reduceMotion = _rmMq.matches;
+  (_rmMq.addEventListener ? _rmMq.addEventListener.bind(_rmMq,'change')
+                          : _rmMq.addListener.bind(_rmMq))(function(e){ _reduceMotion = e.matches; });
+} catch(e){}
+// Horloge d'animation : figée (valeur stable) si reduced-motion.
+function animNow(){ return _reduceMotion ? 0 : Date.now(); }
+
 function easeInOut(t){ return t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
 
 // ── Canvas resize — DPR avec compatibilité Safari iOS ────────────
@@ -1479,10 +1492,15 @@ function proj(x, y, z){
 }
 
 // ── Theme colours ────────────────────────────────────────
+// Mise en cache : getComputedStyle est coûteux et était appelé à chaque
+// frame (×3+). On ne recalcule qu'au changement de thème (invalidateThemeColors).
+var _tcCache = null;
+function invalidateThemeColors(){ _tcCache = null; }
 function getThemeColors(){
+  if (_tcCache) return _tcCache;
   var s = getComputedStyle(document.documentElement);
   function g(v){ return s.getPropertyValue(v).trim(); }
-  return {
+  _tcCache = {
     bg:g('--bg'), bg2:g('--bg2'), bg3:g('--bg3'),
     oceanA:g('--ocean-a'), oceanB:g('--ocean-b'), oceanC:g('--ocean-c'), oceanD:g('--ocean-d'),
     globeA:g('--globe-a'), globeB:g('--globe-b'), globeC:g('--globe-c'), globeD:g('--globe-d'),
@@ -1492,6 +1510,7 @@ function getThemeColors(){
     zoneLabel:g('--zone-label'), zoneHalo:g('--zone-halo'),
     gold:g('--gold'), goldL:g('--gold-l'), ember:g('--ember'), grn:g('--grn'),
   };
+  return _tcCache;
 }
 
 // ── World map (TopoJSON) ──────────────────────────────────
@@ -1577,7 +1596,7 @@ function drawZones(cid, color){
 // ── Consumer market markers (blue diamonds) ──────────────
 function drawMarkets(){
   if(!showMarkets) return;
-  var R = getR(); var now = Date.now(); var tc = getThemeColors();
+  var R = getR(); var now = animNow(); var tc = getThemeColors();
   MARKETS.forEach(function(m){
     var p = ll2xyz(m.lat, m.lon, R);
     var pj = proj(p.x, p.y, p.z);
@@ -1629,7 +1648,7 @@ function drawMarkets(){
 function drawLoungeCountries(){
   if(!showLounges) return;
   if(typeof LOUNGE_COUNTRIES === 'undefined') return;
-  var R = getR(); var now = Date.now(); var tc = getThemeColors();
+  var R = getR(); var now = animNow(); var tc = getThemeColors();
 
   // Construire la liste des pays lounge UNIQUEMENT non-producteurs
   // Les pays producteurs (COUNTRIES) ont déjà leur propre marqueur visuel distinctif
@@ -1805,7 +1824,7 @@ function drawGlobe(){
     if(pj.z<-10) return;
     var isActive=selCountry&&selCountry.id===c.id;
     var isHov=hoverCountry&&hoverCountry.id===c.id;
-    var now2=Date.now();
+    var now2=animNow();
     var pulse2=Math.sin(now2*.002+c.lat*.5)*.5+.5;
     var size2=isActive?14:isHov?11:8;
     var glowR2=20+pulse2*10+(isActive?12:0);
@@ -2022,7 +2041,17 @@ function flyToCountry(c){
   animStartTime = performance.now(); animating = true; autoRot = false;
 }
 
+var _loopPaused = false;
+// Le globe est-il masqué ? (mobile, onglet ≠ globe) → inutile de dessiner
+function _globeHidden(){
+  return document.body.classList.contains('mobile-mode')
+      && typeof mobileActiveTab !== 'undefined' && mobileActiveTab !== 'globe';
+}
+function _resumeGlobe(){ if(_loopPaused){ _loopPaused = false; loop(); } }
+
 function loop(){
+  // Pause : ne pas consommer de CPU quand le globe n'est pas visible
+  if(_globeHidden()){ _loopPaused = true; return; }
   // Smooth animation to country
   if(animating){
     const elapsed=performance.now()-animStartTime;
@@ -2032,6 +2061,10 @@ function loop(){
     rotY=animFromY+(animToY-animFromY)*e;
     targetX=rotX;targetY=rotY;
     if(t>=1)animating=false;
+  } else if(_reduceMotion){
+    // reduced-motion : gel total (ni rotation auto, ni inertie résiduelle).
+    // Le drag (mousemove) et flyTo (branche animating) restent opérants.
+    targetX=rotX; targetY=rotY;
   } else {
     if(autoRot&&!drag)rotY+=.0008;
     rotX+=(targetX-rotX)*.08;rotY+=(targetY-rotY)*.08;
@@ -4166,6 +4199,7 @@ document.querySelectorAll('.mlang-btn').forEach(function(btn) {
 // ── Theme ────────────────────────────────────────────────
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
+  if (typeof invalidateThemeColors === 'function') invalidateThemeColors();
   document.querySelectorAll('.theme-btn,.mtheme-btn').forEach(function(b) {
     b.classList.toggle('active', b.getAttribute('data-theme') === theme);
   });
@@ -4184,6 +4218,8 @@ var ALL_TABS = ['globe', 'lex', 'panel', 'lounge'];
 function switchMobileTab(tab) {
   if (!isMobile()) return;
   mobileActiveTab = tab;
+  // Relancer la boucle du globe si on y revient (elle se met en pause ailleurs)
+  if (tab === 'globe' && typeof _resumeGlobe === 'function') _resumeGlobe();
   ['lex', 'panel', 'lounge-panel'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) { el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); }
