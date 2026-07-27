@@ -1,0 +1,168 @@
+/* themes.css — extrait de index.html */
+
+/* ════════════════════════════════════════════════════════
+   themes.css — CSS design tokens + 4 visual themes
+   Import order: themes.css → components.css → responsive.css
+   ════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap');
+
+/* ── LIGHT (default) ── */
+:root, [data-theme="light"] {
+  --bg:#F8F5EE;  --bg2:#FAFAF8;  --bg3:#F0EDE6;
+  --panel-bg:#FFFFFF;  --panel-border:#B0ADA6;  /* contrast 1.36→2.8, renforcé */
+  --text:#2A1F14;  --text2:#6B6560;  --text3:#5C5248;  /* 4.7:1 ✓ */
+  --gold:#7A5200;  --gold-l:#B07800;  --gold-b:#D09800;  --gold-p:#F5E8C0;  /* 6.8:1 ✓ */
+  --ember:#A03015;  --grn:#2E5238;
+  --shd:rgba(42,31,20,.10);  --shd2:rgba(42,31,20,.18);
+  --grid:rgba(122,82,0,.12);  --equator:rgba(122,82,0,.25);
+  --globe-a:#FAFAF6;  --globe-b:#F2EFE8;  --globe-c:#E8E4DC;  --globe-d:#D8D0C4;
+  --ocean-a:#C8E0F0;  --ocean-b:#B0D0E8;  --ocean-c:#98C0DE;  --ocean-d:#80B0D4;
+  --spec1:rgba(255,255,255,.52);  --spec2:rgba(255,255,255,.12);
+  --rim:rgba(184,134,11,.18);
+  --world-fill:rgba(140,180,120,.45);  --world-stroke:rgba(255,255,255,.75);
+  --flag-overlay:rgba(248,245,238,.84);
+  --hdr-bg:rgba(248,245,238,.97);
+  --zone-label:#2A1F14;  --zone-halo:rgba(255,255,255,.95);
+}
+
+/* ── DARK ── */
+[data-theme="dark"] {
+  --bg:#0E0B08;  --bg2:#151210;  --bg3:#1C1814;
+  --panel-bg:#1A1410;  --panel-border:#584840;  /* renforcé */
+  --text:#F0E8D8;  --text2:#A09880;  --text3:#918273;  /* 4.6:1 ✓ */
+  --gold:#D4A840;  --gold-l:#F0C040;  --gold-b:#FFD060;  --gold-p:#3A2C10;
+  --ember:#E06030;  --grn:#5A9B6A;
+  --shd:rgba(0,0,0,.4);  --shd2:rgba(0,0,0,.6);
+  --grid:rgba(200,160,60,.12);  --equator:rgba(200,160,60,.28);
+  --globe-a:#1E1810;  --globe-b:#161208;  --globe-c:#0E0B05;  --globe-d:#080604;
+  --ocean-a:#0A1A2A;  --ocean-b:#081420;  --ocean-c:#060E18;  --ocean-d:#040A12;
+  --spec1:rgba(200,160,60,.08);  --spec2:rgba(200,160,60,.03);
+  --rim:rgba(200,160,60,.28);
+  --world-fill:rgba(50,80,50,.6);  --world-stroke:rgba(60,100,60,.55);
+  --flag-overlay:rgba(14,11,8,.80);
+  --hdr-bg:rgba(14,11,8,.97);
+  --zone-label:#F0E8D8;  --zone-halo:rgba(10,8,5,.95);
+}
+
+/* ── MIDNIGHT ── */
+[data-theme="midnight"] {
+  --bg:#060914;  --bg2:#0A0D1C;  --bg3:#0E1225;
+  --panel-bg:#0C1020;  --panel-border:#2E3860;  /* renforcé */
+  --text:#C8D8F8;  --text2:#7888B8;  --text3:#7080B8;  /* 4.5:1 ✓ */
+  --gold:#5880E8;  --gold-l:#7898F8;  --gold-b:#A0B8FF;  --gold-p:#0E1530;
+  --ember:#4080E0;  --grn:#3060C0;
+  --shd:rgba(0,0,30,.5);  --shd2:rgba(0,0,30,.7);
+  --grid:rgba(80,120,220,.15);  --equator:rgba(80,120,220,.35);
+  --globe-a:#0C1428;  --globe-b:#080E1E;  --globe-c:#050A14;  --globe-d:#02050C;
+  --ocean-a:#020510;  --ocean-b:#01040C;  --ocean-c:#010308;  --ocean-d:#000204;
+  --spec1:rgba(80,130,255,.12);  --spec2:rgba(80,130,255,.04);
+  --rim:rgba(80,130,255,.3);
+  --world-fill:rgba(15,30,80,.65);  --world-stroke:rgba(50,90,200,.55);
+  --flag-overlay:rgba(6,9,20,.80);
+  --hdr-bg:rgba(6,9,20,.97);
+  --zone-label:#C8D8F8;  --zone-halo:rgba(4,6,16,.95);
+}
+
+/* ── SEPIA ── */
+[data-theme="sepia"] {
+  --bg:#F2E8D4;  --bg2:#EEE4D0;  --bg3:#E8DCCA;
+  --panel-bg:#F8F0E0;  --panel-border:#A89870;  /* renforcé */
+  --text:#3A2810;  --text2:#7A6048;  --text3:#6A5030;  /* 4.9:1 ✓ */
+  --gold:#8B5C0C;  --gold-l:#B07A20;  --gold-b:#D09830;  --gold-p:#F0DCA8;
+  --ember:#A03018;  --grn:#386040;
+  --shd:rgba(40,20,0,.12);  --shd2:rgba(40,20,0,.20);
+  --grid:rgba(140,90,20,.12);  --equator:rgba(140,90,20,.25);
+  --globe-a:#F8F0DC;  --globe-b:#F0E8D0;  --globe-c:#E8DEC4;  --globe-d:#D8CEB4;
+  --ocean-a:#D4E8E0;  --ocean-b:#C4DCE0;  --ocean-c:#B4D0D8;  --ocean-d:#A4C4D0;
+  --spec1:rgba(255,240,200,.50);  --spec2:rgba(255,240,200,.10);
+  --rim:rgba(140,90,20,.20);
+  --world-fill:rgba(160,140,100,.4);  --world-stroke:rgba(180,160,100,.6);
+  --flag-overlay:rgba(242,232,212,.85);
+  --hdr-bg:rgba(242,232,212,.97);
+  --zone-label:#3A2810;  --zone-halo:rgba(248,240,224,.95);
+}
+
+/* ── EMERALD — Vert profond / Or ── */
+[data-theme="emerald"] {
+  --bg:#080F0A;  --bg2:#0C1510;  --bg3:#101C14;
+  --panel-bg:#0E1A12;  --panel-border:#1E3428;
+  --text:#D8F0E0;  --text2:#88B898;  --text3:#6A9878;
+  --gold:#C9A227;  --gold-l:#E8C040;  --gold-b:#FFD860;  --gold-p:#1A2C10;
+  --ember:#D4882A;  --grn:#50C870;
+  --shd:rgba(0,10,5,.5);  --shd2:rgba(0,10,5,.7);
+  --grid:rgba(100,200,120,.12);  --equator:rgba(100,200,120,.28);
+  --globe-a:#0C1E10;  --globe-b:#081408;  --globe-c:#040C05;  --globe-d:#020602;
+  --ocean-a:#040E18;  --ocean-b:#030A12;  --ocean-c:#02070C;  --ocean-d:#010408;
+  --spec1:rgba(80,200,100,.08);  --spec2:rgba(80,200,100,.03);
+  --rim:rgba(80,200,100,.25);
+  --world-fill:rgba(20,60,25,.7);  --world-stroke:rgba(40,120,50,.6);
+  --flag-overlay:rgba(8,15,10,.82);
+  --hdr-bg:rgba(8,15,10,.97);
+  --zone-label:#D8F0E0;  --zone-halo:rgba(5,10,6,.95);
+}
+
+/* ── NAVY — Bleu nuit / Argent ── */
+[data-theme="navy"] {
+  --bg:#060C18;  --bg2:#090F20;  --bg3:#0C1428;
+  --panel-bg:#0A1020;  --panel-border:#1A2440;
+  --text:#D8E4F8;  --text2:#8898C8;  --text3:#7888B8;
+  --gold:#C0C8E0;  --gold-l:#D8E0F0;  --gold-b:#EEF2FF;  --gold-p:#0E1530;
+  --ember:#6090E0;  --grn:#4080C0;
+  --shd:rgba(0,5,25,.5);  --shd2:rgba(0,5,25,.7);
+  --grid:rgba(80,120,220,.12);  --equator:rgba(80,120,220,.30);
+  --globe-a:#0A1428;  --globe-b:#06101E;  --globe-c:#040C16;  --globe-d:#02080E;
+  --ocean-a:#020818;  --ocean-b:#020612;  --ocean-c:#01040C;  --ocean-d:#010308;
+  --spec1:rgba(100,140,255,.10);  --spec2:rgba(100,140,255,.04);
+  --rim:rgba(100,140,255,.28);
+  --world-fill:rgba(15,30,70,.7);  --world-stroke:rgba(40,80,180,.6);
+  --flag-overlay:rgba(6,12,24,.82);
+  --hdr-bg:rgba(6,12,24,.97);
+  --zone-label:#D8E4F8;  --zone-halo:rgba(4,8,18,.95);
+}
+
+/* ── BORDEAUX — Rouge profond / Or ── */
+[data-theme="bordeaux"] {
+  --bg:#0E0608;  --bg2:#140A0C;  --bg3:#1C0E12;
+  --panel-bg:#180A10;  --panel-border:#301520;
+  --text:#F0D8E0;  --text2:#B08090;  --text3:#A08090;
+  --gold:#D4A040;  --gold-l:#F0C060;  --gold-b:#FFD880;  --gold-p:#2C1A08;
+  --ember:#E05060;  --grn:#806060;
+  --shd:rgba(20,0,8,.5);  --shd2:rgba(20,0,8,.7);
+  --grid:rgba(200,80,100,.12);  --equator:rgba(200,80,100,.28);
+  --globe-a:#1C0A10;  --globe-b:#14070C;  --globe-c:#0C0408;  --globe-d:#060204;
+  --ocean-a:#080210;  --ocean-b:#06010C;  --ocean-c:#040108;  --ocean-d:#020004;
+  --spec1:rgba(200,80,100,.08);  --spec2:rgba(200,80,100,.03);
+  --rim:rgba(200,80,100,.28);
+  --world-fill:rgba(60,15,25,.7);  --world-stroke:rgba(140,40,60,.6);
+  --flag-overlay:rgba(14,6,10,.82);
+  --hdr-bg:rgba(14,6,10,.97);
+  --zone-label:#F0D8E0;  --zone-halo:rgba(10,4,7,.95);
+}
+
+
+/* ══ PHOTOS LOUNGES + LIGHTBOX ══════════════════════════ */
+.lc-photos{margin-top:8px}.lc-photo-gallery{border-radius:5px;overflow:hidden}
+.lc-photo-hero{position:relative;cursor:zoom-in;background:var(--bg3);border-radius:5px 5px 0 0;overflow:hidden;aspect-ratio:3/2;max-height:180px}
+.lc-photo-img{width:100%;height:100%;object-fit:cover;transition:transform .3s;display:block}
+.lc-photo-hero:hover .lc-photo-img{transform:scale(1.04)}
+.lc-photo-caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff;font-size:10px;padding:14px 10px 6px;line-height:1.4}
+.lc-photo-count{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);color:#fff;font-size:9px;padding:2px 6px;border-radius:8px}
+.lc-photo-strip{display:flex;gap:3px;padding:3px;background:var(--bg3);border-radius:0 0 5px 5px;overflow-x:auto;scrollbar-width:none}
+.lc-photo-strip::-webkit-scrollbar{display:none}
+.lc-photo-thumb{width:50px;height:34px;object-fit:cover;border-radius:3px;cursor:pointer;flex-shrink:0;opacity:.6;transition:opacity .15s,outline .15s;outline:2px solid transparent}
+.lc-photo-thumb.active{opacity:1;outline-color:var(--gold)}.lc-photo-thumb:hover{opacity:.9}
+.lc-links{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.lc-link{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:3px;background:var(--bg3);border:1px solid var(--panel-border);color:var(--text2);font-size:10px;text-decoration:none;transition:border-color .15s,color .15s}
+.lc-link:hover{border-color:var(--gold);color:var(--gold)}
+.lounge-hours{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--text2);margin:3px 0 5px;padding:3px 8px;background:var(--bg3);border-radius:3px;border:1px solid var(--panel-border)}
+#lc-lightbox{position:fixed;inset:0;z-index:900;display:none;align-items:center;justify-content:center}
+#lc-lightbox.open{display:flex}
+.lb-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.94);backdrop-filter:blur(10px)}
+.lb-content{position:relative;z-index:1;max-width:min(92vw,900px);max-height:92vh;display:flex;flex-direction:column;align-items:center;gap:10px}
+#lb-img{max-width:100%;max-height:80vh;border-radius:8px;object-fit:contain;box-shadow:0 24px 80px rgba(0,0,0,.9)}
+#lb-caption{color:rgba(255,255,255,.8);font-size:12px;text-align:center}
+#lb-counter{color:rgba(255,255,255,.35);font-size:10px;letter-spacing:.15em}
+.lb-close{position:absolute;top:-38px;right:0;background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:42px;height:42px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;z-index:2}
+.lb-prev{left:-52px}.lb-next{right:-52px}.lb-prev:hover,.lb-next:hover{background:rgba(255,255,255,.25)}
+@media(max-width:640px){.lb-prev{left:4px}.lb-next{right:4px}}
