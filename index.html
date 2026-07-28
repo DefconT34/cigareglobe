@@ -42,9 +42,21 @@
 </div>
 
 <!-- ══ GLOBE CANVAS ════════════════════════════════════ -->
-<div id="globe-wrap" role="img" aria-label="Interactive 3D globe">
-  <canvas id="globe"></canvas>
+<div id="globe-wrap">
+  <canvas id="globe" tabindex="0" role="application"
+          aria-label="Globe interactif des pays du cigare"
+          aria-describedby="globe-help"></canvas>
 </div>
+<p id="globe-help" class="sr-only">
+  Flèches pour faire tourner le globe, touches plus et moins pour zoomer,
+  touche 0 pour réinitialiser la vue. La liste des destinations qui suit
+  permet d'ouvrir les mêmes fiches sans utiliser le globe.
+</p>
+
+<!-- Alternative textuelle au globe (remplie par a11y-globe.js).
+     Masquée visuellement, elle apparaît dès qu'un de ses éléments
+     reçoit le focus clavier. -->
+<nav id="globe-a11y" class="sr-only-focusable" aria-label="Destinations du globe"></nav>
 
 <!-- ══ MAP LOADING INDICATOR ═══════════════════════════ -->
 <div id="map-loading" role="status" aria-live="polite">
@@ -358,5 +370,7 @@ if ('serviceWorker' in navigator) {
 <script src="assets/js/favorites.js"></script>
 <!-- Profil & passeport (Étape D) -->
 <script src="assets/js/profile.js"></script>
+<!-- Accessibilité du globe (D4) -->
+<script src="assets/js/a11y-globe.js"></script>
 </body>
 </html>

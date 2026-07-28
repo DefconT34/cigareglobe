@@ -105,6 +105,18 @@ function hitTest(clientX, clientY) {
 function handleSelect(clientX, clientY) {
   const hit = hitTest(clientX, clientY);
   if (!hit) return false;
+  return selectEntity(hit.type, hit.data);
+}
+
+/**
+ * Ouvre les panneaux correspondant a une entite du globe.
+ * Partage entre le clic/tap sur le globe et la navigation au clavier
+ * (assets/js/a11y-globe.js), pour un comportement strictement identique.
+ * @param {'country'|'market'|'lounge'} type
+ */
+function selectEntity(type, data) {
+  const hit = { type: type, data: data };
+  if (!hit.data) return false;
 
   // Use mobile-aware wrappers if available (set by app.js)
   // Falls back to direct calls for desktop
