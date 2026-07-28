@@ -19,6 +19,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **D2** : contributeur de confiance — promotion auto au seuil, publication directe, plafond relevé, badge
 - **D1** : modération des avis — signalement membre, onglet admin, logique d'approbation factorisée (moderation_lib)
 - **A1** : clé admin hors URL — auth par session, CSRF sur les actions, clé retirée du JS
+- **C4** : tests de fumée API (50 vérifications, base dédiée) + workflow CI
 - **A3** : revue sécurité — XSS stocké corrigé (échappement + URLs), fuites d'erreurs colmatées, CSP + Permissions-Policy, CORS/credentials assaini
 
 ## ⏳ À faire
@@ -38,7 +39,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **C1b** — (optionnel) Migration Vite/ESM (build + import/export) · G · à évaluer, non prioritaire
 - [x] ~~**C2** — Vrai schéma SQL versionné~~ ✅
 - [x] ~~**C3** — README + doc d'architecture~~ ✅
-- [ ] **C4** — Tests smoke API + CI · M
+- [x] ~~**C4** — Tests de fumée API (50 vérifications) + CI~~ ✅
 
 ### D. Fonctionnel / produit
 - [x] ~~**D1** — Modération des avis (signalement + écran admin)~~ ✅
@@ -53,4 +54,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **E2** — Auto-héberger topojson / retirer le tag GA placeholder · P
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → C4 → D4 → D6/E
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → D4 → D6/E
