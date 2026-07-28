@@ -6,9 +6,64 @@
 document.getElementById('zIn').onclick    = () => { zoomScale = Math.min(zoomScale + .2, 3); };
 document.getElementById('zOut').onclick   = () => { zoomScale = Math.max(zoomScale - .2, .4); };
 document.getElementById('zReset').onclick = () => { zoomScale = 1; };
+// ── Zoom molette centré sur le curseur ──────────────────
+// Le globe est toujours dessiné au centre de l'écran : « zoomer vers le
+// curseur » revient donc à garder sous le pointeur le point géographique
+// qui s'y trouvait. On dé-projette ce point, puis on résout la rotation
+// (rotX, rotY) qui le ramène exactement à la même position écran après
+// le changement de rayon. Repli silencieux sur le zoom centré classique
+// si le curseur est hors du globe ou si aucune rotation valide n'existe.
+function _zoomAtCursor(clientX, clientY, newZoom) {
+  var R  = getR();
+  var px = clientX - W / 2, py = H / 2 - clientY;   // repère de proj()
+  var d2 = px * px + py * py;
+  if (d2 > R * R * 0.98) return false;              // hors du disque / au ras du limbe
+
+  // Dé-projection : point écran → direction dans le repère du globe
+  var pz = Math.sqrt(Math.max(0, R * R - d2));
+  var cx = Math.cos(rotX), sx = Math.sin(rotX);
+  var cy = Math.cos(rotY), sy = Math.sin(rotY);
+  var gx = px * cy - pz * sy;
+  var z1 = px * sy + pz * cy;
+  var gy =  py * cx + z1 * sx;
+  var gz = -py * sx + z1 * cx;
+  var ux = gx / R, uy = gy / R, uz = gz / R;        // vecteur unitaire
+
+  // Rayon après zoom (getR() dépend de zoomScale)
+  var keep = zoomScale; zoomScale = newZoom;
+  var R2 = getR(); zoomScale = keep;
+  if (d2 > R2 * R2 * 0.98) return false;            // le point sortirait du disque
+
+  // Direction cible : même position écran, sur la sphère de rayon R2
+  var vx = px / R2, vy = py / R2, vz = Math.sqrt(Math.max(0, R2 * R2 - d2)) / R2;
+
+  // rotX' tel que  uy·cos(rotX') − uz·sin(rotX') = vy
+  var M = Math.hypot(uy, uz);
+  if (M < 1e-9 || Math.abs(vy) > M) return false;
+  var phi = Math.atan2(uz, uy);
+  var a   = Math.acos(Math.max(-1, Math.min(1, vy / M)));
+  var norm = function (t) { while (t > Math.PI) t -= 2 * Math.PI; while (t < -Math.PI) t += 2 * Math.PI; return t; };
+  var c1 = norm(-phi + a), c2 = norm(-phi - a);     // deux branches
+  var nrx = Math.abs(norm(c1 - rotX)) <= Math.abs(norm(c2 - rotX)) ? c1 : c2;
+  if (nrx > Math.PI / 2 || nrx < -Math.PI / 2) return false;  // hors des limites de l'app
+
+  // rotY' : rotation amenant (ux, z1') sur (vx, vz)
+  var nz1 = uy * Math.sin(nrx) + uz * Math.cos(nrx);
+  var nry = Math.atan2(nz1, ux) - Math.atan2(vz, vx);
+  if (!isFinite(nrx) || !isFinite(nry)) return false;
+
+  rotX = nrx; rotY = nry;
+  targetX = rotX; targetY = rotY;                   // pas de lissage résiduel
+  if (typeof _inertia !== 'undefined') _inertia = false;
+  return true;
+}
+
 globe.addEventListener('wheel', e => {
   e.preventDefault();
-  zoomScale = Math.max(.4, Math.min(3, zoomScale - e.deltaY * .0008));
+  var next = Math.max(.4, Math.min(3, zoomScale - e.deltaY * .0008));
+  if (next === zoomScale) return;
+  _zoomAtCursor(e.clientX, e.clientY, next);        // repli géré à l'intérieur
+  zoomScale = next;
 }, { passive: false });
 
 // ── Shared hit-test ─────────────────────────────────────

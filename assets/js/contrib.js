@@ -50,7 +50,7 @@ window.openContribModal = function(prefilledCountry) {
   // Reset
   document.getElementById('contrib-form-wrap').style.display = '';
   document.getElementById('contrib-success').classList.remove('show');
-  ['c-name','c-city','c-phone','c-desc','c-source','c-email'].forEach(function(id){
+  ['c-name','c-city','c-phone','c-desc','c-source'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) { el.value = ''; el.style.borderColor = ''; }
   });
@@ -193,7 +193,7 @@ function submitContribution() {
   var phone        = document.getElementById('c-phone').value.trim();
   var desc         = document.getElementById('c-desc').value.trim();
   var source       = document.getElementById('c-source').value.trim();
-  var email        = document.getElementById('c-email').value.trim();
+  // L'email du contributeur provient du compte connecté (backend) — plus de champ formulaire.
 
   // Validation
   var errors = false;
@@ -217,7 +217,7 @@ function submitContribution() {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (window.CGAccount ? window.CGAccount.csrf : '') },
-    body: JSON.stringify({ country_id:country, country_name:country_name, name:name, city:city, type:type, phone:phone, description:desc, source_url:source, email:email })
+    body: JSON.stringify({ country_id:country, country_name:country_name, name:name, city:city, type:type, phone:phone, description:desc, source_url:source })
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
