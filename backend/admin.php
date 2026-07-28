@@ -1,15 +1,39 @@
 <?php
 // ════════════════════════════════════════════════════════
 // admin.php — Interface de modération CigarOdyssey
-// Accès : votre-site.com/backend/admin.php?key=VOTRE_CLE
+// Accès : votre-site.com/backend/admin.php puis saisie de la clé
+// d'administration (ADMIN_KEY). L'authentification est portée par la
+// session : la clé ne transite jamais par l'URL.
 // ════════════════════════════════════════════════════════
 
-session_start();
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/auth_lib.php';
 require_once __DIR__ . '/moderation_lib.php';
 
-$key    = $_GET['key'] ?? $_POST['key'] ?? $_SESSION['admin_key'] ?? '';
-$authed = strlen($key) > 0 && hash_equals(ADMIN_KEY, $key);
+auth_session_start();   // meme session que le reste du site (cookie CGSESS)
+
+// ── Deconnexion ───────────────────────────────────────────
+if (isset($_GET['logout'])) {
+    unset($_SESSION['admin'], $_SESSION['admin_csrf']);
+    header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+    exit;
+}
+
+// ── Connexion : la cle transite uniquement en POST ────────
+$login_error = false;
+if (isset($_POST['login_key'])) {
+    if (ADMIN_KEY !== '' && hash_equals(ADMIN_KEY, (string)$_POST['login_key'])) {
+        session_regenerate_id(true);
+        $_SESSION['admin'] = true;
+        admin_csrf();
+        // Redirection : evite le renvoi du formulaire et laisse une URL propre
+        header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+        exit;
+    }
+    $login_error = true;
+}
+
+$authed = is_admin_request();
 
 // ── Page de connexion ─────────────────────────────────────
 if (!$authed) { ?><!DOCTYPE html>
@@ -37,24 +61,27 @@ button:hover{background:#E8C040}
     <h1>CIGAR ODYSSEY</h1>
     <p>ADMINISTRATION</p>
   </div>
-  <?php if (isset($_POST['key']) && !$authed): ?>
+  <?php if ($login_error): ?>
   <div class="login-err">Clé incorrecte</div>
   <?php endif; ?>
   <form method="POST">
     <label>Clé d'administration</label>
-    <input type="password" name="key" placeholder="••••••••••••" autofocus autocomplete="current-password">
+    <input type="password" name="login_key" placeholder="••••••••••••" autofocus autocomplete="current-password">
     <button type="submit">Accéder →</button>
   </form>
 </div>
 </body></html><?php exit; }
 
 // ── Auth OK — initialisation ──────────────────────────────
-$_SESSION['admin_key'] = $key;
 $db  = getDB();
 $msg = ['type'=>'','text'=>''];
 
 // Actions POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if (!admin_csrf_valid($_POST['csrf'] ?? null)) {
+        http_response_code(419);
+        exit('Jeton de securite invalide ou expire. Rechargez la page.');
+    }
     $id     = (int)($_POST['id'] ?? 0);
     $action = $_POST['action'];
 
@@ -597,8 +624,9 @@ html{transition:background .25s,color .25s}
       <button class="theme-btn" data-t="emerald"  title="Emerald"  onclick="setTheme('emerald')"></button>
       <button class="theme-btn" data-t="bordeaux" title="Bordeaux" onclick="setTheme('bordeaux')"></button>
     </div>
-    <a href="api.php?action=export&admin_key=<?= urlencode($key) ?>" class="btn-export">⬇ Exporter</a>
-    <span class="admin-badge">Admin ·&nbsp;<?= substr($key,0,6) ?>***</span>
+    <a href="api.php?action=export" class="btn-export">⬇ Exporter</a>
+    <span class="admin-badge">Admin</span>
+    <a href="?logout=1" class="admin-badge" style="text-decoration:none">Déconnexion</a>
   </div>
 </header>
 
@@ -607,7 +635,7 @@ html{transition:background .25s,color .25s}
   <div class="nav-section">Navigation</div>
 
   <a class="nav-item <?= $tab==='dashboard' ? 'active' : '' ?>"
-     href="?key=<?= urlencode($key) ?>&tab=dashboard">
+     href="?tab=dashboard">
     <span class="ni-icon">◈</span>
     <span class="ni-label">Tableau de bord</span>
   </a>
@@ -616,7 +644,7 @@ html{transition:background .25s,color .25s}
   <div class="nav-section">Contributions</div>
 
   <a class="nav-item <?= $tab==='pending' ? 'active' : '' ?>"
-     href="?key=<?= urlencode($key) ?>&tab=pending">
+     href="?tab=pending">
     <span class="ni-icon">⏳</span>
     <span class="ni-label">En attente</span>
     <?php if ($stats['pending'] ?? 0): ?>
@@ -625,7 +653,7 @@ html{transition:background .25s,color .25s}
   </a>
 
   <a class="nav-item <?= $tab==='approved' ? 'active' : '' ?>"
-     href="?key=<?= urlencode($key) ?>&tab=approved">
+     href="?tab=approved">
     <span class="ni-icon">✓</span>
     <span class="ni-label">Approuvées</span>
     <?php if ($stats['approved'] ?? 0): ?>
@@ -634,7 +662,7 @@ html{transition:background .25s,color .25s}
   </a>
 
   <a class="nav-item <?= $tab==='rejected' ? 'active' : '' ?>"
-     href="?key=<?= urlencode($key) ?>&tab=rejected">
+     href="?tab=rejected">
     <span class="ni-icon">✕</span>
     <span class="ni-label">Rejetées</span>
     <?php if ($stats['rejected'] ?? 0): ?>
@@ -643,7 +671,7 @@ html{transition:background .25s,color .25s}
   </a>
 
   <a class="nav-item <?= $tab==='all' ? 'active' : '' ?>"
-     href="?key=<?= urlencode($key) ?>&tab=all">
+     href="?tab=all">
     <span class="ni-icon">≡</span>
     <span class="ni-label">Toutes</span>
     <span class="nav-badge nb-dim"><?= array_sum($stats) ?></span>
@@ -653,7 +681,7 @@ html{transition:background .25s,color .25s}
   <div class="nav-section">Contenu</div>
 
   <a class="nav-item <?= $tab==='photos' ? 'active' : '' ?>"
-     href="?key=<?= urlencode($key) ?>&tab=photos">
+     href="?tab=photos">
     <span class="ni-icon">◻</span>
     <span class="ni-label">Photos lounges</span>
     <?php if ($total_photos): ?>
@@ -662,7 +690,7 @@ html{transition:background .25s,color .25s}
   </a>
 
   <a class="nav-item <?= $tab==='reviews' ? 'active' : '' ?>"
-     href="?key=<?= urlencode($key) ?>&tab=reviews">
+     href="?tab=reviews">
     <span class="ni-icon">&#9998;</span>
     <span class="ni-label">Avis</span>
     <?php if ($flagged_count): ?>
@@ -671,7 +699,7 @@ html{transition:background .25s,color .25s}
   </a>
 
   <div class="sidebar-footer">
-    <div class="sf-key">Session active · Clé : <?= substr(htmlspecialchars($key),0,8) ?>…</div>
+    <div class="sf-key">Session administrateur active · <a href="?logout=1" style="color:inherit">Se déconnecter</a></div>
   </div>
 </nav>
 
@@ -748,12 +776,12 @@ html{transition:background .25s,color .25s}
           </div>
           <div class="pr-actions">
             <form method="POST" style="display:inline">
-              <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+              <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
               <input type="hidden" name="id" value="<?= $r['id'] ?>">
               <button class="action-btn ab-approve" name="action" value="approve">✓</button>
             </form>
             <form method="POST" style="display:inline">
-              <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+              <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
               <input type="hidden" name="id" value="<?= $r['id'] ?>">
               <button class="action-btn ab-reject" name="action" value="reject">✕</button>
             </form>
@@ -854,12 +882,12 @@ html{transition:background .25s,color .25s}
       <?php if ($r['status'] === 'pending'): ?>
       <div class="action-row">
         <form method="POST">
-          <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
           <input type="hidden" name="id"  value="<?= $r['id'] ?>">
           <button class="action-btn ab-approve" name="action" value="approve">✓ Approuver</button>
         </form>
         <form method="POST">
-          <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
           <input type="hidden" name="id"  value="<?= $r['id'] ?>">
           <button class="action-btn ab-reject" name="action" value="reject">✕ Rejeter</button>
         </form>
@@ -882,7 +910,7 @@ html{transition:background .25s,color .25s}
   <!-- Sidebar lounges -->
   <div class="photos-sidebar">
     <form class="ps-search" method="GET" id="loungeSearchForm">
-      <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+      <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
       <input type="hidden" name="tab" value="photos">
       <!-- lounge_id intentionnellement absent : reset la sélection à chaque recherche -->
       <input type="text" name="search" value="<?= htmlspecialchars($photo_search) ?>"
@@ -903,7 +931,7 @@ html{transition:background .25s,color .25s}
       } catch(Exception $e){}
     ?>
     <a class="lounge-item <?= $selected_lounge_id===(int)$l['id'] ? 'active' : '' ?>"
-       href="?key=<?= urlencode($key) ?>&tab=photos&lounge_id=<?= $l['id'] ?>&search=<?= urlencode($photo_search) ?>">
+       href="?tab=photos&lounge_id=<?= $l['id'] ?>&search=<?= urlencode($photo_search) ?>">
       <?php if ($photo_count): ?>
       <span class="li-count"><?= $photo_count ?>📷</span>
       <?php endif; ?>
@@ -1081,14 +1109,14 @@ html{transition:background .25s,color .25s}
       <div class="action-row">
         <?php if ($rv['status'] !== 'removed'): ?>
         <form method="POST">
-          <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
           <input type="hidden" name="id"  value="<?= (int)$rv['id'] ?>">
           <button class="action-btn ab-reject" name="action" value="review_remove">✕ Retirer</button>
         </form>
         <?php endif; ?>
         <?php if ($rv['status'] !== 'published'): ?>
         <form method="POST">
-          <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
           <input type="hidden" name="id"  value="<?= (int)$rv['id'] ?>">
           <button class="action-btn ab-approve" name="action" value="review_publish">✓ Publier</button>
         </form>
@@ -1107,7 +1135,6 @@ html{transition:background .25s,color .25s}
 
 <script>
 var PHOTOS_API = '<?= rtrim(dirname($_SERVER["SCRIPT_NAME"]), "/") ?>/photos.php';
-var ADMIN_KEY  = '<?= htmlspecialchars($key) ?>';
 var LOUNGE_ID  = <?= $selected_lounge_id ?>;
 var _file      = null;
 
@@ -1156,7 +1183,6 @@ function doUpload(){
   fd.append('lounge_id',LOUNGE_ID);
   fd.append('caption',document.getElementById('photoCaption').value);
   fd.append('is_primary',document.getElementById('photoIsPrimary').checked?'1':'0');
-  fd.append('key',ADMIN_KEY);
 
   var btn=document.getElementById('btnUpload');
   var track=document.getElementById('progressTrack');
@@ -1167,7 +1193,7 @@ function doUpload(){
   track.style.display='block'; fill.style.width='0%';
 
   var xhr=new XMLHttpRequest();
-  xhr.open('POST',PHOTOS_API+'?action=upload&key='+encodeURIComponent(ADMIN_KEY));
+  xhr.open('POST',PHOTOS_API+'?action=upload');
   xhr.upload.onprogress=function(e){if(e.lengthComputable)fill.style.width=Math.round(e.loaded/e.total*100)+'%'};
   xhr.onload=function(){
     btn.disabled=false; btn.textContent='⬆ Uploader';
@@ -1179,7 +1205,7 @@ function doUpload(){
         fill.style.background='#4A9B5A';
         // Délai légèrement plus long pour Safari (écriture disque + cache)
         setTimeout(function(){
-          var url='?key='+encodeURIComponent(ADMIN_KEY)+'&tab=photos&lounge_id='+LOUNGE_ID+'&_='+Date.now();
+          var url='?tab=photos&lounge_id='+LOUNGE_ID+'&_='+Date.now();
           location.href=url;
         },1200);
       }else{
@@ -1194,16 +1220,16 @@ function doUpload(){
 }
 
 function photoAction(id,action){
-  var fd=new FormData();fd.append('photo_id',id);fd.append('key',ADMIN_KEY);
-  fetch(PHOTOS_API+'?action='+action+'&key='+encodeURIComponent(ADMIN_KEY),{method:'POST',body:fd})
+  var fd=new FormData();fd.append('photo_id',id);
+  fetch(PHOTOS_API+'?action='+action,{method:'POST',body:fd})
   .then(function(r){return r.json()})
   .then(function(d){if(d.success)location.reload();else alert('Erreur: '+(d.error||'inconnue'))});
 }
 
 function photoDelete(id,lid){
   if(!confirm('Supprimer définitivement cette photo ?'))return;
-  var fd=new FormData();fd.append('photo_id',id);fd.append('key',ADMIN_KEY);
-  fetch(PHOTOS_API+'?action=delete&key='+encodeURIComponent(ADMIN_KEY),{method:'POST',body:fd})
+  var fd=new FormData();fd.append('photo_id',id);
+  fetch(PHOTOS_API+'?action=delete',{method:'POST',body:fd})
   .then(function(r){return r.json()})
   .then(function(d){
     if(d.success){

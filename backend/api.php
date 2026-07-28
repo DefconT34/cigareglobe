@@ -48,8 +48,10 @@ function get_ip(): string {
 }
 
 function is_admin(): bool {
-    $key = $_SERVER['HTTP_X_ADMIN_KEY'] ?? ($_GET['admin_key'] ?? '');
-    return strlen($key) > 0 && hash_equals(ADMIN_KEY, $key);
+    // Session d'administration, role moderator/admin, ou en-tete X-Admin-Key.
+    // Le parametre d'URL admin_key n'est plus accepte : il fuitait dans les
+    // logs du serveur, l'historique du navigateur et l'en-tete Referer.
+    return is_admin_request(getDB());
 }
 
 function clean(string $s, int $max = 500): string {

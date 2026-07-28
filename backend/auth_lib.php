@@ -80,6 +80,39 @@ function require_auth(PDO $db): array {
     return $u;
 }
 
+/**
+ * Droits d'administration de la requête courante. Trois voies :
+ *  - session admin ouverte depuis admin.php ;
+ *  - compte connecté ayant le rôle moderator/admin ;
+ *  - clé d'administration transmise par EN-TÊTE (X-Admin-Key).
+ * La clé n'est jamais acceptée depuis l'URL : elle fuirait dans les logs
+ * du serveur, l'historique du navigateur et l'en-tête Referer.
+ */
+function is_admin_request(?PDO $db = null): bool {
+    if (!empty($_SESSION['admin'])) return true;
+
+    $hdr = $_SERVER['HTTP_X_ADMIN_KEY'] ?? '';
+    if ($hdr !== '' && defined('ADMIN_KEY') && ADMIN_KEY !== '' && hash_equals(ADMIN_KEY, $hdr)) {
+        return true;
+    }
+    if ($db) {
+        $u = current_user($db);
+        if ($u && in_array($u['role'], ['moderator', 'admin'], true)) return true;
+    }
+    return false;
+}
+
+/** Jeton CSRF dédié aux formulaires de l'interface d'administration. */
+function admin_csrf(): string {
+    if (empty($_SESSION['admin_csrf'])) $_SESSION['admin_csrf'] = bin2hex(random_bytes(32));
+    return $_SESSION['admin_csrf'];
+}
+
+function admin_csrf_valid(?string $sent): bool {
+    return !empty($_SESSION['admin_csrf']) && is_string($sent)
+        && hash_equals($_SESSION['admin_csrf'], $sent);
+}
+
 /** Version publique d'un utilisateur (jamais password_hash). */
 function user_public(array $u): array {
     return [

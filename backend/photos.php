@@ -21,6 +21,9 @@ set_exception_handler(function($e) {
 });
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/auth_lib.php';
+
+auth_session_start();   // reconnait la session d'administration
 
 // ── Constantes ────────────────────────────────────────────
 define('UPLOAD_DIR',     dirname(__DIR__) . '/uploads/lounges/');
@@ -59,8 +62,9 @@ function get_ip(): string {
 }
 
 function is_admin(): bool {
-    $k = $_GET['key'] ?? $_POST['key'] ?? '';
-    return strlen($k) > 0 && defined('ADMIN_KEY') && hash_equals(ADMIN_KEY, $k);
+    // Session d'administration, role moderator/admin, ou en-tete X-Admin-Key.
+    // La cle n'est plus acceptee depuis l'URL (fuite logs/historique/Referer).
+    return is_admin_request(getDB());
 }
 
 // ── Routing ───────────────────────────────────────────────
