@@ -19,13 +19,14 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **D2** : contributeur de confiance — promotion auto au seuil, publication directe, plafond relevé, badge
 - **D1** : modération des avis — signalement membre, onglet admin, logique d'approbation factorisée (moderation_lib)
 - **A1** : clé admin hors URL — auth par session, CSRF sur les actions, clé retirée du JS
+- **A3** : revue sécurité — XSS stocké corrigé (échappement + URLs), fuites d'erreurs colmatées, CSP + Permissions-Policy, CORS/credentials assaini
 
 ## ⏳ À faire
 
 ### A. Sécurité & robustesse
 - [x] ~~**A1** — Clé admin hors URL (session + CSRF)~~ ✅
 - [ ] **A2** — Restreindre le CORS au domaine réel (garder `*` en local) · P · dépend de B3
-- [ ] **A3** — Revue de sécurité complète (CSP, admin.php, fuite d'erreurs data.php) · M · après A1
+- [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
 - [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→003) · M
@@ -52,4 +53,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **E2** — Auto-héberger topojson / retirer le tag GA placeholder · P
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2+A3 → B2+B1 → C4 → D4 → D6/E
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → C4 → D4 → D6/E
