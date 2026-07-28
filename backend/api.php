@@ -7,6 +7,7 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/auth_lib.php';
 require_once __DIR__ . '/moderation_lib.php';
+require_once __DIR__ . '/mailer.php';
 
 auth_session_start();
 
@@ -217,18 +218,19 @@ function action_submit(): void {
         $auto_approved = approve_contribution($db, $id);
     }
 
-    // Notification email (si configuré)
-    if (ADMIN_EMAIL !== 'votre@email.com') {
-        $subject = '[CigarOdyssey] ' . ($auto_approved ? 'Contribution publiée (confiance)' : 'Nouvelle contribution')
+    // Notification à l'administration. Passe par send_email() : l'appel
+    // direct à mail() contournait le mode journal du développement et
+    // pouvait bloquer la requête sur un délai SMTP.
+    if (ADMIN_EMAIL !== '' && ADMIN_EMAIL !== 'vous@example.com' && ADMIN_EMAIL !== 'votre@email.com') {
+        $esc     = fn($s) => htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
+        $subject = '[CigarGlobe] ' . ($auto_approved ? 'Contribution publiée (confiance)' : 'Nouvelle contribution')
                  . ' : ' . $body['name'];
-        $text    = "Pays : {$body['country_name']}\n"
-                 . "Nom  : {$body['name']}\n"
-                 . "Ville: {$body['city']}\n"
-                 . "Type : " . ($body['type'] ?? '') . "\n"
-                 . "Desc : " . mb_substr($body['description'],0,300) . "\n\n"
-                 . "Valider sur : https://{$_SERVER['HTTP_HOST']}/backend/admin.php\n";
-        @mail(ADMIN_EMAIL, $subject, $text,
-              'From: noreply@' . ($_SERVER['HTTP_HOST'] ?? 'cigarworld.com'));
+        $html = '<p><strong>' . $esc($body['name']) . '</strong><br>'
+              . $esc($body['city']) . ' — ' . $esc($body['country_name']) . '<br>'
+              . $esc($body['type'] ?? '') . '</p>'
+              . '<p>' . nl2br($esc(mb_substr($body['description'], 0, 300))) . '</p>'
+              . '<p><a href="' . $esc(site_url() . '/backend/admin.php') . '">Ouvrir la modération</a></p>';
+        send_email(ADMIN_EMAIL, $subject, $html);
     }
 
     json_out(['success' => true, 'id' => $id, 'auto_approved' => $auto_approved]);

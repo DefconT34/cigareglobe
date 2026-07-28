@@ -14,6 +14,7 @@ espace client (users, email_tokens, auth_attempts, reviews, favorites).
   - `001_users.sql` — comptes (users, email_tokens, auth_attempts)
   - `002_contributions_reviews.sql` — `contributions.user_id` + `reviews`
   - `003_favorites.sql` — favoris & listes
+  - `004_review_flags.sql` — signalements d'avis (modération)
 
 ## Installer / recréer la base
 
@@ -24,9 +25,13 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (001 → 002 → 003).
+dans l'ordre (001 → 002 → 003 → 004).
 
 ## Régénérer `schema.sql`
+
+**À faire après chaque migration** : `schema.sql` sert de base aux tests
+(`tests/run.php`) et à toute recréation de la base. S'il n'est pas à jour,
+les tests échouent sur des tables manquantes.
 
 Après un changement de structure en base, réextraire :
 ```bash

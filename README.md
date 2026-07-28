@@ -83,6 +83,26 @@ uploads/lounges/      Photos uploadées (hors Git)
 Les actions qui écrivent au nom de l'utilisateur exigent une session et un
 jeton **CSRF** (obtenu via `auth.php?action=me`), et un compte à l'email vérifié.
 
+## Tests
+
+Suite de tests de fumée de l'API (sans dépendance : PHP + MySQL suffisent).
+Elle crée une **base dédiée**, recréée à chaque lancement à partir de
+`sql/schema.sql` — la base applicative n'est jamais modifiée — démarre un
+serveur éphémère, puis vérifie authentification, CSRF, contributions,
+avis et modération, favoris, profil et accès d'administration.
+
+```bash
+php tests/run.php          # code de sortie 0 si tout passe, 1 sinon
+TEST_DB=ma_base_test php tests/run.php   # nom de base personnalisé
+```
+
+> Après toute nouvelle migration, **régénérer `sql/schema.sql`**
+> (voir `sql/README.md`) : les tests partent de ce fichier et signaleront
+> sinon des tables manquantes.
+
+L'intégration continue (`.github/workflows/tests.yml`) exécute la même
+commande sur un service MySQL à chaque *push*.
+
 ## Base de données
 
 Voir `sql/README.md` (schéma de référence, migrations, régénération, seed).

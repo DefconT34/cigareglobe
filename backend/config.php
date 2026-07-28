@@ -22,6 +22,10 @@
         if (strlen($v) >= 2 && ($v[0] === '"' || $v[0] === "'") && substr($v, -1) === $v[0]) {
             $v = substr($v, 1, -1);
         }
+        // Une variable d'environnement réelle est prioritaire sur le .env
+        // (convention dotenv). Permet par exemple de viser une base de test :
+        //   DB_NAME=cigareglobe_test php tests/run.php
+        if (getenv($k) !== false) continue;
         $_ENV[$k] = $v;
         putenv("$k=$v");
     }
