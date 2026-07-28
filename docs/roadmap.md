@@ -18,11 +18,12 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **D5** : zoom molette centré sur le curseur (ancrage exact du point géographique, repli propre)
 - **D2** : contributeur de confiance — promotion auto au seuil, publication directe, plafond relevé, badge
 - **D1** : modération des avis — signalement membre, onglet admin, logique d'approbation factorisée (moderation_lib)
+- **A1** : clé admin hors URL — auth par session, CSRF sur les actions, clé retirée du JS
 
 ## ⏳ À faire
 
 ### A. Sécurité & robustesse
-- [ ] **A1** — Clé admin hors URL (session admin, plus de `?key=`) · M
+- [x] ~~**A1** — Clé admin hors URL (session + CSRF)~~ ✅
 - [ ] **A2** — Restreindre le CORS au domaine réel (garder `*` en local) · P · dépend de B3
 - [ ] **A3** — Revue de sécurité complète (CSP, admin.php, fuite d'erreurs data.php) · M · après A1
 
@@ -51,4 +52,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **E2** — Auto-héberger topojson / retirer le tag GA placeholder · P
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A1+A2+A3 → B2+B1 → C4 → D4 → D6/E
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2+A3 → B2+B1 → C4 → D4 → D6/E
