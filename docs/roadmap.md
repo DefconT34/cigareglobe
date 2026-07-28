@@ -17,6 +17,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **D3** : champ email redondant retiré du formulaire de contribution (backend utilise l'email du compte)
 - **D5** : zoom molette centré sur le curseur (ancrage exact du point géographique, repli propre)
 - **D2** : contributeur de confiance — promotion auto au seuil, publication directe, plafond relevé, badge
+- **D1** : modération des avis — signalement membre, onglet admin, logique d'approbation factorisée (moderation_lib)
 
 ## ⏳ À faire
 
@@ -38,7 +39,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **C4** — Tests smoke API + CI · M
 
 ### D. Fonctionnel / produit
-- [ ] **D1** — Modération des avis (statut reviews + UI admin) · M
+- [x] ~~**D1** — Modération des avis (signalement + écran admin)~~ ✅
 - [x] ~~**D2** — Contributeur de confiance (promotion + publication directe)~~ ✅
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
 - [ ] **D4** — Globe : navigation clavier + ARIA · M
@@ -50,4 +51,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **E2** — Auto-héberger topojson / retirer le tag GA placeholder · P
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A1+A2+A3 → B2+B1 → C4 → D1/D4 → D6/E
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A1+A2+A3 → B2+B1 → C4 → D4 → D6/E
