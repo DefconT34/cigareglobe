@@ -19,6 +19,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **D2** : contributeur de confiance — promotion auto au seuil, publication directe, plafond relevé, badge
 - **D1** : modération des avis — signalement membre, onglet admin, logique d'approbation factorisée (moderation_lib)
 - **A1** : clé admin hors URL — auth par session, CSRF sur les actions, clé retirée du JS
+- **E1+E2** : data.php sans DESCRIBE (+7 tests), topojson/carte auto-hébergés, GA retiré, CSP resserrée
 - **C4** : tests de fumée API (50 vérifications, base dédiée) + workflow CI
 - **A3** : revue sécurité — XSS stocké corrigé (échappement + URLs), fuites d'erreurs colmatées, CSP + Permissions-Policy, CORS/credentials assaini
 
@@ -50,8 +51,8 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
 
 ### E. Dette technique
-- [ ] **E1** — Simplifier `data.php` (retirer les DESCRIBE défensifs une fois le schéma figé) · P · après C2
-- [ ] **E2** — Auto-héberger topojson / retirer le tag GA placeholder · P
+- [x] ~~**E1** — Simplifier `data.php` (DESCRIBE défensifs retirés)~~ ✅
+- [x] ~~**E2** — topojson + carte monde auto-hébergés, GA retiré~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → D4 → D6/E
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → D4 → D6/C1b
