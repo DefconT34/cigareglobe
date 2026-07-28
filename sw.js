@@ -2,7 +2,7 @@
 // Stratégie : Network First partout — données toujours fraîches
 // ════════════════════════════════════════════════════════
 
-var CACHE_NAME  = 'cigar-odyssey-v3';
+var CACHE_NAME  = 'cigar-odyssey-v4';   // bump : ressources auto-hebergees (topojson, carte monde)
 var CACHE_SHELL = ['/', '/index.html'];
 
 // ── Installation ──────────────────────────────────────────

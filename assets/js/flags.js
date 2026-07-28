@@ -19,7 +19,7 @@ async function loadWorldMap() {
   const loader = document.getElementById('map-loading');
   if(loader){ loader.style.opacity='1'; loader.style.transform='translateX(-50%) translateY(0)'; }
   try {
-    const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const resp = await fetch('assets/data/countries-110m.json');
     const topo = await resp.json();
     const geo = topojson.feature(topo, topo.objects.countries);
     worldFeatures = geo.features;

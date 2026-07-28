@@ -42,13 +42,14 @@
   # ── Content-Security-Policy ────────────────────────────
   # Limite les origines exécutables. 'unsafe-inline' reste nécessaire :
   # l'application utilise encore des scripts et styles en ligne
-  # (gtag, service worker, interface d'administration). Le durcissement
-  # par nonces suppose de les externaliser au préalable.
-  #   unpkg / cdnjs      : Leaflet, topojson
-  #   jsdelivr           : carte du monde (fetch)
-  #   basemaps.cartocdn  : tuiles de la carte
+  # (service worker, interface d'administration). Le durcissement par
+  # nonces suppose de les externaliser au préalable.
+  # topojson et la carte du monde sont desormais servis localement
+  # (assets/vendor, assets/data), ce qui restreint d'autant les origines.
+  #   unpkg              : Leaflet (vue Explorer)
+  #   basemaps.cartocdn  : tuiles de la carte (couvert par img-src https:)
   #   fonts.googleapis   : polices de l'administration
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://cdn.jsdelivr.net https://www.google-analytics.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 </IfModule>
 
 # ── Blocage des fichiers cachés (.env, .git, .htaccess…) ──

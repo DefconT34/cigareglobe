@@ -200,6 +200,26 @@ $r = http('GET', $base . '/backend/api.php?action=profile', ['jar' => $anon]);
 eq('profil : consultation refusee sans compte ni identifiant', 401, $r['status']);
 
 // ════════════════════════════════════════════════════════
+section('Donnees de l\'atlas');
+
+$r = http('GET', $base . '/backend/data.php?action=globe', ['jar' => $anon]);
+eq('globe : reponse valide', 200, $r['status']);
+check('globe : structure attendue', isset($r['json']['countries'], $r['json']['markets'], $r['json']['polys']));
+
+$r = http('GET', $base . '/backend/data.php?action=lounges&id=testland', ['jar' => $anon]);
+eq('lounges : etablissement du pays renvoye', 1, count($r['json']['static']));
+eq('lounges : champs enrichis presents', true, array_key_exists('maps_url', $r['json']['static'][0]));
+
+$r = http('GET', $base . '/backend/data.php?action=lounges&id=testland&lang=en', ['jar' => $anon]);
+eq('lounges : repli sur le francais si traduction absente', 'Lounge de test', $r['json']['static'][0]['name']);
+
+$r = http('GET', $base . '/backend/data.php?action=lounges_all', ['jar' => $anon]);
+check('lounges_all : regroupement par pays', isset($r['json']['lounges']['testland']));
+
+$r = http('GET', $base . '/backend/data.php?action=inconnue', ['jar' => $anon]);
+eq('action inconnue : refus', 404, $r['status']);
+
+// ════════════════════════════════════════════════════════
 section('Acces d\'administration');
 
 $r = http('GET', $base . '/backend/api.php?action=export&admin_key=test-admin-key', ['jar' => $anon]);

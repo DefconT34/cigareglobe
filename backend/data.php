@@ -79,39 +79,32 @@ try {
 }
 
 
+// Colonnes des fiches d'etablissement. Le schema est fige et versionne
+// (sql/schema.sql) : plus besoin d'un DESCRIBE a chaque requete pour
+// deviner les colonnes disponibles.
+/** Colonne de description selon la langue demandee, avec repli sur le francais. */
+function lounge_desc_col(): string {
+    // Tableau local : une constante declaree ici ne serait pas encore
+    // definie au moment ou le routeur (plus haut) appelle ces fonctions.
+    $lang = in_array($_GET['lang'] ?? '', ['en','es','de','zh','ar'], true) ? $_GET['lang'] : 'fr';
+    return $lang === 'fr'
+        ? 'description AS `desc`'
+        : "COALESCE(NULLIF(description_{$lang}, ''), description) AS `desc`";
+}
+
+/** Colonnes enrichies communes aux deux endpoints. */
+function lounge_extra_cols(): string {
+    return ', hours, maps_url, website, instagram'
+         . ', ROUND(COALESCE(rating, 0), 1) AS rating, COALESCE(rating_count, 0) AS rating_count';
+}
+
 // ── Tous les lounges groupés par pays (pour l'Explorer) ──
 function action_lounges_all(PDO $db): void {
-    // ── Détecter les colonnes disponibles (défensif) ─────
-    try {
-        $describe = $db->query("DESCRIBE lounges")->fetchAll(PDO::FETCH_COLUMN);
-        $cols = array_flip($describe);
-    } catch (Throwable $e) { $cols = []; }
-
-    $has_hours   = isset($cols['hours']);
-    $has_maps    = isset($cols['maps_url']);
-    $has_website = isset($cols['website']);
-    $has_insta   = isset($cols['instagram']);
-    $has_rating  = isset($cols['rating']);
-
-    // Sélection langue description
-    $lang_all = in_array($_GET['lang'] ?? '', ['en','es','de','zh','ar']) ? $_GET['lang'] : 'fr';
-    $desc_col_all = 'description AS `desc`';
-    if ($lang_all !== 'fr') {
-        $desc_lang_col = 'description_' . $lang_all;
-        if (isset($cols[$desc_lang_col])) {
-            $desc_col_all = "COALESCE(NULLIF({$desc_lang_col}, ''), description) AS `desc`";
-        }
-    }
-
-    $extra = ($has_hours   ? ", hours"     : ", NULL AS hours") .
-             ($has_maps    ? ", maps_url"  : ", NULL AS maps_url") .
-             ($has_website ? ", website"   : ", NULL AS website") .
-             ($has_insta   ? ", instagram" : ", NULL AS instagram") .
-             ($has_rating  ? ", ROUND(COALESCE(rating, 0), 1) AS rating, COALESCE(rating_count, 0) AS rating_count"
-                           : ", NULL AS rating, 0 AS rating_count");
+    $desc_col_all = lounge_desc_col();
+    $extra        = lounge_extra_cols();
 
     // ── Requête principale ───────────────────────────────
-    $order = $has_rating ? "COALESCE(rating, 0) DESC, name ASC" : "name ASC";
+    $order = "COALESCE(rating, 0) DESC, name ASC";
     $stmt  = $db->query(
         "SELECT country_id, id, name, city, type, phone, price,
                 " . $desc_col_all . ", source" . $extra . "
@@ -132,10 +125,9 @@ function action_lounges_all(PDO $db): void {
 
     // ── Contributions communautaires (optionnel) ─────────
     try {
-        $comm_extra = ($has_hours   ? ", NULL AS hours"     : ", NULL AS hours") .
-                      ($has_maps    ? ", NULL AS maps_url"  : ", NULL AS maps_url") .
-                      ($has_website ? ", NULL AS website"   : ", NULL AS website") .
-                      ($has_insta   ? ", NULL AS instagram" : ", NULL AS instagram");
+        // Les contributions communautaires n'ont pas ces champs enrichis :
+        // on les aligne à NULL pour obtenir la même forme que les fiches vérifiées.
+        $comm_extra = ', NULL AS hours, NULL AS maps_url, NULL AS website, NULL AS instagram';
         $comm = $db->query(
             "SELECT country_id, name, city, type, phone,
                     '' AS price, description AS `desc`, source_url AS source" . $comm_extra . ",
@@ -283,33 +275,9 @@ function action_lounges(PDO $db): void {
     $id = trim($_GET['id'] ?? '');
     if (!$id) { http_response_code(400); jout(['error'=>'id requis']); }
 
-    // Détecter les colonnes enrichies disponibles
-    $cols = [];
-    try {
-        $describe = $db->query("DESCRIBE lounges")->fetchAll(PDO::FETCH_COLUMN);
-        $cols = array_flip($describe);
-    } catch (Throwable $e) { $cols = []; }
+    $desc_col = lounge_desc_col();
+    $extra    = lounge_extra_cols();
 
-    $has_hours   = isset($cols['hours']);
-    $has_maps    = isset($cols['maps_url']);
-    $has_website = isset($cols['website']);
-    $has_insta   = isset($cols['instagram']);
-    $has_rating  = isset($cols['rating']);
-
-    // Sélection de langue pour la description
-    $lang = in_array($_GET['lang'] ?? '', ['en','es','de','zh','ar']) ? $_GET['lang'] : 'fr';
-    $has_desc_lang = ($lang !== 'fr') && isset($cols['description_' . $lang]);
-    // description_col : colonne langue si dispo, sinon description FR
-    $desc_col = $has_desc_lang
-        ? "COALESCE(NULLIF(description_{$lang}, ''), description) AS `desc`"
-        : "description AS `desc`";
-
-    $extra = ($has_hours   ? ", hours"    : ", NULL AS hours") .
-             ($has_maps    ? ", maps_url"  : ", NULL AS maps_url") .
-             ($has_website ? ", website"   : ", NULL AS website") .
-             ($has_insta   ? ", instagram" : ", NULL AS instagram") .
-             ($has_rating  ? ", ROUND(COALESCE(rating, 0), 1) AS rating, COALESCE(rating_count, 0) AS rating_count"
-                           : ", NULL AS rating, 0 AS rating_count");
 
     $stmt = $db->prepare(
         "SELECT id, name, city, type, phone, price,
