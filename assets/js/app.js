@@ -3,6 +3,24 @@
 // Loaded LAST.
 // ════════════════════════════════════════════════════════
 
+// ── Échappement (contenu potentiellement communautaire) ──
+// Les fiches d'établissement mélangent données vérifiées et
+// contributions de membres : tout ce qui est injecté en HTML doit être
+// échappé, en particulier à l'intérieur d'un attribut.
+function _escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function _escAttr(s) { return _escHtml(s); }
+
+// N'autorise que http(s) : bloque javascript:, data:, vbscript:…
+function _safeUrl(u) {
+  if (!u) return '';
+  var s = String(u).trim();
+  return /^https?:\/\//i.test(s) ? s : '';
+}
+
 // ── Helpers ───────────────────────────────────────────────
 function isMobile() { return window.innerWidth <= 640; }
 
@@ -226,12 +244,16 @@ function _renderLoungeCards(c, list, body) {
       (l.type||'').indexOf('Musée')       >= 0 ? '#7B68EE'       :
       (l.type||'').indexOf('Hotel')       >= 0 ? '#20B2AA'       :
       (l.type||'').indexOf('Members')     >= 0 ? 'var(--ember)'  : 'var(--text2)';
-    var desc  = l.desc || l.description || '';
-    var phone = l.phone    ? '<a class="lc-link" href="tel:'+l.phone+'">📞 '+l.phone+'</a>' : '';
-    var maps  = l.maps_url ? '<a class="lc-link" href="'+l.maps_url+'" target="_blank" rel="noopener">🗺 Maps</a>' : '';
-    var web   = l.website  ? '<a class="lc-link" href="'+l.website+'" target="_blank" rel="noopener">🌐 Site</a>' : '';
-    var insta = l.instagram? '<a class="lc-link" href="https://instagram.com/'+l.instagram.replace('@','')+'" target="_blank" rel="noopener">📸 '+l.instagram+'</a>' : '';
-    var hours = l.hours    ? '<div class="lc-hours">🕐 '+l.hours+'</div>' : '';
+    // Ces champs peuvent provenir de contributions communautaires : on
+    // échappe systématiquement, y compris (surtout) en contexte d'attribut.
+    var E = _escAttr;
+    var desc  = _escHtml(l.desc || l.description || '');
+    var phone = l.phone    ? '<a class="lc-link" href="tel:'+E(l.phone)+'">📞 '+_escHtml(l.phone)+'</a>' : '';
+    var mapsU = _safeUrl(l.maps_url), webU = _safeUrl(l.website);
+    var maps  = mapsU ? '<a class="lc-link" href="'+E(mapsU)+'" target="_blank" rel="noopener noreferrer">🗺 Maps</a>' : '';
+    var web   = webU  ? '<a class="lc-link" href="'+E(webU)+'" target="_blank" rel="noopener noreferrer">🌐 Site</a>' : '';
+    var insta = l.instagram? '<a class="lc-link" href="https://instagram.com/'+E(String(l.instagram).replace('@',''))+'" target="_blank" rel="noopener noreferrer">📸 '+_escHtml(l.instagram)+'</a>' : '';
+    var hours = l.hours    ? '<div class="lc-hours">🕐 '+_escHtml(l.hours)+'</div>' : '';
     // ── Notation interactive ─────────────────────────────
     var loungeId = l.id || null;  // id MySQL (dispo si chargé depuis API)
     var r        = l.rating ? parseFloat(l.rating) : 0;
@@ -269,15 +291,15 @@ function _renderLoungeCards(c, list, body) {
     return (
       '<div class="lc-card">' +
         '<div class="lc-top">' +
-          '<div class="lc-name">' + l.name + '</div>' +
+          '<div class="lc-name">' + _escHtml(l.name) + '</div>' +
           '<div style="display:flex;align-items:center;gap:5px">' +
-            (l.price ? '<span class="lc-price">'+l.price+'</span>' : '') +
+            (l.price ? '<span class="lc-price">'+_escHtml(l.price)+'</span>' : '') +
             ratingHtml +
           '</div>' +
         '</div>' +
         '<div class="lc-meta">' +
-          '<span class="lc-city">📍 ' + (l.city||'') + '</span>' +
-          '<span class="lc-type" style="color:' + clr + '">· ' + (_tr(l.type)||'') + '</span>' +
+          '<span class="lc-city">📍 ' + _escHtml(l.city||'') + '</span>' +
+          '<span class="lc-type" style="color:' + clr + '">· ' + _escHtml(_tr(l.type)||'') + '</span>' +
         '</div>' +
         hours +
         '<div class="lc-desc">' + desc + '</div>' +

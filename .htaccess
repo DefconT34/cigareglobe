@@ -33,8 +33,22 @@
   Header always set X-Content-Type-Options  "nosniff"
   Header always set X-Frame-Options         "SAMEORIGIN"
   Header always set Referrer-Policy         "strict-origin-when-cross-origin"
-  # CORS pour data.php (CDN fonts, Leaflet)
-  Header set Access-Control-Allow-Origin    "*"
+  Header always set Permissions-Policy      "geolocation=(self), camera=(), microphone=(), payment=()"
+
+  # NB : le CORS est géré par les endpoints PHP (cors_headers()). Ne pas
+  # le forcer ici : un « Header set » écraserait leur logique et
+  # renverrait « * » y compris sur les réponses authentifiées.
+
+  # ── Content-Security-Policy ────────────────────────────
+  # Limite les origines exécutables. 'unsafe-inline' reste nécessaire :
+  # l'application utilise encore des scripts et styles en ligne
+  # (gtag, service worker, interface d'administration). Le durcissement
+  # par nonces suppose de les externaliser au préalable.
+  #   unpkg / cdnjs      : Leaflet, topojson
+  #   jsdelivr           : carte du monde (fetch)
+  #   basemaps.cartocdn  : tuiles de la carte
+  #   fonts.googleapis   : polices de l'administration
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://cdn.jsdelivr.net https://www.google-analytics.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 </IfModule>
 
 # ── Blocage des fichiers cachés (.env, .git, .htaccess…) ──

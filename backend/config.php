@@ -52,8 +52,41 @@ define('TRUSTED_AFTER_APPROVED', (int)env('TRUSTED_AFTER_APPROVED', '5'));
 define('ADMIN_KEY',   env('ADMIN_KEY', ''));
 define('ADMIN_EMAIL', env('ADMIN_EMAIL', 'vous@example.com'));
 
+// ── Diagnostic ────────────────────────────────────────────
+// true = les messages d'erreur techniques sont renvoyes au client.
+// A n'activer QU'EN DEVELOPPEMENT.
+if (strtolower((string)env('APP_DEBUG', 'false')) === 'true') define('APP_DEBUG', true);
+
 // ── CORS ──────────────────────────────────────────────────
 define('ALLOWED_ORIGIN', env('ALLOWED_ORIGIN', '*'));
+
+/**
+ * En-tetes CORS. Le couple « Allow-Origin: * » + « Allow-Credentials:
+ * true » est invalide (les navigateurs le rejettent) et dangereux s'il
+ * etait remplace par un reflet de l'Origin : on n'autorise donc les
+ * requetes avec cookies que sur une origine explicitement declaree.
+ */
+function cors_headers(bool $with_credentials = false): void {
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if (ALLOWED_ORIGIN === '*') {
+        if ($with_credentials && $origin !== '') {
+            // Meme origine (front et API servis ensemble) : on renvoie
+            // l'origine appelante, sinon le cookie de session est ignore.
+            $host = $_SERVER['HTTP_HOST'] ?? '';
+            if ($host !== '' && parse_url($origin, PHP_URL_HOST) === explode(':', $host)[0]) {
+                header('Access-Control-Allow-Origin: ' . $origin);
+                header('Vary: Origin');
+                header('Access-Control-Allow-Credentials: true');
+                return;
+            }
+        }
+        header('Access-Control-Allow-Origin: *');
+        return;
+    }
+    header('Access-Control-Allow-Origin: ' . ALLOWED_ORIGIN);
+    header('Vary: Origin');
+    if ($with_credentials) header('Access-Control-Allow-Credentials: true');
+}
 
 // ── Espace client / emails ────────────────────────────────
 if (env('SITE_URL') !== null)       define('SITE_URL',       env('SITE_URL'));

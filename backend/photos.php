@@ -10,13 +10,15 @@ error_reporting(E_ALL);
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Erreur PHP: ' . $errstr . ' (' . basename($errfile) . ':' . $errline . ')']);
+    error_log("[photos.php] $errstr @ $errfile:$errline");
+    echo json_encode(['error' => 'Erreur serveur.']);
     exit;
 });
 set_exception_handler(function($e) {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Exception: ' . $e->getMessage()]);
+    error_log('[photos.php] ' . $e->getMessage());
+    echo json_encode(['error' => 'Erreur serveur.']);
     exit;
 });
 
@@ -82,9 +84,11 @@ try {
         default: jout(['error' => 'Action inconnue: ' . $action], 404);
     }
 } catch (PDOException $e) {
-    jout(['error' => 'Erreur base de données: ' . $e->getMessage()], 500);
+    error_log('[photos.php] SQL ' . $e->getMessage());
+    jout(['error' => 'Erreur base de données.'], 500);
 } catch (Throwable $e) {
-    jout(['error' => 'Erreur serveur: ' . $e->getMessage()], 500);
+    error_log('[photos.php] ' . $e->getMessage());
+    jout(['error' => 'Erreur serveur.'], 500);
 }
 
 // ════════════════════════════════════════════════════════

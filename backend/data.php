@@ -14,19 +14,23 @@
 
 require_once __DIR__ . '/config.php';
 
-// Afficher les erreurs PHP dans la réponse JSON (debug)
+// Les details techniques (message SQL, fichier, ligne) partent dans le
+// journal du serveur, jamais dans la reponse : ils renseigneraient un
+// attaquant sur le schema et l'arborescence. APP_DEBUG=true les reaffiche
+// en developpement uniquement.
 set_exception_handler(function(Throwable $e) {
+    error_log('[data.php] ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode([
-        'error' => $e->getMessage(),
-        'file'  => basename($e->getFile()),
-        'line'  => $e->getLine(),
-    ]);
+    $out = ['error' => 'Erreur serveur.'];
+    if (defined('APP_DEBUG') && APP_DEBUG) {
+        $out['debug'] = $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine();
+    }
+    echo json_encode($out);
     exit;
 });
 
-header('Access-Control-Allow-Origin: '  . ALLOWED_ORIGIN);
+cors_headers(false);
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Content-Type: application/json; charset=utf-8');
 // Cache HTTP — données globe quasi-statiques (1h)
@@ -67,8 +71,11 @@ try {
         default   => (function(){ http_response_code(404); jout(['error'=>'Action inconnue']); })(),
     };
 } catch (Throwable $e) {
+    error_log('[data.php] ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
     http_response_code(500);
-    jout(['error' => 'Erreur serveur: ' . $e->getMessage()]);
+    $out = ['error' => 'Erreur serveur.'];
+    if (defined('APP_DEBUG') && APP_DEBUG) $out['debug'] = $e->getMessage();
+    jout($out);
 }
 
 
