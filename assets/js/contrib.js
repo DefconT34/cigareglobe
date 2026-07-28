@@ -184,6 +184,9 @@ window.castVote = function(id, vote, btn) {
 };
 
 // ── Submit ────────────────────────────────────────────────
+// Texte d'origine du message de succès (restauré si l'ajout repasse par la modération)
+var _successSubHtml = null;
+
 function submitContribution() {
   var country      = document.getElementById('c-country').value;
   var country_name = document.getElementById('c-country').options[document.getElementById('c-country').selectedIndex]?.text?.replace(/^\S+\s/,'') || country;
@@ -226,7 +229,20 @@ function submitContribution() {
       if (data.need_verify && window.CGAccount) { closeContribModal(); window.CGAccount.toast('Vérifiez votre email pour contribuer.', 'err'); return; }
       alert('⚠ ' + data.error); return;
     }
-    // Show success
+    // Show success — message adapté si l'ajout est publié directement
+    // (contributeur de confiance : pas de passage par la modération)
+    var sub = document.querySelector('#contrib-success .contrib-success-sub');
+    if (sub) {
+      if (_successSubHtml === null) _successSubHtml = sub.innerHTML;  // mémoriser l'original
+      if (data.auto_approved) {
+        sub.removeAttribute('data-i18n');   // ne pas se faire écraser par applyLang
+        sub.innerHTML = 'Publié immédiatement — merci ! Votre statut de contributeur de confiance '
+                      + 'dispense vos ajouts de la file de modération.';
+      } else {
+        sub.setAttribute('data-i18n', 'contrib_thanks_sub');
+        sub.innerHTML = _successSubHtml;
+      }
+    }
     document.getElementById('contrib-form-wrap').style.display = 'none';
     document.getElementById('contrib-success').classList.add('show');
     setTimeout(closeContribModal, 3000);

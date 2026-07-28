@@ -163,14 +163,17 @@ function action_submit(): void {
 
     $ip = get_ip();
 
-    // Anti-spam : max 3 contributions par compte par 24h
+    // Anti-spam : quota journalier par compte. Les contributeurs de
+    // confiance (ajouts publiés sans modération) bénéficient d'un plafond
+    // relevé — les brider à 3/jour viderait le statut de son intérêt.
+    $daily_cap = is_trusted_role($user['role']) ? 20 : 3;
     $spam = $db->prepare(
         "SELECT COUNT(*) FROM contributions
          WHERE user_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)"
     );
     $spam->execute([$user['id']]);
-    if ((int)$spam->fetchColumn() >= 3) {
-        json_out(['error' => 'Limite atteinte : 3 contributions par jour maximum.'], 429);
+    if ((int)$spam->fetchColumn() >= $daily_cap) {
+        json_out(['error' => 'Limite atteinte : ' . $daily_cap . ' contributions par jour maximum.'], 429);
     }
 
     // Anti-doublon : même nom + même pays déjà signalé
@@ -205,9 +208,16 @@ function action_submit(): void {
 
     $id = (int)$db->lastInsertId();
 
+    // Contributeur de confiance : publication immédiate, sans file de modération
+    $auto_approved = false;
+    if (is_trusted_role($user['role'])) {
+        $auto_approved = approve_contribution($db, $id);
+    }
+
     // Notification email (si configuré)
     if (ADMIN_EMAIL !== 'votre@email.com') {
-        $subject = '[CigarOdyssey] Nouvelle contribution : ' . $body['name'];
+        $subject = '[CigarOdyssey] ' . ($auto_approved ? 'Contribution publiée (confiance)' : 'Nouvelle contribution')
+                 . ' : ' . $body['name'];
         $text    = "Pays : {$body['country_name']}\n"
                  . "Nom  : {$body['name']}\n"
                  . "Ville: {$body['city']}\n"
@@ -218,7 +228,7 @@ function action_submit(): void {
               'From: noreply@' . ($_SERVER['HTTP_HOST'] ?? 'cigarworld.com'));
     }
 
-    json_out(['success' => true, 'id' => $id]);
+    json_out(['success' => true, 'id' => $id, 'auto_approved' => $auto_approved]);
 }
 
 // ════════════════════════════════════════════════════════
@@ -278,20 +288,7 @@ function action_vote(): void {
     // Auto-approbation (seuil = 3)
     $approved = false;
     if ($up >= VOTES_TO_APPROVE) {
-        $db->prepare("UPDATE contributions SET status='approved', approved_at=NOW() WHERE id=?")->execute([$id]);
-
-        $full = $db->prepare("SELECT * FROM contributions WHERE id=?");
-        $full->execute([$id]);
-        $row = $full->fetch();
-
-        $db->prepare(
-            "INSERT IGNORE INTO approved_lounges
-             (contribution_id, country_id, country_name, name, city, type, phone, description, source_url)
-             VALUES (?,?,?,?,?,?,?,?,?)"
-        )->execute([$id, $row['country_id'], $row['country_name'],
-            $row['name'], $row['city'], $row['type'],
-            $row['phone'], $row['description'], $row['source_url']]);
-
+        approve_contribution($db, $id);
         $approved = true;
     }
 
@@ -313,6 +310,61 @@ function action_vote(): void {
 }
 
 // ════════════════════════════════════════════════════════
+// APPROBATION & CONTRIBUTEURS DE CONFIANCE
+// ════════════════════════════════════════════════════════
+
+/**
+ * Approuve une contribution : publication dans approved_lounges, puis
+ * évaluation d'une promotion de son auteur. Traitement commun aux trois
+ * chemins d'approbation (vote communautaire, modération admin,
+ * publication directe d'un contributeur de confiance).
+ */
+function approve_contribution(PDO $db, int $id): bool {
+    $stmt = $db->prepare("SELECT * FROM contributions WHERE id = ?");
+    $stmt->execute([$id]);
+    $row = $stmt->fetch();
+    if (!$row) return false;
+
+    if ($row['status'] !== 'approved') {
+        $db->prepare("UPDATE contributions SET status='approved', approved_at=NOW() WHERE id=?")->execute([$id]);
+    }
+    $db->prepare(
+        "INSERT IGNORE INTO approved_lounges
+         (contribution_id, country_id, country_name, name, city, type, phone, description, source_url)
+         VALUES (?,?,?,?,?,?,?,?,?)"
+    )->execute([$id, $row['country_id'], $row['country_name'],
+        $row['name'], $row['city'], $row['type'],
+        $row['phone'], $row['description'], $row['source_url']]);
+
+    if (!empty($row['user_id'])) maybe_promote_contributor($db, (int)$row['user_id']);
+    return true;
+}
+
+/**
+ * Promeut un membre en « contributeur de confiance » dès qu'il atteint
+ * TRUSTED_AFTER_APPROVED contributions approuvées. Ses ajouts suivants
+ * sont publiés sans passer par la file de modération.
+ * Ne modifie jamais un rôle moderator/admin.
+ */
+function maybe_promote_contributor(PDO $db, int $user_id): bool {
+    $u = $db->prepare("SELECT role FROM users WHERE id = ?");
+    $u->execute([$user_id]);
+    if ($u->fetchColumn() !== 'member') return false;
+
+    $c = $db->prepare("SELECT COUNT(*) FROM contributions WHERE user_id = ? AND status = 'approved'");
+    $c->execute([$user_id]);
+    if ((int)$c->fetchColumn() < TRUSTED_AFTER_APPROVED) return false;
+
+    $db->prepare("UPDATE users SET role = 'trusted' WHERE id = ? AND role = 'member'")->execute([$user_id]);
+    return true;
+}
+
+/** Rôles dont les contributions sont publiées sans modération. */
+function is_trusted_role(?string $role): bool {
+    return in_array((string)$role, ['trusted', 'moderator', 'admin'], true);
+}
+
+// ════════════════════════════════════════════════════════
 // POST approve / reject — modération manuelle (admin)
 // ════════════════════════════════════════════════════════
 function action_approve(): void {
@@ -320,21 +372,7 @@ function action_approve(): void {
     $id = (int)($_GET['id'] ?? 0);
     if (!$id) json_out(['error' => 'id manquant'], 400);
 
-    $db = getDB();
-    $db->prepare("UPDATE contributions SET status='approved', approved_at=NOW() WHERE id=?")->execute([$id]);
-
-    $full = $db->prepare("SELECT * FROM contributions WHERE id=?");
-    $full->execute([$id]);
-    $row = $full->fetch();
-    if ($row) {
-        $db->prepare(
-            "INSERT IGNORE INTO approved_lounges
-             (contribution_id, country_id, country_name, name, city, type, phone, description, source_url)
-             VALUES (?,?,?,?,?,?,?,?,?)"
-        )->execute([$id, $row['country_id'], $row['country_name'],
-            $row['name'], $row['city'], $row['type'],
-            $row['phone'], $row['description'], $row['source_url']]);
-    }
+    approve_contribution(getDB(), $id);
     json_out(['success' => true]);
 }
 
@@ -623,8 +661,10 @@ function action_fav_list(): void {
 // ════════════════════════════════════════════════════════════
 
 // Badges dérivés de l'activité du membre.
-function compute_badges(array $s): array {
+function compute_badges(array $s, ?string $role = null): array {
     $b = [];
+    if ($role === 'moderator' || $role === 'admin') $b[] = ['icon' => '🛡️', 'label' => 'Modérateur'];
+    elseif ($role === 'trusted')                    $b[] = ['icon' => '⭐', 'label' => 'Contributeur de confiance'];
     if ($s['contributions_approved'] >= 1)  $b[] = ['icon' => '✒️', 'label' => 'Contributeur'];
     if ($s['contributions_approved'] >= 5)  $b[] = ['icon' => '🏅', 'label' => 'Contributeur confirmé'];
     if ($s['reviews_count'] >= 1)           $b[] = ['icon' => '📝', 'label' => 'Critique'];
@@ -699,7 +739,7 @@ function action_profile(): void {
         ],
         'stats'    => $stats,
         'passport' => $passport,
-        'badges'   => compute_badges($stats),
+        'badges'   => compute_badges($stats, $u['role']),
     ]);
 }
 

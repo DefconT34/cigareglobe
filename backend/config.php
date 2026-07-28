@@ -44,6 +44,10 @@ define('DB_CHARSET', env('DB_CHARSET', 'utf8mb4'));
 define('VOTES_TO_APPROVE', (int)env('VOTES_TO_APPROVE', '3'));
 define('VOTES_TO_REJECT',  (int)env('VOTES_TO_REJECT',  '3'));
 
+// Nombre de contributions approuvées à partir duquel un membre devient
+// « contributeur de confiance » (ses ajouts sont ensuite publiés directement).
+define('TRUSTED_AFTER_APPROVED', (int)env('TRUSTED_AFTER_APPROVED', '5'));
+
 // ── Administration ────────────────────────────────────────
 define('ADMIN_KEY',   env('ADMIN_KEY', ''));
 define('ADMIN_EMAIL', env('ADMIN_EMAIL', 'vous@example.com'));
