@@ -19,6 +19,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **D2** : contributeur de confiance — promotion auto au seuil, publication directe, plafond relevé, badge
 - **D1** : modération des avis — signalement membre, onglet admin, logique d'approbation factorisée (moderation_lib)
 - **A1** : clé admin hors URL — auth par session, CSRF sur les actions, clé retirée du JS
+- **D4** : globe accessible — pilotage clavier, focus visible, liste « Explorer sans le globe » équivalente
 - **E1+E2** : data.php sans DESCRIBE (+7 tests), topojson/carte auto-hébergés, GA retiré, CSP resserrée
 - **C4** : tests de fumée API (50 vérifications, base dédiée) + workflow CI
 - **A3** : revue sécurité — XSS stocké corrigé (échappement + URLs), fuites d'erreurs colmatées, CSP + Permissions-Policy, CORS/credentials assaini
@@ -46,7 +47,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D1** — Modération des avis (signalement + écran admin)~~ ✅
 - [x] ~~**D2** — Contributeur de confiance (promotion + publication directe)~~ ✅
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
-- [ ] **D4** — Globe : navigation clavier + ARIA · M
+- [x] ~~**D4** — Globe : navigation clavier + alternative textuelle~~ ✅
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
 - [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
 
@@ -55,4 +56,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**E2** — topojson + carte monde auto-hébergés, GA retiré~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → D4 → D6/C1b
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → D6/C1b (optionnels)
