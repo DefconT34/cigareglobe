@@ -6,6 +6,7 @@
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/auth_lib.php';
+require_once __DIR__ . '/moderation_lib.php';
 
 auth_session_start();
 
@@ -60,7 +61,7 @@ $action = clean($_GET['action'] ?? '', 30);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Les actions qui écrivent au nom de l'utilisateur exigent un jeton CSRF
-$CSRF_ACTIONS = ['submit','rate','review','review_delete','fav_toggle','profile_update'];
+$CSRF_ACTIONS = ['submit','rate','review','review_delete','review_flag','fav_toggle','profile_update'];
 if (in_array($action, $CSRF_ACTIONS, true) && $method === 'POST') {
     csrf_verify();
 }
@@ -74,6 +75,7 @@ try {
     elseif ($action === 'review'  && $method === 'POST') { action_review(); }
     elseif ($action === 'review_delete' && $method === 'POST') { action_review_delete(); }
     elseif ($action === 'reviews' && $method === 'GET')  { action_reviews(); }
+    elseif ($action === 'review_flag' && $method === 'POST') { action_review_flag(); }
     elseif ($action === 'my_ratings'     && $method === 'GET') { action_my_ratings(); }
     elseif ($action === 'my_contributions' && $method === 'GET') { action_my_contributions(); }
     elseif ($action === 'fav_toggle' && $method === 'POST') { action_fav_toggle(); }
@@ -313,57 +315,6 @@ function action_vote(): void {
 // APPROBATION & CONTRIBUTEURS DE CONFIANCE
 // ════════════════════════════════════════════════════════
 
-/**
- * Approuve une contribution : publication dans approved_lounges, puis
- * évaluation d'une promotion de son auteur. Traitement commun aux trois
- * chemins d'approbation (vote communautaire, modération admin,
- * publication directe d'un contributeur de confiance).
- */
-function approve_contribution(PDO $db, int $id): bool {
-    $stmt = $db->prepare("SELECT * FROM contributions WHERE id = ?");
-    $stmt->execute([$id]);
-    $row = $stmt->fetch();
-    if (!$row) return false;
-
-    if ($row['status'] !== 'approved') {
-        $db->prepare("UPDATE contributions SET status='approved', approved_at=NOW() WHERE id=?")->execute([$id]);
-    }
-    $db->prepare(
-        "INSERT IGNORE INTO approved_lounges
-         (contribution_id, country_id, country_name, name, city, type, phone, description, source_url)
-         VALUES (?,?,?,?,?,?,?,?,?)"
-    )->execute([$id, $row['country_id'], $row['country_name'],
-        $row['name'], $row['city'], $row['type'],
-        $row['phone'], $row['description'], $row['source_url']]);
-
-    if (!empty($row['user_id'])) maybe_promote_contributor($db, (int)$row['user_id']);
-    return true;
-}
-
-/**
- * Promeut un membre en « contributeur de confiance » dès qu'il atteint
- * TRUSTED_AFTER_APPROVED contributions approuvées. Ses ajouts suivants
- * sont publiés sans passer par la file de modération.
- * Ne modifie jamais un rôle moderator/admin.
- */
-function maybe_promote_contributor(PDO $db, int $user_id): bool {
-    $u = $db->prepare("SELECT role FROM users WHERE id = ?");
-    $u->execute([$user_id]);
-    if ($u->fetchColumn() !== 'member') return false;
-
-    $c = $db->prepare("SELECT COUNT(*) FROM contributions WHERE user_id = ? AND status = 'approved'");
-    $c->execute([$user_id]);
-    if ((int)$c->fetchColumn() < TRUSTED_AFTER_APPROVED) return false;
-
-    $db->prepare("UPDATE users SET role = 'trusted' WHERE id = ? AND role = 'member'")->execute([$user_id]);
-    return true;
-}
-
-/** Rôles dont les contributions sont publiées sans modération. */
-function is_trusted_role(?string $role): bool {
-    return in_array((string)$role, ['trusted', 'moderator', 'admin'], true);
-}
-
 // ════════════════════════════════════════════════════════
 // POST approve / reject — modération manuelle (admin)
 // ════════════════════════════════════════════════════════
@@ -446,23 +397,6 @@ function action_export(): void {
  * Body JSON : { "id": 42, "rating": 4 }
  * Retourne  : { "rating": 4.2, "rating_count": 15, "my_rating": 4 }
  */
-// Recalcule et enregistre la note moyenne d'un lounge depuis les avis.
-function recompute_lounge_rating(PDO $db, int $lounge_id): array {
-    $avg = $db->prepare(
-        "SELECT ROUND(AVG(rating), 2) AS avg_rating, COUNT(*) AS total
-         FROM reviews WHERE lounge_id = ? AND status = 'published'"
-    );
-    $avg->execute([$lounge_id]);
-    $s = $avg->fetch();
-    $new_avg   = (float)($s['avg_rating'] ?? 0);
-    $new_count = (int)  ($s['total']      ?? 0);
-    try {
-        $db->prepare('UPDATE lounges SET rating = ?, rating_count = ? WHERE id = ?')
-           ->execute([$new_avg, $new_count, $lounge_id]);
-    } catch (Throwable $e) { /* colonnes rating absentes — ignorer */ }
-    return ['rating' => round($new_avg, 1), 'rating_count' => $new_count];
-}
-
 // Vérifie qu'un lounge existe et est publié.
 function assert_lounge(PDO $db, int $lounge_id): void {
     $check = $db->prepare('SELECT id FROM lounges WHERE id = ? AND is_verified = 1');
@@ -539,16 +473,61 @@ function action_reviews(): void {
     $db = getDB();
     $lounge_id = (int)($_GET['id'] ?? 0);
     if ($lounge_id <= 0) json_out(['error' => 'id requis'], 400);
+    $me = current_user($db);
 
+    // Les avis signalés restent visibles tant qu'un modérateur ne les a
+    // pas retirés : un simple signalement ne doit pas suffire à masquer.
     $stmt = $db->prepare(
-        "SELECT r.rating, r.title, r.body, r.created_at, u.display_name
+        "SELECT r.id, r.user_id, r.rating, r.title, r.body, r.created_at, u.display_name
          FROM reviews r JOIN users u ON u.id = r.user_id
-         WHERE r.lounge_id = ? AND r.status = 'published'
+         WHERE r.lounge_id = ? AND r.status <> 'removed'
                AND r.body IS NOT NULL AND r.body <> ''
          ORDER BY r.updated_at DESC LIMIT 50"
     );
     $stmt->execute([$lounge_id]);
-    json_out(['reviews' => $stmt->fetchAll()]);
+
+    $rows = array_map(function ($r) use ($me) {
+        $r['id']   = (int)$r['id'];
+        $r['mine'] = $me && (int)$r['user_id'] === (int)$me['id'];
+        unset($r['user_id']);                       // pas d'exposition inutile
+        return $r;
+    }, $stmt->fetchAll());
+
+    json_out(['reviews' => $rows, 'can_flag' => (bool)$me]);
+}
+
+/**
+ * POST ?action=review_flag — Body : { id, reason? }
+ * Signale un avis. L'avis passe en 'flagged' (toujours visible) et
+ * remonte dans la file de modération.
+ */
+function action_review_flag(): void {
+    $db   = getDB();
+    $user = require_verified($db);
+
+    $body      = json_decode(file_get_contents('php://input'), true) ?? [];
+    $review_id = (int)($body['id'] ?? 0);
+    $reason    = clean($body['reason'] ?? '', 255);
+    if ($review_id <= 0) json_out(['error' => 'id requis'], 400);
+
+    $r = $db->prepare("SELECT user_id, status FROM reviews WHERE id = ?");
+    $r->execute([$review_id]);
+    $review = $r->fetch();
+    if (!$review) json_out(['error' => 'Avis introuvable'], 404);
+    if ((int)$review['user_id'] === (int)$user['id']) {
+        json_out(['error' => 'Vous ne pouvez pas signaler votre propre avis.'], 400);
+    }
+
+    $db->prepare("INSERT IGNORE INTO review_flags (review_id, user_id, reason) VALUES (?,?,?)")
+       ->execute([$review_id, $user['id'], $reason ?: null]);
+
+    if ($review['status'] === 'published') {
+        $db->prepare("UPDATE reviews SET status = 'flagged' WHERE id = ?")->execute([$review_id]);
+    }
+
+    $c = $db->prepare("SELECT COUNT(*) FROM review_flags WHERE review_id = ?");
+    $c->execute([$review_id]);
+    json_out(['success' => true, 'flags' => (int)$c->fetchColumn()]);
 }
 
 /**

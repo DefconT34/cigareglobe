@@ -227,6 +227,13 @@ body.mobile-mode .account-btn { padding: 6px; }
 .lc-rev-title { font-size: 12px; font-weight: 500; color: var(--text); margin-top: 2px; }
 .lc-rev-body { font-size: 12px; color: var(--text2); line-height: 1.45; margin-top: 2px; white-space: pre-wrap; }
 
+.lc-rev-flag {
+  margin-top: 4px; padding: 0; font-size: 10px; letter-spacing: .02em;
+  background: none; border: none; color: var(--text2); cursor: pointer; text-decoration: underline;
+}
+.lc-rev-flag:hover { color: var(--ember); }
+.lc-rev-flag:disabled { color: var(--text3, var(--text2)); cursor: default; text-decoration: none; }
+
 .lc-rev-cta {
   margin-top: 8px; width: 100%; padding: 8px; font-size: 11px;
   background: transparent; color: var(--gold); cursor: pointer;

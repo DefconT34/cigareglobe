@@ -27,11 +27,11 @@
     if (!box) return;
     fetch(apiBase() + '?action=reviews&id=' + encodeURIComponent(loungeId), { credentials: 'include' })
       .then(function (r) { return r.json(); })
-      .then(function (d) { render(box, loungeId, (d && d.reviews) || []); })
-      .catch(function () { render(box, loungeId, []); });
+      .then(function (d) { render(box, loungeId, (d && d.reviews) || [], !!(d && d.can_flag)); })
+      .catch(function () { render(box, loungeId, [], false); });
   };
 
-  function render(box, loungeId, list) {
+  function render(box, loungeId, list, canFlag) {
     var A = window.CGAccount;
     var canWrite = A && A.user && A.user.email_verified;
 
@@ -47,6 +47,10 @@
         '</div>' +
         (rv.title ? '<div class="lc-rev-title">' + esc(rv.title) + '</div>' : '') +
         '<div class="lc-rev-body">' + esc(rv.body) + '</div>' +
+        // Signalement : réservé aux membres connectés, jamais sur son propre avis
+        (canFlag && !rv.mine
+          ? '<button type="button" class="lc-rev-flag" data-rid="' + rv.id + '">⚑ Signaler</button>'
+          : '') +
       '</div>';
     }).join('');
 
@@ -55,6 +59,29 @@
 
     box.innerHTML = head + items + cta;
     box.querySelector('.lc-rev-cta').addEventListener('click', function () { openForm(box, loungeId); });
+    box.querySelectorAll('.lc-rev-flag').forEach(function (b) {
+      b.addEventListener('click', function () { flagReview(b, loungeId); });
+    });
+  }
+
+  // ── Signalement d'un avis ───────────────────────────────
+  function flagReview(btn, loungeId) {
+    var A = window.CGAccount;
+    if (!A || !A.requireVerified()) return;
+    if (!window.confirm('Signaler cet avis aux modérateurs ?')) return;
+    btn.disabled = true;
+    fetch(apiBase() + '?action=review_flag', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (A ? A.csrf : '') },
+      body: JSON.stringify({ id: parseInt(btn.dataset.rid, 10) })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.error) { btn.disabled = false; if (A) A.toast(d.error, 'err'); return; }
+        btn.textContent = '⚑ Signalé';                 // l'avis reste visible
+        if (A) A.toast('Merci — cet avis a été transmis aux modérateurs.', 'ok');
+      })
+      .catch(function () { btn.disabled = false; if (A) A.toast('Erreur réseau.', 'err'); });
   }
 
   // ── Formulaire de rédaction ─────────────────────────────

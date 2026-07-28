@@ -6,6 +6,7 @@
 
 session_start();
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/moderation_lib.php';
 
 $key    = $_GET['key'] ?? $_POST['key'] ?? $_SESSION['admin_key'] ?? '';
 $authed = strlen($key) > 0 && hash_equals(ADMIN_KEY, $key);
@@ -58,20 +59,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
 
     if ($id && $action === 'approve') {
-        $db->prepare("UPDATE contributions SET status='approved', approved_at=NOW() WHERE id=?")->execute([$id]);
-        $full = $db->prepare("SELECT * FROM contributions WHERE id=?");
-        $full->execute([$id]);
-        $row = $full->fetch();
-        if ($row) {
-            $db->prepare(
-                "INSERT IGNORE INTO approved_lounges
-                 (contribution_id,country_id,country_name,name,city,type,phone,description,source_url)
-                 VALUES(?,?,?,?,?,?,?,?,?)"
-            )->execute([$id,$row['country_id'],$row['country_name'],
-                $row['name'],$row['city'],$row['type'],
-                $row['phone'],$row['description'],$row['source_url']]);
-        }
+        // Traitement partagé (moderation_lib) : publication + promotion
+        // eventuelle de l'auteur en contributeur de confiance.
+        approve_contribution($db, $id);
         $msg = ['type'=>'ok','text'=>"Contribution #{$id} approuvée et ajoutée aux lounges."];
+    } elseif ($id && $action === 'review_publish') {
+        set_review_status($db, $id, 'published');
+        $msg = ['type'=>'ok','text'=>"Avis #{$id} rétabli."];
+    } elseif ($id && $action === 'review_remove') {
+        set_review_status($db, $id, 'removed');
+        $msg = ['type'=>'warn','text'=>"Avis #{$id} retiré et exclu de la note."];
     } elseif ($id && $action === 'reject') {
         $db->prepare("UPDATE contributions SET status='rejected' WHERE id=?")->execute([$id]);
         $msg = ['type'=>'warn','text'=>"Contribution #{$id} rejetée."];
@@ -101,6 +98,27 @@ $total_lounges = (int)$db->query("SELECT COUNT(*) FROM lounges WHERE is_verified
 $total_photos  = 0;
 try { $total_photos = (int)$db->query("SELECT COUNT(*) FROM lounge_photos WHERE is_approved=1")->fetchColumn(); } catch(Exception $e){}
 $total_countries = (int)$db->query("SELECT COUNT(DISTINCT country_id) FROM lounges WHERE is_verified=1")->fetchColumn();
+
+// Avis (moderation) — signales en tete
+$reviews_rows  = [];
+$flagged_count = 0;
+try {
+    $flagged_count = (int)$db->query("SELECT COUNT(*) FROM reviews WHERE status='flagged'")->fetchColumn();
+} catch (Throwable $e) {}
+if ($tab === 'reviews') {
+    try {
+        $reviews_rows = $db->query(
+            "SELECT r.id, r.rating, r.title, r.body, r.status, r.created_at,
+                    u.display_name, l.name AS lounge_name, l.country_id,
+                    (SELECT COUNT(*) FROM review_flags f WHERE f.review_id = r.id) AS flags
+             FROM reviews r
+             JOIN users u ON u.id = r.user_id
+             LEFT JOIN lounges l ON l.id = r.lounge_id
+             ORDER BY (r.status = 'flagged') DESC, flags DESC, r.updated_at DESC
+             LIMIT 200"
+        )->fetchAll();
+    } catch (Throwable $e) { $reviews_rows = []; }
+}
 
 // Photos
 $photos_data       = [];
@@ -643,6 +661,15 @@ html{transition:background .25s,color .25s}
     <?php endif; ?>
   </a>
 
+  <a class="nav-item <?= $tab==='reviews' ? 'active' : '' ?>"
+     href="?key=<?= urlencode($key) ?>&tab=reviews">
+    <span class="ni-icon">&#9998;</span>
+    <span class="ni-label">Avis</span>
+    <?php if ($flagged_count): ?>
+    <span class="nav-badge nb-red"><?= $flagged_count ?></span>
+    <?php endif; ?>
+  </a>
+
   <div class="sidebar-footer">
     <div class="sf-key">Session active · Clé : <?= substr(htmlspecialchars($key),0,8) ?>…</div>
   </div>
@@ -991,6 +1018,88 @@ html{transition:background .25s,color .25s}
     <?php endif; // selected_lounge_id ?>
   </div>
 </div>
+
+<!-- ── AVIS ───────────────────────────────── -->
+<?php elseif ($tab === 'reviews'): ?>
+<div class="page-header">
+  <div>
+    <div class="page-title">Avis des membres</div>
+    <div class="page-subtitle">
+      <?= count($reviews_rows) ?> avis · signalés en tête ·
+      « Retirer » masque l’avis et l’exclut de la note du lounge
+    </div>
+  </div>
+</div>
+
+<?php if (empty($reviews_rows)): ?>
+<div class="empty-state">
+  <div class="empty-icon">◈</div>
+  <div class="empty-text">Aucun avis pour l’instant</div>
+</div>
+<?php else: ?>
+<div class="table-scroll"><table class="contrib-table">
+  <thead>
+    <tr>
+      <th>Auteur</th>
+      <th>Établissement</th>
+      <th>Note</th>
+      <th>Avis</th>
+      <th>Signalements</th>
+      <th>Statut</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($reviews_rows as $rv): $rt = (int)$rv['rating']; ?>
+  <tr>
+    <td style="white-space:nowrap">
+      <div class="ct-name"><?= htmlspecialchars($rv['display_name']) ?></div>
+      <div class="ct-city"><?= date('d/m/y', strtotime($rv['created_at'])) ?></div>
+    </td>
+    <td>
+      <div class="ct-name"><?= htmlspecialchars($rv['lounge_name'] ?? '—') ?></div>
+      <div class="ct-city"><?= htmlspecialchars($rv['country_id'] ?? '') ?></div>
+    </td>
+    <td style="white-space:nowrap;color:#C9A227"><?= str_repeat('★', $rt) . str_repeat('☆', 5 - $rt) ?></td>
+    <td>
+      <?php if ($rv['title']): ?><div class="ct-name"><?= htmlspecialchars($rv['title']) ?></div><?php endif; ?>
+      <div class="ct-city" style="white-space:normal"><?= nl2br(htmlspecialchars(mb_substr((string)$rv['body'], 0, 400))) ?></div>
+    </td>
+    <td style="text-align:center">
+      <?php if ((int)$rv['flags'] > 0): ?>
+      <span class="nav-badge nb-red"><?= (int)$rv['flags'] ?></span>
+      <?php else: ?>
+      <span style="font-size:11px;color:var(--text3)">—</span>
+      <?php endif; ?>
+    </td>
+    <td>
+      <span class="status-pill stp-<?= $rv['status'] === 'published' ? 'approved' : ($rv['status'] === 'flagged' ? 'pending' : 'rejected') ?>">
+        <?= match($rv['status']){'published'=>'Publié','flagged'=>'Signalé','removed'=>'Retiré',default=>$rv['status']} ?>
+      </span>
+    </td>
+    <td>
+      <div class="action-row">
+        <?php if ($rv['status'] !== 'removed'): ?>
+        <form method="POST">
+          <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+          <input type="hidden" name="id"  value="<?= (int)$rv['id'] ?>">
+          <button class="action-btn ab-reject" name="action" value="review_remove">✕ Retirer</button>
+        </form>
+        <?php endif; ?>
+        <?php if ($rv['status'] !== 'published'): ?>
+        <form method="POST">
+          <input type="hidden" name="key" value="<?= htmlspecialchars($key) ?>">
+          <input type="hidden" name="id"  value="<?= (int)$rv['id'] ?>">
+          <button class="action-btn ab-approve" name="action" value="review_publish">✓ Publier</button>
+        </form>
+        <?php endif; ?>
+      </div>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+  </tbody>
+</table></div>
+<?php endif; ?>
 <?php endif; ?>
 
 </main>
