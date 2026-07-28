@@ -14,6 +14,8 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **C2** : vrai schéma SQL (`sql/schema.sql` via mysqldump, 19 tables) + `sql/README.md` à jour
 - **C3** : README projet (lancement local, structure, endpoints, base, déploiement)
 - **C1** : externalisation du front — CSS (3 fichiers) + JS (23 modules) sortis d'index.html (7826 → 373 lignes), 27 fichiers dans assets/. Zéro régression.
+- **D3** : champ email redondant retiré du formulaire de contribution (backend utilise l'email du compte)
+- **D5** : zoom molette centré sur le curseur (ancrage exact du point géographique, repli propre)
 
 ## ⏳ À faire
 
@@ -37,9 +39,9 @@ Effort : P = Petit · M = Moyen · G = Gros.
 ### D. Fonctionnel / produit
 - [ ] **D1** — Modération des avis (statut reviews + UI admin) · M
 - [ ] **D2** — Contributeur de confiance (rôle trusted + auto-approbation) · P→M
-- [ ] **D3** — Retirer le champ email redondant du modal contribution · P
+- [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
 - [ ] **D4** — Globe : navigation clavier + ARIA · M
-- [ ] **D5** — Globe : zoom centré sur le curseur · P
+- [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
 - [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
 
 ### E. Dette technique
@@ -47,4 +49,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **E2** — Auto-héberger topojson / retirer le tag GA placeholder · P
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → **B3** → A1+A2+A3 → B2+B1 → C4 → D1–D5 → D6/E
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A1+A2+A3 → B2+B1 → C4 → D1/D2/D4 → D6/E
