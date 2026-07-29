@@ -153,9 +153,13 @@ function openLex(c) {
       '<div style="padding:30px;text-align:center;color:var(--text2);font-family:Cinzel,serif;font-size:10px;letter-spacing:.15em">'+t('loading_spinner')+'</div>';
     window.loadCountryDetails(c.id).then(function(data) {
       renderLexBody(data.geo || {}, data.zones || []);
-    }).catch(function() {
+    }).catch(function(err) {
+      // Journaliser la cause reelle : ce catch attrape aussi bien un echec
+      // reseau qu'une exception du rendu, et le message seul ne permettait
+      // pas de les distinguer.
+      console.error('[lexique] ' + c.id + ' :', err);
       document.getElementById('lexBody').innerHTML =
-        '<div style="padding:20px;color:#e55">Erreur de chargement.</div>';
+        '<div style="padding:20px;color:#e55">' + t('error_loading') + '</div>';
     });
   }
 }
@@ -284,10 +288,22 @@ function openBrand(name, cid) {
 
   // Sinon fetch depuis MySQL
   window.loadBrand(name)
-    .then(function() { _renderBrand(name, cid); })
-    .catch(function() {
+    .then(function() {
+      // Le rendu est isole du chargement : une exception ici serait sinon
+      // rapportee comme une « erreur de chargement », ce qui envoie le
+      // diagnostic dans la mauvaise direction.
+      try {
+        _renderBrand(name, cid);
+      } catch (err) {
+        console.error('[marque] rendu de ' + name + ' :', err);
+        document.getElementById('bmGam').innerHTML =
+          '<div style="padding:20px;color:#e55">' + t('error_loading') + '</div>';
+      }
+    })
+    .catch(function(err) {
+      console.error('[marque] chargement de ' + name + ' :', err);
       document.getElementById('bmGam').innerHTML =
-        '<div style="padding:20px;color:#e55">Erreur de chargement.</div>';
+        '<div style="padding:20px;color:#e55">' + t('error_loading') + '</div>';
     });
 }
 

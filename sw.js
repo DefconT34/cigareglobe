@@ -2,7 +2,7 @@
 // Stratégie : Network First partout — données toujours fraîches
 // ════════════════════════════════════════════════════════
 
-var CACHE_NAME  = 'cigar-odyssey-v4';   // bump : ressources auto-hebergees (topojson, carte monde)
+var CACHE_NAME  = 'cigar-odyssey-v5';   // bump : strategie de cache des assets applicatifs
 var CACHE_SHELL = ['/', '/index.html'];
 
 // ── Installation ──────────────────────────────────────────
@@ -67,7 +67,28 @@ self.addEventListener('fetch', function(e) {
     return;
   }
 
-  // Autres ressources (images, fonts) → Cache First
+  // Code applicatif (JS/CSS) → Network First avec repli sur le cache.
+  // En « Cache First », une version mise en cache n'etait plus jamais
+  // rafraichie : le navigateur pouvait servir d'anciens scripts avec un
+  // HTML recent, ce qui provoquait des incoherences a l'execution.
+  // Les bibliotheques (assets/vendor) et les donnees figees (assets/data)
+  // restent en Cache First : elles ne changent pas.
+  if (url.pathname.indexOf('/assets/js/') !== -1 || url.pathname.indexOf('/assets/css/') !== -1) {
+    e.respondWith(
+      fetch(e.request)
+        .then(function(res) {
+          if (res.ok) {
+            var clone = res.clone();
+            caches.open(CACHE_NAME).then(function(c){ c.put(e.request, clone); });
+          }
+          return res;
+        })
+        .catch(function() { return caches.match(e.request); })   // hors-ligne
+    );
+    return;
+  }
+
+  // Autres ressources (bibliotheques, donnees, images, fonts) → Cache First
   e.respondWith(
     caches.match(e.request).then(function(cached) {
       if (cached) return cached;
