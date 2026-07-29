@@ -19,7 +19,7 @@
   --ocean-a:#C8E0F0;  --ocean-b:#B0D0E8;  --ocean-c:#98C0DE;  --ocean-d:#80B0D4;
   --spec1:rgba(255,255,255,.52);  --spec2:rgba(255,255,255,.12);
   --rim:rgba(184,134,11,.18);
-  --limb:rgba(24,54,86,.22);  --shade:rgba(20,44,72,.16);  --grain:.09;
+  --ocean-label:rgba(38,70,100,.52);  --limb:rgba(24,54,86,.22);  --shade:rgba(20,44,72,.16);  --grain:.09;
   --world-fill:rgba(140,180,120,.45);  --world-stroke:rgba(255,255,255,.75);
   --flag-overlay:rgba(248,245,238,.84);
   --hdr-bg:rgba(248,245,238,.97);
@@ -39,7 +39,7 @@
   --ocean-a:#0A1A2A;  --ocean-b:#081420;  --ocean-c:#060E18;  --ocean-d:#040A12;
   --spec1:rgba(200,160,60,.08);  --spec2:rgba(200,160,60,.03);
   --rim:rgba(200,160,60,.28);
-  --limb:rgba(0,0,0,.42);  --shade:rgba(0,0,0,.34);  --grain:.05;
+  --ocean-label:rgba(160,185,210,.38);  --limb:rgba(0,0,0,.42);  --shade:rgba(0,0,0,.34);  --grain:.05;
   --world-fill:rgba(50,80,50,.6);  --world-stroke:rgba(60,100,60,.55);
   --flag-overlay:rgba(14,11,8,.80);
   --hdr-bg:rgba(14,11,8,.97);
@@ -59,7 +59,7 @@
   --ocean-a:#020510;  --ocean-b:#01040C;  --ocean-c:#010308;  --ocean-d:#000204;
   --spec1:rgba(80,130,255,.12);  --spec2:rgba(80,130,255,.04);
   --rim:rgba(80,130,255,.3);
-  --limb:rgba(0,0,0,.50);  --shade:rgba(0,2,10,.38);  --grain:.04;
+  --ocean-label:rgba(120,160,220,.36);  --limb:rgba(0,0,0,.50);  --shade:rgba(0,2,10,.38);  --grain:.04;
   --world-fill:rgba(15,30,80,.65);  --world-stroke:rgba(50,90,200,.55);
   --flag-overlay:rgba(6,9,20,.80);
   --hdr-bg:rgba(6,9,20,.97);
@@ -79,7 +79,7 @@
   --ocean-a:#D4E8E0;  --ocean-b:#C4DCE0;  --ocean-c:#B4D0D8;  --ocean-d:#A4C4D0;
   --spec1:rgba(255,240,200,.50);  --spec2:rgba(255,240,200,.10);
   --rim:rgba(140,90,20,.20);
-  --limb:rgba(92,62,24,.21);  --shade:rgba(80,54,20,.15);  --grain:.11;
+  --ocean-label:rgba(96,80,52,.55);  --limb:rgba(92,62,24,.21);  --shade:rgba(80,54,20,.15);  --grain:.11;
   --world-fill:rgba(160,140,100,.4);  --world-stroke:rgba(180,160,100,.6);
   --flag-overlay:rgba(242,232,212,.85);
   --hdr-bg:rgba(242,232,212,.97);
@@ -99,7 +99,7 @@
   --ocean-a:#040E18;  --ocean-b:#030A12;  --ocean-c:#02070C;  --ocean-d:#010408;
   --spec1:rgba(80,200,100,.08);  --spec2:rgba(80,200,100,.03);
   --rim:rgba(80,200,100,.25);
-  --limb:rgba(0,0,0,.45);  --shade:rgba(0,6,2,.34);  --grain:.05;
+  --ocean-label:rgba(140,190,160,.34);  --limb:rgba(0,0,0,.45);  --shade:rgba(0,6,2,.34);  --grain:.05;
   --world-fill:rgba(20,60,25,.7);  --world-stroke:rgba(40,120,50,.6);
   --flag-overlay:rgba(8,15,10,.82);
   --hdr-bg:rgba(8,15,10,.97);
@@ -119,7 +119,7 @@
   --ocean-a:#020818;  --ocean-b:#020612;  --ocean-c:#01040C;  --ocean-d:#010308;
   --spec1:rgba(100,140,255,.10);  --spec2:rgba(100,140,255,.04);
   --rim:rgba(100,140,255,.28);
-  --limb:rgba(0,0,0,.48);  --shade:rgba(0,2,10,.36);  --grain:.05;
+  --ocean-label:rgba(140,170,220,.36);  --limb:rgba(0,0,0,.48);  --shade:rgba(0,2,10,.36);  --grain:.05;
   --world-fill:rgba(15,30,70,.7);  --world-stroke:rgba(40,80,180,.6);
   --flag-overlay:rgba(6,12,24,.82);
   --hdr-bg:rgba(6,12,24,.97);
@@ -139,7 +139,7 @@
   --ocean-a:#080210;  --ocean-b:#06010C;  --ocean-c:#040108;  --ocean-d:#020004;
   --spec1:rgba(200,80,100,.08);  --spec2:rgba(200,80,100,.03);
   --rim:rgba(200,80,100,.28);
-  --limb:rgba(0,0,0,.45);  --shade:rgba(8,0,2,.34);  --grain:.05;
+  --ocean-label:rgba(205,160,170,.34);  --limb:rgba(0,0,0,.45);  --shade:rgba(8,0,2,.34);  --grain:.05;
   --world-fill:rgba(60,15,25,.7);  --world-stroke:rgba(140,40,60,.6);
   --flag-overlay:rgba(14,6,10,.82);
   --hdr-bg:rgba(14,6,10,.97);

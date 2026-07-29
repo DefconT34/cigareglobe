@@ -105,6 +105,7 @@ function getThemeColors(){
     zoneLabel:g('--zone-label'), zoneHalo:g('--zone-halo'),
     gold:g('--gold'), goldL:g('--gold-l'), ember:g('--ember'), grn:g('--grn'),
     limb:g('--limb'), shade:g('--shade'), grain:parseFloat(g('--grain')) || 0,
+    oceanLabel:g('--ocean-label'),
   };
   return _tcCache;
 }
@@ -172,6 +173,58 @@ function sphereOverlay(tc, R){
 
   _ovl = { key: key, cv: cv };
   return cv;
+}
+
+// ── Étiquettes des océans ────────────────────────────────
+// Typographie d'atlas : italique, lettres espacées, encre discrète.
+// Les mers n'apparaissent qu'au zoom (minZoom) pour ne pas encombrer la
+// vue d'ensemble. Traduites dans les 6 langues du site.
+var OCEANS = [
+  { lat:  30, lon: -155, minZoom: 0,   n: { fr:'Océan Pacifique Nord', en:'North Pacific Ocean', es:'Océano Pacífico Norte', de:'Nordpazifik',        zh:'北太平洋', ar:'المحيط الهادئ الشمالي' } },
+  { lat: -25, lon: -125, minZoom: 0,   n: { fr:'Océan Pacifique Sud',  en:'South Pacific Ocean', es:'Océano Pacífico Sur',   de:'Südpazifik',         zh:'南太平洋', ar:'المحيط الهادئ الجنوبي' } },
+  { lat:  32, lon:  -42, minZoom: 0,   n: { fr:'Océan Atlantique',     en:'North Atlantic Ocean',es:'Océano Atlántico',      de:'Nordatlantik',       zh:'北大西洋', ar:'المحيط الأطلسي' } },
+  { lat: -26, lon:  -18, minZoom: 0,   n: { fr:'Atlantique Sud',       en:'South Atlantic Ocean',es:'Atlántico Sur',         de:'Südatlantik',        zh:'南大西洋', ar:'الأطلسي الجنوبي' } },
+  { lat: -22, lon:   78, minZoom: 0,   n: { fr:'Océan Indien',         en:'Indian Ocean',        es:'Océano Índico',         de:'Indischer Ozean',    zh:'印度洋',   ar:'المحيط الهندي' } },
+  { lat: -60, lon:   35, minZoom: 1.1, n: { fr:'Océan Austral',        en:'Southern Ocean',      es:'Océano Austral',        de:'Südlicher Ozean',    zh:'南大洋',   ar:'المحيط الجنوبي' } },
+  { lat:  80, lon:  -20, minZoom: 1.1, n: { fr:'Océan Arctique',       en:'Arctic Ocean',        es:'Océano Ártico',         de:'Arktischer Ozean',   zh:'北冰洋',   ar:'المحيط المتجمد' } },
+  // Mers d'intérêt pour l'atlas du cigare
+  { lat:  14, lon:  -76, minZoom: 1.7, n: { fr:'Mer des Caraïbes',     en:'Caribbean Sea',       es:'Mar Caribe',            de:'Karibisches Meer',   zh:'加勒比海', ar:'البحر الكاريبي' } },
+  { lat:  35, lon:   17, minZoom: 1.5, n: { fr:'Méditerranée',         en:'Mediterranean Sea',   es:'Mediterráneo',          de:'Mittelmeer',         zh:'地中海',   ar:'البحر المتوسط' } },
+  { lat:  25, lon:  -90, minZoom: 1.8, n: { fr:'Golfe du Mexique',     en:'Gulf of Mexico',      es:'Golfo de México',       de:'Golf von Mexiko',    zh:'墨西哥湾', ar:'خليج المكسيك' } },
+];
+
+function drawOceanLabels(tc, R){
+  var lang = window.currentLang || 'fr';
+  var size = Math.max(9, Math.min(15, R * 0.042));
+
+  gc.save();
+  gc.font = 'italic ' + size.toFixed(1) + 'px Georgia, "Times New Roman", serif';
+  gc.textAlign = 'center';
+  gc.textBaseline = 'middle';
+  gc.lineJoin = 'round';
+  // L'espacement des lettres n'est pas gere partout : on l'applique si
+  // le navigateur le propose, sinon le rendu reste correct sans.
+  if ('letterSpacing' in gc) gc.letterSpacing = Math.round(size * 0.18) + 'px';
+
+  OCEANS.forEach(function(o){
+    if (zoomScale < o.minZoom) return;
+    var p  = ll2xyz(o.lat, o.lon, R);
+    var pj = proj(p.x, p.y, p.z);
+    var fade = limbFade(pj.z, R);
+    if (fade < 0.45) return;                 // trop pres du bord : illisible
+
+    var label = o.n[lang] || o.n.fr;
+    gc.globalAlpha = fade;
+    gc.strokeStyle = tc.zoneHalo;            // halo : lisibilite sur la mer
+    gc.lineWidth = 2.5;
+    gc.strokeText(label, pj.x, pj.y);
+    gc.fillStyle = tc.oceanLabel;
+    gc.fillText(label, pj.x, pj.y);
+  });
+
+  gc.globalAlpha = 1;
+  if ('letterSpacing' in gc) gc.letterSpacing = '0px';
+  gc.restore();
 }
 
 // ── World map (TopoJSON) ──────────────────────────────────
@@ -490,6 +543,9 @@ function drawGlobe(){
     fe ? gc.moveTo(pje.x,pje.y) : gc.lineTo(pje.x,pje.y); fe=false;
   }
   gc.strokeStyle=tc.equator; gc.lineWidth=0.8; gc.stroke();
+
+  // Étiquettes des océans — sous l'ombrage, comme une encre sur la carte
+  drawOceanLabels(tc, R);
 
   // Ombrage de sphère : limbe + directionnel + grain (couche pré-calculée)
   gc.drawImage(sphereOverlay(tc, R), W/2 - R, H/2 - R, R*2, R*2);
