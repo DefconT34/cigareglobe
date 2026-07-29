@@ -183,6 +183,15 @@ function openPanel(c) {
   document.getElementById('bRegion').textContent = _tr(c.region);
   document.getElementById('panel').classList.add('open');
 
+  // Exclusion mutuelle : le panneau des lounges occupe la même colonne.
+  // openLoungePanel() ferme déjà panel et lex ; sans la réciproque, passer
+  // d'un pays à lounges à un pays producteur laissait les deux superposés,
+  // chacun avec son en-tête pays. (Le mobile est géré par ses onglets.)
+  if (typeof isMobile !== 'function' || !isMobile()) {
+    var lp = document.getElementById('lounge-panel');
+    if (lp) { lp.classList.remove('open'); lp.setAttribute('aria-hidden', 'true'); }
+  }
+
   // Render immediately with inline data (COUNTRIES already has full detail)
   _renderPanel(c);
 
