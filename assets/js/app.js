@@ -176,6 +176,11 @@ function openLoungePanel(c, background) {
   var el = document.getElementById('lounge-panel');
   if (!el) return;
 
+  // Reciproque de _fillPanelLounges : on retire l'extrait de la fiche pays
+  // pour ne jamais avoir deux fois les memes cartes (identifiants uniques).
+  var excerpt = document.getElementById('panel-lounges');
+  if (excerpt) excerpt.innerHTML = '';
+
   document.getElementById('lFlag').textContent   = c.flag || '';
   document.getElementById('lName').textContent   = c.name || '';
   document.getElementById('lRegion').textContent = c.region || 'Caves & Lounges';
@@ -215,6 +220,10 @@ function openLoungePanel(c, background) {
   window.loadLounges(c.id)
     .then(function(list) {
       _loadMyRatings(function() {
+        // Le chargement est asynchrone : entre-temps l'utilisateur a pu
+        // revenir a la fiche pays. Sans cette garde, un rendu tardif
+        // repeuplerait un panneau ferme et dupliquerait les cartes.
+        if (!background && !el.classList.contains('open')) { body.innerHTML = ''; return; }
         list = _enrichWithMyRatings(list);
         _renderLoungeCards(c, list, body);
         if (typeof injectContribButton === 'function') injectContribButton(c.id);
@@ -225,7 +234,8 @@ function openLoungePanel(c, background) {
     });
 }
 
-function _renderLoungeCards(c, list, body) {
+function _renderLoungeCards(c, list, body, opts) {
+  opts = opts || {};
   if (!list || !list.length) {
     body.innerHTML =
       '<div class="no-lounge-banner">' +
@@ -311,12 +321,14 @@ function _renderLoungeCards(c, list, body) {
       '</div>'
     );
   }).join('');
-  body.innerHTML =
+  // L'intro est masquable : la fiche pays n'affiche qu'un extrait et
+  // annonce le total elle-meme, un decompte partiel y serait trompeur.
+  var intro = opts.intro === false ? '' :
     '<div class="lc-intro">' +
       '<span class="lc-badge">' + list.length + ' '+t('lounge_establish')+(list.length>1?'s':'') + '</span>' +
       ' · '+t('lounge_section_of')+' ' + c.name +
-    '</div>' +
-    '<div class="lc-grid">' + cards + '</div>';
+    '</div>';
+  body.innerHTML = intro + '<div class="lc-grid">' + cards + '</div>';
 
   // Charger les photos lazily après rendu des cartes
   if (typeof _loadLoungePhotos === 'function') {
@@ -425,8 +437,11 @@ window.openLoungePanelForCountry = function(lc) {
 // Called when a producer country is clicked — offer lounge tab
 window._mobileOpenPanel = function(c) {
   openPanel(c);
-  // Pre-fill lounge panel in background (background=true = don't open/close panels)
-  openLoungePanel(c, true);
+  // Pre-remplissage du panneau des lounges : utile uniquement sur mobile,
+  // ou l'onglet doit etre pret. Sur desktop, la fiche pays montre deja un
+  // extrait et le bouton « voir tout » remplit le panneau a la demande —
+  // pre-remplir dupliquerait les cartes (et leurs identifiants) dans le DOM.
+  if (isMobile()) openLoungePanel(c, true);
   if (isMobile()) {
     switchMobileTab('panel');
     var btn = document.getElementById('mnav-panel');

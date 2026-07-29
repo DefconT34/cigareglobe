@@ -3,35 +3,57 @@
 // Chargement lazy : HABANOS et détails chargés depuis MySQL au clic
 // ════════════════════════════════════════════════════════
 
-// ── Lounges (data déjà dans LOUNGES, chargé par app.js) ──
-function renderLounges(countryId) {
-  var list = LOUNGES[countryId];
-  if (!list || !list.length) return '';
+// ── Lounges du pays ─────────────────────────────────────
+// Le rendu est delegue a _renderLoungeCards (app.js), celui du panneau
+// des lounges : memes cartes, avec notes, avis, favoris et photos.
+// L'ancien rendu local, plus pauvre et sans echappement, a ete retire —
+// ces fiches incluent des contributions de membres.
+function _fillPanelLounges(c, list) {
+  var host = document.getElementById('panel-lounges');
+  if (!host) return;
 
-  var cards = list.map(function(l) {
-    var typeColor = l.type.indexOf('Festival')    >= 0 ? 'var(--ember)'  :
-                    l.type.indexOf('Manufacture') >= 0 ? 'var(--grn)'    :
-                    l.type.indexOf('Plantation')  >= 0 ? 'var(--grn)'    :
-                    l.type.indexOf('Flagship')    >= 0 ? 'var(--gold)'   :
-                    l.type.indexOf('Musée')       >= 0 ? '#7B68EE'       :
-                    l.type.indexOf('Hotel')       >= 0 ? '#20B2AA'       :
-                    l.type.indexOf('Members')     >= 0 ? 'var(--ember)'  : 'var(--text2)';
-    var priceHtml = l.price ? '<span class="lounge-price">' + l.price + '</span>' : '';
-    var phoneHtml = l.phone ? '<div class="lounge-phone">📞 ' + l.phone + '</div>' : '';
-    var desc = l.desc || l.description || '';
-    return '<div class="lounge-card">' +
-      '<div class="lounge-top"><div class="lounge-name">' + l.name + '</div>' + priceHtml + '</div>' +
-      '<div class="lounge-meta">' +
-        '<span class="lounge-city">📍 ' + l.city + '</span>' +
-        '<span class="lounge-type" style="color:' + typeColor + '">' + l.type + '</span>' +
-      '</div>' +
-      '<div class="lounge-desc">' + desc + '</div>' +
-      phoneHtml +
-    '</div>';
-  }).join('');
+  // Rendu tardif : si la fiche pays n'est plus a l'ecran, on l'abandonne
+  // (l'utilisateur a ouvert le panneau complet entre-temps).
+  var panelEl = document.getElementById('panel');
+  if (panelEl && !panelEl.classList.contains('open')) { host.innerHTML = ''; return; }
 
-  return '<div class="sec">Caves & Lounges</div>' +
-         '<div class="lounge-grid">' + cards + '</div>';
+  if (!list || !list.length) { host.innerHTML = ''; return; }
+
+  // Sur mobile, l'onglet « Lounges » affiche deja ces fiches : un extrait
+  // ici les rendrait deux fois dans le document. Or chaque carte porte des
+  // identifiants uniques (lc-fav-42, lc-photos-42...) que les chargeurs
+  // resolvent par getElementById — un doublon rendrait le second bloc inerte.
+  if (typeof isMobile === 'function' && isMobile()) { host.innerHTML = ''; return; }
+
+  // Un seul jeu de cartes doit exister dans le document : les fiches
+  // portent des identifiants uniques (lc-fav-42...) que les chargeurs
+  // resolvent par getElementById. Le panneau masque garde sinon ses
+  // cartes, et le premier element trouve serait le mauvais.
+  var lb = document.getElementById('loungeBody');
+  if (lb) lb.innerHTML = '';
+
+  var EXTRAIT = 3;
+  // Les mieux notes d'abord : un extrait n'a d'interet que s'il montre
+  // le meilleur. Les Etats-Unis comptent 31 etablissements.
+  var top = list.slice().sort(function(a, b) {
+    return (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0);
+  }).slice(0, EXTRAIT);
+
+  var total = list.length;
+  host.innerHTML =
+    '<div class="sec">' + t('lounge_section_of') + ' ' + _escHtml(c.name) +
+      ' <span class="lounge-count">' + total + '</span></div>' +
+    '<div id="panel-lounges-body"></div>' +
+    (total > EXTRAIT
+      ? '<button type="button" class="contrib-panel-btn" id="panel-lounges-more">' +
+          t('see_all_lounges').replace('{n}', total) + ' →</button>'
+      : '');
+
+  _renderLoungeCards(c, _enrichWithMyRatings(top),
+                     document.getElementById('panel-lounges-body'), { intro: false });
+
+  var more = document.getElementById('panel-lounges-more');
+  if (more) more.addEventListener('click', function() { openLoungePanel(c); });
 }
 
 // ── Habanos (depuis HABANOS_DATA, chargé lazy) ────────────
@@ -195,6 +217,14 @@ function openPanel(c) {
   // Render immediately with inline data (COUNTRIES already has full detail)
   _renderPanel(c);
 
+  // Etablissements du pays : la donnee arrive apres le rendu du panneau.
+  // Sans ce chargement, la section restait silencieusement vide.
+  if (typeof window.loadLounges === 'function') {
+    window.loadLounges(c.id)
+      .then(function(list) { _fillPanelLounges(c, list || []); })
+      .catch(function(err) { console.error('[panneau] lounges de ' + c.id + ' :', err); });
+  }
+
   // Then silently enrich with habanos (lazy-loaded, fills HABANOS_DATA)
   if (!HABANOS_DATA[c.id]) {
     window.loadCountryDetails(c.id).then(function() {
@@ -246,7 +276,7 @@ function _renderPanel(c) {
     (other.length ? '<div class="sec">'+t('s_other_brands')+'</div><div class="brand-grid">' + other.map(function(b){ return brandCard(b,c); }).join('') + '</div>' : '') +
     '<div class="sec">'+t('notes_sommelier')+'</div>' +
     '<div class="sn">' + _tr(c.notes||'') + '</div>' +
-    renderLounges(c.id) +
+    '<div id="panel-lounges"></div>' +
     habanos;
 }
 

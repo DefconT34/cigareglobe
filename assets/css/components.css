@@ -761,3 +761,11 @@ body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 1
 }
 #globe-a11y button:hover { background: var(--bg3); }
 #globe-a11y button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+/* Compteur d'établissements dans le titre de section du panneau pays */
+.lounge-count {
+  display: inline-block; margin-left: 6px; padding: 1px 7px;
+  border-radius: 9px; background: var(--bg3); border: 1px solid var(--panel-border);
+  font-family: 'Lato', sans-serif; font-size: 10px; color: var(--text2);
+  letter-spacing: 0; vertical-align: middle;
+}
