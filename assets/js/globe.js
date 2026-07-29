@@ -90,7 +90,7 @@ function proj(x, y, z){
 // Mise en cache : getComputedStyle est coûteux et était appelé à chaque
 // frame (×3+). On ne recalcule qu'au changement de thème (invalidateThemeColors).
 var _tcCache = null;
-function invalidateThemeColors(){ _tcCache = null; }
+function invalidateThemeColors(){ _tcCache = null; if (typeof _ovl !== 'undefined' && _ovl) _ovl.key = ''; }
 function getThemeColors(){
   if (_tcCache) return _tcCache;
   var s = getComputedStyle(document.documentElement);
@@ -104,8 +104,74 @@ function getThemeColors(){
     worldFill:g('--world-fill'), worldStroke:g('--world-stroke'),
     zoneLabel:g('--zone-label'), zoneHalo:g('--zone-halo'),
     gold:g('--gold'), goldL:g('--gold-l'), ember:g('--ember'), grn:g('--grn'),
+    limb:g('--limb'), shade:g('--shade'), grain:parseFloat(g('--grain')) || 0,
   };
   return _tcCache;
+}
+
+// ── Ombrage de sphère : limbe + directionnel + grain ─────
+// Ces trois couches ne dépendent que du rayon et du thème — jamais de la
+// rotation. On les peint une fois dans un canvas hors écran, puis chaque
+// image ne coûte plus qu'un seul drawImage.
+var _ovl = { key: '', cv: null };
+var _grainCv = null;
+
+function grainTile(){
+  if (_grainCv) return _grainCv;
+  var n = 96, cv = document.createElement('canvas');
+  cv.width = cv.height = n;
+  var x = cv.getContext('2d');
+  var img = x.createImageData(n, n), d = img.data;
+  for (var i = 0; i < d.length; i += 4){
+    // Gris moyen bruité : neutre en fusion « overlay », il n'éclaircit ni
+    // n'assombrit l'ensemble — il n'ajoute que de la matière.
+    var v = 110 + Math.random() * 36;
+    d[i] = d[i+1] = d[i+2] = v; d[i+3] = 255;
+  }
+  x.putImageData(img, 0, 0);
+  _grainCv = cv;
+  return cv;
+}
+
+function sphereOverlay(tc, R){
+  var key = Math.round(R) + '|' + tc.limb + '|' + tc.shade + '|' + tc.grain + '|' + DPR;
+  if (_ovl.key === key) return _ovl.cv;
+
+  var d  = Math.max(2, Math.ceil(R * 2));
+  var cv = document.createElement('canvas');
+  cv.width = cv.height = Math.ceil(d * DPR);
+  var x = cv.getContext('2d');
+  x.scale(DPR, DPR);
+
+  var c = d / 2, r = d / 2;
+  x.beginPath(); x.arc(c, c, r, 0, Math.PI * 2); x.clip();
+
+  // Ombrage directionnel — contrepoint sombre au reflet (en haut à gauche)
+  var lx = c - r * 0.34, ly = c - r * 0.34;
+  var dg = x.createRadialGradient(lx, ly, r * 0.10, lx, ly, r * 1.9);
+  dg.addColorStop(0,   'rgba(0,0,0,0)');
+  dg.addColorStop(0.5, 'rgba(0,0,0,0)');
+  dg.addColorStop(1,   tc.shade || 'rgba(0,0,0,0)');
+  x.fillStyle = dg; x.fillRect(0, 0, d, d);
+
+  // Assombrissement du limbe — le signal de sphéricité
+  var lg = x.createRadialGradient(c, c, r * 0.60, c, c, r);
+  lg.addColorStop(0, 'rgba(0,0,0,0)');
+  lg.addColorStop(1, tc.limb || 'rgba(0,0,0,0)');
+  x.fillStyle = lg; x.fillRect(0, 0, d, d);
+
+  // Grain — matière de papier imprimé
+  if (tc.grain > 0.001){
+    x.globalCompositeOperation = 'overlay';
+    x.globalAlpha = tc.grain;
+    x.fillStyle = x.createPattern(grainTile(), 'repeat');
+    x.fillRect(0, 0, d, d);
+    x.globalAlpha = 1;
+    x.globalCompositeOperation = 'source-over';
+  }
+
+  _ovl = { key: key, cv: cv };
+  return cv;
 }
 
 // ── World map (TopoJSON) ──────────────────────────────────
@@ -424,6 +490,9 @@ function drawGlobe(){
     fe ? gc.moveTo(pje.x,pje.y) : gc.lineTo(pje.x,pje.y); fe=false;
   }
   gc.strokeStyle=tc.equator; gc.lineWidth=0.8; gc.stroke();
+
+  // Ombrage de sphère : limbe + directionnel + grain (couche pré-calculée)
+  gc.drawImage(sphereOverlay(tc, R), W/2 - R, H/2 - R, R*2, R*2);
 
   // Globe shadow
   gc.save();
