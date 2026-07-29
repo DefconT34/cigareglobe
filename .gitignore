@@ -29,3 +29,8 @@ Thumbs.db
 # Archives
 *.rar
 *.zip
+
+# Maquettes de comparaison WebGL (locales, non integrees a l'application).
+# Conservees pour reference, volontairement hors depot : elles embarquent
+# Three.js (~600 Ko) et ne servent qu'a arbitrer le chantier D6.
+docs/demo/
