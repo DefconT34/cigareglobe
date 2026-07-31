@@ -272,7 +272,13 @@
 <script src="assets/js/search.js"></script>
 <script src="assets/js/deeplinks.js"></script>
 
-<button id="contrib-btn" title="Signaler un établissement" aria-label="Signaler un établissement">✏</button>
+<!-- ══ COLONNE DE BOUTONS FLOTTANTS (bas gauche) ═══════
+     Conteneur commun : les modules 🗺 Explorer, 🔍 Recherche et
+     🔄 Gyroscope y déposent leur bouton. Voir #side-fabs dans
+     components.css — la géométrie n'est définie qu'à cet endroit. -->
+<div id="side-fabs">
+  <button id="contrib-btn" class="side-fab" title="Signaler un établissement" aria-label="Signaler un établissement">✏</button>
+</div>
 <!-- ══ CONTRIBUTION MODAL ══════════════════════════════ -->
 <div id="contrib-modal" role="dialog" aria-modal="true" aria-labelledby="contrib-title" aria-hidden="true">
   <div class="contrib-box">

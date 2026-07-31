@@ -366,23 +366,56 @@ html, body {
    CONTRIBUTION MODAL — Signaler un établissement
    ════════════════════════════════════════════════════════ */
 
-/* Floating contribute button */
-#contrib-btn {
-  position:fixed; bottom:62px; left:16px;
+/* ════════════════════════════════════════════════════════
+   COLONNE DE BOUTONS FLOTTANTS — bas gauche
+   ────────────────────────────────────────────────────────
+   Source unique de la géométrie des boutons ✏ 🔄 🔍 🗺. Ils
+   étaient auparavant positionnés chacun par des offsets `bottom`
+   codés en dur dans quatre fichiers distincts (components.css,
+   globe.js, search.js, explorer.js) : les écarts avaient dérivé
+   jusqu'à 0 px entre deux d'entre eux et 48 px entre deux autres,
+   ce dernier trou correspondant à la place réservée au bouton
+   gyroscope, qui n'existe que sur appareil tactile.
+
+   Une pile flex règle le problème à la racine : l'écart est
+   constant, et un bouton absent ne laisse aucun vide. L'ordre
+   vertical est fixé par `order`, donc indépendant de l'instant où
+   chaque module injecte son bouton.
+   ════════════════════════════════════════════════════════ */
+#side-fabs {
+  position:fixed; left:16px; bottom:62px;
+  /* Sous le panneau de gauche (#lex, z-index 60), qui recouvre cette
+     colonne quand il s'ouvre. */
   z-index:55;
+  display:flex; flex-direction:column-reverse; align-items:center; gap:10px;
+  pointer-events:none;   /* la colonne ne capte rien entre les boutons */
+}
+
+.side-fab {
+  pointer-events:auto;
+  flex:0 0 auto;
+  /* Contexte de positionnement pour les décorations internes, comme la
+     pastille ::after du gyroscope actif (#gyro-btn.gyro-on). */
+  position:relative;
   width:38px; height:38px;
+  padding:0; line-height:1; font-size:17px;
+  display:flex; align-items:center; justify-content:center;
   background:var(--panel-bg);
   border:1px solid var(--panel-border);
   border-radius:50%;
   cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  font-size:16px;
-  box-shadow:0 2px 12px var(--shd);
-  transition:all .2s;
-  color:var(--text);
+  color:var(--gold);
+  box-shadow:0 2px 10px var(--shd);
   -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  transition:border-color .2s, box-shadow .2s, transform .15s;
 }
-#contrib-btn:hover { transform:scale(1.1); box-shadow:0 4px 20px var(--shd2); border-color:var(--gold); }
+.side-fab:hover { border-color:var(--gold); box-shadow:0 4px 20px var(--shd2); transform:scale(1.08); }
+
+/* Ordre de bas en haut (le conteneur est en column-reverse). */
+#contrib-btn  { order:1; color:var(--text); font-size:16px; }
+#gyro-btn     { order:2; }
+#search-btn   { order:3; }
+#explorer-btn { order:4; font-size:15px; }
 
 /* Modal backdrop */
 #contrib-modal {
@@ -540,7 +573,9 @@ html, body {
 }
 
 /* Mobile adjustments */
-body.mobile-mode #contrib-btn { bottom:68px; left:12px; width:34px; height:34px; font-size:14px; }
+body.mobile-mode #side-fabs { left:12px; bottom:68px; gap:8px; }
+body.mobile-mode .side-fab   { width:34px; height:34px; font-size:15px; }
+body.mobile-mode #contrib-btn  { font-size:14px; }
 body.mobile-mode #contrib-modal { align-items:flex-end; }
 body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 16px 0 0; max-height:92vh; }
 

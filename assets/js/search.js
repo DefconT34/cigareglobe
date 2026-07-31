@@ -233,28 +233,8 @@ window.addEventListener('DOMContentLoaded', function() {
   // CSS
   var style = document.createElement('style');
   style.textContent = `
-    /* ── Bouton recherche — icône ronde, colonne gauche bas ── */
-    #search-btn {
-      position:fixed;
-      bottom:148px;   /* au-dessus du gyroscope (110px) + taille (38px) */
-      left:16px;
-      z-index:120;
-      width:38px; height:38px;
-      display:flex; align-items:center; justify-content:center;
-      background:var(--panel-bg); border:1px solid var(--panel-border);
-      border-radius:50%; cursor:pointer; color:var(--gold);
-      font-size:17px;
-      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-      box-shadow:0 2px 10px var(--shd);
-      transition:border-color .2s, box-shadow .2s, transform .15s;
-    }
-    #search-btn:hover { border-color:var(--gold); box-shadow:0 4px 20px var(--shd2); transform:scale(1.08); }
-    body.mobile-mode #search-btn {
-      bottom:148px;
-      left:12px;
-      width:34px; height:34px;
-      font-size:15px;
-    }
+    /* Le bouton 🔍 prend sa géométrie de .side-fab (components.css) :
+       il fait partie de la colonne #side-fabs, rien à positionner ici. */
 
     /* ── Overlay ── */
     #search-overlay {
@@ -323,11 +303,12 @@ window.addEventListener('DOMContentLoaded', function() {
   // Bouton recherche (top center)
   var btn = document.createElement('button');
   btn.id = 'search-btn';
+  btn.className = 'side-fab';
   btn.setAttribute('aria-label', 'Rechercher (/ ou Ctrl+K)');
   btn.setAttribute('title', 'Rechercher');
   btn.innerHTML = '🔍';
   btn.addEventListener('click', openSearch);
-  document.body.appendChild(btn);
+  (document.getElementById('side-fabs') || document.body).appendChild(btn);
 
   // Overlay
   var overlay = document.createElement('div');

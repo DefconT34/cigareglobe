@@ -493,20 +493,8 @@ window.addEventListener('DOMContentLoaded', function() {
     }
     .exp-link:hover { opacity:1; }
 
-    /* Bouton Explorer dans l'UI principale */
-    #explorer-btn {
-      position:fixed;
-      bottom:186px; left:12px;  /* mobile — au-dessus du bouton 🔍 */
-      z-index:120;
-      width:34px; height:34px;
-      display:flex; align-items:center; justify-content:center;
-      background:var(--panel-bg); border:1px solid var(--panel-border);
-      border-radius:50%; cursor:pointer; font-size:15px; color:var(--gold);
-      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-      box-shadow:0 2px 10px var(--shd);
-      transition:border-color .2s, box-shadow .2s, transform .15s;
-    }
-    #explorer-btn:hover { border-color:var(--gold); transform:scale(1.08); }
+    /* Le bouton 🗺 prend sa géométrie de .side-fab (components.css) :
+       il fait partie de la colonne #side-fabs, rien à positionner ici. */
   `;
   document.head.appendChild(style);
 
@@ -523,11 +511,12 @@ window.addEventListener('DOMContentLoaded', function() {
   // Bouton Explorer (dans la colonne gauche, au-dessus de la recherche)
   var btn = document.createElement('button');
   btn.id        = 'explorer-btn';
+  btn.className = 'side-fab';
   btn.title     = 'Vue Explorer — Carte 2D';
   btn.innerHTML = '🗺';
   btn.setAttribute('aria-label', 'Vue Explorer');
   btn.addEventListener('click', openExplorer);
-  document.body.appendChild(btn);
+  (document.getElementById('side-fabs') || document.body).appendChild(btn);
 
   // Overlay Explorer
   var overlay = document.createElement('div');

@@ -762,30 +762,10 @@ window.addEventListener('DOMContentLoaded', function() {
   btn.title     = 'Activer le gyroscope';
   btn.setAttribute('aria-label', 'Gyroscope');
   btn.setAttribute('aria-pressed', 'false');
-  // Position : au-dessus du bouton ✏ contrib (left, bas)
-  var isMob = window.innerWidth <= 640;
-  btn.style.cssText = [
-    'position:fixed',
-    isMob ? 'bottom:110px' : 'bottom:108px',  // au-dessus du contrib-btn
-    isMob ? 'left:12px'    : 'left:16px',     // aligné avec contrib-btn
-    'right:auto',
-    'z-index:200',
-    'width:' + (isMob ? '34px' : '38px'),
-    'height:' + (isMob ? '34px' : '38px'),
-    'border-radius:50%',
-    'border:1px solid rgba(201,162,39,0.4)',
-    'background:var(--panel-bg, rgba(26,14,0,0.85))',
-    'color:#c9a227',
-    'font-size:' + (isMob ? '15px' : '17px'),
-    'cursor:pointer',
-    'display:flex',
-    'align-items:center',
-    'justify-content:center',
-    'backdrop-filter:blur(8px)',
-    '-webkit-backdrop-filter:blur(8px)',
-    'transition:background .2s, border-color .2s, transform .15s',
-    'box-shadow:0 2px 10px rgba(0,0,0,0.4)',
-  ].join(';');
+  // Géométrie et position : .side-fab dans la colonne #side-fabs
+  // (components.css). Rien à calculer ici, donc rien à recalculer au
+  // redimensionnement — c'est la pile flex qui s'en charge.
+  btn.className = 'side-fab';
 
   // Style actif
   var style = document.createElement('style');
@@ -793,16 +773,7 @@ window.addEventListener('DOMContentLoaded', function() {
   document.head.appendChild(style);
 
   btn.addEventListener('click', toggleGyro);
-  document.body.appendChild(btn);
-
-  // Adapter la position si la fenêtre est redimensionnée
-  window.addEventListener('resize', function() {
-    var mob = window.innerWidth <= 640;
-    btn.style.bottom = mob ? '110px' : '108px';
-    btn.style.left   = mob ? '12px'  : '16px';
-    btn.style.width  = btn.style.height = mob ? '34px' : '38px';
-    btn.style.fontSize = mob ? '15px' : '17px';
-  });
+  (document.getElementById('side-fabs') || document.body).appendChild(btn);
 
   // Android : démarrer directement (pas de permission requise)
   if (typeof DeviceOrientationEvent.requestPermission !== 'function') {
