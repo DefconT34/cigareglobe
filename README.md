@@ -58,7 +58,7 @@ backend/
   config.php          Chargeur .env + connexion PDO (sans secret)
   auth.php            Authentification (register, verify, login, reset…)
   auth_lib.php        Session sécurisée, CSRF, rate-limit, utilisateur courant
-  mailer.php          Envoi d'email (send_email, mode LOG_ONLY en dev)
+  mailer.php          Envoi d'email — pilotes log/mail/brevo/mailgun/resend
   api.php             Contributions, avis, favoris, profil, modération
   data.php            Données de l'atlas (globe, pays, lounges, marques…)
   photos.php          Upload & gestion des photos de lounges
@@ -66,7 +66,7 @@ backend/
   .htaccess           Protection de config.php
 sql/
   schema.sql          Schéma de référence (structure complète)
-  migrations/         Évolutions incrémentales (001→003)
+  migrations/         Évolutions incrémentales (001→006)
 docs/
   roadmap.md          Feuille de route (chantiers restants + ordre)
   espace-client.md    Cahier des charges de l'espace membre
@@ -107,8 +107,19 @@ commande sur un service MySQL à chaque *push*.
 
 Voir `sql/README.md` (schéma de référence, migrations, régénération, seed).
 
+## Emails
+
+`send_email()` est le point d'entrée unique ; le transport se choisit
+dans `.env` via `MAIL_DRIVER` (`log`, `mail`, `brevo`, `mailgun`,
+`resend`) sans toucher au code appelant. La configuration DNS (SPF,
+DKIM, DMARC) et le diagnostic sont détaillés dans `docs/emails.md`.
+
+```bash
+php tools/mail_doctor.php            # contrôle transport + DNS
+php tools/mail_doctor.php --to=vous@exemple.com   # + envoi de test
+```
+
 ## Déploiement
 
 Non couvert ici pour l'instant — étapes détaillées dans `docs/roadmap.md`
-(chantiers B1/B2/B3 : `.env` serveur, rotation des secrets, email
-transactionnel, domaine).
+(chantiers B1/B3 : `.env` serveur, rotation des secrets, domaine).

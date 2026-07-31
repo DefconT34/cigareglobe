@@ -99,6 +99,16 @@ define('MAIL_FROM_NAME', env('MAIL_FROM_NAME', 'CigarGlobe'));
 if (strtolower((string)env('MAIL_LOG_ONLY', 'false')) === 'true') define('MAIL_LOG_ONLY', true);
 if (strtolower((string)env('MAIL_DEBUG',    'false')) === 'true') define('MAIL_DEBUG', true);
 
+// Transport : log | mail | brevo | mailgun | resend (voir docs/emails.md).
+// Les pilotes HTTP signent en DKIM et portent la reputation d'envoi ;
+// mail() reste le repli et n'est pas recommande en production.
+define('MAIL_DRIVER',    strtolower((string)env('MAIL_DRIVER', 'mail')));
+define('MAIL_API_KEY',   (string)env('MAIL_API_KEY', ''));
+define('MAIL_REPLY_TO',  (string)env('MAIL_REPLY_TO', ''));
+define('MAILGUN_DOMAIN', (string)env('MAILGUN_DOMAIN', ''));
+define('MAILGUN_HOST',   (string)env('MAILGUN_HOST', 'api.mailgun.net'));
+define('MAIL_TIMEOUT',   (int)env('MAIL_TIMEOUT', 10));
+
 // ── Connexion PDO ─────────────────────────────────────────
 function getDB(): PDO {
     static $pdo = null;

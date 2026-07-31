@@ -1,4 +1,6 @@
 <?php
+// Ligne de commande uniquement : ce harnais reconstruit la base de test.
+if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 // ════════════════════════════════════════════════════════
 // tests/bootstrap.php — Harnais de test (sans dépendance)
 // ────────────────────────────────────────────────────────

@@ -1,0 +1,4 @@
+# Harnais de test : usage en ligne de commande uniquement.
+# run.php reconstruit la base de test — il ne doit jamais etre joignable
+# par HTTP, meme si le repertoire est deploye par megarde.
+Require all denied

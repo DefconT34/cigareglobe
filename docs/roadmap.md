@@ -25,6 +25,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **A3** : revue sécurité — XSS stocké corrigé (échappement + URLs), fuites d'erreurs colmatées, CSP + Permissions-Policy, CORS/credentials assaini
 - **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
 - **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
+- **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
 
 ## ⏳ À faire
 
@@ -34,8 +35,8 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→003) · M
-- [ ] **B2** — Délivrabilité email (service transactionnel derrière send_email) · M · décision tierce
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→006) · M
+- [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [ ] **B3** — Nom & domaine unifiés (CigarOdyssey/Globe/World → un seul + SEO/manifest/MAIL_FROM) · P→M · débloque A2/B2
 
 ### C. Qualité & structure
@@ -60,4 +61,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → **B3** → A2 → B1 → D6/C1b (optionnels)

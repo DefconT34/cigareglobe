@@ -1,17 +1,68 @@
 <?php
 // ════════════════════════════════════════════════════════
-// mailer.php — Abstraction d'envoi d'email
+// mailer.php — Envoi d'email transactionnel
 // ────────────────────────────────────────────────────────
-// Point d'entrée unique : send_email(). Implémentation mail()
-// aujourd'hui, swappable vers un service transactionnel (Brevo,
-// Mailgun…) plus tard SANS toucher au code appelant.
+// Point d'entrée unique : send_email(). Le transport est choisi par
+// MAIL_DRIVER, sans que le code appelant ait à le savoir :
 //
-// Constantes optionnelles (config.php) :
-//   MAIL_FROM       'noreply@cigareglobe.com'
-//   MAIL_FROM_NAME  'CigarGlobe'
-//   MAIL_LOG_ONLY   true  → n'envoie rien, écrit dans le log (DEV)
-//   MAIL_DEBUG      true  → journalise en plus de l'envoi réel
+//   log      n'envoie rien, journalise dans backend/cache/mail_outbox.log
+//            (mode développement : permet de récupérer les liens de
+//            vérification et de réinitialisation)
+//   mail     fonction mail() de PHP — repli, délivrabilité médiocre :
+//            pas de DKIM, IP mutualisée souvent mal réputée
+//   brevo    API HTTP Brevo (ex-Sendinblue)
+//   mailgun  API HTTP Mailgun
+//   resend   API HTTP Resend
+//
+// Les trois pilotes HTTP signent les messages en DKIM et gèrent la
+// réputation d'envoi : c'est ce qui fait la différence entre « arrive
+// en boîte de réception » et « arrive en spam ». Ils supposent que le
+// domaine de MAIL_FROM a été vérifié chez le prestataire et que SPF,
+// DKIM et DMARC sont publiés — voir docs/emails.md.
+//
+// Constantes (config.php, alimentées par .env) :
+//   MAIL_DRIVER      log | mail | brevo | mailgun | resend
+//   MAIL_API_KEY     clé d'API du prestataire (pilotes HTTP)
+//   MAIL_FROM        adresse d'expédition, sur le domaine vérifié
+//   MAIL_FROM_NAME   nom affiché
+//   MAIL_REPLY_TO    adresse de réponse réelle (facultatif)
+//   MAILGUN_DOMAIN   domaine d'envoi Mailgun
+//   MAILGUN_HOST     api.mailgun.net (défaut) ou api.eu.mailgun.net
+//   MAIL_TIMEOUT     délai d'attente HTTP en secondes (défaut 10)
+//   MAIL_LOG_ONLY    true → force le pilote « log » (rétrocompatible)
+//   MAIL_DEBUG       true → journalise en plus de l'envoi réel
 // ════════════════════════════════════════════════════════
+
+// Dernière erreur de transport, pour le diagnostic (jamais renvoyée au client).
+$GLOBALS['_mail_last_error'] = '';
+
+function mail_last_error(): string {
+    return (string)($GLOBALS['_mail_last_error'] ?? '');
+}
+
+/**
+ * Pilote effectif. MAIL_LOG_ONLY reste prioritaire (dev et tests).
+ * Un pilote HTTP sans clé d'API retombe sur mail() plutôt que d'échouer
+ * en silence : mieux vaut un email mal noté qu'un compte inutilisable.
+ */
+function mail_driver(): string {
+    if (defined('MAIL_LOG_ONLY') && MAIL_LOG_ONLY) return 'log';
+
+    $d = defined('MAIL_DRIVER') ? strtolower(trim(MAIL_DRIVER)) : 'mail';
+    if (!in_array($d, ['log', 'mail', 'brevo', 'mailgun', 'resend'], true)) return 'mail';
+
+    if (in_array($d, ['brevo', 'mailgun', 'resend'], true)) {
+        if (!defined('MAIL_API_KEY') || MAIL_API_KEY === '') {
+            _mail_log('-', 'configuration', "MAIL_DRIVER=$d sans MAIL_API_KEY — repli sur mail()", 'CONFIG');
+            return 'mail';
+        }
+        if (!function_exists('curl_init')) {
+            _mail_log('-', 'configuration', "MAIL_DRIVER=$d mais cURL absent — repli sur mail()", 'CONFIG');
+            return 'mail';
+        }
+    }
+    return $d;
+}
 
 function _mail_log(string $to, string $subject, string $body, string $status): void {
     $dir = __DIR__ . '/cache';
@@ -21,29 +72,204 @@ function _mail_log(string $to, string $subject, string $body, string $status): v
     @file_put_contents($dir . '/mail_outbox.log', $line, FILE_APPEND);
 }
 
+function _mail_from(): array {
+    $addr = defined('MAIL_FROM') && MAIL_FROM !== ''
+          ? MAIL_FROM
+          : ('noreply@' . ($_SERVER['HTTP_HOST'] ?? 'cigareglobe.com'));
+    $name = defined('MAIL_FROM_NAME') && MAIL_FROM_NAME !== '' ? MAIL_FROM_NAME : 'CigarGlobe';
+    return [$addr, $name];
+}
+
 /**
- * Envoie un email HTML. Retourne true si accepté pour envoi.
+ * Version texte du message. Un email HTML sans alternative texte est
+ * pénalisé par les filtres anti-spam ; les liens sont explicités pour
+ * rester utilisables.
+ */
+function mail_text_from_html(string $html): string {
+    $t = preg_replace('#<(script|style)\b[^>]*>.*?</\1>#is', '', $html);
+    $t = preg_replace('#<a\b[^>]*href=(["\'])(.*?)\1[^>]*>(.*?)</a>#is', '$3 : $2', $t);
+    $t = preg_replace('#<(br|/p|/div|/h[1-6]|/tr)\s*/?>#i', "\n", $t);
+    $t = html_entity_decode(strip_tags($t), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $t = preg_replace('/[ \t]+/', ' ', $t);
+    $t = preg_replace('/\n\s*\n\s*\n+/', "\n\n", $t);
+    return trim($t);
+}
+
+/**
+ * Requête HTTP POST JSON ou formulaire. Retourne [status, corps].
+ * Un status 0 signale une erreur réseau (le corps porte le message).
+ */
+function _mail_http(string $url, array $headers, $payload): array {
+    $timeout = defined('MAIL_TIMEOUT') ? max(2, (int)MAIL_TIMEOUT) : 10;
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => is_array($payload) ? http_build_query($payload) : $payload,
+        CURLOPT_HTTPHEADER     => $headers,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => $timeout,
+        CURLOPT_CONNECTTIMEOUT => min(5, $timeout),
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+    ]);
+    $body   = curl_exec($ch);
+    $status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err    = curl_error($ch);
+    curl_close($ch);
+    if ($body === false) return [0, $err ?: 'erreur cURL'];
+    return [$status, (string)$body];
+}
+
+/** Une réponse transitoire mérite une seconde tentative. */
+function _mail_is_transient(int $status): bool {
+    return $status === 0 || $status === 429 || $status >= 500;
+}
+
+// ── Pilotes ───────────────────────────────────────────────
+
+function _mail_via_brevo(string $to, string $subject, string $html, string $text): array {
+    [$fromAddr, $fromName] = _mail_from();
+    $payload = [
+        'sender'      => ['email' => $fromAddr, 'name' => $fromName],
+        'to'          => [['email' => $to]],
+        'subject'     => $subject,
+        'htmlContent' => $html,
+        'textContent' => $text,
+    ];
+    if (defined('MAIL_REPLY_TO') && MAIL_REPLY_TO !== '') {
+        $payload['replyTo'] = ['email' => MAIL_REPLY_TO];
+    }
+    return _mail_http('https://api.brevo.com/v3/smtp/email',
+        ['Content-Type: application/json', 'Accept: application/json', 'api-key: ' . MAIL_API_KEY],
+        json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+}
+
+function _mail_via_mailgun(string $to, string $subject, string $html, string $text): array {
+    [$fromAddr, $fromName] = _mail_from();
+    $domain = defined('MAILGUN_DOMAIN') && MAILGUN_DOMAIN !== ''
+            ? MAILGUN_DOMAIN
+            : substr(strrchr($fromAddr, '@') ?: '@', 1);
+    $host   = defined('MAILGUN_HOST') && MAILGUN_HOST !== '' ? MAILGUN_HOST : 'api.mailgun.net';
+    $fields = [
+        'from'    => sprintf('%s <%s>', $fromName, $fromAddr),
+        'to'      => $to,
+        'subject' => $subject,
+        'html'    => $html,
+        'text'    => $text,
+    ];
+    if (defined('MAIL_REPLY_TO') && MAIL_REPLY_TO !== '') $fields['h:Reply-To'] = MAIL_REPLY_TO;
+    return _mail_http('https://' . $host . '/v3/' . rawurlencode($domain) . '/messages',
+        ['Authorization: Basic ' . base64_encode('api:' . MAIL_API_KEY)],
+        $fields);
+}
+
+function _mail_via_resend(string $to, string $subject, string $html, string $text): array {
+    [$fromAddr, $fromName] = _mail_from();
+    $payload = [
+        'from'    => sprintf('%s <%s>', $fromName, $fromAddr),
+        'to'      => [$to],
+        'subject' => $subject,
+        'html'    => $html,
+        'text'    => $text,
+    ];
+    if (defined('MAIL_REPLY_TO') && MAIL_REPLY_TO !== '') $payload['reply_to'] = MAIL_REPLY_TO;
+    return _mail_http('https://api.resend.com/emails',
+        ['Content-Type: application/json', 'Authorization: Bearer ' . MAIL_API_KEY],
+        json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+}
+
+/**
+ * Repli mail(). Message multipart texte + HTML, en-têtes Date et
+ * Message-ID explicites, et enveloppe d'expéditeur (-f) alignée sur
+ * MAIL_FROM pour que le Return-Path corresponde à l'enregistrement SPF.
+ */
+function _mail_via_php(string $to, string $subject, string $html, string $text): array {
+    [$fromAddr] = _mail_from();
+    [$headers, $body] = mail_build_mime($subject, $html, $text);
+    $ok = @mail($to, _mail_encode_header($subject), $body, $headers, '-f' . $fromAddr);
+    return $ok ? [200, 'ok'] : [0, 'mail() a refusé le message'];
+}
+
+/**
+ * Construit les en-têtes et le corps multipart/alternative du repli
+ * mail(). Isolé du transport pour rester vérifiable par les tests.
+ * Retourne [en-têtes, corps].
+ */
+function mail_build_mime(string $subject, string $html, string $text): array {
+    [$fromAddr, $fromName] = _mail_from();
+    $domain   = substr(strrchr($fromAddr, '@') ?: '@localhost', 1);
+    $boundary = 'cg' . bin2hex(random_bytes(12));
+
+    $headers  = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: multipart/alternative; boundary=\"$boundary\"\r\n";
+    $headers .= 'From: ' . sprintf('%s <%s>', _mail_encode_header($fromName), $fromAddr) . "\r\n";
+    if (defined('MAIL_REPLY_TO') && MAIL_REPLY_TO !== '') $headers .= 'Reply-To: ' . MAIL_REPLY_TO . "\r\n";
+    $headers .= 'Date: ' . date('r') . "\r\n";
+    $headers .= 'Message-ID: <' . bin2hex(random_bytes(16)) . '@' . $domain . ">\r\n";
+    $headers .= "X-Mailer: CigarGlobe\r\n";
+    $headers .= "Auto-Submitted: auto-generated\r\n";
+
+    $body  = "--$boundary\r\n"
+           . "Content-Type: text/plain; charset=UTF-8\r\n"
+           . "Content-Transfer-Encoding: base64\r\n\r\n"
+           . chunk_split(base64_encode($text)) . "\r\n"
+           . "--$boundary\r\n"
+           . "Content-Type: text/html; charset=UTF-8\r\n"
+           . "Content-Transfer-Encoding: base64\r\n\r\n"
+           . chunk_split(base64_encode($html)) . "\r\n"
+           . "--$boundary--\r\n";
+
+    return [$headers, $body];
+}
+
+/** Encodage RFC 2047 des en-têtes non ASCII (sujet, nom d'expéditeur). */
+function _mail_encode_header(string $s): string {
+    return preg_match('/[\x80-\xFF]/', $s)
+        ? '=?UTF-8?B?' . base64_encode($s) . '?='
+        : $s;
+}
+
+// ── Point d'entrée ────────────────────────────────────────
+
+/**
+ * Envoie un email HTML. Retourne true si le message a été accepté par
+ * le transport. N'émet jamais d'exception et ne divulgue rien au
+ * client : les échecs partent dans backend/cache/mail_outbox.log.
  */
 function send_email(string $to, string $subject, string $html): bool {
-    $fromAddr = defined('MAIL_FROM')      ? MAIL_FROM      : ('noreply@' . ($_SERVER['HTTP_HOST'] ?? 'cigareglobe.com'));
-    $fromName = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'CigarGlobe';
+    $GLOBALS['_mail_last_error'] = '';
+    $driver = mail_driver();
+    $text   = mail_text_from_html($html);
 
-    $headers  = 'MIME-Version: 1.0' . "\r\n";
-    $headers .= 'Content-Type: text/html; charset=utf-8' . "\r\n";
-    $headers .= 'From: ' . sprintf('%s <%s>', $fromName, $fromAddr) . "\r\n";
-    $headers .= 'Reply-To: ' . $fromAddr . "\r\n";
-
-    // Mode DEV : ne rien envoyer, journaliser (permet de récupérer les liens)
-    if (defined('MAIL_LOG_ONLY') && MAIL_LOG_ONLY) {
+    if ($driver === 'log') {
         _mail_log($to, $subject, $html, 'LOG_ONLY');
         return true;
     }
 
-    $ok = @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $html, $headers);
-    if (!$ok || (defined('MAIL_DEBUG') && MAIL_DEBUG)) {
-        _mail_log($to, $subject, $html, $ok ? 'SENT' : 'FAILED');
+    $send = function () use ($driver, $to, $subject, $html, $text): array {
+        switch ($driver) {
+            case 'brevo':   return _mail_via_brevo($to, $subject, $html, $text);
+            case 'mailgun': return _mail_via_mailgun($to, $subject, $html, $text);
+            case 'resend':  return _mail_via_resend($to, $subject, $html, $text);
+            default:        return _mail_via_php($to, $subject, $html, $text);
+        }
+    };
+
+    [$status, $resp] = $send();
+    // Une panne passagère (réseau, 429, 5xx) mérite une seconde tentative.
+    if (_mail_is_transient($status) && $driver !== 'mail') {
+        usleep(400000);
+        [$status, $resp] = $send();
     }
-    return (bool)$ok;
+
+    $ok = $status >= 200 && $status < 300;
+    if (!$ok) {
+        $GLOBALS['_mail_last_error'] = $driver . ' — HTTP ' . $status . ' : ' . substr($resp, 0, 300);
+        _mail_log($to, $subject, mail_last_error(), 'FAILED');
+    } elseif (defined('MAIL_DEBUG') && MAIL_DEBUG) {
+        _mail_log($to, $subject, $html, 'SENT[' . $driver . ']');
+    }
+    return $ok;
 }
 
 /**

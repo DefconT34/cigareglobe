@@ -1,4 +1,6 @@
 <?php
+// Ligne de commande uniquement : ce harnais reconstruit la base de test.
+if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 // ════════════════════════════════════════════════════════
 // tests/run.php — Tests de fumee de l'API CigarGlobe
 // ────────────────────────────────────────────────────────
@@ -22,6 +24,24 @@ $base = start_server();
 tprint('Serveur       : ' . $base);
 
 register_shutdown_function('stop_server');
+
+// Le journal des emails du mode DEV est partage avec l'application et
+// s'accumule d'une session a l'autre : on note sa taille pour ne lire
+// que ce que CE lancement y ajoute, sinon un jeton perime d'une session
+// precedente serait pris pour celui d'Alice.
+$MAIL_LOG    = PROJECT_ROOT . '/backend/cache/mail_outbox.log';
+$MAIL_OFFSET = is_file($MAIL_LOG) ? filesize($MAIL_LOG) : 0;
+
+/** Dernier jeton d'un type donne emis depuis le debut du lancement. */
+function last_token(string $type): string {
+    global $MAIL_LOG, $MAIL_OFFSET;
+    if (!is_file($MAIL_LOG)) return '';
+    $fresh = (string)@file_get_contents($MAIL_LOG, false, null, $MAIL_OFFSET);
+    $re = $type === 'verify'
+        ? '/action=verify&(?:amp;)?token=([a-f0-9]{64})/'
+        : '/[?&]reset=([a-f0-9]{64})/';
+    return preg_match_all($re, $fresh, $m) ? end($m[1]) : '';
+}
 
 $alice = new_client('alice');   // membre principal
 $bob   = new_client('bob');     // second membre (signalements)
@@ -48,11 +68,7 @@ $r = post_json($base, $bob, '/backend/auth.php?action=register',
 eq('inscription : email deja utilise refuse', 409, $r['status']);
 
 // Verification de l'email par le lien recu (journal des emails en mode DEV)
-$log = PROJECT_ROOT . '/backend/cache/mail_outbox.log';
-$token = '';
-if (is_file($log) && preg_match('/action=verify&(?:amp;)?token=([a-f0-9]{64})/', file_get_contents($log), $m)) {
-    $token = $m[1];
-}
+$token = last_token('verify');
 check('verification : jeton present dans l\'email envoye', $token !== '');
 if ($token !== '') {
     $r = http('GET', $base . '/backend/auth.php?action=verify&token=' . $token, ['jar' => $alice]);
@@ -232,4 +248,70 @@ eq('cle d\'administration acceptee par en-tete', 200, $r['status']);
 $r = http('GET', $base . '/backend/admin.php?tab=reviews', ['jar' => $anon]);
 check('administration : page de connexion pour un visiteur', str_contains($r['body'], "Clé d'administration"));
 
+// ════════════════════════════════════════════════════════
+section('Emails');
+
+require_once PROJECT_ROOT . '/backend/mailer.php';
+
+// La suite tourne avec MAIL_LOG_ONLY=true : aucun message ne doit partir.
+eq('pilote : MAIL_LOG_ONLY force le mode journal', 'log', mail_driver());
+
+$html = email_template('Bienvenue, Alice !', 'Confirmez votre adresse.',
+                       'Confirmer mon email', 'https://exemple.test/?verify=abc123',
+                       'Lien valable 24 heures.');
+$text = mail_text_from_html($html);
+
+check('alternative texte : plus aucune balise', !preg_match('/<[a-z\/]/i', $text));
+check('alternative texte : le lien reste exploitable', str_contains($text, 'https://exemple.test/?verify=abc123'));
+check('alternative texte : le libelle du bouton precede son URL',
+      str_contains($text, 'Confirmer mon email : https://exemple.test/?verify=abc123'));
+check('alternative texte : entites HTML decodees', !str_contains($text, '&#039;') && !str_contains($text, '&amp;'));
+
+// Repli mail() : le message doit etre un multipart texte + HTML valide.
+[$mh, $mb] = mail_build_mime('Confirmez votre adresse email', $html, $text);
+preg_match('/boundary="([^"]+)"/', $mh, $m);
+check('MIME : frontiere declaree dans les en-tetes', !empty($m[1]));
+eq('MIME : deux parties et une cloture', 3, substr_count($mb, '--' . ($m[1] ?? 'x')));
+check('MIME : partie texte presente', str_contains($mb, 'Content-Type: text/plain; charset=UTF-8'));
+check('MIME : partie HTML presente', str_contains($mb, 'Content-Type: text/html; charset=UTF-8'));
+check('MIME : en-tetes Date et Message-ID', str_contains($mh, 'Date: ') && str_contains($mh, 'Message-ID: <'));
+eq('MIME : sujet accentue encode en RFC 2047',
+   '=?UTF-8?B?' . base64_encode('Réinitialisation') . '?=', _mail_encode_header('Réinitialisation'));
+eq('MIME : sujet ASCII laisse tel quel', 'Welcome', _mail_encode_header('Welcome'));
+
+// Un pilote HTTP sans cle d'API doit retomber sur mail() plutot que
+// d'echouer en silence. Verifie dans un sous-processus, les constantes
+// de configuration etant deja figees dans celui-ci.
+check('pilote : brevo sans cle d\'API retombe sur mail()',
+      probe_mail_driver(['MAIL_DRIVER' => 'brevo', 'MAIL_API_KEY' => '']) === 'mail');
+check('pilote : brevo avec cle d\'API est retenu',
+      probe_mail_driver(['MAIL_DRIVER' => 'brevo', 'MAIL_API_KEY' => 'xkeysib-test-000000000000']) === 'brevo');
+check('pilote : valeur inconnue ramenee a mail()',
+      probe_mail_driver(['MAIL_DRIVER' => 'fantaisie']) === 'mail');
+
 report_and_exit();
+
+/**
+ * Pilote retenu pour un environnement donne. Les constantes de
+ * configuration etant figees a la premiere inclusion, chaque variante
+ * se mesure dans un processus separe ; l'environnement est transmis a
+ * proc_open plutot qu'a travers le shell, dont la syntaxe differe
+ * entre Windows et POSIX.
+ */
+function probe_mail_driver(array $vars): string {
+    $env = array_merge([
+        'MAIL_LOG_ONLY' => 'false',
+        'SystemRoot'    => getenv('SystemRoot') ?: '',
+        'PATH'          => getenv('PATH') ?: '',
+    ], $vars);
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tests/probe_mail_driver.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT, $env);
+    if (!is_resource($proc)) return '';
+    $out = stream_get_contents($pipes[1]);
+    fclose($pipes[1]); fclose($pipes[2]);
+    proc_close($proc);
+    return trim((string)$out);
+}
