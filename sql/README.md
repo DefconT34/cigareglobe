@@ -15,6 +15,8 @@ espace client (users, email_tokens, auth_attempts, reviews, favorites).
   - `002_contributions_reviews.sql` — `contributions.user_id` + `reviews`
   - `003_favorites.sql` — favoris & listes
   - `004_review_flags.sql` — signalements d'avis (modération)
+  - `005_drop_country_polygons.sql` — retrait des polygones saisis à la main
+    (les contours viennent désormais de la carte du monde du front)
 
 ## Installer / recréer la base
 
@@ -25,7 +27,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (001 → 002 → 003 → 004).
+dans l'ordre (001 → 002 → 003 → 004 → 005).
 
 ## Régénérer `schema.sql`
 

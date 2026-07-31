@@ -139,17 +139,6 @@ CREATE TABLE `contributions` (
   KEY `idx_contrib_user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `country_polygons`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `country_polygons` (
-  `country_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `points` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT 'Array of [lat,lon]',
-  PRIMARY KEY (`country_id`),
-  CONSTRAINT `country_polygons_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `producer_countries` (`id`),
-  CONSTRAINT `country_polygons_chk_1` CHECK (json_valid(`points`))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `email_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
