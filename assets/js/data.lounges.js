@@ -50,7 +50,7 @@ var LOUNGE_COUNTRIES = [
   { id:'kuwait',     name:'Koweït',         flag:'🇰🇼', lat:29.4,  lon:47.7,  color:'#8B2BE2' },
   { id:'bahrain',    name:'Bahreïn',        flag:'🇧🇭', lat:26.1,  lon:50.5,  color:'#8B2BE2' },
   { id:'lebanon',    name:'Liban',          flag:'🇱🇧', lat:33.9,  lon:35.5,  color:'#8B2BE2' },
-  { id:'israel',     name:'Israël',         flag:'🇮🇱', lat:31.5,  lon:35.0,  color:'#8B2BE2' },
+  { id:'israel',     name:'Israël',         flag:'🇮🇱', lat:31.2,  lon:34.9,  color:'#8B2BE2' },
   { id:'oman',       name:'Oman',           flag:'🇴🇲', lat:21.5,  lon:55.9,  color:'#8B2BE2' },
   { id:'saudiarabia',name:'Arabie Saoudite',flag:'🇸🇦', lat:23.9,  lon:45.1,  color:'#8B2BE2' },
   // Asie

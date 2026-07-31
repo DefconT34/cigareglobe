@@ -23,6 +23,8 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **E1+E2** : data.php sans DESCRIBE (+7 tests), topojson/carte auto-hébergés, GA retiré, CSP resserrée
 - **C4** : tests de fumée API (50 vérifications, base dédiée) + workflow CI
 - **A3** : revue sécurité — XSS stocké corrigé (échappement + URLs), fuites d'erreurs colmatées, CSP + Permissions-Policy, CORS/credentials assaini
+- **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
+- **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
 
 ## ⏳ À faire
 
@@ -54,6 +56,8 @@ Effort : P = Petit · M = Moyen · G = Gros.
 ### E. Dette technique
 - [x] ~~**E1** — Simplifier `data.php` (DESCRIBE défensifs retirés)~~ ✅
 - [x] ~~**E2** — topojson + carte monde auto-hébergés, GA retiré~~ ✅
+- [x] ~~**E3** — Frontières réelles des pays producteurs (table `country_polygons` supprimée)~~ ✅
+- [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
 
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → **B3** → A2 → B2+B1 → D6/C1b (optionnels)
