@@ -48,7 +48,6 @@ const I18N = {
     gdp:'PIB', independence:'Indépendance',
   
     explorer_title:'🗺 Explorer — Lounges & Caves',
-    explorer_search:'🔍 Ville, nom, pays…',
     explorer_regions:'🌍 Toutes régions',
     explorer_types:'Tous types',
     explorer_sort_country:'Trier par pays',
@@ -200,7 +199,7 @@ const I18N = {
     contrib_source_ph:'https://instagram.com/… ou site officiel',
     contrib_email_ph:'votre@email.com',
     contrib_desc_ph2:'Décrivez l\'établissement : ambiance, sélection, horaires, spécialités…',
-    explorer_search_ph:'🔍 Chercher une ville, un nom, un pays…',
+    explorer_search_ph:'Chercher une ville, un nom, un pays…',
     search_ph:'Pays, lounge, marque, ville…',
   
     stat_brands:'Marques',
@@ -252,7 +251,6 @@ const I18N = {
     gdp:'GDP', independence:'Independence',
   
     explorer_title:'🗺 Explorer — Lounges & Cigars',
-    explorer_search:'🔍 City, name, country…',
     explorer_regions:'🌍 All regions',
     explorer_types:'All types',
     explorer_sort_country:'Sort by country',
@@ -407,7 +405,7 @@ const I18N = {
     contrib_source_ph:'https://instagram.com/… or official website',
     contrib_email_ph:'your@email.com',
     contrib_desc_ph2:'Describe the establishment: atmosphere, selection, hours, specialties…',
-    explorer_search_ph:'🔍 Search a city, name, country…',
+    explorer_search_ph:'Search a city, name, country…',
     search_ph:'Country, lounge, brand, city…',
   
     stat_brands:'Brands',
@@ -459,7 +457,6 @@ const I18N = {
     gdp:'PIB', independence:'Independencia',
   
     explorer_title:'🗺 Explorador — Salas & Cuevas',
-    explorer_search:'🔍 Ciudad, nombre, país…',
     explorer_regions:'🌍 Todas las regiones',
     explorer_types:'Todos los tipos',
     explorer_sort_country:'Ordenar por país',
@@ -614,7 +611,7 @@ const I18N = {
     contrib_source_ph:'https://instagram.com/… o sitio oficial',
     contrib_email_ph:'su@email.com',
     contrib_desc_ph2:'Describa el establecimiento: ambiente, selección, horario, especialidades…',
-    explorer_search_ph:'🔍 Buscar ciudad, nombre, país…',
+    explorer_search_ph:'Buscar ciudad, nombre, país…',
     search_ph:'País, salón, marca, ciudad…',
   
     stat_brands:'Marcas',
@@ -666,7 +663,6 @@ const I18N = {
     gdp:'BIP', independence:'Unabhängigkeit',
   
     explorer_title:'🗺 Explorer — Lounges & Höhlen',
-    explorer_search:'🔍 Stadt, Name, Land…',
     explorer_regions:'🌍 Alle Regionen',
     explorer_types:'Alle Typen',
     explorer_sort_country:'Nach Land sortieren',
@@ -821,7 +817,7 @@ const I18N = {
     contrib_source_ph:'https://instagram.com/… oder offizielle Website',
     contrib_email_ph:'ihre@email.com',
     contrib_desc_ph2:'Beschreiben Sie den Betrieb: Atmosphäre, Auswahl, Öffnungszeiten…',
-    explorer_search_ph:'🔍 Stadt, Name oder Land suchen…',
+    explorer_search_ph:'Stadt, Name oder Land suchen…',
     search_ph:'Land, Lounge, Marke, Stadt…',
   
     stat_brands:'Marken',
@@ -873,7 +869,6 @@ const I18N = {
     gdp:'GDP', independence:'独立年份',
   
     explorer_title:'🗺 探索 — 休息室',
-    explorer_search:'🔍 城市、名称…',
     explorer_regions:'🌍 所有地区',
     explorer_types:'所有类型',
     explorer_sort_country:'按国家排序',
@@ -1028,7 +1023,7 @@ const I18N = {
     contrib_source_ph:'https://instagram.com/… 或官方网站',
     contrib_email_ph:'您的@邮箱.com',
     contrib_desc_ph2:'描述场所：氛围、雪茄选择、营业时间、特色…',
-    explorer_search_ph:'🔍 搜索城市、名称、国家…',
+    explorer_search_ph:'搜索城市、名称、国家…',
     search_ph:'国家、休息室、品牌、城市…',
   
     stat_brands:'品牌',
@@ -1080,7 +1075,6 @@ const I18N = {
     gdp:'الناتج المحلي', independence:'الاستقلال',
   
     explorer_title:'🗺 مستكشف — الصالات',
-    explorer_search:'🔍 مدينة، اسم…',
     explorer_regions:'🌍 كل المناطق',
     explorer_types:'كل الأنواع',
     explorer_sort_country:'ترتيب حسب البلد',
@@ -1235,7 +1229,7 @@ const I18N = {
     contrib_source_ph:'https://instagram.com/… أو الموقع الرسمي',
     contrib_email_ph:'بريدك@مثال.com',
     contrib_desc_ph2:'صِف المنشأة: الأجواء، تشكيلة السيجار، ساعات العمل، التخصصات…',
-    explorer_search_ph:'🔍 ابحث عن مدينة أو اسم أو بلد…',
+    explorer_search_ph:'ابحث عن مدينة أو اسم أو بلد…',
     search_ph:'بلد، صالة، ماركة، مدينة…',
   
     stat_brands:'الماركات',
@@ -1328,8 +1322,15 @@ function applyLang(lang){
   var expTitle = document.getElementById('exp-title');
   if (expTitle) expTitle.textContent = t('explorer_title');
 
+  // Même clé qu'à la création du champ (explorer.js) : deux clés
+  // distinctes faisaient changer le texte après un changement de langue.
   var expSearch = document.getElementById('exp-search');
-  if (expSearch) expSearch.placeholder = t('explorer_search');
+  if (expSearch) expSearch.placeholder = t('explorer_search_ph');
+
+  // L'overlay de recherche est construit une seule fois au chargement :
+  // sans cette ligne, son placeholder restait dans la langue initiale.
+  var mainSearch = document.getElementById('search-input');
+  if (mainSearch) mainSearch.placeholder = t('search_ph');
 
   // Re-render region/type selects
   var expRegion = document.getElementById('exp-region');

@@ -399,13 +399,24 @@ window.addEventListener('DOMContentLoaded', function() {
       background:var(--bg2); border-bottom:1px solid var(--panel-border);
       flex-shrink:0;
     }
-    #exp-search {
-      flex:1; min-width:160px; padding:6px 10px;
+    /* Le cadre passe sur l'enveloppe pour que la loupe soit dedans, comme
+       dans la recherche principale ; le champ devient transparent. */
+    .exp-search-wrap {
+      flex:1; min-width:160px;
+      display:flex; align-items:center; gap:6px;
+      padding:6px 10px;
       background:var(--bg3); border:1px solid var(--panel-border);
-      border-radius:4px; color:var(--text); font-size:12px;
-      font-family:inherit; outline:none;
+      border-radius:4px;
     }
-    #exp-search:focus { border-color:var(--gold); }
+    .exp-search-wrap:focus-within { border-color:var(--gold); }
+    /* .search-icon est defini par search.js en 18px pour l'overlay
+       plein ecran : ici la barre de filtres est plus dense. */
+    .exp-search-wrap .search-icon { font-size:13px; color:var(--gold); flex-shrink:0; }
+    #exp-search {
+      flex:1; min-width:0; padding:0;
+      background:transparent; border:none; outline:none;
+      color:var(--text); font-size:12px; font-family:inherit;
+    }
     .exp-select {
       padding:6px 10px; background:var(--bg3);
       border:1px solid var(--panel-border); border-radius:4px;
@@ -528,8 +539,11 @@ window.addEventListener('DOMContentLoaded', function() {
       <button id="exp-close" onclick="closeExplorer()" aria-label="Fermer">✕</button>
     </div>
     <div id="exp-filters">
-      <input id="exp-search" type="search" placeholder="${t('explorer_search_ph')}"
-             autocomplete="off" oninput="expFilter()">
+      <div class="exp-search-wrap">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input id="exp-search" type="search" placeholder="${t('explorer_search_ph')}"
+               autocomplete="off" aria-label="${t('explorer_search_ph')}" oninput="expFilter()">
+      </div>
       <select class="exp-select" id="exp-region" onchange="expFilter()">
         <option value="all">${t('explorer_regions')}</option>
         <option value="Afrique">${t('region_africa')}</option>
