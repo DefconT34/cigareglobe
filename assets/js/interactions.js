@@ -197,13 +197,15 @@ window.addEventListener('mousemove', e => {
       : hit.type === 'market'
         ? hit.data.flag + ' ' + hit.data.name.toUpperCase() + ' — Marché #' + hit.data.rank
         : hit.data.flag + ' ' + hit.data.name.toUpperCase() + ' — Caves & Lounges';
-    tip.style.opacity = '1';
     tip.style.left = (e.clientX + 14) + 'px';
     tip.style.top  = (e.clientY - 16) + 'px';
     tip.textContent = label;
+    tip.classList.add('tip-on');
+    tip.setAttribute('aria-hidden', 'false');
     globe.style.cursor = 'pointer';
   } else {
-    tip.style.opacity  = '0';
+    tip.classList.remove('tip-on');
+    tip.setAttribute('aria-hidden', 'true');
     globe.style.cursor = drag ? 'grabbing' : 'grab';
   }
 });

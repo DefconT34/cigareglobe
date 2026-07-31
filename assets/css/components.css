@@ -215,7 +215,14 @@ html, body {
 #zoom-thumb { width:3px; border-radius:3px; background:var(--gold); transition:height .2s; min-height:4px; }
 
 /* ── TOOLTIP ── */
-#tip { position:fixed; background:var(--panel-bg); border:1px solid var(--panel-border); box-shadow:0 3px 14px var(--shd); padding:5px 11px; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.12em; color:var(--text); pointer-events:none; z-index:70; transition:opacity .15s; white-space:nowrap; border-radius:3px; }
+/* Infobulle du globe. L'etat de repos doit etre declare : sans lui, la
+   regle transitionnait une opacite jamais definie, et l'infobulle vide
+   restait peinte au coin haut-gauche (fixed sans left/top) jusqu'au
+   premier survol. visibility complete l'opacite pour la sortir du rendu
+   plutot que de la laisser transparente. */
+#tip { position:fixed; left:0; top:0; opacity:0; visibility:hidden;
+       background:var(--panel-bg); border:1px solid var(--panel-border); box-shadow:0 3px 14px var(--shd); padding:5px 11px; font-family:'Cinzel',serif; font-size:9px; letter-spacing:.12em; color:var(--text); pointer-events:none; z-index:70; transition:opacity .15s, visibility .15s; white-space:nowrap; border-radius:3px; }
+#tip.tip-on { opacity:1; visibility:visible; }
 
 /* ── BOTTOM BAR ── */
 .bbar { position:fixed; bottom:0; left:0; right:0; height:44px; padding:0 24px; background:var(--hdr-bg); border-top:1px solid var(--panel-border); z-index:44; display:flex; align-items:center; justify-content:space-between; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); transition:all .4s; }
