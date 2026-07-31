@@ -262,24 +262,77 @@ function drawWorldCountries(tc){
 }
 
 // ── Producer country polygons ────────────────────────────
+// ── Contour des pays producteurs ─────────────────────────
+// La surbrillance reprend la geometrie reelle de la carte du monde
+// (countries-110m.json, deja chargee pour le fond) au lieu de polygones
+// saisis a la main : les contours epousent les cotes, et un nouveau pays
+// producteur est correctement detoure sans travail supplementaire.
+//
+// Appariement : les identifiants suivent le nom anglais du pays, qu'on
+// normalise pour comparer ; les cas qui ne s'y pretent pas sont declares.
+var POLY_NAME_OVERRIDES = { usa: 'United States of America' };
+var _featIndex = null;   // nom normalise -> feature
+
+function _normName(s){
+  return String(s || '').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')   // accents
+    .replace(/[^a-z]/g, '');                             // ponctuation, espaces
+}
+
+function invalidateFeatureIndex(){ _featIndex = null; }
+
+function countryFeature(cid){
+  if (!worldFeatures) return null;
+  if (!_featIndex) {
+    _featIndex = {};
+    worldFeatures.forEach(function(f){
+      var n = f.properties && f.properties.name;
+      if (n) _featIndex[_normName(n)] = f;
+    });
+  }
+  var wanted = _normName(POLY_NAME_OVERRIDES[cid] || cid);
+  if (_featIndex[wanted]) return _featIndex[wanted];
+  // Repli : « Dominican Rep. » pour l'identifiant « dominican »
+  var keys = Object.keys(_featIndex);
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i].indexOf(wanted) === 0) return _featIndex[keys[i]];
+  }
+  return null;
+}
+
 function drawCountryPoly(cid, color, isActive){
-  var poly = COUNTRY_POLYS[cid]; if(!poly) return;
+  var f = countryFeature(cid);
+  if (!f || !f.geometry) return;
   var R = getR();
-  gc.save(); gc.beginPath();
-  var first = true;
-  poly.forEach(function(pt){
-    var p = ll2xyz(pt[0], pt[1], R+1);
-    var pj = proj(p.x, p.y, p.z);
-    if(pj.z < 0){ first=true; return; }
-    first ? gc.moveTo(pj.x,pj.y) : gc.lineTo(pj.x,pj.y);
-    first = false;
-  });
-  gc.closePath();
-  gc.fillStyle = color + (isActive?'55':'33');
-  gc.fill();
+  // Un pays peut compter plusieurs polygones (archipels : Indonesie,
+  // Philippines) et chacun plusieurs anneaux (enclaves).
+  var geoms = f.geometry.type === 'MultiPolygon'
+    ? f.geometry.coordinates
+    : [f.geometry.coordinates];
+
+  gc.save();
+  gc.fillStyle   = color + (isActive ? '55' : '33');
   gc.strokeStyle = color;
-  gc.lineWidth = isActive ? Math.max(1.5, 2/DPR) : Math.max(0.8, 1/DPR);
-  gc.stroke();
+  gc.lineWidth   = isActive ? Math.max(1.5, 2/DPR) : Math.max(0.8, 1/DPR);
+
+  geoms.forEach(function(poly){
+    poly.forEach(function(ring){
+      gc.beginPath();
+      var first = true, hasPoints = false;
+      ring.forEach(function(pt){
+        // La carte du monde stocke [longitude, latitude]
+        var p  = ll2xyz(pt[1], pt[0], R + 1);
+        var pj = proj(p.x, p.y, p.z);
+        if (pj.z < 0){ first = true; return; }   // face cachee du globe
+        first ? gc.moveTo(pj.x, pj.y) : gc.lineTo(pj.x, pj.y);
+        first = false; hasPoints = true;
+      });
+      if (!hasPoints) return;
+      gc.closePath();
+      gc.fill();
+      gc.stroke();
+    });
+  });
   gc.restore();
 }
 

@@ -23,6 +23,9 @@ async function loadWorldMap() {
     const topo = await resp.json();
     const geo = topojson.feature(topo, topo.objects.countries);
     worldFeatures = geo.features;
+    // Les contours des pays producteurs s'appuient dessus : on force la
+    // reconstruction de leur index d'appariement.
+    if (typeof invalidateFeatureIndex === 'function') invalidateFeatureIndex();
     console.log('World map loaded:', worldFeatures.length, 'countries');
   } catch(e) {
     console.warn('World map load failed:', e);

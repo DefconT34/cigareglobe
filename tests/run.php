@@ -204,7 +204,7 @@ section('Donnees de l\'atlas');
 
 $r = http('GET', $base . '/backend/data.php?action=globe', ['jar' => $anon]);
 eq('globe : reponse valide', 200, $r['status']);
-check('globe : structure attendue', isset($r['json']['countries'], $r['json']['markets'], $r['json']['polys']));
+check('globe : structure attendue', isset($r['json']['countries'], $r['json']['markets'], $r['json']['lounge_countries']));
 
 $r = http('GET', $base . '/backend/data.php?action=lounges&id=testland', ['jar' => $anon]);
 eq('lounges : etablissement du pays renvoye', 1, count($r['json']['static']));

@@ -14,7 +14,6 @@ if(typeof MARKETS          ==='undefined') var MARKETS          = (typeof MARKET
 if(typeof LOUNGE_COUNTRIES ==='undefined') var LOUNGE_COUNTRIES = (typeof LOUNGE_COUNTRIES!=="undefined"&&LOUNGE_COUNTRIES.length) ? LOUNGE_COUNTRIES : [];
 if(typeof LOUNGES          ==='undefined') var LOUNGES          = (typeof LOUNGES!=="undefined") ? LOUNGES : {};
 if(typeof ZONES            ==='undefined') var ZONES            = (typeof ZONES!=="undefined"&&Object.keys(ZONES).length) ? ZONES : {};
-if(typeof COUNTRY_POLYS    ==='undefined') var COUNTRY_POLYS    = (typeof COUNTRY_POLYS!=="undefined"&&Object.keys(COUNTRY_POLYS).length) ? COUNTRY_POLYS : {};
 if(typeof GEO_INFO         ==='undefined') var GEO_INFO         = (typeof GEO_INFO!=="undefined"&&Object.keys(GEO_INFO).length) ? GEO_INFO : {};
 if(typeof BRANDS_DB        ==='undefined') var BRANDS_DB        = (typeof BRANDS_DB!=="undefined") ? BRANDS_DB : {};
 if(typeof HABANOS_DATA     ==='undefined') var HABANOS_DATA     = (typeof HABANOS_DATA!=="undefined") ? HABANOS_DATA : {};
@@ -47,7 +46,6 @@ window.loadGlobeData = function() {
             LOUNGE_COUNTRIES = data.lounge_countries || [];
             GEO_INFO         = data.geo              || {};
             ZONES            = data.zones            || {};
-            COUNTRY_POLYS    = data.polys            || {};
 
             // Convertir lat/lon en nombres
             COUNTRIES.forEach(function(c) {

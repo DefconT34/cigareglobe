@@ -168,12 +168,10 @@ function action_globe(PDO $db): void {
         $zones[$cid][] = $z;
     }
 
-    // Polygones pays
-    $polys_raw = $db->query("SELECT country_id, points FROM country_polygons")->fetchAll();
-    $polys = [];
-    foreach ($polys_raw as $p) {
-        $polys[$p['country_id']] = json_decode($p['points'], true);
-    }
+    // Les contours des pays producteurs proviennent desormais de la carte
+    // du monde (assets/data/countries-110m.json), deja chargee par le front :
+    // frontieres exactes, et plus de polygones a maintenir en base.
+    // La table country_polygons n'est donc plus interrogee.
 
     // Marchés
     $markets = $db->query(
@@ -215,7 +213,6 @@ function action_globe(PDO $db): void {
     jout([
         'countries'        => $countries,
         'zones'            => $zones,
-        'polys'            => $polys,
         'markets'          => $markets,
         'lounge_countries' => $lounge_countries,
         'geo'              => $geo,
