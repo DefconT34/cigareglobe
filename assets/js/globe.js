@@ -46,8 +46,11 @@ var DPR = 1;
 var _isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 function resize(){
-  W = window.innerWidth;
-  H = window.innerHeight;
+  // Certains contextes (panneau pas encore dimensionne, iframe, webview)
+  // renvoient 0 au moment ou le script s'execute. Sans repli, le rayon
+  // devient nul et le rendu echoue definitivement.
+  W = window.innerWidth  || document.documentElement.clientWidth  || 1024;
+  H = window.innerHeight || document.documentElement.clientHeight || 768;
   // Safari iOS : limiter à 2x max (évite les artefacts de rendu)
   DPR = _isSafari
     ? Math.min(window.devicePixelRatio || 1, 2)
@@ -495,6 +498,7 @@ function drawGlobe(){
   gc.clearRect(0, 0, W, H);
 
   var R = getR();
+  if (!(R > 0)) return;          // dimensions pas encore connues
 
   // Halo d'atmosphère (glow externe) — dessiné avant la sphère (opaque)
   // qui recouvre la partie interne, ne laissant que l'anneau lumineux.

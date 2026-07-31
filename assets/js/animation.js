@@ -38,6 +38,10 @@ function _resumeGlobe(){ if(_loopPaused){ _loopPaused = false; loop(); } }
 function loop(){
   // Pause : ne pas consommer de CPU quand le globe n'est pas visible
   if(_globeHidden()){ _loopPaused = true; return; }
+  // Auto-reparation : si les dimensions ont change sans evenement resize
+  // (cas d'un conteneur mesure a 0 au demarrage), on se resynchronise.
+  if(typeof resize === 'function' && window.innerWidth && window.innerHeight &&
+     (W !== window.innerWidth || H !== window.innerHeight)) resize();
   // Smooth animation to country
   if(animating){
     const elapsed=performance.now()-animStartTime;
