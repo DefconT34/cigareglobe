@@ -201,7 +201,7 @@ const I18N = {
     contrib_email_ph:'votre@email.com',
     contrib_desc_ph2:'Décrivez l\'établissement : ambiance, sélection, horaires, spécialités…',
     explorer_search_ph:'🔍 Chercher une ville, un nom, un pays…',
-    search_ph:'🔍 Pays, lounge, marque, ville…',
+    search_ph:'Pays, lounge, marque, ville…',
   
     stat_brands:'Marques',
     stat_market:'Marchés',
@@ -408,7 +408,7 @@ const I18N = {
     contrib_email_ph:'your@email.com',
     contrib_desc_ph2:'Describe the establishment: atmosphere, selection, hours, specialties…',
     explorer_search_ph:'🔍 Search a city, name, country…',
-    search_ph:'🔍 Country, lounge, brand, city…',
+    search_ph:'Country, lounge, brand, city…',
   
     stat_brands:'Brands',
     stat_market:'Markets',
@@ -615,7 +615,7 @@ const I18N = {
     contrib_email_ph:'su@email.com',
     contrib_desc_ph2:'Describa el establecimiento: ambiente, selección, horario, especialidades…',
     explorer_search_ph:'🔍 Buscar ciudad, nombre, país…',
-    search_ph:'🔍 País, salón, marca, ciudad…',
+    search_ph:'País, salón, marca, ciudad…',
   
     stat_brands:'Marcas',
     stat_market:'Mercados',
@@ -822,7 +822,7 @@ const I18N = {
     contrib_email_ph:'ihre@email.com',
     contrib_desc_ph2:'Beschreiben Sie den Betrieb: Atmosphäre, Auswahl, Öffnungszeiten…',
     explorer_search_ph:'🔍 Stadt, Name oder Land suchen…',
-    search_ph:'🔍 Land, Lounge, Marke, Stadt…',
+    search_ph:'Land, Lounge, Marke, Stadt…',
   
     stat_brands:'Marken',
     stat_market:'Märkte',
@@ -1029,7 +1029,7 @@ const I18N = {
     contrib_email_ph:'您的@邮箱.com',
     contrib_desc_ph2:'描述场所：氛围、雪茄选择、营业时间、特色…',
     explorer_search_ph:'🔍 搜索城市、名称、国家…',
-    search_ph:'🔍 国家、休息室、品牌、城市…',
+    search_ph:'国家、休息室、品牌、城市…',
   
     stat_brands:'品牌',
     stat_market:'市场',
@@ -1236,7 +1236,7 @@ const I18N = {
     contrib_email_ph:'بريدك@مثال.com',
     contrib_desc_ph2:'صِف المنشأة: الأجواء، تشكيلة السيجار، ساعات العمل، التخصصات…',
     explorer_search_ph:'🔍 ابحث عن مدينة أو اسم أو بلد…',
-    search_ph:'🔍 بلد، صالة، ماركة، مدينة…',
+    search_ph:'بلد، صالة، ماركة، مدينة…',
   
     stat_brands:'الماركات',
     stat_market:'الأسواق',

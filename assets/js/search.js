@@ -319,7 +319,9 @@ window.addEventListener('DOMContentLoaded', function() {
   overlay.innerHTML = `
     <div class="search-box" role="search">
       <div class="search-input-wrap">
-        <span class="search-icon">🔍</span>
+        <!-- Icône décorative : le champ porte deja aria-label. Le
+             placeholder ne doit donc pas reprendre la loupe. -->
+        <span class="search-icon" aria-hidden="true">🔍</span>
         <input id="search-input" type="search" placeholder="${t('search_ph')}"
                autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Recherche"/>
         <button id="search-close" aria-label="Fermer">✕</button>
