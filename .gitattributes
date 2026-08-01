@@ -1,0 +1,4 @@
+# Les dumps SQL sont relus par des outils qui découpent sur ";\n".
+# Un checkout en CRLF a déjà cassé le chargement du schéma (zéro table
+# créée, l'échec ne se voyant qu'au premier INSERT). On fige en LF.
+*.sql text eol=lf
