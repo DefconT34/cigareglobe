@@ -81,6 +81,10 @@ function est_tronque(string $v): bool {
 
 $appliquer = in_array('--appliquer', $argv, true);
 $perdues   = in_array('--perdues', $argv, true);
+// Vide les traductions tronquees pour qu'elles ressortent a l'export.
+// Jamais la colonne source : elle, il faut la reecrire a la main, et
+// l'effacer ferait disparaitre le peu qui subsiste.
+$vider     = in_array('--vider-tronquees', $argv, true);
 
 $db = getDB();
 $repare = 0; $vues = 0; $tronquees = [];
@@ -110,6 +114,11 @@ foreach (plan_contenu() as $table => $champs) {
 
                 if (est_tronque($v)) {
                     $tronquees[] = ['t' => $table, 'c' => $col, 'k' => $r['k'], 'v' => $v];
+                    if ($vider && $l !== '') {
+                        $db->prepare("UPDATE `$table` SET `$col` = NULL WHERE `$pk` = ?")
+                           ->execute([$r['k']]);
+                        continue;
+                    }
                 }
                 if (!est_francais($v)) continue;
 
