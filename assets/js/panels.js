@@ -74,7 +74,7 @@ function renderHabanos(countryId) {
             return '<div class="hfactory"><div class="hfactory-icon">🏭</div><div class="hfactory-info">' +
               '<div class="hfactory-name">' + f.name + '</div>' +
               '<div class="hfactory-city">' + f.city + ' · ' + t('ui_founded') + ' ' + f.founded + '</div>' +
-              '<div class="hfactory-marques">' + (f.marques||[]).map(function(m){ return '<span class="hfactory-marque">'+m+'</span>'; }).join('') + '</div>' +
+              '<div class="hfactory-marques">' + (f.marques||[]).map(function(m){ return '<span class="hfactory-marque">'+_tr(m)+'</span>'; }).join('') + '</div>' +
             '</div></div>';
           }).join('') + '</div>'
         ) : '') +
@@ -104,7 +104,7 @@ function renderHabanos(countryId) {
           return '<div class="hfactory"><div class="hfactory-icon">🏭</div><div class="hfactory-info">' +
             '<div class="hfactory-name">'+f.name+'</div>' +
             '<div class="hfactory-city">'+f.city+' · ' + t('ui_founded') + ' '+f.founded+'</div>' +
-            '<div class="hfactory-marques">'+(f.marques||[]).map(function(m){ return '<span class="hfactory-marque">'+m+'</span>'; }).join('')+'</div>' +
+            '<div class="hfactory-marques">'+(f.marques||[]).map(function(m){ return '<span class="hfactory-marque">'+_tr(m)+'</span>'; }).join('')+'</div>' +
           '</div></div>';
         }).join('') +
         '<div class="sec">' + t('hab_official_brands') + '</div>' +
@@ -113,12 +113,12 @@ function renderHabanos(countryId) {
         }).join('') + '</div>' +
         '<div class="sec">' + t('hab_distribution') + '</div>' +
         (h.distributeurs||[]).map(function(d){
-          return '<div class="hdist"><span class="hdist-pays">'+d.pays+'</span><span class="hdist-nom">'+d.distributeur+'</span></div>';
+          return '<div class="hdist"><span class="hdist-pays">'+_tr(d.pays)+'</span><span class="hdist-nom">'+_tr(d.distributeur)+'</span></div>';
         }).join('') +
         '<div class="sec">' + t('hab_festival') + '</div>' +
         '<div class="hfestival">🎪 ' + (h.festival||'—') + '</div>' +
         '<div class="sec">' + t('hab_certifications') + '</div>' +
-        (h.certifications||[]).map(function(cert){ return '<div class="hcert">'+cert+'</div>'; }).join('') +
+        (h.certifications||[]).map(function(cert){ return '<div class="hcert">'+_tr(cert)+'</div>'; }).join('') +
       '</div>' +
     '</div>';
 }
@@ -225,8 +225,12 @@ function openPanel(c) {
       .catch(function(err) { console.error('[panneau] lounges de ' + c.id + ' :', err); });
   }
 
-  // Then silently enrich with habanos (lazy-loaded, fills HABANOS_DATA)
-  if (!HABANOS_DATA[c.id]) {
+  // Enrichissement depuis la base. On interroge TOUJOURS, sans tester la
+  // presence en memoire : data.habanos.js pre-remplit HABANOS_DATA avec
+  // un instantane francais, si bien que la condition n'etait jamais
+  // vraie et que la section restait en francais dans les six langues.
+  // Le chargeur met en cache par pays ET par langue : une seule requete.
+  {
     window.loadCountryDetails(c.id).then(function() {
       // Re-render habanos section only — DOM surgery
       var panelBody = document.getElementById('panelBody');
@@ -288,10 +292,10 @@ function brandCard(b, c) {
     ' style="cursor:pointer">' +
     '<div style="display:flex;justify-content:space-between;align-items:center">' +
       '<div class="bn">' + b.name + '</div>' +
-      '<span class="btag">DÉTAILS →</span>' +
+      '<span class="btag">' + t('brand_details') + '</span>' +
     '</div>' +
     '<div class="bdesc">' + _tr(b.desc) + '</div>' +
-    '<div class="bexpand">▶ Histoire &amp; gamme</div>' +
+    '<div class="bexpand">' + t('brand_expand') + '</div>' +
   '</div>';
 }
 

@@ -76,6 +76,7 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**F3** — Colonnes de traduction manquantes (migration 007)~~ ✅
 - [x] ~~**F4** — Contenu de l'atlas traduit~~ ✅ · les 4 tables de référence à 100 % dans les 6 langues
 - [ ] **F4b** — Prose longue : `brands` (40 valeurs) et 178 descriptions d'établissements · G · **relève d'un service de traduction**, outillage prêt
+- [ ] **F4c** — Texte libre dans les colonnes JSON : 169 valeurs distinctes (descriptions de marques, fabriques, certifications, distributeurs) · M · voir l'audit dans `docs/i18n.md`
 
 ### E. Dette technique
 - [x] ~~**E1** — Simplifier `data.php` (DESCRIBE défensifs retirés)~~ ✅

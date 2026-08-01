@@ -90,7 +90,14 @@ window.loadGlobeData = function() {
 
 // ── Chargement détails d'un pays (au clic) ───────────────
 window.loadCountryDetails = function(countryId) {
-    return _cachedFetch(_api('country', { id: countryId }));
+    return _cachedFetch(_api('country', { id: countryId }))
+        .then(function (data) {
+            // La presence Habanos vit dans un global lu par panels.js.
+            // Sans cette affectation, seul le snapshot francais de
+            // data.habanos.js etait affiche, quelle que soit la langue.
+            if (data && data.habanos) HABANOS_DATA[countryId] = data.habanos;
+            return data;
+        });
 };
 
 // ── Chargement des lounges d'un pays (au clic) ───────────

@@ -363,6 +363,10 @@ const I18N = {
     seo_title:'CigarOdyssey — L\'atlas mondial du cigare premium',
     seo_description:'Globe interactif des pays producteurs et des marchés du cigare, et annuaire des caves et lounges dans 92 pays.',
     seo_image_alt:'Globe interactif des pays producteurs de cigares',
+
+    /* Cartes de marque (audit multilingue) */
+    brand_details:'DÉTAILS →',
+    brand_expand:'▶ Histoire & gamme',
   },
 
   en: {
@@ -724,6 +728,10 @@ const I18N = {
     seo_title:'CigarOdyssey — The World\'s Premium Cigar Atlas',
     seo_description:'Interactive globe of cigar producing countries and markets, with a directory of cellars and lounges in 92 countries.',
     seo_image_alt:'Interactive globe of cigar producing countries',
+
+    /* Cartes de marque (audit multilingue) */
+    brand_details:'DETAILS →',
+    brand_expand:'▶ History & range',
   },
 
   es: {
@@ -1085,6 +1093,10 @@ const I18N = {
     seo_title:'CigarOdyssey — El atlas mundial del puro premium',
     seo_description:'Globo interactivo de los países productores y los mercados del puro, con un directorio de bodegas y salones en 92 países.',
     seo_image_alt:'Globo interactivo de los países productores de puros',
+
+    /* Cartes de marque (audit multilingue) */
+    brand_details:'DETALLES →',
+    brand_expand:'▶ Historia y gama',
   },
 
   de: {
@@ -1446,6 +1458,10 @@ const I18N = {
     seo_title:'CigarOdyssey — Der Weltatlas der Premium-Zigarre',
     seo_description:'Interaktiver Globus der Zigarren-Erzeugerländer und -Märkte, mit einem Verzeichnis von Kellern und Lounges in 92 Ländern.',
     seo_image_alt:'Interaktiver Globus der Zigarren-Erzeugerländer',
+
+    /* Cartes de marque (audit multilingue) */
+    brand_details:'DETAILS →',
+    brand_expand:'▶ Geschichte & Sortiment',
   },
 
   zh: {
@@ -1807,6 +1823,10 @@ const I18N = {
     seo_title:'CigarOdyssey — 全球优质雪茄地图',
     seo_description:'雪茄生产国与市场的交互式地球仪，并收录 92 个国家的雪茄窖与雪茄馆名录。',
     seo_image_alt:'雪茄生产国交互式地球仪',
+
+    /* Cartes de marque (audit multilingue) */
+    brand_details:'详情 →',
+    brand_expand:'▶ 历史与系列',
   },
 
   ar: {
@@ -2168,6 +2188,10 @@ const I18N = {
     seo_title:'CigarOdyssey — أطلس السيجار الفاخر حول العالم',
     seo_description:'كرة أرضية تفاعلية لبلدان إنتاج السيجار وأسواقه، مع دليل للأقبية والصالات في 92 بلدًا.',
     seo_image_alt:'كرة أرضية تفاعلية لبلدان إنتاج السيجار',
+
+    /* Cartes de marque (audit multilingue) */
+    brand_details:'التفاصيل →',
+    brand_expand:'▶ التاريخ والتشكيلة',
   },
 };
 
