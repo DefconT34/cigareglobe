@@ -26,6 +26,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
 - **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
 - **C5** : tests de bout en bout Playwright (36 parcours : globe, panneaux, recherche, Explorer, langues, a11y, mobile) + jeu de donnees versionne + CI
+- **F4** : contenu de l'atlas traduit — pays, marchés, zones et Habanos à 100 % dans les 6 langues ; traduction par motifs pour les valeurs chiffrées
 - **F6** : référencement multilingue — URLs par langue (`/en/`…), hreflang, sitemap, `index.php` qui sert le bon en-tête
 - **F3** : colonnes de traduction du contenu (migration 007) + repli dans `data.php`
 - **F5** : RTL arabe vérifié, infobulle bornée à la fenêtre
@@ -73,7 +74,8 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**F5** — RTL arabe vérifié de bout en bout~~ ✅ · infobulle bornée à la fenêtre
 - [x] ~~**F6** — Référencement multilingue : URLs par langue, hreflang, sitemap~~ ✅
 - [x] ~~**F3** — Colonnes de traduction manquantes (migration 007)~~ ✅
-- [ ] **F4** — Remplir le contenu · G · outillage livré, champs courts faits, **~310 valeurs distinctes restantes**
+- [x] ~~**F4** — Contenu de l'atlas traduit~~ ✅ · les 4 tables de référence à 100 % dans les 6 langues
+- [ ] **F4b** — Prose longue : `brands` (40 valeurs) et 178 descriptions d'établissements · G · **relève d'un service de traduction**, outillage prêt
 
 ### E. Dette technique
 - [x] ~~**E1** — Simplifier `data.php` (DESCRIBE défensifs retirés)~~ ✅
