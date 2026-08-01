@@ -370,10 +370,13 @@ window.addEventListener('DOMContentLoaded', function() {
       position:fixed; inset:0; z-index:600;
       background:var(--bg);
       display:flex; flex-direction:column;
-      opacity:0; pointer-events:none;
-      transition:opacity .25s;
+      /* visibility en plus de l'opacite : sinon les six controles de
+         la vue restent focalisables au clavier alors qu'elle est
+         fermee et invisible. */
+      opacity:0; visibility:hidden; pointer-events:none;
+      transition:opacity .25s, visibility .25s;
     }
-    #exp-overlay.open { opacity:1; pointer-events:all; }
+    #exp-overlay.open { opacity:1; visibility:visible; pointer-events:all; }
 
     /* Header Explorer */
     #exp-header {

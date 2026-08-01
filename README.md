@@ -107,6 +107,22 @@ commande sur un service MySQL à chaque *push*.
 
 Voir `sql/README.md` (schéma de référence, migrations, régénération, seed).
 
+## Tests
+
+Deux suites complementaires :
+
+```bash
+php tests/run.php     # API : 72 verifications (auth, CSRF, moderation, emails)
+npm run test:e2e      # Front : navigateur reel (globe, panneaux, recherche, i18n, a11y, mobile)
+```
+
+Les deux reconstruisent une base de test dediee ; la base applicative
+n'est jamais modifiee. Details des tests de bout en bout :
+`tests/e2e/LISEZ-MOI.md`.
+
+Playwright est une dependance de **developpement uniquement** : le site
+reste sans etape de build, rien de `node_modules/` n'est deploye.
+
 ## Emails
 
 `send_email()` est le point d'entrée unique ; le transport se choisit

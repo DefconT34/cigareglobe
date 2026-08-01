@@ -243,10 +243,14 @@ window.addEventListener('DOMContentLoaded', function() {
       backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
       display:flex; flex-direction:column; align-items:center;
       padding-top:60px;
-      opacity:0; pointer-events:none;
-      transition:opacity .2s;
+      /* visibility, et pas seulement opacity : un overlay rendu
+         transparent reste focalisable au clavier et annonce par les
+         lecteurs d'ecran. Son champ captait le focus alors qu'il
+         etait invisible. */
+      opacity:0; visibility:hidden; pointer-events:none;
+      transition:opacity .2s, visibility .2s;
     }
-    #search-overlay.open { opacity:1; pointer-events:all; }
+    #search-overlay.open { opacity:1; visibility:visible; pointer-events:all; }
 
     /* ── Champ ── */
     .search-box {

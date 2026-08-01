@@ -25,6 +25,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **A3** : revue sécurité — XSS stocké corrigé (échappement + URLs), fuites d'erreurs colmatées, CSP + Permissions-Policy, CORS/credentials assaini
 - **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
 - **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
+- **C5** : tests de bout en bout Playwright (36 parcours : globe, panneaux, recherche, Explorer, langues, a11y, mobile) + jeu de donnees versionne + CI
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
 
 ## ⏳ À faire
@@ -41,10 +42,11 @@ Effort : P = Petit · M = Moyen · G = Gros.
 
 ### C. Qualité & structure
 - [x] ~~**C1** — Externalisation du front (CSS + 23 modules JS hors index.html)~~ ✅
-- [ ] **C1b** — (optionnel) Migration Vite/ESM (build + import/export) · G · à évaluer, non prioritaire
+- [ ] **C1b** — (optionnel) Migration Vite/ESM (build + import/export) · G · à évaluer, non prioritaire · le filet de tests front existe désormais
 - [x] ~~**C2** — Vrai schéma SQL versionné~~ ✅
 - [x] ~~**C3** — README + doc d'architecture~~ ✅
 - [x] ~~**C4** — Tests de fumée API (50 vérifications) + CI~~ ✅
+- [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
 - [x] ~~**D1** — Modération des avis (signalement + écran admin)~~ ✅

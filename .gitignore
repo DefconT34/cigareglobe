@@ -30,6 +30,16 @@ Thumbs.db
 *.rar
 *.zip
 
+# Outillage de test de bout en bout (Playwright). Rien de tout ceci
+# n'est deploye : le site reste sans etape de build.
+# package-lock.json est versionne : l'integration continue doit
+# installer exactement la meme version de Playwright.
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # Maquettes de comparaison WebGL (locales, non integrees a l'application).
 # Conservees pour reference, volontairement hors depot : elles embarquent
 # Three.js (~600 Ko) et ne servent qu'a arbitrer le chantier D6.
