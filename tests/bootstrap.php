@@ -117,7 +117,8 @@ function test_pdo(): PDO {
 }
 
 // ── Serveur PHP ephemere ─────────────────────────────────
-$GLOBALS['t_server'] = null;
+$GLOBALS['t_server']  = null;
+$GLOBALS['t_servers'] = [];
 
 function free_port(): int {
     $s = stream_socket_server('tcp://127.0.0.1:0', $errno, $errstr);
@@ -131,7 +132,7 @@ function free_port(): int {
  * Demarre le serveur integre sur la base de test. Les variables
  * d'environnement priment sur le .env (voir backend/config.php).
  */
-function start_server(): string {
+function start_server(array $extra = []): string {
     $port = free_port();
     // L'environnement est transmis explicitement : en integration continue
     // il n'y a pas de fichier .env, le serveur doit donc recevoir les acces.
@@ -147,6 +148,7 @@ function start_server(): string {
         'SystemRoot'    => getenv('SystemRoot') ?: '',   // requis par PHP sous Windows
         'PATH'          => getenv('PATH') ?: '',
     ];
+    $env = array_merge($env, $extra);
     $cmd = sprintf('%s -d xdebug.mode=off -S 127.0.0.1:%d -t %s',
                    escapeshellarg(PHP_BINARY), $port, escapeshellarg(PROJECT_ROOT));
 
@@ -155,7 +157,10 @@ function start_server(): string {
                              2 => ['file', tempnam(sys_get_temp_dir(), 'cgsrv'), 'w']],
                       $pipes, PROJECT_ROOT, $env);
     if (!is_resource($proc)) { tprint('Impossible de demarrer le serveur de test.'); exit(2); }
-    $GLOBALS['t_server'] = $proc;
+    // Tous les serveurs lances sont arretes a la sortie, pas seulement
+    // le dernier : sinon un processus PHP resterait a ecouter.
+    $GLOBALS['t_servers'][] = $proc;
+    $GLOBALS['t_server']    = $proc;
 
     $base = "http://127.0.0.1:$port";
     for ($i = 0; $i < 60; $i++) {          // attente active, 6 s max
@@ -169,7 +174,10 @@ function start_server(): string {
 }
 
 function stop_server(): void {
-    if (is_resource($GLOBALS['t_server'])) proc_terminate($GLOBALS['t_server']);
+    foreach (($GLOBALS['t_servers'] ?? []) as $p) {
+        if (is_resource($p)) proc_terminate($p);
+    }
+    $GLOBALS['t_servers'] = [];
 }
 
 // ── Client HTTP ──────────────────────────────────────────

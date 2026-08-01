@@ -289,6 +289,73 @@ check('pilote : brevo avec cle d\'API est retenu',
 check('pilote : valeur inconnue ramenee a mail()',
       probe_mail_driver(['MAIL_DRIVER' => 'fantaisie']) === 'mail');
 
+// ════════════════════════════════════════════════════════
+section('CORS');
+
+/** Valeur d'un en-tete de reponse (derniere occurrence), '' si absent. */
+function entete(string $brut, string $nom): string {
+    $v = '';
+    foreach (explode("\n", $brut) as $l) {
+        if (stripos($l, $nom . ':') === 0) $v = trim(substr($l, strlen($nom) + 1));
+    }
+    return $v;
+}
+
+// Le serveur principal tourne en ALLOWED_ORIGIN=* (developpement).
+$r = http('GET', $base . '/backend/data.php?action=globe',
+          ['jar' => $anon, 'headers' => ['Origin: https://exemple-tiers.test']]);
+eq('developpement : toute origine est acceptee', '*', entete($r['headers'], 'Access-Control-Allow-Origin'));
+
+// Second serveur, CORS restreint : c'est la configuration de production.
+$PERMIS  = 'https://cigarodyssey.com,https://www.cigarodyssey.com';
+$restr   = start_server(['ALLOWED_ORIGIN' => $PERMIS]);
+
+$r = http('GET', $restr . '/backend/data.php?action=globe',
+          ['jar' => $anon, 'headers' => ['Origin: https://cigarodyssey.com']]);
+eq('production : le domaine declare est autorise',
+   'https://cigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
+check('production : la reponse varie selon l\'origine',
+      stripos(entete($r['headers'], 'Vary'), 'origin') !== false);
+
+$r = http('GET', $restr . '/backend/data.php?action=globe',
+          ['jar' => $anon, 'headers' => ['Origin: https://www.cigarodyssey.com']]);
+eq('production : le sous-domaine www est autorise separement',
+   'https://www.cigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
+
+$r = http('GET', $restr . '/backend/data.php?action=globe',
+          ['jar' => $anon, 'headers' => ['Origin: https://cigarodyssey.com.attaquant.test']]);
+eq('production : une origine qui prefixe le domaine est refusee',
+   '', entete($r['headers'], 'Access-Control-Allow-Origin'));
+
+$r = http('GET', $restr . '/backend/data.php?action=globe',
+          ['jar' => $anon, 'headers' => ['Origin: http://cigarodyssey.com']]);
+eq('production : le meme domaine en clair est refuse',
+   '', entete($r['headers'], 'Access-Control-Allow-Origin'));
+
+$r = http('GET', $restr . '/backend/data.php?action=globe',
+          ['jar' => $anon, 'headers' => ['Origin: https://exemple-tiers.test']]);
+eq('production : une origine tierce repart sans autorisation',
+   '', entete($r['headers'], 'Access-Control-Allow-Origin'));
+
+// Requetes authentifiees : « * » et les cookies sont incompatibles.
+$r = http('GET', $restr . '/backend/auth.php?action=me',
+          ['jar' => $anon, 'headers' => ['Origin: https://cigarodyssey.com']]);
+eq('production : credentials autorises pour le domaine declare',
+   'true', entete($r['headers'], 'Access-Control-Allow-Credentials'));
+eq('production : jamais « * » avec des credentials',
+   'https://cigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
+
+$r = http('GET', $restr . '/backend/auth.php?action=me',
+          ['jar' => $anon, 'headers' => ['Origin: https://exemple-tiers.test']]);
+eq('production : pas de credentials pour une origine tierce',
+   '', entete($r['headers'], 'Access-Control-Allow-Credentials'));
+
+// photos.php codait « * » en dur, hors de cors_headers().
+$r = http('GET', $restr . '/backend/photos.php?action=list&lounge_id=1',
+          ['jar' => $anon, 'headers' => ['Origin: https://exemple-tiers.test']]);
+eq('production : photos.php respecte aussi la liste',
+   '', entete($r['headers'], 'Access-Control-Allow-Origin'));
+
 report_and_exit();
 
 /**

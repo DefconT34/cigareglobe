@@ -5,8 +5,6 @@ et marchés, annuaire de lounges & caves (avec photos, notes et avis), et
 espace membre (contributions, favoris, profil). PWA multilingue
 (fr/en/es/de/zh/ar).
 
-> Le projet apparaît sous plusieurs noms dans le code (CigarOdyssey /
-> CigarOdyssey) — unification prévue (voir `docs/roadmap.md`, chantier B3).
 
 ## Stack
 
@@ -83,45 +81,54 @@ uploads/lounges/      Photos uploadées (hors Git)
 Les actions qui écrivent au nom de l'utilisateur exigent une session et un
 jeton **CSRF** (obtenu via `auth.php?action=me`), et un compte à l'email vérifié.
 
+## Base de données
+
+Voir `sql/README.md` (schéma de référence, migrations, régénération, seed).
+
+## CORS
+
+`ALLOWED_ORIGIN` (dans `.env`) liste les origines autorisées à lire
+l'API depuis un navigateur, séparées par des virgules :
+
+```
+ALLOWED_ORIGIN=https://cigarodyssey.com,https://www.cigarodyssey.com   # production
+ALLOWED_ORIGIN=*                                                        # local
+```
+
+Le domaine nu et le sous-domaine `www` sont **deux origines
+distinctes** : déclarer les deux si les deux répondent. La comparaison
+est exacte, jamais un préfixe — `https://cigarodyssey.com.exemple.net`
+est refusé.
+
+À savoir : CORS n'empêche que la lecture *par un navigateur* depuis un
+autre site. Il ne protège pas d'une récupération serveur à serveur, qui
+ne passe par aucune de ces vérifications.
+
 ## Tests
 
-Suite de tests de fumée de l'API (sans dépendance : PHP + MySQL suffisent).
-Elle crée une **base dédiée**, recréée à chaque lancement à partir de
-`sql/schema.sql` — la base applicative n'est jamais modifiée — démarre un
-serveur éphémère, puis vérifie authentification, CSRF, contributions,
-avis et modération, favoris, profil et accès d'administration.
+Deux suites complémentaires. Toutes deux reconstruisent une **base
+dédiée** à partir de `sql/schema.sql` : la base applicative n'est jamais
+modifiée.
 
 ```bash
-php tests/run.php          # code de sortie 0 si tout passe, 1 sinon
+php tests/run.php     # API : 83 vérifications (auth, CSRF, modération, emails, CORS)
+npm run test:e2e      # Front : navigateur réel (globe, panneaux, recherche, i18n, a11y, mobile)
+```
+
+```bash
 TEST_DB=ma_base_test php tests/run.php   # nom de base personnalisé
 ```
+
+Détails des tests de bout en bout : `tests/e2e/LISEZ-MOI.md`. Playwright
+est une dépendance de **développement uniquement** — le site reste sans
+étape de build, rien de `node_modules/` n'est déployé.
 
 > Après toute nouvelle migration, **régénérer `sql/schema.sql`**
 > (voir `sql/README.md`) : les tests partent de ce fichier et signaleront
 > sinon des tables manquantes.
 
-L'intégration continue (`.github/workflows/tests.yml`) exécute la même
-commande sur un service MySQL à chaque *push*.
-
-## Base de données
-
-Voir `sql/README.md` (schéma de référence, migrations, régénération, seed).
-
-## Tests
-
-Deux suites complementaires :
-
-```bash
-php tests/run.php     # API : 72 verifications (auth, CSRF, moderation, emails)
-npm run test:e2e      # Front : navigateur reel (globe, panneaux, recherche, i18n, a11y, mobile)
-```
-
-Les deux reconstruisent une base de test dediee ; la base applicative
-n'est jamais modifiee. Details des tests de bout en bout :
-`tests/e2e/LISEZ-MOI.md`.
-
-Playwright est une dependance de **developpement uniquement** : le site
-reste sans etape de build, rien de `node_modules/` n'est deploye.
+L'intégration continue (`.github/workflows/tests.yml`) exécute les deux
+suites sur un service MySQL à chaque *push*.
 
 ## Emails
 
@@ -138,4 +145,5 @@ php tools/mail_doctor.php --to=vous@exemple.com   # + envoi de test
 ## Déploiement
 
 Non couvert ici pour l'instant — étapes détaillées dans `docs/roadmap.md`
-(chantiers B1/B3 : `.env` serveur, rotation des secrets, domaine).
+(chantier B1 : `.env` serveur, rotation des secrets, migrations 001→006,
+enregistrements DNS des emails).

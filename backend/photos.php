@@ -40,9 +40,12 @@ define('MAX_PER_LOUNGE', 10);
 
 // ── Headers JSON ──────────────────────────────────────────
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+// Passe par cors_headers() comme les autres points d'entree : l'envoi
+// de photos s'appuie sur la session, et l'ancien « * » code en dur
+// ignorait ALLOWED_ORIGIN.
+cors_headers(true);
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-CSRF-Token');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);

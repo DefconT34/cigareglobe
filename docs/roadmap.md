@@ -26,6 +26,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
 - **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
 - **C5** : tests de bout en bout Playwright (36 parcours : globe, panneaux, recherche, Explorer, langues, a11y, mobile) + jeu de donnees versionne + CI
+- **A2** : CORS restreint — liste d'origines comparées exactement, `photos.php` rallié, 11 vérifications
 - **B3** : nom & domaine unifiés — CigarOdyssey / cigarodyssey.com partout (backend, emails, SEO, manifeste, CI, docs)
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
 
@@ -33,7 +34,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 
 ### A. Sécurité & robustesse
 - [x] ~~**A1** — Clé admin hors URL (session + CSRF)~~ ✅
-- [ ] **A2** — Restreindre le CORS au domaine réel (garder `*` en local) · P · **débloqué**
+- [x] ~~**A2** — CORS restreint au domaine réel (liste d'origines, `*` en local)~~ ✅
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
@@ -64,4 +65,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → **A2** → B1 → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → **B1** → D6/C1b (optionnels)

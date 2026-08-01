@@ -62,24 +62,56 @@ define('ADMIN_EMAIL', env('ADMIN_EMAIL', 'vous@example.com'));
 if (strtolower((string)env('APP_DEBUG', 'false')) === 'true') define('APP_DEBUG', true);
 
 // ── CORS ──────────────────────────────────────────────────
+// Une ou plusieurs origines separees par des virgules, ou « * ».
+// En production, le domaine nu et le sous-domaine www sont DEUX
+// origines distinctes : declarer les deux si les deux repondent.
 define('ALLOWED_ORIGIN', env('ALLOWED_ORIGIN', '*'));
 
+/** Liste des origines autorisees, normalisees (sans barre finale). */
+function allowed_origins(): array {
+    static $liste = null;
+    if ($liste !== null) return $liste;
+    $liste = [];
+    foreach (explode(',', (string)ALLOWED_ORIGIN) as $o) {
+        $o = rtrim(trim($o), '/');
+        if ($o !== '') $liste[] = $o;
+    }
+    return $liste;
+}
+
 /**
- * En-tetes CORS. Le couple « Allow-Origin: * » + « Allow-Credentials:
- * true » est invalide (les navigateurs le rejettent) et dangereux s'il
- * etait remplace par un reflet de l'Origin : on n'autorise donc les
- * requetes avec cookies que sur une origine explicitement declaree.
+ * En-tetes CORS.
+ *
+ * Deux regles tiennent tout le reste :
+ *
+ *  - « Allow-Origin: * » et « Allow-Credentials: true » ne peuvent pas
+ *    coexister : les navigateurs rejettent la reponse. Les requetes
+ *    porteuses de cookies exigent donc une origine nommee.
+ *  - une origine n'est renvoyee que si elle figure dans la liste, apres
+ *    comparaison exacte. Refleter l'Origin recue sans la verifier
+ *    reviendrait a autoriser n'importe quel site a lire des reponses
+ *    authentifiees au nom du visiteur.
+ *
+ * Origine inconnue : aucun en-tete Allow-Origin. Le navigateur bloque
+ * la lecture, ce qui est le comportement voulu.
  */
 function cors_headers(bool $with_credentials = false): void {
-    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-    if (ALLOWED_ORIGIN === '*') {
+    $origin  = rtrim($_SERVER['HTTP_ORIGIN'] ?? '', '/');
+    $permis  = allowed_origins();
+    $ouvert  = in_array('*', $permis, true);
+
+    // La reponse depend de l'origine appelante : les caches doivent le
+    // savoir, y compris quand aucune origine n'est finalement autorisee.
+    if (!$ouvert || $with_credentials) header('Vary: Origin');
+
+    if ($ouvert) {
+        // Developpement. Le front et l'API etant servis ensemble, on
+        // renvoie l'origine appelante quand un cookie est necessaire —
+        // uniquement si elle correspond a l'hote courant.
         if ($with_credentials && $origin !== '') {
-            // Meme origine (front et API servis ensemble) : on renvoie
-            // l'origine appelante, sinon le cookie de session est ignore.
             $host = $_SERVER['HTTP_HOST'] ?? '';
             if ($host !== '' && parse_url($origin, PHP_URL_HOST) === explode(':', $host)[0]) {
                 header('Access-Control-Allow-Origin: ' . $origin);
-                header('Vary: Origin');
                 header('Access-Control-Allow-Credentials: true');
                 return;
             }
@@ -87,9 +119,19 @@ function cors_headers(bool $with_credentials = false): void {
         header('Access-Control-Allow-Origin: *');
         return;
     }
-    header('Access-Control-Allow-Origin: ' . ALLOWED_ORIGIN);
-    header('Vary: Origin');
-    if ($with_credentials) header('Access-Control-Allow-Credentials: true');
+
+    if ($origin !== '' && in_array($origin, $permis, true)) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+        if ($with_credentials) header('Access-Control-Allow-Credentials: true');
+        return;
+    }
+
+    // Requete sans en-tete Origin (navigation directe, appel serveur a
+    // serveur, meme origine) : rien a declarer, la reponse part telle
+    // quelle. Une origine etrangere, elle, repart sans autorisation.
+    if ($origin === '' && !$with_credentials) {
+        header('Access-Control-Allow-Origin: ' . $permis[0]);
+    }
 }
 
 // ── Espace client / emails ────────────────────────────────
