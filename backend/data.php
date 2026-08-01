@@ -33,12 +33,26 @@ set_exception_handler(function(Throwable $e) {
 cors_headers(false);
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Content-Type: application/json; charset=utf-8');
-// Cache HTTP — données globe quasi-statiques (1h)
-header('Cache-Control: public, max-age=3600');
+// Le cache est pose par jout(), au moment de la reponse : les donnees
+// dependent de la langue demandee et ne peuvent pas etre figees une
+// heure comme elles l'etaient ici.
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 function jout(mixed $d): void {
+    // La reponse depend du parametre « lang ». Sans en-tete explicite,
+    // le navigateur applique sa propre heuristique — et le .htaccess
+    // pose meme un Expires de 5 minutes sur le JSON : une reponse
+    // francaise pouvait etre resservie apres un changement de langue,
+    // ou une correction de contenu rester invisible.
+    //
+    // « no-cache » n'interdit pas la mise en cache : il impose la
+    // revalidation a chaque usage, ce qui est exactement le besoin ici.
+    header('Cache-Control: no-cache');
+    // Second argument a false : header() REMPLACE par defaut, ce qui
+    // effacait le « Vary: Origin » pose par cors_headers() — un cache
+    // aurait pu servir la reponse d'une origine a une autre.
+    header('Vary: Accept-Encoding', false);
     echo json_encode($d, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     exit;
 }
@@ -204,9 +218,10 @@ function action_lounges_all(PDO $db): void {
 function action_globe(PDO $db): void {
     // Pays producteurs (sans notes longues, sans brands détail)
     $countries = $db->query(
-        "SELECT id,name,flag,lat,lon,region,tier,color,production,revenue,rev_detail,
-                harvest,climate,soil,tabacaleras,regions,varieties,notes,brands
-         FROM producer_countries ORDER BY name"
+        // SELECT * et non une liste figee : traduire_table() a besoin des
+        // colonnes de langue, qu'une enumeration explicite laissait de
+        // cote — la reponse revenait alors toujours en francais.
+        "SELECT * FROM producer_countries ORDER BY name"
     )->fetchAll();
     $json_c = ['tabacaleras','regions','varieties','brands'];
     $countries = array_map(

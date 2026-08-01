@@ -78,10 +78,14 @@
   # Sans barre finale : on redirige, pour n'avoir qu'une seule URL
   # indexable par langue.
   RewriteRule ^(en|es|de|zh|ar)$ /$1/ [R=301,L]
-  RewriteRule ^(en|es|de|zh|ar)/?$ /index.php?lang=$1 [L,QSA]
+  # E=PRETTY:1 : index.php sait ainsi que la reecriture fonctionne
+  # reellement, et le front peut construire des liens /en/ plutot que
+  # ?lang=en. Sans ce temoin, un serveur sans mod_rewrite (php -S en
+  # developpement) verrait ses liens de langue mener nulle part.
+  RewriteRule ^(en|es|de|zh|ar)/?$ /index.php?lang=$1 [L,QSA,E=PRETTY:1]
 
   # La racine passe aussi par index.php (français).
-  RewriteRule ^$ /index.php?lang=fr [L,QSA]
+  RewriteRule ^$ /index.php?lang=fr [L,QSA,E=PRETTY:1]
 
   # Plan de site : genere, pour que le domaine suive SITE_URL.
   RewriteRule ^sitemap\.xml$ /sitemap.php [L]

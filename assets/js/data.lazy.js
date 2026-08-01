@@ -50,8 +50,9 @@ window.loadLounges = function(countryId) {
         return Promise.resolve(LOUNGES[countryId]);
     }
     return _fetch(
-        DATA_API + '?action=lounges&id=' + encodeURIComponent(countryId),
-        'lounges:' + countryId
+        DATA_API + '?action=lounges&id=' + encodeURIComponent(countryId)
+                 + '&lang=' + (window.currentLang || 'fr'),
+        'lounges:' + countryId + ':' + (window.currentLang || 'fr')
     ).then(function(data) {
         // Fusionner statiques + communautaires approuvés
         var all = (data.static || []).concat(data.community || []);
@@ -70,7 +71,8 @@ window.loadLounges = function(countryId) {
 window.loadBrand = function(brandName) {
     if (BRANDS_DB[brandName]) return Promise.resolve(BRANDS_DB[brandName]);
     return _fetch(
-        DATA_API + '?action=brand&name=' + encodeURIComponent(brandName),
+        DATA_API + '?action=brand&name=' + encodeURIComponent(brandName)
+                 + '&lang=' + (window.currentLang || 'fr'),
         'brand:' + brandName
     ).then(function(data) {
         var b = data.brand;
@@ -83,7 +85,8 @@ window.loadBrand = function(brandName) {
 // Appelé par panels.js → openPanel / openLex
 window.loadCountryDetails = function(countryId) {
     return _fetch(
-        DATA_API + '?action=country&id=' + encodeURIComponent(countryId),
+        DATA_API + '?action=country&id=' + encodeURIComponent(countryId)
+                 + '&lang=' + (window.currentLang || 'fr'),
         'country:' + countryId
     ).then(function(data) {
         // Mettre à jour les globals si plus frais

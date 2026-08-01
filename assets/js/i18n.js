@@ -2336,6 +2336,15 @@ window.applyLang = applyLang; // expose for cross-file access
  * Le français vit à la racine, les autres sous leur préfixe (/en/…).
  */
 function urlLangue(lang) {
+  // Les URL par langue supposent que le serveur les reecrit. index.php
+  // pose data-pretty-urls quand c'est le cas ; sinon (php -S en
+  // developpement, ouverture directe du fichier) on repasse par le
+  // parametre, qui donne exactement le meme rendu.
+  if (document.documentElement.getAttribute('data-pretty-urls') !== '1') {
+    var q = location.search.replace(/([?&])lang=[a-z]{2}&?/, '$1').replace(/[?&]$/, '');
+    q = (q ? q + '&' : '?') + 'lang=' + lang;
+    return location.pathname + q + location.hash;
+  }
   var chemin = location.pathname.replace(/^\/(en|es|de|zh|ar)(\/|$)/, '/');
   if (lang !== 'fr') chemin = '/' + lang + chemin;
   // Le parametre ?lang= n'a de sens que pour le repli sans reecriture :
@@ -2361,11 +2370,9 @@ document.querySelectorAll('.lang-btn,.mlang-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
     var lang = btn.getAttribute('data-lang');
     if (lang === window.currentLang) return;
-    var cible = urlLangue(lang);
-    // Repli sur la bascule en place si les URL par langue ne sont pas
-    // servies (ouverture directe du fichier, serveur sans réécriture).
+    // Ouverture directe du fichier : aucune URL a viser, on bascule sur place.
     if (location.protocol === 'file:') { applyLang(lang); return; }
-    location.assign(cible);
+    location.assign(urlLangue(lang));
   });
 });
 

@@ -31,6 +31,13 @@ $lang = strtolower(trim((string)($_GET['lang'] ?? 'fr')));
 if (!in_array($lang, LANGUES, true)) $lang = 'fr';
 $dir = in_array($lang, RTL, true) ? 'rtl' : 'ltr';
 
+// La reecriture d'URL fonctionne-t-elle ? .htaccess pose PRETTY=1 sur
+// ses regles ; sans mod_rewrite (php -S en developpement) le temoin est
+// absent. Le front s'en sert pour choisir entre « /en/ » et
+// « ?lang=en » : construire des liens /en/ sur un serveur qui ne les
+// reecrit pas menerait le visiteur nulle part.
+$pretty = !empty($_SERVER['PRETTY']) || !empty($_SERVER['REDIRECT_PRETTY']);
+
 /** Racine publique, sans barre finale. */
 function racine(): string {
     if (defined('SITE_URL') && SITE_URL) return rtrim(SITE_URL, '/');
@@ -106,7 +113,7 @@ $empreinte = max(filemtime($gabarit), filemtime($i18njs));
 // dependent, un site joignable par plusieurs noms servirait sinon
 // des canoniques errones depuis le cache.
 $pageCache = __DIR__ . '/backend/cache/page_' . $lang . '_'
-           . substr(sha1(racine()), 0, 12) . '.html';
+           . substr(sha1(racine() . '|' . (int)$pretty), 0, 12) . '.html';
 
 if (is_file($pageCache) && filemtime($pageCache) >= $empreinte) {
     header('Content-Type: text/html; charset=utf-8');
@@ -128,7 +135,8 @@ $e = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 
 $remplacements = [
     '<html lang="fr" data-theme="light" dir="ltr">'
-        => '<html lang="' . $lang . '" data-theme="light" dir="' . $dir . '">',
+        => '<html lang="' . $lang . '" data-theme="light" dir="' . $dir . '"'
+         . ($pretty ? ' data-pretty-urls="1"' : '') . '>',
     '<title>CigarOdyssey — The World\'s Premium Cigar Atlas</title>'
         => '<title>' . $e($titre) . '</title>',
     '<meta name="description" content="CigarOdyssey — The World\'s Premium Cigar Atlas">'

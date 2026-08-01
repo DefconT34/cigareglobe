@@ -18,6 +18,26 @@ if(typeof GEO_INFO         ==='undefined') var GEO_INFO         = (typeof GEO_IN
 if(typeof BRANDS_DB        ==='undefined') var BRANDS_DB        = (typeof BRANDS_DB!=="undefined") ? BRANDS_DB : {};
 if(typeof HABANOS_DATA     ==='undefined') var HABANOS_DATA     = (typeof HABANOS_DATA!=="undefined") ? HABANOS_DATA : {};
 
+/**
+ * URL d'un endpoint, langue comprise.
+ *
+ * Trois appels sur cinq oubliaient « lang » : le globe, la fiche pays
+ * et la fiche marché revenaient donc toujours en français, quelle que
+ * soit la langue choisie — alors que la base contient bien les
+ * traductions. Passer par cette fonction rend l'oubli impossible.
+ *
+ * La langue fait partie de l'URL, donc de la clé de cache : deux
+ * langues ne se marchent pas dessus.
+ */
+function _api(action, params) {
+    var url = DATA_API + '?action=' + encodeURIComponent(action);
+    Object.keys(params || {}).forEach(function (k) {
+        if (params[k] !== undefined && params[k] !== null && params[k] !== '')
+            url += '&' + k + '=' + encodeURIComponent(params[k]);
+    });
+    return url + '&lang=' + (window.currentLang || 'fr');
+}
+
 // ── Cache en mémoire (évite les re-fetch) ────────────────
 var _cache = {};
 window._loungeCache = _cache; // exposé pour invalidation par i18n.js
@@ -38,7 +58,7 @@ function _cachedFetch(url) {
 // ── Chargement initial du globe ──────────────────────────
 // Appelé au démarrage — charge tout ce qu'il faut pour afficher le globe
 window.loadGlobeData = function() {
-    return _cachedFetch(DATA_API + '?action=globe')
+    return _cachedFetch(_api('globe'))
         .then(function(data) {
             // Remplir les globals
             COUNTRIES        = data.countries        || [];
@@ -70,7 +90,7 @@ window.loadGlobeData = function() {
 
 // ── Chargement détails d'un pays (au clic) ───────────────
 window.loadCountryDetails = function(countryId) {
-    return _cachedFetch(DATA_API + '?action=country&id=' + encodeURIComponent(countryId));
+    return _cachedFetch(_api('country', { id: countryId }));
 };
 
 // ── Chargement des lounges d'un pays (au clic) ───────────
@@ -78,7 +98,7 @@ window.loadLounges = function(countryId) {
     if (LOUNGES[countryId] !== undefined) {
         return Promise.resolve(LOUNGES[countryId]);
     }
-    return _cachedFetch(DATA_API + '?action=lounges&id=' + encodeURIComponent(countryId) + '&lang=' + (window.currentLang||'fr'))
+    return _cachedFetch(_api('lounges', { id: countryId }))
         .then(function(data) {
             var all = (data.static || []).concat(data.community || []);
             LOUNGES[countryId] = all;
@@ -93,7 +113,7 @@ window.loadLounges = function(countryId) {
 // ── Chargement d'une marque (au clic) ────────────────────
 window.loadBrand = function(brandName) {
     if (BRANDS_DB[brandName]) return Promise.resolve(BRANDS_DB[brandName]);
-    return _cachedFetch(DATA_API + '?action=brand&name=' + encodeURIComponent(brandName) + '&lang=' + (window.currentLang||'fr'))
+    return _cachedFetch(_api('brand', { name: brandName }))
         .then(function(data) {
             if (data.brand) BRANDS_DB[brandName] = data.brand;
             return data.brand;
@@ -102,7 +122,7 @@ window.loadBrand = function(brandName) {
 
 // ── Chargement d'un marché (au clic) ─────────────────────
 window.loadMarket = function(marketId) {
-    return _cachedFetch(DATA_API + '?action=market&id=' + encodeURIComponent(marketId));
+    return _cachedFetch(_api('market', { id: marketId }));
 };
 
 // ── Bootstrap : lance le chargement et démarre le globe ──

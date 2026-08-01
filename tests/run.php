@@ -292,13 +292,20 @@ check('pilote : valeur inconnue ramenee a mail()',
 // ════════════════════════════════════════════════════════
 section('CORS');
 
-/** Valeur d'un en-tete de reponse (derniere occurrence), '' si absent. */
+/**
+ * Valeur d'un en-tete de reponse, '' si absent.
+ *
+ * Les occurrences multiples sont jointes par une virgule, comme le veut
+ * HTTP : « Vary: Origin » suivi de « Vary: Accept-Encoding » equivaut a
+ * « Vary: Origin, Accept-Encoding ». Ne retenir que la derniere faisait
+ * echouer un controle pourtant satisfait.
+ */
 function entete(string $brut, string $nom): string {
-    $v = '';
+    $vals = [];
     foreach (explode("\n", $brut) as $l) {
-        if (stripos($l, $nom . ':') === 0) $v = trim(substr($l, strlen($nom) + 1));
+        if (stripos($l, $nom . ':') === 0) $vals[] = trim(substr($l, strlen($nom) + 1));
     }
-    return $v;
+    return implode(', ', $vals);
 }
 
 // Le serveur principal tourne en ALLOWED_ORIGIN=* (developpement).
