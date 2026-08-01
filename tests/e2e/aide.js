@@ -3,6 +3,7 @@
 // ════════════════════════════════════════════════════════
 
 const { expect } = require('@playwright/test');
+const { servirStatiqueDepuisDisque } = require('./statique');
 
 /**
  * Ouvre une page et attend que l'application soit REELLEMENT prete :
@@ -15,6 +16,11 @@ const { expect } = require('@playwright/test');
  * disent rien de l'application.
  */
 async function ouvrir(page, url = '/') {
+  // Les fichiers JS/CSS et les ressources tierces sont servis depuis le
+  // disque : c'est le seul point de la campagne qui rendait page.goto()
+  // instable. Voir statique.js pour les mesures.
+  await servirStatiqueDepuisDisque(page);
+
   await page.goto(url);
 
   await expect
@@ -47,12 +53,25 @@ async function ouvrir(page, url = '/') {
 }
 
 /**
- * Erreurs de console dignes d'interet. Le serveur de developpement,
- * mono-requete, ferme parfois une connexion quand plusieurs fichiers
- * sont demandes ensemble : ces coupures reseau ne disent rien de
- * l'application et rendraient la campagne intermittente.
+ * Erreurs de console dignes d'interet : coupures de transport ecartees,
+ * reponses en erreur retenues.
+ *
+ * Le motif couvrait aussi « Failed to load resource », qui est le
+ * prefixe commun a DEUX messages tres differents chez Chrome :
+ *
+ *   Failed to load resource: net::ERR_CONNECTION_RESET
+ *   Failed to load resource: the server responded with a status of 404
+ *
+ * Le second est un vrai defaut — un fichier absent, une URL mal
+ * reecrite — et il passait inapercu. Le prefixe est donc retire : les
+ * coupures restent filtrees par les motifs net::ERR_*, qui figurent
+ * dans le meme message, et un 404 fait desormais echouer le test.
+ *
+ * Verifie : un chargement complet ne produit aucune reponse non-2xx, en
+ * bureau comme en mobile, depuis que les ressources inertes viennent du
+ * disque (voir statique.js).
  */
-const BRUIT_RESEAU = /ERR_CONNECTION_RESET|ERR_ABORTED|ERR_NETWORK_CHANGED|Failed to load resource/i;
+const BRUIT_RESEAU = /ERR_CONNECTION_RESET|ERR_ABORTED|ERR_NETWORK_CHANGED/i;
 
 function collecteErreurs(page) {
   const erreurs = [];
