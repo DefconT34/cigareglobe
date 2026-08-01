@@ -58,6 +58,17 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
 - [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
 
+### F. Internationalisation
+*Audit et plan détaillés : `docs/i18n.md`. Les 196 clés de `i18n.js` sont
+complètes dans les 6 langues ; le déficit est ailleurs.*
+- [ ] **F7** — Garde-fous : parité des clés + parcours des 6 langues en CI · P · **à faire en premier**
+- [ ] **F1** — Rapatrier les 88 chaînes codées en dur du front dans `i18n.js` · M
+- [ ] **F2** — Codes d'erreur côté serveur (92 messages), traduits côté front · M · dépend de F1
+- [ ] **F5** — RTL arabe : vérifier les composants récents (`#side-fabs`, champ Explorer) · P
+- [ ] **F6** — Référencement multilingue (`hreflang`, `lang` dynamique, URLs par langue) · M · **décision requise**
+- [ ] **F3** — Colonnes de traduction manquantes, 6 tables (migration 007) · M
+- [ ] **F4** — Remplir le contenu (~514 segments → ~2 570 traductions) · G · dépend de F3
+
 ### E. Dette technique
 - [x] ~~**E1** — Simplifier `data.php` (DESCRIBE défensifs retirés)~~ ✅
 - [x] ~~**E2** — topojson + carte monde auto-hébergés, GA retiré~~ ✅
@@ -65,4 +76,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → **B1** → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → **F7+F1+F2** → B1 → F3/F4/F6 → D6/C1b (optionnels)
