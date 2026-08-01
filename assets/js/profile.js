@@ -57,10 +57,10 @@
     fetch(apiBase() + '?action=profile', { credentials: 'include' })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (!d || d.error) { box.innerHTML = '<div class="cg-contrib-empty">' + esc((d && d.error) || 'Erreur.') + '</div>'; return; }
+        if (!d || d.error) { box.innerHTML = '<div class="cg-contrib-empty">' + esc((d && d.error) || t('acc_error')) + '</div>'; return; }
         renderView(box, d);
       })
-      .catch(function () { box.innerHTML = '<div class="cg-contrib-empty">Erreur réseau.</div>'; });
+      .catch(function () { box.innerHTML = '<div class="cg-contrib-empty">' + t('acc_net_error') + '</div>'; });
   }
 
   function renderView(box, d) {
@@ -79,18 +79,18 @@
       '</div>' +
       (p.bio ? '<div class="cg-prof-bio">' + esc(p.bio) + '</div>' : '') +
       '<div class="cg-prof-stats">' +
-        tile(s.contributions_approved, 'Contributions') +
-        tile(s.reviews_count, 'Avis') +
-        tile(s.countries_visited, 'Pays visités') +
+        tile(s.contributions_approved, t('prof_contributions')) +
+        tile(s.reviews_count, t('prof_reviews')) +
+        tile(s.countries_visited, t('prof_countries')) +
       '</div>' +
       (badges.length ?
-        '<div class="cg-prof-section">Badges</div><div class="cg-prof-badges">' +
+        '<div class="cg-prof-section">' + t('prof_badges') + '</div><div class="cg-prof-badges">' +
         badges.map(function (b) { return '<span class="cg-badge">' + b.icon + ' ' + esc(b.label) + '</span>'; }).join('') +
         '</div>' : '') +
-      '<div class="cg-prof-section">Passeport ' + (pass.length ? '(' + pass.length + ')' : '') + '</div>' +
+      '<div class="cg-prof-section">' + t('prof_passport') + ' ' + (pass.length ? '(' + pass.length + ')' : '') + '</div>' +
       (pass.length ?
         '<div class="cg-prof-passport">' + pass.map(function (c) { return '<span class="cg-pass-flag" title="' + esc(c) + '">' + flag(c) + '</span>'; }).join('') + '</div>' :
-        '<div class="cg-prof-empty">Marquez des établissements comme « visités » pour remplir votre passeport.</div>');
+        '<div class="cg-prof-empty">' + t('prof_passport_empty') + '</div>');
 
     box.querySelector('.cg-prof-edit').addEventListener('click', function () { renderEdit(box, p); });
   }
@@ -103,11 +103,11 @@
     box.innerHTML =
       '<div class="cg-modal-logo"><div class="m">MON PROFIL</div></div>' +
       '<div class="cg-msg hidden" id="cgProfMsg"></div>' +
-      '<div class="cg-field"><label>Avatar (emoji)</label><input type="text" id="pf-avatar" maxlength="8" value="' + esc(p.avatar_url || '') + '" placeholder="🎩"></div>' +
-      '<div class="cg-field"><label>Nom d\'affichage</label><input type="text" id="pf-name" maxlength="80" value="' + esc(p.display_name || '') + '"></div>' +
-      '<div class="cg-field"><label>Bio</label><textarea id="pf-bio" maxlength="500" rows="3" placeholder="Quelques mots sur vous…">' + esc(p.bio || '') + '</textarea></div>' +
+      '<div class="cg-field"><label>' + t('prof_avatar') + '</label><input type="text" id="pf-avatar" maxlength="8" value="' + esc(p.avatar_url || '') + '" placeholder="🎩"></div>' +
+      '<div class="cg-field"><label>' + t('acc_display_name') + '</label><input type="text" id="pf-name" maxlength="80" value="' + esc(p.display_name || '') + '"></div>' +
+      '<div class="cg-field"><label>' + t('prof_bio') + '</label><textarea id="pf-bio" maxlength="500" rows="3" placeholder="' + t('prof_bio_ph') + '">' + esc(p.bio || '') + '</textarea></div>' +
       '<div class="cg-prof-edit-actions">' +
-        '<button type="button" class="cg-prof-cancel">Annuler</button>' +
+        '<button type="button" class="cg-prof-cancel">' + t('ui_cancel') + '</button>' +
         '<button type="button" class="cg-prof-save">Enregistrer</button>' +
       '</div>';
 
@@ -118,7 +118,7 @@
       var bio  = document.getElementById('pf-bio').value.trim();
       var av   = document.getElementById('pf-avatar').value.trim();
       var msg  = document.getElementById('cgProfMsg');
-      if (!name) { msg.className = 'cg-msg err'; msg.textContent = 'Le nom d\'affichage est requis.'; return; }
+      if (!name) { msg.className = 'cg-msg err'; msg.textContent = t('prof_name_required'); return; }
       var btn = box.querySelector('.cg-prof-save'); btn.disabled = true;
       fetch(apiBase() + '?action=profile_update', {
         method: 'POST', credentials: 'include',
@@ -133,7 +133,7 @@
           if (A) A.toast('Profil mis à jour.', 'ok');
           load();                                        // retour vue
         })
-        .catch(function () { btn.disabled = false; msg.className = 'cg-msg err'; msg.textContent = 'Erreur réseau.'; });
+        .catch(function () { btn.disabled = false; msg.className = 'cg-msg err'; msg.textContent = t('acc_net_error'); });
     });
   }
 })();

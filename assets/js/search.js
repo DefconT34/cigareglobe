@@ -38,7 +38,7 @@ function buildIndex() {
   (MARKETS || []).forEach(function(m) {
     _index.push({
       type: 'market', id: m.id, label: m.name,
-      sub: 'Marché #' + m.rank, flag: m.flag,
+      sub: t('tip_market').replace('{n}', m.rank).replace('— ', ''), flag: m.flag,
       keywords: (m.name + ' marché consommateur').toLowerCase(),
       data: m
     });
@@ -343,7 +343,7 @@ window.addEventListener('DOMContentLoaded', function() {
                autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Recherche"/>
         <button id="search-close" aria-label="Fermer">✕</button>
       </div>
-      <div id="search-results" role="listbox" aria-label="Résultats"></div>
+      <div id="search-results" role="listbox" aria-label="' + t('ui_results') + '"></div>
       <div class="search-hint" id="search-hint-text"></div>
     </div>
   `;

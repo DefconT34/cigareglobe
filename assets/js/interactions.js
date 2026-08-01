@@ -195,8 +195,8 @@ window.addEventListener('mousemove', e => {
     const label = hit.type === 'country'
       ? hit.data.flag + ' ' + hit.data.name.toUpperCase()
       : hit.type === 'market'
-        ? hit.data.flag + ' ' + hit.data.name.toUpperCase() + ' — Marché #' + hit.data.rank
-        : hit.data.flag + ' ' + hit.data.name.toUpperCase() + ' — Caves & Lounges';
+        ? hit.data.flag + ' ' + hit.data.name.toUpperCase() + ' ' + t('tip_market').replace('{n}', hit.data.rank)
+        : hit.data.flag + ' ' + hit.data.name.toUpperCase() + ' ' + t('tip_lounges');
     tip.style.left = (e.clientX + 14) + 'px';
     tip.style.top  = (e.clientY - 16) + 'px';
     tip.textContent = label;

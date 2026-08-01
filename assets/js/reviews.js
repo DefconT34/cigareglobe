@@ -36,8 +36,8 @@
     var canWrite = A && A.user && A.user.email_verified;
 
     var head = list.length
-      ? '<div class="lc-rev-head">' + list.length + ' avis</div>'
-      : '<div class="lc-rev-head lc-rev-none">Aucun avis pour l\'instant</div>';
+      ? '<div class="lc-rev-head">' + t('rev_count').replace('{n}', list.length) + '</div>'
+      : '<div class="lc-rev-head lc-rev-none">' + t('rev_none') + '</div>';
 
     var items = list.map(function (rv) {
       return '<div class="lc-rev">' +
@@ -54,7 +54,7 @@
       '</div>';
     }).join('');
 
-    var ctaLabel = canWrite ? '✍ Laisser un avis' : '✍ Se connecter pour laisser un avis';
+    var ctaLabel = canWrite ? t('rev_write') : t('rev_login_write');
     var cta = '<button class="lc-rev-cta" type="button">' + ctaLabel + '</button>';
 
     box.innerHTML = head + items + cta;
@@ -68,7 +68,7 @@
   function flagReview(btn, loungeId) {
     var A = window.CGAccount;
     if (!A || !A.requireVerified()) return;
-    if (!window.confirm('Signaler cet avis aux modérateurs ?')) return;
+    if (!window.confirm(t('rev_flag_confirm'))) return;
     btn.disabled = true;
     fetch(apiBase() + '?action=review_flag', {
       method: 'POST', credentials: 'include',
@@ -78,10 +78,10 @@
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (d.error) { btn.disabled = false; if (A) A.toast(d.error, 'err'); return; }
-        btn.textContent = '⚑ Signalé';                 // l'avis reste visible
-        if (A) A.toast('Merci — cet avis a été transmis aux modérateurs.', 'ok');
+        btn.textContent = t('rev_flagged');                 // l'avis reste visible
+        if (A) A.toast(t('rev_flag_thanks'), 'ok');
       })
-      .catch(function () { btn.disabled = false; if (A) A.toast('Erreur réseau.', 'err'); });
+      .catch(function () { btn.disabled = false; if (A) A.toast(t('acc_net_error'), 'err'); });
   }
 
   // ── Formulaire de rédaction ─────────────────────────────
@@ -96,10 +96,10 @@
       '<div class="lc-rev-fstars">' +
         [1, 2, 3, 4, 5].map(function (s) { return '<span class="lc-rev-fstar" data-v="' + s + '">☆</span>'; }).join('') +
       '</div>' +
-      '<input type="text" class="lc-rev-ftitle" maxlength="120" placeholder="Titre (optionnel)">' +
-      '<textarea class="lc-rev-fbody" maxlength="2000" rows="3" placeholder="Partagez votre expérience…"></textarea>' +
+      '<input type="text" class="lc-rev-ftitle" maxlength="120" placeholder="' + t('rev_title_ph') + '">' +
+      '<textarea class="lc-rev-fbody" maxlength="2000" rows="3" placeholder="' + t('rev_body_ph') + '"></textarea>' +
       '<div class="lc-rev-form-actions">' +
-        '<button type="button" class="lc-rev-cancel">Annuler</button>' +
+        '<button type="button" class="lc-rev-cancel">' + t('ui_cancel') + '</button>' +
         '<button type="button" class="lc-rev-send">Publier</button>' +
       '</div>' +
       '<div class="lc-rev-msg"></div>';
@@ -121,7 +121,7 @@
 
     form.querySelector('.lc-rev-send').addEventListener('click', function () {
       var msg = form.querySelector('.lc-rev-msg');
-      if (selected < 1) { msg.textContent = 'Choisissez une note.'; return; }
+      if (selected < 1) { msg.textContent = t('rev_choose_rating'); return; }
       var title = form.querySelector('.lc-rev-ftitle').value.trim();
       var body  = form.querySelector('.lc-rev-fbody').value.trim();
       var send  = form.querySelector('.lc-rev-send');
@@ -145,7 +145,7 @@
         if (window._resetMyRatings) window._resetMyRatings();
         window._loadLoungeReviews(loungeId);   // recharge la liste (form retiré)
       })
-      .catch(function () { send.disabled = false; msg.textContent = 'Erreur réseau.'; });
+      .catch(function () { send.disabled = false; msg.textContent = t('acc_net_error'); });
     });
   }
 })();

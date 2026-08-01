@@ -73,7 +73,7 @@ function renderHabanos(countryId) {
           (h.factories||[]).map(function(f) {
             return '<div class="hfactory"><div class="hfactory-icon">🏭</div><div class="hfactory-info">' +
               '<div class="hfactory-name">' + f.name + '</div>' +
-              '<div class="hfactory-city">' + f.city + ' · Est. ' + f.founded + '</div>' +
+              '<div class="hfactory-city">' + f.city + ' · ' + t('ui_founded') + ' ' + f.founded + '</div>' +
               '<div class="hfactory-marques">' + (f.marques||[]).map(function(m){ return '<span class="hfactory-marque">'+m+'</span>'; }).join('') + '</div>' +
             '</div></div>';
           }).join('') + '</div>'
@@ -103,7 +103,7 @@ function renderHabanos(countryId) {
         (h.factories||[]).map(function(f) {
           return '<div class="hfactory"><div class="hfactory-icon">🏭</div><div class="hfactory-info">' +
             '<div class="hfactory-name">'+f.name+'</div>' +
-            '<div class="hfactory-city">'+f.city+' · Est. '+f.founded+'</div>' +
+            '<div class="hfactory-city">'+f.city+' · ' + t('ui_founded') + ' '+f.founded+'</div>' +
             '<div class="hfactory-marques">'+(f.marques||[]).map(function(m){ return '<span class="hfactory-marque">'+m+'</span>'; }).join('')+'</div>' +
           '</div></div>';
         }).join('') +

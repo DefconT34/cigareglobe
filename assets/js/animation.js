@@ -80,7 +80,7 @@ function _initDOM() {
   // Cacher l'overlay — fonctionne que le DOM soit prêt ou non
   var ov  = document.getElementById('loading-overlay');
   var msg = document.getElementById('loading-msg');
-  if (msg) msg.textContent = 'Globe prêt ✓';
+  if (msg) msg.textContent = t('globe_ready');
   if (ov) {
     ov.style.transition = 'opacity 0.4s';
     ov.style.opacity    = '0';

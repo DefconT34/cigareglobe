@@ -15,11 +15,14 @@
   }
 
   var LISTS = [
-    { key: 'to_visit', icon: '📌', label: 'À visiter' },
-    { key: 'visited',  icon: '✅', label: 'Visité' },
-    { key: 'favorite', icon: '♥',  label: 'Favori' }
+    { key: 'to_visit', icon: '📌', label: t('fav_to_visit') },
+    { key: 'visited',  icon: '✅', label: t('fav_visited') },
+    { key: 'favorite', icon: '♥',  label: t('fav_favorite') }
   ];
-  var LABELS = { to_visit: 'À visiter', visited: 'Visités', favorite: 'Favoris' };
+  function LABEL(cle) {
+    return { to_visit: t('fav_to_visit'), visited: t('fav_visited_pl'),
+             favorite: t('fav_favorite_pl') }[cle] || cle;
+  }
 
   var _states = null;   // { lounge:{id:[lists]}, country:{id:[lists]} }
 
@@ -73,10 +76,10 @@
       .then(function (r) { return r.json(); })
       .then(function (d) {
         btn.disabled = false;
-        if (d.error) { if (d.need_verify && A) A.toast('Vérifiez votre email pour utiliser vos listes.', 'err'); return; }
+        if (d.error) { if (d.need_verify && A) A.toast(t('fav_verify'), 'err'); return; }
         if (_states) { _states[type] = _states[type] || {}; _states[type][id] = d.lists; }
         btn.classList.toggle('on', d.lists.indexOf(list) >= 0);
-        if (A) A.toast(turningOn ? 'Ajouté à « ' + LABELS[list] + ' ».' : 'Retiré de « ' + LABELS[list] + ' ».', 'ok');
+        if (A) A.toast(t(turningOn ? 'fav_added' : 'fav_removed').replace('{l}', LABEL(list)), 'ok');
       })
       .catch(function () { btn.disabled = false; });
   }
@@ -120,7 +123,7 @@
       .then(function (d) {
         var items = (d && d.items) || [];
         if (d && d.error) { box.innerHTML = '<div class="cg-contrib-empty">' + esc(d.error) + '</div>'; return; }
-        if (!items.length) { box.innerHTML = '<div class="cg-contrib-empty">Aucun favori pour l\'instant. Enregistrez des établissements depuis leur fiche.</div>'; return; }
+        if (!items.length) { box.innerHTML = '<div class="cg-contrib-empty">' + t('fav_none') + '</div>'; return; }
         var groups = { to_visit: [], visited: [], favorite: [] };
         items.forEach(function (it) { (groups[it.list] || (groups[it.list] = [])).push(it); });
         box.innerHTML = LISTS.map(function (L) {
@@ -141,6 +144,6 @@
           '</div>';
         }).join('');
       })
-      .catch(function () { box.innerHTML = '<div class="cg-contrib-empty">Erreur réseau.</div>'; });
+      .catch(function () { box.innerHTML = '<div class="cg-contrib-empty">' + t('acc_net_error') + '</div>'; });
   }
 })();

@@ -96,7 +96,7 @@ function loadContributions(countryId) {
 
 function renderContributions(contribs, panel, countryId) {
   if (!contribs.length) {
-    panel.innerHTML = '<div style="color:var(--text2);font-size:10px;padding:4px 0;opacity:.6">Aucune contribution pour ce pays.</div>';
+    panel.innerHTML = '<div style="color:var(--text2);font-size:10px;padding:4px 0;opacity:.6">' + t('contrib_none_country') + '</div>';
     return;
   }
 
@@ -107,8 +107,8 @@ function renderContributions(contribs, panel, countryId) {
   contribs.forEach(function(c) {
     var scoreColor = c.votes_up > c.votes_down ? 'var(--grn)' : c.votes_down > c.votes_up ? '#e55' : 'var(--text2)';
     var statusBadge = c.status === 'approved'
-      ? '<span style="color:var(--grn);font-size:9px">✅ Approuvé</span>'
-      : '<span style="color:#c9a227;font-size:9px">⏳ En attente</span>';
+      ? '<span style="color:var(--grn);font-size:9px">' + t('contrib_approved') + '</span>'
+      : '<span style="color:#c9a227;font-size:9px">' + t('contrib_pending') + '</span>';
 
     html += '<div style="background:var(--bg3);border:1px solid var(--panel-border);border-left:3px solid #8B2BE2;border-radius:3px;padding:8px 10px;margin-bottom:6px">';
     html += '<div style="display:flex;justify-content:space-between;align-items:start;gap:8px">';
@@ -125,10 +125,10 @@ function renderContributions(contribs, panel, countryId) {
       html += '<div style="display:flex;align-items:center;gap:8px;margin-top:8px">';
       html += '<span style="font-size:10px;color:' + scoreColor + '">Score: ' + (c.votes_up - c.votes_down) + '</span>';
       html += '<button onclick="castVote(' + c.id + ',1,this)" style="padding:3px 10px;background:' +
-        (c.my_vote===1?'var(--grn)':'var(--bg2)') + ';border:1px solid var(--panel-border);border-radius:2px;cursor:pointer;font-size:11px;color:var(--text);transition:.2s" title="Ce lieu existe bien">👍 ' + c.votes_up + '</button>';
+        (c.my_vote===1?'var(--grn)':'var(--bg2)') + ';border:1px solid var(--panel-border);border-radius:2px;cursor:pointer;font-size:11px;color:var(--text);transition:.2s" title="' + t('contrib_vote_yes') + '">👍 ' + c.votes_up + '</button>';
       html += '<button onclick="castVote(' + c.id + ',-1,this)" style="padding:3px 10px;background:' +
-        (c.my_vote===-1?'#e55':'var(--bg2)') + ';border:1px solid var(--panel-border);border-radius:2px;cursor:pointer;font-size:11px;color:var(--text);transition:.2s" title="Ce lieu n\'existe pas">👎 ' + c.votes_down + '</button>';
-      html += '<span style="font-size:9px;color:var(--text2);opacity:.6">3 👍 = validation automatique</span>';
+        (c.my_vote===-1?'#e55':'var(--bg2)') + ';border:1px solid var(--panel-border);border-radius:2px;cursor:pointer;font-size:11px;color:var(--text);transition:.2s" title="' + t('contrib_vote_no') + '">👎 ' + c.votes_down + '</button>';
+      html += '<span style="font-size:9px;color:var(--text2);opacity:.6">' + t('contrib_auto_valid') + '</span>';
       html += '</div>';
     }
     html += '</div>';
@@ -176,7 +176,7 @@ window.castVote = function(id, vote, btn) {
 
     if (data.approved) {
       container.style.borderLeftColor = 'var(--grn)';
-      container.querySelector('[style*="⏳"]') && (container.innerHTML += '<div style="color:var(--grn);font-size:10px;margin-top:4px">✅ Seuil atteint — sera intégré prochainement !</div>');
+      container.querySelector('[style*="⏳"]') && (container.innerHTML += '<div style="color:var(--grn);font-size:10px;margin-top:4px">' + t('contrib_threshold') + '</div>');
     }
     btn.disabled = false;
   })
@@ -236,8 +236,7 @@ function submitContribution() {
       if (_successSubHtml === null) _successSubHtml = sub.innerHTML;  // mémoriser l'original
       if (data.auto_approved) {
         sub.removeAttribute('data-i18n');   // ne pas se faire écraser par applyLang
-        sub.innerHTML = 'Publié immédiatement — merci ! Votre statut de contributeur de confiance '
-                      + 'dispense vos ajouts de la file de modération.';
+        sub.textContent = t('contrib_trusted');
       } else {
         sub.setAttribute('data-i18n', 'contrib_thanks_sub');
         sub.innerHTML = _successSubHtml;
@@ -266,7 +265,7 @@ window.injectContribButton = function(countryId) {
   // Contribute button
   var btn = document.createElement('button');
   btn.className = 'contrib-panel-btn';
-  btn.innerHTML = '✏ &nbsp;Signaler un établissement manquant';
+  btn.textContent = t('contrib_report_btn');
   btn.onclick = function() { window.openContribModal(countryId); };
   body.appendChild(btn);
 

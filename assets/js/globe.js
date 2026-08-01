@@ -727,7 +727,7 @@ function toggleGyro() {
           _updateGyroBtn(btn);
         } else {
           btn.textContent = '🚫';
-          btn.title = 'Permission gyroscope refusée';
+          btn.title = t('gyro_denied');
           setTimeout(function(){ btn.textContent = '🔄'; }, 2000);
         }
       })
@@ -747,7 +747,7 @@ function toggleGyro() {
 
 function _updateGyroBtn(btn) {
   btn.classList.toggle('gyro-on', _gyroActive);
-  btn.title = _gyroActive ? 'Gyroscope actif — tap pour désactiver' : 'Activer le gyroscope';
+  btn.title = t(_gyroActive ? 'gyro_active' : 'gyro_activate');
 }
 
 // Injecter le bouton gyroscope dans le DOM au chargement
@@ -759,7 +759,7 @@ window.addEventListener('DOMContentLoaded', function() {
   var btn = document.createElement('button');
   btn.id        = 'gyro-btn';
   btn.innerHTML = '🔄';
-  btn.title     = 'Activer le gyroscope';
+  btn.title     = t('gyro_activate');
   btn.setAttribute('aria-label', 'Gyroscope');
   btn.setAttribute('aria-pressed', 'false');
   // Géométrie et position : .side-fab dans la colonne #side-fabs

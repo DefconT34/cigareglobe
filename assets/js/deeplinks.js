@@ -74,7 +74,7 @@ function addShareButton(panelId, type, getId) {
     var btn = document.createElement('button');
     btn.className = 'share-btn';
     btn.innerHTML = '🔗';
-    btn.title = 'Copier le lien';
+    btn.title = t('ui_copy_link');
     btn.style.cssText = 'position:absolute;top:12px;right:44px;background:none;border:none;' +
       'color:var(--text2);font-size:16px;cursor:pointer;padding:4px;border-radius:4px;' +
       'transition:color .15s;z-index:10;';
