@@ -54,6 +54,28 @@ formait une seule « instruction », commençant par une directive
 `/*!40101 … */` donc ignorée — **zéro table créée**, et l'échec ne se
 manifestait qu'au premier `INSERT` sur `lounges`.
 
+## Traductions — `traductions.sql`
+
+Exception assumée à la règle « pas de données dans Git » : les
+traductions du contenu représentent des milliers de segments qui ne
+vivaient que dans la base locale. Elles ne contiennent aucune donnée
+personnelle — ni comptes, ni avis, ni adresses IP.
+
+```bash
+php tools/i18n_dump.php > sql/traductions.sql   # sauvegarder
+mysql <base> < sql/traductions.sql              # restaurer / appliquer
+```
+
+Les `UPDATE` portent sur la **clé primaire**, jamais sur le texte
+source : le français de référence est amené à être corrigé, et s'y
+accrocher rendrait le fichier caduc au premier ajustement. Le fichier
+est rejouable autant de fois qu'on veut.
+
+Le périmètre traduisible est décrit une seule fois, dans
+`tools/i18n_contenu_plan.php`, partagé par l'export/import et par ce
+dump — deux copies auraient fini par diverger, et la sauvegarde aurait
+alors laissé filer des colonnes pourtant traduites.
+
 ## Données
 
 `schema.sql` ne contient **que la structure** (jamais de données
