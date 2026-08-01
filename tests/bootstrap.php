@@ -87,6 +87,12 @@ function setup_test_database(): PDO {
     // controles le temps de l'import.
     $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
     $sql = file_get_contents(PROJECT_ROOT . '/sql/schema.sql');
+    // Normaliser les fins de ligne AVANT de decouper : un dump produit
+    // sous Windows se termine par ";\r\n", et le decoupage sur ";\n"
+    // renvoyait alors le fichier entier en un seul morceau — morceau qui
+    // commence par une directive /*! et se faisait donc ignorer. Zero
+    // table creee, et l'echec ne se voyait qu'au premier INSERT.
+    $sql = str_replace(["\r\n", "\r"], "\n", $sql);
     foreach (explode(";\n", $sql) as $stmt) {
         $stmt = trim($stmt);
         // Ignorer les directives de session du dump (/*!40101 ... */)

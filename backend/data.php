@@ -152,9 +152,90 @@ function champs_traduits(string $table): array {
     ][$table] ?? [];
 }
 
+/**
+ * Dictionnaire de traductions libres, charge une fois par requete.
+ *
+ * Indexe sur le texte source et non sur une colonne : le meme libelle
+ * peut apparaitre dans plusieurs tables et plusieurs structures JSON,
+ * il ne se traduit qu'une fois. Voir la migration 008.
+ */
+function dictionnaire_libre(PDO $db): array {
+    static $dico = null;
+    if ($dico !== null) return $dico;
+
+    $lang = langue_courante();
+    $dico = [];
+    if ($lang === 'fr') return $dico;
+
+    try {
+        $st = $db->prepare('SELECT source_hash, target_text FROM content_translations WHERE lang = ?');
+        $st->execute([$lang]);
+        foreach ($st as $r) $dico[$r['source_hash']] = $r['target_text'];
+    } catch (Throwable $e) {
+        // Table absente (base pas encore migree) : on sert le francais.
+        error_log('[data.php] dictionnaire libre indisponible : ' . $e->getMessage());
+    }
+    return $dico;
+}
+
+/**
+ * Traduit le texte libre d'une valeur, en descendant dans les tableaux
+ * et les objets. Une chaine sans entree au dictionnaire est laissee
+ * telle quelle — le francais reste, plutot qu'un vide.
+ *
+ * Les cles ne sont jamais traduites, seulement les valeurs : « name »
+ * doit rester « name » pour le front.
+ */
+function traduire_libre(PDO $db, mixed $valeur): mixed {
+    $dico = dictionnaire_libre($db);
+    if (!$dico) return $valeur;
+
+    if (is_string($valeur)) {
+        $h = sha1(trim($valeur));
+        return $dico[$h] ?? $valeur;
+    }
+    if (is_array($valeur)) {
+        foreach ($valeur as $k => $v) $valeur[$k] = traduire_libre($db, $v);
+    }
+    return $valeur;
+}
+
+/**
+ * Champs JSON dont le CONTENU est du texte libre traduisible.
+ *
+ * Volontairement absents : tabacaleras, regions, varieties, top_brands
+ * et marques_officielles — noms propres et toponymes, qui ne se
+ * traduisent pas.
+ */
+function champs_libres(string $table): array {
+    return [
+        'producer_countries' => ['brands'],
+        'habanos_presence'   => ['factories', 'certifications', 'distributeurs'],
+    ][$table] ?? [];
+}
+
+/**
+ * Colonnes SCALAIRES traduites par le dictionnaire plutot que par une
+ * colonne « champ_en ». Ces valeurs sont rares et formulaires (« La
+ * Havane, Cuba ») : le dictionnaire, indexe sur le texte source, evite
+ * d'ajouter cinq colonnes par champ.
+ */
+function champs_libres_scalaires(string $table): array {
+    return [
+        'habanos_presence' => ['founded', 'hq'],
+    ][$table] ?? [];
+}
+
 /** Raccourci : traduit une ligne selon la table dont elle provient. */
-function traduire_table(array $ligne, string $table): array {
-    return traduire($ligne, champs_traduits($table));
+function traduire_table(array $ligne, string $table, ?PDO $db = null): array {
+    $ligne = traduire($ligne, champs_traduits($table));
+    if ($db) {
+        $libres = array_merge(champs_libres($table), champs_libres_scalaires($table));
+        foreach ($libres as $champ) {
+            if (isset($ligne[$champ])) $ligne[$champ] = traduire_libre($db, $ligne[$champ]);
+        }
+    }
+    return $ligne;
 }
 
 /** Colonnes enrichies communes aux deux endpoints. */
@@ -225,7 +306,7 @@ function action_globe(PDO $db): void {
     )->fetchAll();
     $json_c = ['tabacaleras','regions','varieties','brands'];
     $countries = array_map(
-        fn($r) => traduire_table(row_parse($r, $json_c), 'producer_countries'),
+        fn($r) => traduire_table(row_parse($r, $json_c), 'producer_countries', $db),
         $countries
     );
 
@@ -299,7 +380,7 @@ function action_country(PDO $db): void {
     $c->execute([$id]);
     $country = $c->fetch();
     if (!$country) { http_response_code(404); jout(err('not_found_country', 'Pays introuvable')); }
-    $country = traduire_table(row_parse($country, ['tabacaleras','regions','varieties','brands']), 'producer_countries');
+    $country = traduire_table(row_parse($country, ['tabacaleras','regions','varieties','brands']), 'producer_countries', $db);
 
     $g = $db->prepare("SELECT * FROM producer_geo WHERE country_id = ?");
     $g->execute([$id]);
@@ -322,7 +403,7 @@ function action_country(PDO $db): void {
     $hab_row = $h->fetch();
     $habanos = null;
     if ($hab_row) {
-        $habanos = traduire_table(row_parse($hab_row, ['factories','marques_officielles','distributeurs','certifications']), 'habanos_presence');
+        $habanos = traduire_table(row_parse($hab_row, ['factories','marques_officielles','distributeurs','certifications']), 'habanos_presence', $db);
         $habanos['present'] = (bool)$habanos['present'];
         unset($habanos['country_id']);
         // rename keys for JS compat
@@ -441,7 +522,7 @@ function action_all(PDO $db): void {
         $brands[$b['name']] = $b;
     }
 
-    $habanos_raw = array_map(fn($h) => traduire_table($h, 'habanos_presence'),
+    $habanos_raw = array_map(fn($h) => traduire_table($h, 'habanos_presence', $db),
                              $db->query("SELECT * FROM habanos_presence")->fetchAll());
     $habanos = [];
     foreach ($habanos_raw as $h) {

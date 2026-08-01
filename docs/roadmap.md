@@ -76,7 +76,7 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**F3** — Colonnes de traduction manquantes (migration 007)~~ ✅
 - [x] ~~**F4** — Contenu de l'atlas traduit~~ ✅ · les 4 tables de référence à 100 % dans les 6 langues
 - [ ] **F4b** — Prose longue : `brands` (40 valeurs) et 178 descriptions d'établissements · G · **relève d'un service de traduction**, outillage prêt
-- [ ] **F4c** — Texte libre dans les colonnes JSON : 169 valeurs distinctes (descriptions de marques, fabriques, certifications, distributeurs) · M · voir l'audit dans `docs/i18n.md`
+- [x] ~~**F4c** — Texte libre dans les colonnes JSON : migration 008 (`content_translations`), 101 valeurs distinctes → 505 traductions, export à zéro. Corrige aussi le rendu qui figeait le bloc Habanos en français.~~ ✅
 
 ### E. Dette technique
 - [x] ~~**E1** — Simplifier `data.php` (DESCRIBE défensifs retirés)~~ ✅

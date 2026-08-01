@@ -234,10 +234,11 @@ function openPanel(c) {
     window.loadCountryDetails(c.id).then(function() {
       // Re-render habanos section only — DOM surgery
       var panelBody = document.getElementById('panelBody');
-      var habBlock  = panelBody.querySelector('.habanos-section-placeholder');
-      if (habBlock) {
-        habBlock.outerHTML = renderHabanos(c.id);
-      }
+      // Conteneur stable : l'ancien marqueur disparaissait des le premier
+      // rendu, si bien que la version traduite n'etait jamais reinjectee
+      // et le bloc restait dans la langue de l'instantane statique.
+      var habBlock = panelBody.querySelector('.habanos-zone');
+      if (habBlock) habBlock.innerHTML = renderHabanos(c.id);
     }).catch(function() {});
   }
 }
@@ -255,7 +256,7 @@ function _renderPanel(c) {
 
   var habanos = HABANOS_DATA[c.id]
     ? renderHabanos(c.id)
-    : '<div class="habanos-section-placeholder"></div>'; // filled lazily
+    : ''; // rempli par l'enrichissement ci-dessous
 
   document.getElementById('panelBody').innerHTML =
     '<span class="tier-badge" style="background:' + tc.bg + ';border-color:' + tc.border + ';color:' + tc.color + '">' + tc.text + '</span>' +
@@ -281,7 +282,7 @@ function _renderPanel(c) {
     '<div class="sec">'+t('notes_sommelier')+'</div>' +
     '<div class="sn">' + _tr(c.notes||'') + '</div>' +
     '<div id="panel-lounges"></div>' +
-    habanos;
+    '<div class="habanos-zone">' + habanos + '</div>';
 }
 
 function brandCard(b, c) {

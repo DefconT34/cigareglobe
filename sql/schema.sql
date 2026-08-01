@@ -521,6 +521,21 @@ CREATE TABLE `votes` (
   CONSTRAINT `fk_votes_contrib` FOREIGN KEY (`contribution_id`) REFERENCES `contributions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `content_translations`  (migration 008)
+--
+
+DROP TABLE IF EXISTS `content_translations`;
+CREATE TABLE `content_translations` (
+  `source_hash` char(40) NOT NULL COMMENT 'sha1 du texte source',
+  `lang` char(2) NOT NULL,
+  `source_text` text NOT NULL COMMENT 'conserve pour la relecture',
+  `target_text` text NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`source_hash`,`lang`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

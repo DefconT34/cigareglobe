@@ -43,6 +43,17 @@ mysqldump --no-data --skip-comments --no-tablespaces \
   | sed -E 's/ AUTO_INCREMENT=[0-9]+//g' > sql/schema.sql
 ```
 
+**Sous Windows, ne pas rediriger depuis PowerShell** : `>` écrit des
+fins de ligne CRLF. `tests/bootstrap.php` découpe le dump instruction
+par instruction et normalise désormais les fins de ligne, mais un
+fichier CRLF reste une anomalie dans le dépôt. Passer par Git Bash, ou
+reconvertir en LF après coup.
+
+Symptôme du temps où la normalisation manquait : le fichier entier
+formait une seule « instruction », commençant par une directive
+`/*!40101 … */` donc ignorée — **zéro table créée**, et l'échec ne se
+manifestait qu'au premier `INSERT` sur `lounges`.
+
 ## Données
 
 `schema.sql` ne contient **que la structure** (jamais de données
