@@ -247,7 +247,7 @@
 
     req.then(function (res) {
       submit.disabled = false;
-      if (!res.ok) { setMsg((res.data && res.data.error) || t('acc_error'), 'err'); return; }
+      if (!res.ok) { setMsg(tErr(res.data), 'err'); return; }
 
       if (kind === 'login' || kind === 'register') {
         user = res.data.user;
@@ -286,7 +286,7 @@
   function doResend() {
     api('resend', 'POST').then(function (res) {
       if (menu) menu.classList.add('hidden');
-      toast(res.ok ? t('acc_verif_sent') : ((res.data && res.data.error) || t('acc_error')), res.ok ? 'ok' : 'err');
+      toast(res.ok ? t('acc_verif_sent') : tErr(res.data), res.ok ? 'ok' : 'err');
     });
   }
 
@@ -336,7 +336,7 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         var list = (data && data.contributions) || [];
-        if (data && data.error) { box.innerHTML = '<div class="cg-contrib-empty">' + escapeHtml(data.error) + '</div>'; return; }
+        if (data && data.error) { box.innerHTML = '<div class="cg-contrib-empty">' + escapeHtml(tErr(data)) + '</div>'; return; }
         if (!list.length) { box.innerHTML = '<div class="cg-contrib-empty">' + t('acc_no_contrib') + '</div>'; return; }
         box.innerHTML = list.map(function (c) {
           return '<div class="cg-contrib-item">' +

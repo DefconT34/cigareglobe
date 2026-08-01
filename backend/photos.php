@@ -11,14 +11,14 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     error_log("[photos.php] $errstr @ $errfile:$errline");
-    echo json_encode(['error' => 'Erreur serveur.']);
+    echo json_encode(err('server_error', 'Erreur serveur.'));
     exit;
 });
 set_exception_handler(function($e) {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     error_log('[photos.php] ' . $e->getMessage());
-    echo json_encode(['error' => 'Erreur serveur.']);
+    echo json_encode(err('server_error', 'Erreur serveur.'));
     exit;
 });
 
@@ -88,23 +88,23 @@ try {
     }
 } catch (PDOException $e) {
     error_log('[photos.php] SQL ' . $e->getMessage());
-    jout(['error' => 'Erreur base de données.'], 500);
+    jout(err('db_error', 'Erreur base de données.'), 500);
 } catch (Throwable $e) {
     error_log('[photos.php] ' . $e->getMessage());
-    jout(['error' => 'Erreur serveur.'], 500);
+    jout(err('server_error', 'Erreur serveur.'), 500);
 }
 
 // ════════════════════════════════════════════════════════
 // UPLOAD
 // ════════════════════════════════════════════════════════
 function action_upload(PDO $db): never {
-    if (!is_admin()) jout(['error' => 'Non autorisé'], 403);
+    if (!is_admin()) jout(err('forbidden', 'Non autorisé'), 403);
 
     $lounge_id  = (int)($_POST['lounge_id'] ?? 0);
     $caption    = trim(strip_tags($_POST['caption']    ?? ''));
     $is_primary = !empty($_POST['is_primary']) && $_POST['is_primary'] !== '0';
 
-    if (!$lounge_id) jout(['error' => 'lounge_id manquant'], 400);
+    if (!$lounge_id) jout(err('id_required', 'lounge_id manquant'), 400);
 
     // Vérifier que le lounge existe
     $chk = $db->prepare("SELECT id FROM lounges WHERE id = ? AND is_verified = 1");
@@ -115,12 +115,12 @@ function action_upload(PDO $db): never {
     $cnt = $db->prepare("SELECT COUNT(*) FROM lounge_photos WHERE lounge_id = ?");
     $cnt->execute([$lounge_id]);
     if ((int)$cnt->fetchColumn() >= MAX_PER_LOUNGE) {
-        jout(['error' => 'Quota atteint (10 photos max par lounge)'], 429);
+        jout(err('photo_quota', 'Quota atteint (10 photos max par lounge)'), 429);
     }
 
     // Vérifier fichier uploadé
     if (!isset($_FILES['photo'])) {
-        jout(['error' => 'Aucun fichier reçu (clé "photo" manquante)'], 400);
+        jout(err('file_missing', 'Aucun fichier reçu (clé "photo" manquante)'), 400);
     }
 
     $file = $_FILES['photo'];
@@ -144,7 +144,7 @@ function action_upload(PDO $db): never {
 
     $tmp = $file['tmp_name'];
     if (!is_uploaded_file($tmp)) {
-        jout(['error' => 'Fichier invalide (sécurité)'], 400);
+        jout(err('file_invalid', 'Fichier invalide (sécurité)'), 400);
     }
 
     // Vérification MIME réelle
@@ -196,7 +196,7 @@ function action_upload(PDO $db): never {
         if (!$img) {
             // GD ne peut pas lire → copie directe
             if (!move_uploaded_file($tmp, $dest)) {
-                jout(['error' => 'Échec de la copie du fichier'], 500);
+                jout(err('upload_failed', 'Échec de la copie du fichier'), 500);
             }
             copy($dest, $thumb);
         } else {
@@ -235,13 +235,13 @@ function action_upload(PDO $db): never {
     } else {
         // Pas de GD — copie directe (extension .jpg déjà forcée)
         if (!move_uploaded_file($tmp, $dest)) {
-            jout(['error' => 'Échec move_uploaded_file — vérifiez les permissions'], 500);
+            jout(err('upload_failed', 'Échec move_uploaded_file — vérifiez les permissions'), 500);
         }
         copy($dest, $thumb);
     }
 
     if (!file_exists($dest)) {
-        jout(['error' => 'Fichier introuvable après copie — vérifiez les permissions du dossier'], 500);
+        jout(err('upload_failed', 'Fichier introuvable après copie — vérifiez les permissions du dossier'), 500);
     }
 
     // Photo principale ?
@@ -329,15 +329,15 @@ function action_list(PDO $db): never {
 // DELETE
 // ════════════════════════════════════════════════════════
 function action_delete(PDO $db): never {
-    if (!is_admin()) jout(['error' => 'Non autorisé'], 403);
+    if (!is_admin()) jout(err('forbidden', 'Non autorisé'), 403);
 
     $photo_id = (int)($_POST['photo_id'] ?? 0);
-    if (!$photo_id) jout(['error' => 'photo_id requis'], 400);
+    if (!$photo_id) jout(err('id_required', 'photo_id requis'), 400);
 
     $row = $db->prepare("SELECT lounge_id, filename FROM lounge_photos WHERE id = ?");
     $row->execute([$photo_id]);
     $photo = $row->fetch();
-    if (!$photo) jout(['error' => 'Photo introuvable'], 404);
+    if (!$photo) jout(err('not_found_photo', 'Photo introuvable'), 404);
 
     // Supprimer les fichiers
     $dir = UPLOAD_DIR . $photo['lounge_id'] . '/';
@@ -353,15 +353,15 @@ function action_delete(PDO $db): never {
 // PRIMARY
 // ════════════════════════════════════════════════════════
 function action_primary(PDO $db): never {
-    if (!is_admin()) jout(['error' => 'Non autorisé'], 403);
+    if (!is_admin()) jout(err('forbidden', 'Non autorisé'), 403);
 
     $photo_id = (int)($_POST['photo_id'] ?? 0);
-    if (!$photo_id) jout(['error' => 'photo_id requis'], 400);
+    if (!$photo_id) jout(err('id_required', 'photo_id requis'), 400);
 
     $row = $db->prepare("SELECT lounge_id FROM lounge_photos WHERE id = ?");
     $row->execute([$photo_id]);
     $photo = $row->fetch();
-    if (!$photo) jout(['error' => 'Photo introuvable'], 404);
+    if (!$photo) jout(err('not_found_photo', 'Photo introuvable'), 404);
 
     $db->prepare("UPDATE lounge_photos SET is_primary = 0 WHERE lounge_id = ?")->execute([$photo['lounge_id']]);
     $db->prepare("UPDATE lounge_photos SET is_primary = 1 WHERE id = ?")->execute([$photo_id]);
@@ -372,10 +372,10 @@ function action_primary(PDO $db): never {
 // APPROVE (modération photos communautaires)
 // ════════════════════════════════════════════════════════
 function action_approve(PDO $db): never {
-    if (!is_admin()) jout(['error' => 'Non autorisé'], 403);
+    if (!is_admin()) jout(err('forbidden', 'Non autorisé'), 403);
 
     $photo_id = (int)($_POST['photo_id'] ?? 0);
-    if (!$photo_id) jout(['error' => 'photo_id requis'], 400);
+    if (!$photo_id) jout(err('id_required', 'photo_id requis'), 400);
 
     $db->prepare("UPDATE lounge_photos SET is_approved = 1 WHERE id = ?")->execute([$photo_id]);
     jout(['success' => true]);

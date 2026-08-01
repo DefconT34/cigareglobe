@@ -77,7 +77,7 @@
     })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (d.error) { btn.disabled = false; if (A) A.toast(d.error, 'err'); return; }
+        if (d.error) { btn.disabled = false; if (A) A.toast(tErr(d), 'err'); return; }
         btn.textContent = t('rev_flagged');                 // l'avis reste visible
         if (A) A.toast(t('rev_flag_thanks'), 'ok');
       })
@@ -138,7 +138,7 @@
         send.disabled = false;
         if (d.error) {
           if (d.need_verify && A) A.toast('Vérifiez votre email pour laisser un avis.', 'err');
-          else msg.textContent = d.error;
+          else msg.textContent = tErr(d);
           return;
         }
         if (A) A.toast('Merci pour votre avis !', 'ok');

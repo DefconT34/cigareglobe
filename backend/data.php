@@ -22,7 +22,7 @@ set_exception_handler(function(Throwable $e) {
     error_log('[data.php] ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
-    $out = ['error' => 'Erreur serveur.'];
+    $out = err('server_error', 'Erreur serveur.');
     if (defined('APP_DEBUG') && APP_DEBUG) {
         $out['debug'] = $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine();
     }
@@ -68,12 +68,12 @@ try {
         'brand'   => action_brand($db),
         'market'  => action_market($db),
         'all'     => action_all($db),
-        default   => (function(){ http_response_code(404); jout(['error'=>'Action inconnue']); })(),
+        default   => (function(){ http_response_code(404); jout(err('unknown_action', 'Action inconnue')); })(),
     };
 } catch (Throwable $e) {
     error_log('[data.php] ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
     http_response_code(500);
-    $out = ['error' => 'Erreur serveur.'];
+    $out = err('server_error', 'Erreur serveur.');
     if (defined('APP_DEBUG') && APP_DEBUG) $out['debug'] = $e->getMessage();
     jout($out);
 }
@@ -222,12 +222,12 @@ function action_globe(PDO $db): void {
 // ── Country : détail complet d'un pays producteur ────────
 function action_country(PDO $db): void {
     $id = trim($_GET['id'] ?? '');
-    if (!$id) { http_response_code(400); jout(['error'=>'id requis']); }
+    if (!$id) { http_response_code(400); jout(err('id_required', 'id requis')); }
 
     $c = $db->prepare("SELECT * FROM producer_countries WHERE id = ?");
     $c->execute([$id]);
     $country = $c->fetch();
-    if (!$country) { http_response_code(404); jout(['error'=>'Pays introuvable']); }
+    if (!$country) { http_response_code(404); jout(err('not_found_country', 'Pays introuvable')); }
     $country = row_parse($country, ['tabacaleras','regions','varieties','brands']);
 
     $g = $db->prepare("SELECT * FROM producer_geo WHERE country_id = ?");
@@ -270,7 +270,7 @@ function action_country(PDO $db): void {
 // ── Lounges : établissements d'un pays ────────────────────
 function action_lounges(PDO $db): void {
     $id = trim($_GET['id'] ?? '');
-    if (!$id) { http_response_code(400); jout(['error'=>'id requis']); }
+    if (!$id) { http_response_code(400); jout(err('id_required', 'id requis')); }
 
     $desc_col = lounge_desc_col();
     $extra    = lounge_extra_cols();
@@ -317,12 +317,12 @@ function action_lounges(PDO $db): void {
 }
 function action_brand(PDO $db): void {
     $name = trim($_GET['name'] ?? '');
-    if (!$name) { http_response_code(400); jout(['error'=>'name requis']); }
+    if (!$name) { http_response_code(400); jout(err('name_required_param', 'name requis')); }
 
     $stmt = $db->prepare("SELECT * FROM brands WHERE name = ?");
     $stmt->execute([$name]);
     $brand = $stmt->fetch();
-    if (!$brand) { http_response_code(404); jout(['error'=>'Marque introuvable']); }
+    if (!$brand) { http_response_code(404); jout(err('not_found_brand', 'Marque introuvable')); }
     // Sélectionner la bonne langue pour tous les champs traduisibles
     $lang = in_array($_GET['lang'] ?? '', ['en','es','de','zh','ar']) ? $_GET['lang'] : 'fr';
     if ($lang !== 'fr') {
@@ -358,12 +358,12 @@ function action_brand(PDO $db): void {
 // ── Market : détail d'un marché ──────────────────────────
 function action_market(PDO $db): void {
     $id = trim($_GET['id'] ?? '');
-    if (!$id) { http_response_code(400); jout(['error'=>'id requis']); }
+    if (!$id) { http_response_code(400); jout(err('id_required', 'id requis')); }
 
     $stmt = $db->prepare("SELECT * FROM markets WHERE id = ?");
     $stmt->execute([$id]);
     $m = $stmt->fetch();
-    if (!$m) { http_response_code(404); jout(['error'=>'Marché introuvable']); }
+    if (!$m) { http_response_code(404); jout(err('not_found_market', 'Marché introuvable')); }
     $m = row_parse($m, ['top_brands']);
     $m['topBrands'] = $m['top_brands']; unset($m['top_brands']);
     $m['rank'] = (int)$m['rank_num']; unset($m['rank_num']);

@@ -26,6 +26,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
 - **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
 - **C5** : tests de bout en bout Playwright (36 parcours : globe, panneaux, recherche, Explorer, langues, a11y, mobile) + jeu de donnees versionne + CI
+- **F2** : messages du serveur — 35 codes stables, traduits côté front par `tErr()`, jamais par PHP
 - **F1** : interface entièrement traduite — 102 clés dans 6 langues, 12 modules câblés, 3 modules qui ne se retraduisaient jamais corrigés
 - **F7** : garde-fous multilingues — parité des clés, couverture du contenu en base, balayage des 6 langues à cliquet, RTL `#side-fabs` corrigé
 - **A2** : CORS restreint — liste d'origines comparées exactement, `photos.php` rallié, 11 vérifications
@@ -65,7 +66,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**F7** — Garde-fous : parité des clés (`tools/i18n_check.php`, 12 vérifications) + balayage des 6 langues avec cliquet~~ ✅
 - [x] ~~**F1** — Rapatrier les chaînes codées en dur du front dans `i18n.js`~~ ✅ · 102 clés, 12 modules
-- [ ] **F2** — Codes d'erreur côté serveur (92 messages), traduits côté front · M · dépend de F1
+- [x] ~~**F2** — Codes d'erreur côté serveur, traduits côté front~~ ✅ · 35 codes, 10 vérifications
 - [ ] **F5** — RTL arabe : vérifier les composants récents (`#side-fabs`, champ Explorer) · P
 - [ ] **F6** — Référencement multilingue (`hreflang`, `lang` dynamique, URLs par langue) · M · **décision requise**
 - [ ] **F3** — Colonnes de traduction manquantes, 6 tables (migration 007) · M
@@ -78,4 +79,4 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → **F2** → B1 → F3/F4/F6 → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → **B1** → F3/F4/F6 → D6/C1b (optionnels)

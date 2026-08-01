@@ -376,6 +376,60 @@ foreach (i18n_ecarts($trad) as $langue => $e) {
     eq("i18n : $langue n'a pas de cle orpheline", [], $e['en_trop']);
 }
 
+// ════════════════════════════════════════════════════════
+section('Codes d\'erreur');
+
+// Le serveur ne traduit pas : il renvoie un CODE stable que le front
+// traduit (voir err() dans backend/config.php et tErr() dans i18n.js).
+$r = http('POST', $base . '/backend/auth.php?action=login',
+          ['jar' => $anon, 'json' => ['email' => 'x@y.z', 'password' => 'zzz']]);
+eq('CSRF : la reponse porte un code', 'csrf_invalid', $r['json']['code'] ?? null);
+check('CSRF : le message francais reste present, comme repli',
+      !empty($r['json']['error']));
+
+$r = post_json($base, $anon, '/backend/auth.php?action=login',
+               ['email' => 'inconnu@test.local', 'password' => 'mauvais123']);
+eq('identifiants errones : code stable', 'credentials_invalid', $r['json']['code'] ?? null);
+
+$r = post_json($base, $anon, '/backend/auth.php?action=register',
+               ['email' => 'alice@test.local', 'password' => 'motdepasse8', 'display_name' => 'Sosie']);
+eq('email deja pris : code stable', 'email_taken', $r['json']['code'] ?? null);
+
+$r = http('GET', $base . '/backend/api.php?action=my_contributions', ['jar' => $anon]);
+eq('non connecte : code stable', 'auth_required', $r['json']['code'] ?? null);
+
+$r = http('GET', $base . '/backend/data.php?action=country&id=inexistant', ['jar' => $anon]);
+eq('pays introuvable : code stable', 'not_found_country', $r['json']['code'] ?? null);
+
+$r = http('GET', $base . '/backend/data.php?action=inconnue', ['jar' => $anon]);
+eq('action inconnue : code stable', 'unknown_action', $r['json']['code'] ?? null);
+
+// Chaque code emis par le back doit avoir sa traduction, sinon le front
+// afficherait le message francais quelle que soit la langue.
+$codes = [];
+foreach (glob(PROJECT_ROOT . '/backend/*.php') as $f) {
+    if (preg_match_all("/err\('([a-z_]+)'/", file_get_contents($f), $m)) {
+        foreach ($m[1] as $c) $codes[$c] = true;
+    }
+}
+check('au moins vingt codes distincts sont definis', count($codes) >= 20,
+      count($codes) . ' trouve(s)');
+
+$trad = i18n_parse(PROJECT_ROOT . '/assets/js/i18n.js');
+$sansTraduction = [];
+foreach (array_keys($codes) as $c) {
+    if (!isset($trad['fr']['err_' . $c])) $sansTraduction[] = $c;
+}
+eq('chaque code a sa traduction francaise', [], $sansTraduction);
+
+$manquantes = [];
+foreach (['en', 'es', 'de', 'zh', 'ar'] as $l) {
+    foreach (array_keys($codes) as $c) {
+        if (!isset($trad[$l]['err_' . $c])) $manquantes[] = "$l/$c";
+    }
+}
+eq('chaque code est traduit dans les cinq autres langues', [], $manquantes);
+
 report_and_exit();
 
 /**

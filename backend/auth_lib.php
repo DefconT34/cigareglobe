@@ -57,7 +57,7 @@ function csrf_get(): string {
 function csrf_verify(): void {
     $sent = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($_POST['_csrf'] ?? '');
     if (empty($_SESSION['csrf']) || !is_string($sent) || !hash_equals($_SESSION['csrf'], $sent)) {
-        respond(['error' => 'Jeton CSRF invalide ou expiré. Rechargez la page.'], 419);
+        respond(err('csrf_invalid', 'Jeton CSRF invalide ou expiré. Rechargez la page.'), 419);
     }
 }
 
@@ -76,7 +76,7 @@ function current_user(PDO $db): ?array {
 /** Renvoie l'utilisateur ou coupe avec 401. */
 function require_auth(PDO $db): array {
     $u = current_user($db);
-    if (!$u) respond(['error' => 'Authentification requise'], 401);
+    if (!$u) respond(err('auth_required', 'Authentification requise'), 401);
     return $u;
 }
 
@@ -136,7 +136,7 @@ function rate_limit(PDO $db, string $action, int $max, int $windowSec): void {
         );
         $c->execute([$ip, $action, $windowSec]);
         if ((int)$c->fetchColumn() >= $max) {
-            respond(['error' => 'Trop de tentatives. Réessayez dans quelques minutes.'], 429);
+            respond(err('rate_limited', 'Trop de tentatives. Réessayez dans quelques minutes.'), 429);
         }
         $db->prepare("INSERT INTO auth_attempts (ip, action) VALUES (?, ?)")->execute([$ip, $action]);
     } catch (Throwable $e) {

@@ -151,6 +151,23 @@ define('MAILGUN_DOMAIN', (string)env('MAILGUN_DOMAIN', ''));
 define('MAILGUN_HOST',   (string)env('MAILGUN_HOST', 'api.mailgun.net'));
 define('MAIL_TIMEOUT',   (int)env('MAIL_TIMEOUT', 10));
 
+/**
+ * Corps d'une reponse d'erreur : un CODE stable et un message francais.
+ *
+ * Le serveur ne traduit pas. Le front lit le code et cherche la cle
+ * « err_<code> » dans i18n.js ; a defaut, il affiche le message tel
+ * quel. Les traductions restent ainsi dans un seul fichier, et ajouter
+ * une langue ne demande aucune modification du back.
+ *
+ * Le message reste indispensable : il sert de repli, il documente le
+ * code a la lecture, et il reste lisible pour un appel direct a l'API.
+ *
+ *   respond(err('email_taken', 'Un compte existe deja avec cet email.'), 409);
+ */
+function err(string $code, string $message, array $extra = []): array {
+    return array_merge(['error' => $message, 'code' => $code], $extra);
+}
+
 // ── Connexion PDO ─────────────────────────────────────────
 function getDB(): PDO {
     static $pdo = null;

@@ -57,7 +57,7 @@
     fetch(apiBase() + '?action=profile', { credentials: 'include' })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (!d || d.error) { box.innerHTML = '<div class="cg-contrib-empty">' + esc((d && d.error) || t('acc_error')) + '</div>'; return; }
+        if (!d || d.error) { box.innerHTML = '<div class="cg-contrib-empty">' + esc(tErr(d)) + '</div>'; return; }
         renderView(box, d);
       })
       .catch(function () { box.innerHTML = '<div class="cg-contrib-empty">' + t('acc_net_error') + '</div>'; });
@@ -128,7 +128,7 @@
         .then(function (r) { return r.json(); })
         .then(function (d) {
           btn.disabled = false;
-          if (d.error) { msg.className = 'cg-msg err'; msg.textContent = d.error; return; }
+          if (d.error) { msg.className = 'cg-msg err'; msg.textContent = tErr(d); return; }
           if (A && A.updateUser) A.updateUser(d.user);   // maj en-tête
           if (A) A.toast('Profil mis à jour.', 'ok');
           load();                                        // retour vue

@@ -122,7 +122,7 @@
       .then(function (r) { return r.json(); })
       .then(function (d) {
         var items = (d && d.items) || [];
-        if (d && d.error) { box.innerHTML = '<div class="cg-contrib-empty">' + esc(d.error) + '</div>'; return; }
+        if (d && d.error) { box.innerHTML = '<div class="cg-contrib-empty">' + esc(tErr(d)) + '</div>'; return; }
         if (!items.length) { box.innerHTML = '<div class="cg-contrib-empty">' + t('fav_none') + '</div>'; return; }
         var groups = { to_visit: [], visited: [], favorite: [] };
         items.forEach(function (it) { (groups[it.list] || (groups[it.list] = [])).push(it); });

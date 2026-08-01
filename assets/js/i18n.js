@@ -320,6 +320,44 @@ const I18N = {
 
     /* Fin de chargement du globe (lot F1) */
     globe_ready:'Globe prêt ✓',
+
+    /* Messages d'erreur du serveur, par code (lot F2) */
+    err_server_error:'Erreur serveur. Réessayez dans un instant.',
+    err_db_error:'Erreur de base de données.',
+    err_unknown_action:'Action inconnue.',
+    err_method_not_allowed:'Méthode non autorisée.',
+    err_auth_required:'Connectez-vous pour continuer.',
+    err_forbidden:'Accès refusé.',
+    err_csrf_invalid:'Session expirée. Rechargez la page.',
+    err_rate_limited:'Trop de tentatives. Réessayez dans quelques minutes.',
+    err_email_invalid:'Adresse email invalide.',
+    err_email_taken:'Un compte existe déjà avec cet email.',
+    err_credentials_invalid:'Email ou mot de passe incorrect.',
+    err_account_suspended:'Ce compte est suspendu.',
+    err_token_missing:'Lien incomplet : jeton manquant.',
+    err_token_invalid:'Lien invalide ou expiré.',
+    err_name_required:'Le nom d\'affichage est requis (80 caractères maximum).',
+    err_verify_email:'Confirmez votre email pour contribuer ou noter.',
+    err_params_invalid:'Paramètres invalides.',
+    err_id_required:'Identifiant manquant.',
+    err_country_required:'Pays manquant.',
+    err_name_required_param:'Nom manquant.',
+    err_not_found_country:'Pays introuvable.',
+    err_not_found_market:'Marché introuvable.',
+    err_not_found_brand:'Marque introuvable.',
+    err_not_found_lounge:'Établissement introuvable.',
+    err_not_found_review:'Avis introuvable.',
+    err_not_found_photo:'Photo introuvable.',
+    err_not_found_profile:'Profil introuvable.',
+    err_not_found_contribution:'Contribution introuvable ou déjà traitée.',
+    err_rating_required:'Une note de 1 à 5 est requise.',
+    err_already_voted:'Vous avez déjà voté de cette façon.',
+    err_already_reported:'Cet établissement a déjà été signalé pour ce pays.',
+    err_own_review:'Vous ne pouvez pas signaler votre propre avis.',
+    err_photo_quota:'Limite atteinte : 10 photos maximum par établissement.',
+    err_file_missing:'Aucun fichier reçu.',
+    err_file_invalid:'Fichier refusé.',
+    err_upload_failed:'L\'envoi a échoué. Réessayez.',
   },
 
   en: {
@@ -638,6 +676,44 @@ const I18N = {
 
     /* Fin de chargement du globe (lot F1) */
     globe_ready:'Globe ready ✓',
+
+    /* Messages d'erreur du serveur, par code (lot F2) */
+    err_server_error:'Server error. Please try again shortly.',
+    err_db_error:'Database error.',
+    err_unknown_action:'Unknown action.',
+    err_method_not_allowed:'Method not allowed.',
+    err_auth_required:'Please sign in to continue.',
+    err_forbidden:'Access denied.',
+    err_csrf_invalid:'Session expired. Please reload the page.',
+    err_rate_limited:'Too many attempts. Please try again in a few minutes.',
+    err_email_invalid:'Invalid email address.',
+    err_email_taken:'An account already exists with this email.',
+    err_credentials_invalid:'Incorrect email or password.',
+    err_account_suspended:'This account is suspended.',
+    err_token_missing:'Incomplete link: token missing.',
+    err_token_invalid:'Invalid or expired link.',
+    err_name_required:'A display name is required (80 characters maximum).',
+    err_verify_email:'Confirm your email to contribute or rate.',
+    err_params_invalid:'Invalid parameters.',
+    err_id_required:'Missing identifier.',
+    err_country_required:'Missing country.',
+    err_name_required_param:'Missing name.',
+    err_not_found_country:'Country not found.',
+    err_not_found_market:'Market not found.',
+    err_not_found_brand:'Brand not found.',
+    err_not_found_lounge:'Establishment not found.',
+    err_not_found_review:'Review not found.',
+    err_not_found_photo:'Photo not found.',
+    err_not_found_profile:'Profile not found.',
+    err_not_found_contribution:'Contribution not found or already handled.',
+    err_rating_required:'A rating from 1 to 5 is required.',
+    err_already_voted:'You have already voted this way.',
+    err_already_reported:'This establishment has already been reported for this country.',
+    err_own_review:'You cannot report your own review.',
+    err_photo_quota:'Limit reached: 10 photos maximum per establishment.',
+    err_file_missing:'No file received.',
+    err_file_invalid:'File rejected.',
+    err_upload_failed:'Upload failed. Please try again.',
   },
 
   es: {
@@ -956,6 +1032,44 @@ const I18N = {
 
     /* Fin de chargement du globe (lot F1) */
     globe_ready:'Globo listo ✓',
+
+    /* Messages d'erreur du serveur, par code (lot F2) */
+    err_server_error:'Error del servidor. Inténtalo de nuevo en un momento.',
+    err_db_error:'Error de base de datos.',
+    err_unknown_action:'Acción desconocida.',
+    err_method_not_allowed:'Método no permitido.',
+    err_auth_required:'Inicia sesión para continuar.',
+    err_forbidden:'Acceso denegado.',
+    err_csrf_invalid:'Sesión caducada. Recarga la página.',
+    err_rate_limited:'Demasiados intentos. Inténtalo de nuevo en unos minutos.',
+    err_email_invalid:'Dirección de correo no válida.',
+    err_email_taken:'Ya existe una cuenta con este correo.',
+    err_credentials_invalid:'Correo o contraseña incorrectos.',
+    err_account_suspended:'Esta cuenta está suspendida.',
+    err_token_missing:'Enlace incompleto: falta el token.',
+    err_token_invalid:'Enlace no válido o caducado.',
+    err_name_required:'El nombre visible es obligatorio (80 caracteres como máximo).',
+    err_verify_email:'Confirma tu correo para aportar o valorar.',
+    err_params_invalid:'Parámetros no válidos.',
+    err_id_required:'Falta el identificador.',
+    err_country_required:'Falta el país.',
+    err_name_required_param:'Falta el nombre.',
+    err_not_found_country:'País no encontrado.',
+    err_not_found_market:'Mercado no encontrado.',
+    err_not_found_brand:'Marca no encontrada.',
+    err_not_found_lounge:'Establecimiento no encontrado.',
+    err_not_found_review:'Opinión no encontrada.',
+    err_not_found_photo:'Foto no encontrada.',
+    err_not_found_profile:'Perfil no encontrado.',
+    err_not_found_contribution:'Aportación no encontrada o ya tratada.',
+    err_rating_required:'Se requiere una puntuación de 1 a 5.',
+    err_already_voted:'Ya has votado de esta forma.',
+    err_already_reported:'Este establecimiento ya se ha propuesto para este país.',
+    err_own_review:'No puedes denunciar tu propia opinión.',
+    err_photo_quota:'Límite alcanzado: 10 fotos por establecimiento.',
+    err_file_missing:'No se ha recibido ningún archivo.',
+    err_file_invalid:'Archivo rechazado.',
+    err_upload_failed:'La subida ha fallado. Inténtalo de nuevo.',
   },
 
   de: {
@@ -1274,6 +1388,44 @@ const I18N = {
 
     /* Fin de chargement du globe (lot F1) */
     globe_ready:'Globus bereit ✓',
+
+    /* Messages d'erreur du serveur, par code (lot F2) */
+    err_server_error:'Serverfehler. Bitte versuchen Sie es gleich erneut.',
+    err_db_error:'Datenbankfehler.',
+    err_unknown_action:'Unbekannte Aktion.',
+    err_method_not_allowed:'Methode nicht erlaubt.',
+    err_auth_required:'Bitte melden Sie sich an, um fortzufahren.',
+    err_forbidden:'Zugriff verweigert.',
+    err_csrf_invalid:'Sitzung abgelaufen. Bitte laden Sie die Seite neu.',
+    err_rate_limited:'Zu viele Versuche. Bitte in einigen Minuten erneut versuchen.',
+    err_email_invalid:'Ungültige E-Mail-Adresse.',
+    err_email_taken:'Mit dieser E-Mail besteht bereits ein Konto.',
+    err_credentials_invalid:'E-Mail oder Passwort ist falsch.',
+    err_account_suspended:'Dieses Konto ist gesperrt.',
+    err_token_missing:'Unvollständiger Link: Token fehlt.',
+    err_token_invalid:'Ungültiger oder abgelaufener Link.',
+    err_name_required:'Ein Anzeigename ist erforderlich (höchstens 80 Zeichen).',
+    err_verify_email:'Bestätigen Sie Ihre E-Mail, um beizutragen oder zu bewerten.',
+    err_params_invalid:'Ungültige Parameter.',
+    err_id_required:'Kennung fehlt.',
+    err_country_required:'Land fehlt.',
+    err_name_required_param:'Name fehlt.',
+    err_not_found_country:'Land nicht gefunden.',
+    err_not_found_market:'Markt nicht gefunden.',
+    err_not_found_brand:'Marke nicht gefunden.',
+    err_not_found_lounge:'Einrichtung nicht gefunden.',
+    err_not_found_review:'Bewertung nicht gefunden.',
+    err_not_found_photo:'Foto nicht gefunden.',
+    err_not_found_profile:'Profil nicht gefunden.',
+    err_not_found_contribution:'Beitrag nicht gefunden oder bereits bearbeitet.',
+    err_rating_required:'Eine Bewertung von 1 bis 5 ist erforderlich.',
+    err_already_voted:'Sie haben bereits so abgestimmt.',
+    err_already_reported:'Diese Einrichtung wurde für dieses Land bereits gemeldet.',
+    err_own_review:'Sie können Ihre eigene Bewertung nicht melden.',
+    err_photo_quota:'Grenze erreicht: höchstens 10 Fotos pro Einrichtung.',
+    err_file_missing:'Keine Datei empfangen.',
+    err_file_invalid:'Datei abgelehnt.',
+    err_upload_failed:'Der Upload ist fehlgeschlagen. Bitte erneut versuchen.',
   },
 
   zh: {
@@ -1592,6 +1744,44 @@ const I18N = {
 
     /* Fin de chargement du globe (lot F1) */
     globe_ready:'地球仪就绪 ✓',
+
+    /* Messages d'erreur du serveur, par code (lot F2) */
+    err_server_error:'服务器错误，请稍后重试。',
+    err_db_error:'数据库错误。',
+    err_unknown_action:'未知操作。',
+    err_method_not_allowed:'不允许的请求方式。',
+    err_auth_required:'请登录后继续。',
+    err_forbidden:'访问被拒绝。',
+    err_csrf_invalid:'会话已过期，请刷新页面。',
+    err_rate_limited:'尝试次数过多，请几分钟后再试。',
+    err_email_invalid:'电子邮箱地址无效。',
+    err_email_taken:'该邮箱已注册账户。',
+    err_credentials_invalid:'邮箱或密码不正确。',
+    err_account_suspended:'该账户已被暂停。',
+    err_token_missing:'链接不完整：缺少令牌。',
+    err_token_invalid:'链接无效或已过期。',
+    err_name_required:'必须填写显示名称（最多 80 个字符）。',
+    err_verify_email:'请确认邮箱后参与贡献或评分。',
+    err_params_invalid:'参数无效。',
+    err_id_required:'缺少标识符。',
+    err_country_required:'缺少国家。',
+    err_name_required_param:'缺少名称。',
+    err_not_found_country:'未找到该国家。',
+    err_not_found_market:'未找到该市场。',
+    err_not_found_brand:'未找到该品牌。',
+    err_not_found_lounge:'未找到该场所。',
+    err_not_found_review:'未找到该评价。',
+    err_not_found_photo:'未找到该照片。',
+    err_not_found_profile:'未找到该资料。',
+    err_not_found_contribution:'未找到该贡献，或已处理。',
+    err_rating_required:'需要 1 到 5 的评分。',
+    err_already_voted:'您已投过相同的票。',
+    err_already_reported:'该场所已在此国家提交过。',
+    err_own_review:'您不能举报自己的评价。',
+    err_photo_quota:'已达上限：每个场所最多 10 张照片。',
+    err_file_missing:'未收到文件。',
+    err_file_invalid:'文件被拒绝。',
+    err_upload_failed:'上传失败，请重试。',
   },
 
   ar: {
@@ -1910,6 +2100,44 @@ const I18N = {
 
     /* Fin de chargement du globe (lot F1) */
     globe_ready:'الكرة الأرضية جاهزة ✓',
+
+    /* Messages d'erreur du serveur, par code (lot F2) */
+    err_server_error:'خطأ في الخادم. أعد المحاولة بعد قليل.',
+    err_db_error:'خطأ في قاعدة البيانات.',
+    err_unknown_action:'إجراء غير معروف.',
+    err_method_not_allowed:'الطريقة غير مسموح بها.',
+    err_auth_required:'سجّل الدخول للمتابعة.',
+    err_forbidden:'تم رفض الوصول.',
+    err_csrf_invalid:'انتهت الجلسة. أعد تحميل الصفحة.',
+    err_rate_limited:'محاولات كثيرة. أعد المحاولة بعد بضع دقائق.',
+    err_email_invalid:'عنوان بريد إلكتروني غير صالح.',
+    err_email_taken:'يوجد حساب بهذا البريد الإلكتروني بالفعل.',
+    err_credentials_invalid:'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
+    err_account_suspended:'هذا الحساب موقوف.',
+    err_token_missing:'رابط ناقص: الرمز مفقود.',
+    err_token_invalid:'رابط غير صالح أو منتهي الصلاحية.',
+    err_name_required:'الاسم المعروض مطلوب (80 حرفًا كحد أقصى).',
+    err_verify_email:'أكِّد بريدك الإلكتروني للمساهمة أو التقييم.',
+    err_params_invalid:'معاملات غير صالحة.',
+    err_id_required:'المعرّف مفقود.',
+    err_country_required:'البلد مفقود.',
+    err_name_required_param:'الاسم مفقود.',
+    err_not_found_country:'البلد غير موجود.',
+    err_not_found_market:'السوق غير موجود.',
+    err_not_found_brand:'العلامة التجارية غير موجودة.',
+    err_not_found_lounge:'المنشأة غير موجودة.',
+    err_not_found_review:'التقييم غير موجود.',
+    err_not_found_photo:'الصورة غير موجودة.',
+    err_not_found_profile:'الملف الشخصي غير موجود.',
+    err_not_found_contribution:'المساهمة غير موجودة أو عولجت بالفعل.',
+    err_rating_required:'يلزم تقييم من 1 إلى 5.',
+    err_already_voted:'لقد صوّت بهذه الطريقة من قبل.',
+    err_already_reported:'سبق الإبلاغ عن هذه المنشأة في هذا البلد.',
+    err_own_review:'لا يمكنك الإبلاغ عن تقييمك الخاص.',
+    err_photo_quota:'بلغت الحد: 10 صور كحد أقصى لكل منشأة.',
+    err_file_missing:'لم يُستلم أي ملف.',
+    err_file_invalid:'الملف مرفوض.',
+    err_upload_failed:'فشل الرفع. أعد المحاولة.',
   },
 };
 
@@ -1921,6 +2149,27 @@ function t(key){
   return (I18N[lang] && I18N[lang][key]) || I18N.fr[key] || key;
 }
 window.t = t; // expose globally
+
+/**
+ * Message d'erreur d'une réponse d'API, dans la langue courante.
+ *
+ * Le serveur ne traduit pas : il renvoie un code stable (`code`) et un
+ * message français (`error`). On cherche la clé « err_<code> » ; si elle
+ * n'existe pas — code récent, message dynamique — on retombe sur le
+ * message du serveur plutôt que d'afficher un identifiant technique.
+ *
+ *   fetch(...).then(d => { if (d.error) toast(tErr(d)); });
+ */
+function tErr(reponse, defaut) {
+  if (!reponse) return defaut || t('acc_error');
+  if (reponse.code) {
+    var cle = 'err_' + reponse.code;
+    var msg = t(cle);
+    if (msg !== cle) return msg;          // t() renvoie la clé si absente
+  }
+  return reponse.error || defaut || t('acc_error');
+}
+window.tErr = tErr;
 
 function applyLang(lang){
   currentLang = lang;

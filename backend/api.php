@@ -89,9 +89,9 @@ try {
     elseif ($action === 'reject'  && $method === 'POST') { action_reject(); }
     elseif ($action === 'export'  && $method === 'GET')  { action_export(); }
     elseif ($action === 'stats'   && $method === 'GET')  { action_stats(); }
-    else   { json_out(['error' => 'Action inconnue'], 404); }
+    else   { json_out(err('unknown_action', 'Action inconnue'), 404); }
 } catch (Throwable $e) {
-    json_out(['error' => 'Erreur serveur'], 500);
+    json_out(err('server_error', 'Erreur serveur'), 500);
 }
 
 // ════════════════════════════════════════════════════════
@@ -99,7 +99,7 @@ try {
 // ════════════════════════════════════════════════════════
 function action_list(): void {
     $country = clean($_GET['country'] ?? '', 50);
-    if (!$country) json_out(['error' => 'Paramètre country requis'], 400);
+    if (!$country) json_out(err('country_required', 'Paramètre country requis'), 400);
 
     $db   = getDB();
     $ip   = get_ip();
@@ -131,7 +131,7 @@ function action_list(): void {
 // GET all — toutes les contributions (admin)
 // ════════════════════════════════════════════════════════
 function action_all(): void {
-    if (!is_admin()) json_out(['error' => 'Accès refusé'], 403);
+    if (!is_admin()) json_out(err('forbidden', 'Accès refusé'), 403);
 
     $status = clean($_GET['status'] ?? 'pending', 20);
     if (!in_array($status, ['pending','approved','rejected','all'])) $status = 'pending';
@@ -187,7 +187,7 @@ function action_submit(): void {
     );
     $dup->execute([clean($body['country_id'],50), clean($body['name'],200)]);
     if ($dup->fetch()) {
-        json_out(['error' => 'Cet établissement a déjà été signalé pour ce pays.'], 409);
+        json_out(err('already_reported', 'Cet établissement a déjà été signalé pour ce pays.'), 409);
     }
 
     // Insertion (attribuée au compte)
@@ -245,7 +245,7 @@ function action_vote(): void {
     $vote = (int)($body['vote'] ?? 0);
 
     if (!$id || !in_array($vote, [1, -1])) {
-        json_out(['error' => 'Paramètres invalides'], 400);
+        json_out(err('params_invalid', 'Paramètres invalides'), 400);
     }
 
     $ip = get_ip();
@@ -255,7 +255,7 @@ function action_vote(): void {
     $c = $db->prepare("SELECT id, votes_up, votes_down FROM contributions WHERE id = ? AND status = 'pending'");
     $c->execute([$id]);
     $contrib = $c->fetch();
-    if (!$contrib) json_out(['error' => 'Contribution introuvable ou déjà traitée'], 404);
+    if (!$contrib) json_out(err('not_found_contribution', 'Contribution introuvable ou déjà traitée'), 404);
 
     // Vote existant ?
     $prev_stmt = $db->prepare("SELECT vote FROM votes WHERE contribution_id = ? AND voter_ip = ?");
@@ -264,7 +264,7 @@ function action_vote(): void {
 
     if ($prev !== false) {
         $prev = (int)$prev;
-        if ($prev === $vote) json_out(['error' => 'Vous avez déjà voté de cette façon'], 409);
+        if ($prev === $vote) json_out(err('already_voted', 'Vous avez déjà voté de cette façon'), 409);
 
         // Changer de vote
         $db->prepare("UPDATE votes SET vote = ? WHERE contribution_id = ? AND voter_ip = ?")->execute([$vote, $id, $ip]);
@@ -322,18 +322,18 @@ function action_vote(): void {
 // POST approve / reject — modération manuelle (admin)
 // ════════════════════════════════════════════════════════
 function action_approve(): void {
-    if (!is_admin()) json_out(['error' => 'Accès refusé'], 403);
+    if (!is_admin()) json_out(err('forbidden', 'Accès refusé'), 403);
     $id = (int)($_GET['id'] ?? 0);
-    if (!$id) json_out(['error' => 'id manquant'], 400);
+    if (!$id) json_out(err('id_required', 'id manquant'), 400);
 
     approve_contribution(getDB(), $id);
     json_out(['success' => true]);
 }
 
 function action_reject(): void {
-    if (!is_admin()) json_out(['error' => 'Accès refusé'], 403);
+    if (!is_admin()) json_out(err('forbidden', 'Accès refusé'), 403);
     $id = (int)($_GET['id'] ?? 0);
-    if (!$id) json_out(['error' => 'id manquant'], 400);
+    if (!$id) json_out(err('id_required', 'id manquant'), 400);
     getDB()->prepare("UPDATE contributions SET status='rejected' WHERE id=?")->execute([$id]);
     json_out(['success' => true]);
 }
@@ -352,7 +352,7 @@ function action_stats(): void {
 // GET export — générer le JS des approuvés (admin)
 // ════════════════════════════════════════════════════════
 function action_export(): void {
-    if (!is_admin()) json_out(['error' => 'Accès refusé'], 403);
+    if (!is_admin()) json_out(err('forbidden', 'Accès refusé'), 403);
 
     $db   = getDB();
     $rows = $db->query(
@@ -404,7 +404,7 @@ function action_export(): void {
 function assert_lounge(PDO $db, int $lounge_id): void {
     $check = $db->prepare('SELECT id FROM lounges WHERE id = ? AND is_verified = 1');
     $check->execute([$lounge_id]);
-    if (!$check->fetch()) json_out(['error' => 'Lounge introuvable'], 404);
+    if (!$check->fetch()) json_out(err('not_found_lounge', 'Lounge introuvable'), 404);
 }
 
 function action_rate(): void {
@@ -415,7 +415,7 @@ function action_rate(): void {
     $lounge_id = (int)($body['id']     ?? 0);
     $rating    = (int)($body['rating'] ?? 0);
     if ($lounge_id <= 0 || $rating < 1 || $rating > 5) {
-        json_out(['error' => 'Paramètres invalides (id requis, rating 1-5)'], 400);
+        json_out(err('params_invalid', 'Paramètres invalides (id requis, rating 1-5)'), 400);
     }
     assert_lounge($db, $lounge_id);
 
@@ -443,7 +443,7 @@ function action_review(): void {
     $title     = clean($body['title'] ?? '', 120);
     $text      = clean($body['body']  ?? '', 2000);
     if ($lounge_id <= 0 || $rating < 1 || $rating > 5) {
-        json_out(['error' => 'Une note (1-5) est requise.'], 400);
+        json_out(err('rating_required', 'Une note (1-5) est requise.'), 400);
     }
     assert_lounge($db, $lounge_id);
 
@@ -463,7 +463,7 @@ function action_review_delete(): void {
     $user = require_verified($db);
     $body = json_decode(file_get_contents('php://input'), true) ?? [];
     $lounge_id = (int)($body['id'] ?? 0);
-    if ($lounge_id <= 0) json_out(['error' => 'id requis'], 400);
+    if ($lounge_id <= 0) json_out(err('id_required', 'id requis'), 400);
 
     $db->prepare("DELETE FROM reviews WHERE user_id = ? AND lounge_id = ?")
        ->execute([$user['id'], $lounge_id]);
@@ -475,7 +475,7 @@ function action_review_delete(): void {
 function action_reviews(): void {
     $db = getDB();
     $lounge_id = (int)($_GET['id'] ?? 0);
-    if ($lounge_id <= 0) json_out(['error' => 'id requis'], 400);
+    if ($lounge_id <= 0) json_out(err('id_required', 'id requis'), 400);
     $me = current_user($db);
 
     // Les avis signalés restent visibles tant qu'un modérateur ne les a
@@ -511,14 +511,14 @@ function action_review_flag(): void {
     $body      = json_decode(file_get_contents('php://input'), true) ?? [];
     $review_id = (int)($body['id'] ?? 0);
     $reason    = clean($body['reason'] ?? '', 255);
-    if ($review_id <= 0) json_out(['error' => 'id requis'], 400);
+    if ($review_id <= 0) json_out(err('id_required', 'id requis'), 400);
 
     $r = $db->prepare("SELECT user_id, status FROM reviews WHERE id = ?");
     $r->execute([$review_id]);
     $review = $r->fetch();
-    if (!$review) json_out(['error' => 'Avis introuvable'], 404);
+    if (!$review) json_out(err('not_found_review', 'Avis introuvable'), 404);
     if ((int)$review['user_id'] === (int)$user['id']) {
-        json_out(['error' => 'Vous ne pouvez pas signaler votre propre avis.'], 400);
+        json_out(err('own_review', 'Vous ne pouvez pas signaler votre propre avis.'), 400);
     }
 
     $db->prepare("INSERT IGNORE INTO review_flags (review_id, user_id, reason) VALUES (?,?,?)")
@@ -582,12 +582,12 @@ function action_fav_toggle(): void {
     $tid  = clean((string)($body['target_id'] ?? ''), 50);
     $list = in_array($body['list'] ?? '', ['to_visit','visited','favorite'], true) ? $body['list'] : '';
     $on   = !empty($body['on']);
-    if ($tid === '' || $list === '') json_out(['error' => 'Paramètres invalides'], 400);
+    if ($tid === '' || $list === '') json_out(err('params_invalid', 'Paramètres invalides'), 400);
 
     if ($type === 'lounge') {
         $c = $db->prepare('SELECT id FROM lounges WHERE id = ? AND is_verified = 1');
         $c->execute([(int)$tid]);
-        if (!$c->fetch()) json_out(['error' => 'Lounge introuvable'], 404);
+        if (!$c->fetch()) json_out(err('not_found_lounge', 'Lounge introuvable'), 404);
     }
 
     if ($on) {
@@ -670,7 +670,7 @@ function action_profile(): void {
                               FROM users WHERE id = ? AND status = 'active'");
         $stmt->execute([$uid]);
         $u = $stmt->fetch();
-        if (!$u) json_out(['error' => 'Profil introuvable'], 404);
+        if (!$u) json_out(err('not_found_profile', 'Profil introuvable'), 404);
     } else {
         $u   = require_auth($db);
         $uid = (int)$u['id'];
@@ -734,7 +734,7 @@ function action_profile_update(): void {
     $name   = clean($body['display_name'] ?? '', 80);
     $bio    = clean($body['bio']    ?? '', 500);
     $avatar = clean($body['avatar'] ?? '', 16);   // emoji ou courte chaîne
-    if ($name === '') json_out(['error' => 'Nom d\'affichage requis.'], 400);
+    if ($name === '') json_out(err('name_required', 'Nom d\'affichage requis.'), 400);
 
     $db->prepare("UPDATE users SET display_name = ?, bio = ?, avatar_url = ? WHERE id = ?")
        ->execute([$name, $bio ?: null, $avatar ?: null, $u['id']]);

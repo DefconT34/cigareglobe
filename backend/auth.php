@@ -33,7 +33,7 @@ $db     = getDB();
 // Les POST modifiant l'état exigent un CSRF valide
 $POST_ACTIONS = ['register','login','logout','forgot','reset','resend'];
 if (in_array($action, $POST_ACTIONS, true)) {
-    if ($method !== 'POST') respond(['error' => 'Méthode non autorisée'], 405);
+    if ($method !== 'POST') respond(err('method_not_allowed', 'Méthode non autorisée'), 405);
     csrf_verify();
 }
 
@@ -47,10 +47,10 @@ try {
         case 'forgot':   action_forgot($db);   break;
         case 'reset':    action_reset($db);    break;
         case 'resend':   action_resend($db);   break;
-        default:         respond(['error' => 'Action inconnue'], 404);
+        default:         respond(err('unknown_action', 'Action inconnue'), 404);
     }
 } catch (Throwable $e) {
-    respond(['error' => 'Erreur serveur'], 500);
+    respond(err('server_error', 'Erreur serveur'), 500);
 }
 
 // ════════════════════════════════════════════════════════
@@ -75,14 +75,14 @@ function action_register(PDO $db): void {
     $pass  = (string)($b['password'] ?? '');
     $name  = trim($b['display_name'] ?? '');
 
-    if (!valid_email($email))         respond(['error' => 'Adresse email invalide.'], 400);
-    if ($name === '' || mb_strlen($name) > 80) respond(['error' => 'Nom d\'affichage requis (max 80 caractères).'], 400);
+    if (!valid_email($email))         respond(err('email_invalid', 'Adresse email invalide.'), 400);
+    if ($name === '' || mb_strlen($name) > 80) respond(err('name_required', 'Nom d\'affichage requis (max 80 caractères).'), 400);
     if ($err = password_error($pass)) respond(['error' => $err], 400);
 
     // Email déjà utilisé ?
     $chk = $db->prepare("SELECT id FROM users WHERE email = ?");
     $chk->execute([$email]);
-    if ($chk->fetch()) respond(['error' => 'Un compte existe déjà avec cet email.'], 409);
+    if ($chk->fetch()) respond(err('email_taken', 'Un compte existe déjà avec cet email.'), 409);
 
     $hash = password_hash($pass, PASSWORD_DEFAULT);
     $ins  = $db->prepare(
@@ -144,10 +144,10 @@ function action_login(PDO $db): void {
 
     // Message générique (ne pas révéler si l'email existe)
     if (!$u || !password_verify($pass, $u['password_hash'])) {
-        respond(['error' => 'Email ou mot de passe incorrect.'], 401);
+        respond(err('credentials_invalid', 'Email ou mot de passe incorrect.'), 401);
     }
     if ($u['status'] !== 'active') {
-        respond(['error' => 'Ce compte est suspendu.'], 403);
+        respond(err('account_suspended', 'Ce compte est suspendu.'), 403);
     }
 
     // Ré-hachage si l'algorithme par défaut a changé
@@ -216,7 +216,7 @@ function action_reset(PDO $db): void {
     $pass  = (string)($b['password'] ?? '');
 
     if ($err = password_error($pass)) respond(['error' => $err], 400);
-    if (!$token) respond(['error' => 'Jeton manquant.'], 400);
+    if (!$token) respond(err('token_missing', 'Jeton manquant.'), 400);
 
     $hash = hash('sha256', $token);
     $stmt = $db->prepare(
@@ -226,7 +226,7 @@ function action_reset(PDO $db): void {
     );
     $stmt->execute([$hash]);
     $row = $stmt->fetch();
-    if (!$row) respond(['error' => 'Lien invalide ou expiré.'], 400);
+    if (!$row) respond(err('token_invalid', 'Lien invalide ou expiré.'), 400);
 
     $nh = password_hash($pass, PASSWORD_DEFAULT);
     $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?")->execute([$nh, $row['user_id']]);

@@ -391,7 +391,7 @@ document.addEventListener('click', function(e) {
   .then(function(data) {
     if (data.error) {
       if (data.need_verify && window.CGAccount) window.CGAccount.toast('Vérifiez votre email pour noter.', 'err');
-      else console.warn('Rating error:', data.error);
+      else console.warn('Rating error:', data.code || data.error);
       return;
     }
 

@@ -149,7 +149,7 @@ window.castVote = function(id, vote, btn) {
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
-    if (data.error) { alert(data.error); btn.disabled = false; return; }
+    if (data.error) { alert(tErr(data)); btn.disabled = false; return; }
 
     // Refresh the contribution card
     var container = btn.closest('[style*="border-left:3px"]');
@@ -227,7 +227,7 @@ function submitContribution() {
     btn.disabled = false; btn.textContent = 'Envoyer ›';
     if (data.error) {
       if (data.need_verify && window.CGAccount) { closeContribModal(); window.CGAccount.toast('Vérifiez votre email pour contribuer.', 'err'); return; }
-      alert('⚠ ' + data.error); return;
+      alert('⚠ ' + tErr(data)); return;
     }
     // Show success — message adapté si l'ajout est publié directement
     // (contributeur de confiance : pas de passage par la modération)
