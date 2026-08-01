@@ -16,6 +16,22 @@ function normalizeType(type) {
   return 'Cave & Lounge';
 }
 
+// Le type sert d'identifiant interne (filtres, couleurs) ET d'etiquette
+// affichee. On separe les deux : la valeur reste en francais, le libelle
+// passe par les cles ctype_*, presentes dans les six langues.
+var TYPE_CLES = {
+  'La Casa del Habano': 'ctype_lcdh',
+  'Davidoff':           'ctype_davidoff',
+  'Hôtel & Palace':     'ctype_hotel',
+  'Manufacture':        'ctype_manufacture',
+  'Festival':           'ctype_festival',
+  'Cave & Lounge':      'ctype_cave_lounge',
+};
+function typeLabel(normType) {
+  var cle = TYPE_CLES[normType];
+  return cle ? t(cle) : normType;
+}
+
 var TYPE_COLORS = {
   'La Casa del Habano': '#C9A227',
   'Davidoff':           '#4A7AB5',
@@ -112,7 +128,7 @@ function renderList() {
   if (!container) return;
 
   if (!_filtered.length) {
-    container.innerHTML = '<div class="exp-empty">Aucun établissement pour ces filtres</div>';
+    container.innerHTML = '<div class="exp-empty">' + t('exp_empty') + '</div>';
     return;
   }
 
@@ -130,7 +146,7 @@ function renderList() {
           '<div class="exp-card-meta">'+
             '<span class="exp-city">'+l.city+'</span>'+
             '<span class="exp-type-dot" style="background:'+color+'"></span>'+
-            '<span class="exp-type-lbl" style="color:'+color+'">'+l.normType+'</span>'+
+            '<span class="exp-type-lbl" style="color:'+color+'">'+typeLabel(l.normType)+'</span>'+
           '</div>'+
         '</div>'+
         '<div class="exp-card-right">'+
@@ -155,10 +171,10 @@ function renderStars(r) {
 function updateStats() {
   var el = document.getElementById('exp-stats') || document.getElementById('exp-count');
   if (!el) return;
-  if (!_allLounges.length) { el.textContent = 'Chargement…'; return; }
+  if (!_allLounges.length) { el.textContent = t('exp_loading'); return; }
   var nbPays = new Set(_filtered.map(function(l){ return l.cid; })).size;
-  el.textContent = _filtered.length + ' établissement' +
-    (_filtered.length > 1 ? 's' : '') + ' · ' + nbPays + ' pays';
+  var modele = t(_filtered.length > 1 ? 'exp_stats_many' : 'exp_stats_one');
+  el.textContent = modele.replace('{n}', _filtered.length).replace('{p}', nbPays);
 }
 
 // ── Carte Leaflet ────────────────────────────────────────
@@ -245,7 +261,7 @@ function buildPopup(g) {
     'style="margin-top:8px;width:100%;padding:5px;background:rgba(201,162,39,0.15);'+
     'border:1px solid rgba(201,162,39,0.4);border-radius:3px;color:#C9A227;'+
     'font-family:Cinzel,serif;font-size:9px;letter-spacing:.12em;cursor:pointer;">'+
-    'VOIR SUR LE GLOBE</button>';
+    t('exp_see_globe') + '</button>';
   return html;
 }
 
@@ -589,6 +605,43 @@ window.addEventListener('DOMContentLoaded', function() {
   });
 
 });
+
+// ── Rafraichissement de langue ────────────────────────────
+// L'overlay est construit une seule fois : sans cette fonction, ses
+// libelles restent figes dans la langue du chargement. C'est ce qui
+// laissait « ✏ Ajouter » en francais dans les six langues alors que la
+// cle explorer_add etait bien traduite.
+window.expRefreshLang = function() {
+  var titre = document.getElementById('exp-title');
+  if (!titre) return;                       // overlay pas encore construit
+  titre.textContent = t('explorer_title');
+
+  var ajouter = document.querySelector('.exp-contrib-btn');
+  if (ajouter) ajouter.textContent = t('explorer_add');
+
+  var champ = document.getElementById('exp-search');
+  if (champ) { champ.placeholder = t('explorer_search_ph');
+               champ.setAttribute('aria-label', t('explorer_search_ph')); }
+
+  // Les listes deroulantes : le premier choix et les libelles de type.
+  // Les « value » restent en francais, ce sont les identifiants internes.
+  var type = document.getElementById('exp-type');
+  if (type) {
+    type.options[0].text = t('explorer_types');
+    for (var i = 1; i < type.options.length; i++) {
+      var v = type.options[i].value;
+      type.options[i].text = (v === 'Davidoff') ? '💎 Davidoff' : typeLabel(v);
+    }
+  }
+  var tri = document.getElementById('exp-sort');
+  if (tri && tri.options.length >= 2) {
+    tri.options[0].text = t('explorer_sort_country');
+    tri.options[1].text = t('explorer_sort_rating');
+  }
+
+  // Re-rendu : cartes, compteur et etiquettes de type.
+  applyFilters();
+};
 
 // ── Filter handler ────────────────────────────────────────
 window.expFilter = function() {

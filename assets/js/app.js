@@ -501,6 +501,11 @@ window.onLangChange = function(lang) {
   }
   if (typeof selMarket !== 'undefined' && selMarket && typeof openMarketPanel === 'function')
     openMarketPanel(selMarket);
+  // La vue Explorer est construite une fois et garde ses libelles :
+  // elle se retraduit elle-meme (voir expRefreshLang dans explorer.js).
+  if (typeof window.expRefreshLang === 'function') window.expRefreshLang();
+  // Liste « Explorer sans le globe » : memes titres de groupe a retraduire.
+  if (typeof window._globeA11yRefresh === 'function') window._globeA11yRefresh();
   document.querySelectorAll('.mlang-btn').forEach(function(b) {
     b.classList.toggle('active', b.getAttribute('data-lang') === lang);
   });

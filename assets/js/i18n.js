@@ -208,6 +208,32 @@ const I18N = {
     language:'Langue',
     tab_detail:'Détails',
     theme:'Thème',
+
+    /* Accessibilite du globe et vue Explorer (lot F1) */
+    a11y_zoom:'Zoom {n} pour cent',
+    a11y_reset:'Vue réinitialisée',
+    a11y_grp_producers:'Pays producteurs',
+    a11y_grp_countries:'Pays',
+    a11y_grp_markets:'Marchés',
+    a11y_grp_lounges:'Pays avec caves & lounges',
+    a11y_market_rank:'— marché n° {n}',
+    a11y_list_title:'Explorer sans le globe',
+    a11y_list_intro:'Cette liste ouvre les mêmes fiches que les repères du globe.',
+    exp_empty:'Aucun établissement pour ces filtres',
+    exp_loading:'Chargement…',
+    exp_stats_one:'{n} établissement · {p} pays',
+    exp_stats_many:'{n} établissements · {p} pays',
+    exp_see_globe:'VOIR SUR LE GLOBE',
+    ctype_cave_lounge:'Cave & Lounge',
+
+    /* Noms des themes (lot F1) */
+    theme_light:'☀ Clair',
+    theme_dark:'🌙 Sombre',
+    theme_midnight:'🌌 Minuit',
+    theme_sepia:'📜 Sépia',
+    theme_emerald:'🌿 Émeraude',
+    theme_navy:'⚓ Marine',
+    theme_bordeaux:'🍷 Bordeaux',
   },
 
   en: {
@@ -414,6 +440,32 @@ const I18N = {
     language:'Language',
     tab_detail:'Details',
     theme:'Theme',
+
+    /* Accessibilite du globe et vue Explorer (lot F1) */
+    a11y_zoom:'Zoom {n} percent',
+    a11y_reset:'View reset',
+    a11y_grp_producers:'Producing countries',
+    a11y_grp_countries:'Countries',
+    a11y_grp_markets:'Markets',
+    a11y_grp_lounges:'Countries with cigar lounges',
+    a11y_market_rank:'— market no. {n}',
+    a11y_list_title:'Browse without the globe',
+    a11y_list_intro:'This list opens the same entries as the markers on the globe.',
+    exp_empty:'No establishment matches these filters',
+    exp_loading:'Loading…',
+    exp_stats_one:'{n} establishment · {p} countries',
+    exp_stats_many:'{n} establishments · {p} countries',
+    exp_see_globe:'SEE ON THE GLOBE',
+    ctype_cave_lounge:'Cigar Cellar & Lounge',
+
+    /* Noms des themes (lot F1) */
+    theme_light:'☀ Light',
+    theme_dark:'🌙 Dark',
+    theme_midnight:'🌌 Midnight',
+    theme_sepia:'📜 Sepia',
+    theme_emerald:'🌿 Emerald',
+    theme_navy:'⚓ Navy',
+    theme_bordeaux:'🍷 Bordeaux',
   },
 
   es: {
@@ -620,6 +672,32 @@ const I18N = {
     language:'Idioma',
     tab_detail:'Detalles',
     theme:'Tema',
+
+    /* Accessibilite du globe et vue Explorer (lot F1) */
+    a11y_zoom:'Zoom {n} por ciento',
+    a11y_reset:'Vista restablecida',
+    a11y_grp_producers:'Países productores',
+    a11y_grp_countries:'Países',
+    a11y_grp_markets:'Mercados',
+    a11y_grp_lounges:'Países con salones de puros',
+    a11y_market_rank:'— mercado n.º {n}',
+    a11y_list_title:'Explorar sin el globo',
+    a11y_list_intro:'Esta lista abre las mismas fichas que los marcadores del globo.',
+    exp_empty:'Ningún establecimiento con estos filtros',
+    exp_loading:'Cargando…',
+    exp_stats_one:'{n} establecimiento · {p} países',
+    exp_stats_many:'{n} establecimientos · {p} países',
+    exp_see_globe:'VER EN EL GLOBO',
+    ctype_cave_lounge:'Bodega y Salón',
+
+    /* Noms des themes (lot F1) */
+    theme_light:'☀ Claro',
+    theme_dark:'🌙 Oscuro',
+    theme_midnight:'🌌 Medianoche',
+    theme_sepia:'📜 Sepia',
+    theme_emerald:'🌿 Esmeralda',
+    theme_navy:'⚓ Marino',
+    theme_bordeaux:'🍷 Burdeos',
   },
 
   de: {
@@ -826,6 +904,32 @@ const I18N = {
     language:'Sprache',
     tab_detail:'Details',
     theme:'Thema',
+
+    /* Accessibilite du globe et vue Explorer (lot F1) */
+    a11y_zoom:'Zoom {n} Prozent',
+    a11y_reset:'Ansicht zurückgesetzt',
+    a11y_grp_producers:'Erzeugerländer',
+    a11y_grp_countries:'Länder',
+    a11y_grp_markets:'Märkte',
+    a11y_grp_lounges:'Länder mit Zigarren-Lounges',
+    a11y_market_rank:'— Markt Nr. {n}',
+    a11y_list_title:'Ohne Globus erkunden',
+    a11y_list_intro:'Diese Liste öffnet dieselben Einträge wie die Markierungen auf dem Globus.',
+    exp_empty:'Keine Einrichtung für diese Filter',
+    exp_loading:'Wird geladen…',
+    exp_stats_one:'{n} Einrichtung · {p} Länder',
+    exp_stats_many:'{n} Einrichtungen · {p} Länder',
+    exp_see_globe:'AUF DEM GLOBUS ZEIGEN',
+    ctype_cave_lounge:'Zigarrenkeller & Lounge',
+
+    /* Noms des themes (lot F1) */
+    theme_light:'☀ Hell',
+    theme_dark:'🌙 Dunkel',
+    theme_midnight:'🌌 Mitternacht',
+    theme_sepia:'📜 Sepia',
+    theme_emerald:'🌿 Smaragd',
+    theme_navy:'⚓ Marineblau',
+    theme_bordeaux:'🍷 Bordeaux',
   },
 
   zh: {
@@ -1032,6 +1136,32 @@ const I18N = {
     language:'语言',
     tab_detail:'详情',
     theme:'主题',
+
+    /* Accessibilite du globe et vue Explorer (lot F1) */
+    a11y_zoom:'缩放 {n}%',
+    a11y_reset:'视图已重置',
+    a11y_grp_producers:'生产国',
+    a11y_grp_countries:'国家',
+    a11y_grp_markets:'市场',
+    a11y_grp_lounges:'设有雪茄馆的国家',
+    a11y_market_rank:'— 第 {n} 大市场',
+    a11y_list_title:'不使用地球仪浏览',
+    a11y_list_intro:'此列表打开与地球仪标记相同的条目。',
+    exp_empty:'没有符合这些筛选条件的场所',
+    exp_loading:'加载中…',
+    exp_stats_one:'{n} 家场所 · {p} 个国家',
+    exp_stats_many:'{n} 家场所 · {p} 个国家',
+    exp_see_globe:'在地球仪上查看',
+    ctype_cave_lounge:'雪茄窖与雪茄馆',
+
+    /* Noms des themes (lot F1) */
+    theme_light:'☀ 浅色',
+    theme_dark:'🌙 深色',
+    theme_midnight:'🌌 午夜',
+    theme_sepia:'📜 棕褐',
+    theme_emerald:'🌿 翡翠',
+    theme_navy:'⚓ 海军蓝',
+    theme_bordeaux:'🍷 酒红',
   },
 
   ar: {
@@ -1238,6 +1368,32 @@ const I18N = {
     language:'اللغة',
     tab_detail:'التفاصيل',
     theme:'السمة',
+
+    /* Accessibilite du globe et vue Explorer (lot F1) */
+    a11y_zoom:'تكبير {n} بالمئة',
+    a11y_reset:'تمت إعادة تعيين العرض',
+    a11y_grp_producers:'البلدان المنتجة',
+    a11y_grp_countries:'البلدان',
+    a11y_grp_markets:'الأسواق',
+    a11y_grp_lounges:'بلدان بها صالات سيجار',
+    a11y_market_rank:'— السوق رقم {n}',
+    a11y_list_title:'التصفح بدون الكرة الأرضية',
+    a11y_list_intro:'تفتح هذه القائمة البطاقات نفسها التي تفتحها علامات الكرة الأرضية.',
+    exp_empty:'لا توجد منشآت تطابق هذه المرشحات',
+    exp_loading:'جارٍ التحميل…',
+    exp_stats_one:'{n} منشأة · {p} بلدًا',
+    exp_stats_many:'{n} منشأة · {p} بلدًا',
+    exp_see_globe:'عرض على الكرة الأرضية',
+    ctype_cave_lounge:'قبو وصالة سيجار',
+
+    /* Noms des themes (lot F1) */
+    theme_light:'☀ فاتح',
+    theme_dark:'🌙 داكن',
+    theme_midnight:'🌌 منتصف الليل',
+    theme_sepia:'📜 بني داكن',
+    theme_emerald:'🌿 زمردي',
+    theme_navy:'⚓ كحلي',
+    theme_bordeaux:'🍷 نبيذي',
   },
 };
 

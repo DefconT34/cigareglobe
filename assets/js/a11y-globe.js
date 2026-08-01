@@ -49,15 +49,15 @@
         case 'ArrowDown':  rotX += STEP_ROT; break;
         case '+': case '=':
           zoomScale = Math.min(zoomScale + STEP_ZOOM, 3);
-          announce('Zoom ' + Math.round(zoomScale * 100) + ' pour cent');
+          announce(t('a11y_zoom').replace('{n}', Math.round(zoomScale * 100)));
           break;
         case '-': case '_':
           zoomScale = Math.max(zoomScale - STEP_ZOOM, 0.4);
-          announce('Zoom ' + Math.round(zoomScale * 100) + ' pour cent');
+          announce(t('a11y_zoom').replace('{n}', Math.round(zoomScale * 100)));
           break;
         case 'Home': case '0':
           rotX = 0; rotY = 0; zoomScale = 1;
-          announce('Vue réinitialisée');
+          announce(t('a11y_reset'));
           break;
         default: handled = false;
       }
@@ -79,18 +79,19 @@
   function entities() {
     var out = [];
     (window.COUNTRIES || []).forEach(function (c) {
-      out.push({ type: 'country', data: c, group: c.tier ? 'Pays producteurs' : 'Pays',
+      out.push({ type: 'country', data: c, group: c.tier ? t('a11y_grp_producers') : t('a11y_grp_countries'),
                  label: (c.flag ? c.flag + ' ' : '') + c.name });
     });
     (window.MARKETS || []).forEach(function (m) {
-      out.push({ type: 'market', data: m, group: 'Marchés',
-                 label: (m.flag ? m.flag + ' ' : '') + m.name + ' — marché n° ' + m.rank });
+      out.push({ type: 'market', data: m, group: t('a11y_grp_markets'),
+                 label: (m.flag ? m.flag + ' ' : '') + m.name + ' '
+                        + t('a11y_market_rank').replace('{n}', m.rank) });
     });
     var producers = {};
     (window.COUNTRIES || []).forEach(function (c) { producers[c.id] = true; });
     (window.LOUNGE_COUNTRIES || []).forEach(function (lc) {
       if (producers[lc.id]) return;               // déjà listé comme pays producteur
-      out.push({ type: 'lounge', data: lc, group: 'Pays avec caves & lounges',
+      out.push({ type: 'lounge', data: lc, group: t('a11y_grp_lounges'),
                  label: (lc.flag ? lc.flag + ' ' : '') + lc.name });
     });
     return out;
@@ -105,8 +106,8 @@
     var groups = {};
     items.forEach(function (it) { (groups[it.group] = groups[it.group] || []).push(it); });
 
-    var html = '<h2>Explorer sans le globe</h2>' +
-      '<p>Cette liste ouvre les mêmes fiches que les repères du globe.</p>';
+    var html = '<h2>' + esc(t('a11y_list_title')) + '</h2>' +
+      '<p>' + esc(t('a11y_list_intro')) + '</p>';
     Object.keys(groups).forEach(function (g) {
       html += '<h3>' + esc(g) + '</h3><ul>';
       groups[g].forEach(function (it, i) {
@@ -144,4 +145,8 @@
   else init();
 
   window._globeAnnounce = announce;
+  // La liste est construite une fois les donnees arrivees ; ses titres de
+  // groupe doivent suivre la langue, sans quoi ils restent figes dans
+  // celle du chargement (meme defaut que la vue Explorer).
+  window._globeA11yRefresh = buildList;
 })();
