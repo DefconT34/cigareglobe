@@ -68,36 +68,42 @@ module.exports = defineConfig({
 
   // Le globe est anime et charge ses donnees en differe : on laisse de
   // la marge sans masquer une vraie lenteur.
-  // Le serveur integre etant mono-requete, une navigation peut attendre
-  // que les fichiers precedents soient servis : la marge absorbe cette
-  // contention sans masquer une vraie lenteur applicative.
   timeout: 60_000,
   expect: { timeout: 10_000 },
 
   // Le serveur integre de PHP traite une requete a la fois (et
-  // PHP_CLI_SERVER_WORKERS n'existe pas sous Windows) : plusieurs
-  // travailleurs le saturent et les navigations expirent. La suite PHP
-  // s'execute deja sequentiellement pour la meme raison.
+  // PHP_CLI_SERVER_WORKERS n'existe pas sous Windows). Les fichiers
+  // inertes ne lui sont plus demandes (tests/e2e/statique.js), mais
+  // index.php et backend/*.php si : plusieurs travailleurs les mettraient
+  // en file. La suite PHP s'execute deja sequentiellement.
   fullyParallel: false,
   workers: 1,
   forbidOnly: !!process.env.CI,
-  // Deux reessais, y compris en local. Le serveur integre sert les ~30
-  // fichiers d'une page une requete a la fois, et depuis les URL par
-  // langue chaque navigation passe en plus par index.php : sous charge
-  // il lui arrive de couper une connexion ou de faire attendre. Ces
-  // coupures ne disent rien de l'application — un echec reel se
-  // reproduit aux deux reessais.
+  // Un seul reessai, et aucun en local.
   //
-  // La vraie correction serait un serveur multi-processus, que
-  // « php -S » n'offre pas sous Windows (PHP_CLI_SERVER_WORKERS est
-  // reserve aux systemes POSIX). A revoir si la campagne se degrade
-  // encore : voir docs/i18n.md.
-  retries: 2,
+  // Il y en avait deux partout, pour absorber les coupures du serveur
+  // integre sur la rafale de ~40 ressources d'une page. Cette rafale
+  // n'existe plus : les fichiers inertes sont servis depuis le disque
+  // (tests/e2e/statique.js, ou les mesures sont detaillees), et une page
+  // ne demande plus que quatre reponses PHP. La campagne complete passe
+  // desormais du premier coup.
+  //
+  // En local, zero reessai : une instabilite residuelle doit se voir
+  // tout de suite, pas etre rattrapee en silence. En integration
+  // continue, un reessai distingue un incident d'infrastructure d'un
+  // vrai defaut — et le compte « flaky » du rapport le signale.
+  retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]]
                            : [['list'], ['html', { open: 'never' }]],
 
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
+    // Volontairement inchange. Les expirations de page.goto() qui
+    // rendaient la campagne instable etaient des blocages nets de ~19 s
+    // (connexion acceptee puis jamais servie), pas une lenteur
+    // graduelle : relever ce seuil aurait transforme un echec en test
+    // lent sans rien corriger. Un chargement sain tient en 3 a 4 s, soit
+    // huit fois de marge. Voir tests/e2e/statique.js.
     navigationTimeout: 30_000,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

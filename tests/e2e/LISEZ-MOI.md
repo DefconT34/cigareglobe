@@ -79,6 +79,67 @@ Le serveur intégré de PHP traite une requête à la fois, et
 navigations expirent. La campagne s'exécute donc séquentiellement,
 comme la suite PHP. Comptez quelques minutes.
 
+## Pourquoi les fichiers JS et CSS ne passent pas par le serveur
+
+`tests/e2e/statique.js` intercepte les ressources **inertes** et les
+sert depuis le disque. Sans cela, un tiers des parcours échouaient au
+premier essai et repassaient au retry — jamais sur une assertion,
+toujours sur l'expiration de `page.goto()` dans `ouvrir()`.
+
+Deux causes, mesurées en chargeant la page 8 fois de suite :
+
+| | chargements > 18 s | `goto` médian |
+|---|---|---|
+| sans interception | 3 / 8 | 5,6 s |
+| interception | 0 / 8 | 3,1 s (max 4,0 s) |
+
+1. **`php -S` lâche une connexion sur la rafale.** Une page demande une
+   quarantaine de ressources ; le serveur annonce `Connection: close`,
+   donc chacune ouvre sa propre connexion TCP. Il lui arrive d'en
+   accepter une puis de ne jamais la servir — le relevé Chrome montre
+   `connect=5 ms` puis 19 s d'attente avant `ERR_CONNECTION_RESET`. Les
+   scripts classiques s'exécutant dans l'ordre, toute la page attend
+   derrière.
+2. **Les ressources tierces sont interrogées pour de vrai.**
+   `fonts.googleapis.com` (importé par `themes.css`) et `unpkg.com`
+   (Leaflet, chargé par `explorer.js`) coûtaient ~2 s par chargement,
+   7 s au pire relevé — délai compté dans `load`, donc dans `goto`.
+   Elles sont désormais téléchargées **une fois** puis relues depuis
+   `tests/e2e/.cache-tiers/` (hors dépôt).
+
+Effet sur la campagne complète : **36 réussites, 9,8 min, aucun
+réessai** — contre 12 parcours sur 36 rattrapés au retry et 21 min
+auparavant. Les réessais sont donc retombés de 2 à `1` en intégration
+continue et `0` en local : une instabilité résiduelle doit se voir tout
+de suite plutôt qu'être rattrapée en silence.
+
+Ce que cela **ne masque pas** : les octets servis sont ceux du disque,
+sans transformation ; une URL erronée ou un fichier absent n'est pas
+intercepté et repart vers le serveur, qui répond 404 comme avant. Seul
+le transport change — et ce transport n'est pas celui de la production,
+où Apache sert les fichiers, jamais `php -S`. Tout le dynamique
+(`/`, `index.php`, `backend/*.php`) passe par le serveur, inchangé.
+
+Un filtre a par ailleurs pu être **resserré** : `collecteErreurs()`
+écartait tout message commençant par `Failed to load resource`, prefixe
+commun aux coupures de transport **et** aux réponses 404. Un fichier
+absent ou une URL mal réécrite passait donc inaperçu. Le préfixe est
+retiré ; les coupures restent filtrées par les motifs `net::ERR_*`, qui
+figurent dans le même message. Vérifié : un chargement complet ne
+produit aucune réponse non-2xx, en bureau comme en mobile.
+
+### Ce qui a été écarté
+
+- **Préchauffage dans `globalSetup`.** Mesuré : `index.php` répond en
+  28 ms à froid (cache `backend/cache/` vide, `i18n.js` de 200 Ko à
+  analyser) contre 13–24 ms à chaud. Le cache par langue n'a jamais été
+  en cause ; préchauffer n'aurait rien changé.
+- **Augmenter `navigationTimeout`.** Le budget de 30 s n'était pas
+  serré : un chargement sain tient en 3–4 s, et les échecs étaient des
+  blocages de ~19 s, pas une lenteur graduelle. Relever le seuil aurait
+  transformé un échec en test lent sans supprimer le blocage. Le seuil
+  reste à 30 s, soit ~8× la marge d'un chargement sain.
+
 ## Points d'entrée par lien profond
 
 Cliquer une cible sur le canvas dépendrait de la rotation du globe au

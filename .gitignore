@@ -39,6 +39,10 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+# Copie locale des ressources tierces (polices Google, Leaflet) que la
+# campagne sert depuis le disque au lieu d'interroger le reseau a chaque
+# chargement. Reconstruite toute seule. Voir tests/e2e/statique.js.
+/tests/e2e/.cache-tiers/
 
 # Maquettes de comparaison WebGL (locales, non integrees a l'application).
 # Conservees pour reference, volontairement hors depot : elles embarquent
