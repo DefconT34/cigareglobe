@@ -26,6 +26,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
 - **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
 - **C5** : tests de bout en bout Playwright (36 parcours : globe, panneaux, recherche, Explorer, langues, a11y, mobile) + jeu de donnees versionne + CI
+- **F7** : garde-fous multilingues — parité des clés, couverture du contenu en base, balayage des 6 langues à cliquet, RTL `#side-fabs` corrigé
 - **A2** : CORS restreint — liste d'origines comparées exactement, `photos.php` rallié, 11 vérifications
 - **B3** : nom & domaine unifiés — CigarOdyssey / cigarodyssey.com partout (backend, emails, SEO, manifeste, CI, docs)
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
@@ -59,9 +60,9 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
 
 ### F. Internationalisation
-*Audit et plan détaillés : `docs/i18n.md`. Les 196 clés de `i18n.js` sont
+*Audit et plan détaillés : `docs/i18n.md`. Les 222 clés de `i18n.js` sont
 complètes dans les 6 langues ; le déficit est ailleurs.*
-- [ ] **F7** — Garde-fous : parité des clés + parcours des 6 langues en CI · P · **à faire en premier**
+- [x] ~~**F7** — Garde-fous : parité des clés (`tools/i18n_check.php`, 12 vérifications) + balayage des 6 langues avec cliquet~~ ✅
 - [ ] **F1** — Rapatrier les 88 chaînes codées en dur du front dans `i18n.js` · M
 - [ ] **F2** — Codes d'erreur côté serveur (92 messages), traduits côté front · M · dépend de F1
 - [ ] **F5** — RTL arabe : vérifier les composants récents (`#side-fabs`, champ Explorer) · P
@@ -76,4 +77,4 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → **F7+F1+F2** → B1 → F3/F4/F6 → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → **F1+F2** → B1 → F3/F4/F6 → D6/C1b (optionnels)

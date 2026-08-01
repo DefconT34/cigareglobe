@@ -356,6 +356,26 @@ $r = http('GET', $restr . '/backend/photos.php?action=list&lounge_id=1',
 eq('production : photos.php respecte aussi la liste',
    '', entete($r['headers'], 'Access-Control-Allow-Origin'));
 
+// ════════════════════════════════════════════════════════
+section('Traductions');
+
+// Le controle vit dans tools/i18n_check.php pour rester lancable seul ;
+// la constante empeche son bloc « ligne de commande » de s'executer ici.
+define('I18N_CHECK_INCLUDE', true);
+require_once PROJECT_ROOT . '/tools/i18n_check.php';
+
+$trad = i18n_parse(PROJECT_ROOT . '/assets/js/i18n.js');
+
+check('i18n : les six langues sont declarees',
+      count(array_intersect(['fr','en','es','de','zh','ar'], array_keys($trad))) === 6,
+      'trouvees : ' . implode(', ', array_keys($trad)));
+check('i18n : le francais sert de reference', !empty($trad['fr']));
+
+foreach (i18n_ecarts($trad) as $langue => $e) {
+    eq("i18n : $langue ne manque aucune cle", [], $e['manquantes']);
+    eq("i18n : $langue n'a pas de cle orpheline", [], $e['en_trop']);
+}
+
 report_and_exit();
 
 /**

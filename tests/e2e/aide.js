@@ -31,7 +31,17 @@ async function ouvrir(page, url = '/') {
   // chargement. C'est une tolerance d'infrastructure, pas une mesure de
   // performance — les tests de contenu ont leurs propres delais.
   await expect(page.locator('#loading-overlay'))
-    .toBeHidden({ timeout: 30_000 });
+    .toBeHidden({ timeout: 40_000 });
+
+  // Les boutons 🔍 et 🗺 sont injectes par search.js et explorer.js.
+  // Les attendre prouve que ces modules ont bien ete servis ET executes :
+  // sous charge, le serveur mono-requete coupe parfois une connexion, et
+  // le test echouait alors sur un « element introuvable » indechiffrable.
+  await expect(page.locator('#side-fabs .side-fab'),
+    'les modules du front n\'ont pas tous ete charges')
+    .toHaveCount(await page.evaluate(() =>
+      ('ontouchstart' in window || navigator.maxTouchPoints) ? 4 : 3),
+      { timeout: 20_000 });
 
   return page;
 }

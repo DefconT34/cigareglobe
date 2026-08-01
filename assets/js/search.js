@@ -206,7 +206,13 @@ function openSearch() {
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden','false');
   document.body.style.overflow = 'hidden';
-  setTimeout(function(){ input.focus(); }, 150);
+  // Focus immediat plutot qu'apres un delai arbitraire : « visibility »
+  // passe a visible des l'ajout de la classe, il suffit de forcer le
+  // calcul du style avant d'appeler focus(). L'attente de 150 ms qui
+  // tenait lieu de synchronisation rendait le champ tantot actif,
+  // tantot non, selon la charge de la machine.
+  void overlay.offsetWidth;
+  input.focus({ preventScroll: true });
   // Invalider l'index si les lounges ont été chargés depuis
   _index = null;
   buildIndex();
@@ -248,9 +254,16 @@ window.addEventListener('DOMContentLoaded', function() {
          lecteurs d'ecran. Son champ captait le focus alors qu'il
          etait invisible. */
       opacity:0; visibility:hidden; pointer-events:none;
-      transition:opacity .2s, visibility .2s;
+      /* visibility n'est pas animee mais commutee : a l'ouverture elle
+         passe a « visible » immediatement (sinon focus() sur le champ
+         est refuse, l'element etant encore invisible) ; a la fermeture
+         elle attend la fin du fondu. */
+      transition:opacity .2s, visibility 0s linear .2s;
     }
-    #search-overlay.open { opacity:1; visibility:visible; pointer-events:all; }
+    #search-overlay.open {
+      opacity:1; visibility:visible; pointer-events:all;
+      transition:opacity .2s, visibility 0s;
+    }
 
     /* ── Champ ── */
     .search-box {

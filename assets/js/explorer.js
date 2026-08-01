@@ -374,9 +374,14 @@ window.addEventListener('DOMContentLoaded', function() {
          la vue restent focalisables au clavier alors qu'elle est
          fermee et invisible. */
       opacity:0; visibility:hidden; pointer-events:none;
-      transition:opacity .25s, visibility .25s;
+      /* Meme regle que l'overlay de recherche : visibility commutee,
+         immediate a l'ouverture, differee a la fermeture. */
+      transition:opacity .25s, visibility 0s linear .25s;
     }
-    #exp-overlay.open { opacity:1; visibility:visible; pointer-events:all; }
+    #exp-overlay.open {
+      opacity:1; visibility:visible; pointer-events:all;
+      transition:opacity .25s, visibility 0s;
+    }
 
     /* Header Explorer */
     #exp-header {

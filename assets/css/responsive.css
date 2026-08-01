@@ -181,6 +181,11 @@ body.mobile-mode .bmodal.open .bm-box { transform:translateY(0); }
 [dir="rtl"] .sec::after, [dir="rtl"] .lex-sec::after { background:linear-gradient(to left, var(--gold-p), transparent); }
 [dir="rtl"] .sn { border-left:none; border-right:3px solid var(--gold); }
 [dir="rtl"] #zoom-ctrl { right:auto; left:8px; }
+/* La colonne d'actions passe a droite, comme le veut une lecture de
+   droite a gauche — et parce que #zoom-ctrl vient justement d'aller a
+   gauche : sans cette regle, les deux se superposaient du meme cote. */
+[dir="rtl"] #side-fabs { left:auto; right:16px; }
+body.mobile-mode[dir="rtl"] #side-fabs { left:auto; right:12px; }
 [dir="rtl"] #mobile-menu { right:auto; left:0; border-radius:0 0 10px 0; }
 [dir="rtl"] .bbar, [dir="rtl"] .legend { flex-direction:row-reverse; }
 

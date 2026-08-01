@@ -71,7 +71,7 @@ module.exports = defineConfig({
   // Le serveur integre etant mono-requete, une navigation peut attendre
   // que les fichiers precedents soient servis : la marge absorbe cette
   // contention sans masquer une vraie lenteur applicative.
-  timeout: 45_000,
+  timeout: 60_000,
   expect: { timeout: 10_000 },
 
   // Le serveur integre de PHP traite une requete a la fois (et
