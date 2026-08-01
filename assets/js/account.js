@@ -46,10 +46,10 @@
         btn.className = 'account-btn' + (user.email_verified ? '' : ' is-unverified');
         btn.innerHTML = '<span class="ab-avatar">' + escapeHtml(initial) + '</span>'
           + '<span class="ab-label">' + escapeHtml(user.display_name) + '</span>'
-          + (user.email_verified ? '' : '<span class="cg-badge-unverified">non vérifié</span>');
+          + (user.email_verified ? '' : '<span class="cg-badge-unverified">' + t('acc_unverified') + '</span>');
       } else {
         btn.className = 'account-btn';
-        btn.innerHTML = '<span class="ab-icon" aria-hidden="true">👤</span><span class="ab-label">Se connecter</span>';
+        btn.innerHTML = '<span class="ab-icon" aria-hidden="true">👤</span><span class="ab-label">' + t('acc_signin') + '</span>';
       }
     }
     renderMobileMenu();
@@ -70,13 +70,13 @@
       box.innerHTML =
         '<div class="mm-user"><b>' + escapeHtml(user.display_name) + '</b>' +
         '<span>' + escapeHtml(user.email) + '</span></div>' +
-        '<button data-act="profile">👤 Mon profil</button>' +
-        '<button data-act="contribs">📋 Mes contributions</button>' +
-        '<button data-act="favs">❤ Mes listes</button>' +
-        (user.email_verified ? '' : '<button data-act="resend">✉ Renvoyer la vérification</button>') +
-        '<button data-act="logout">↪ Se déconnecter</button>';
+        '<button data-act="profile">' + t('acc_profile') + '</button>' +
+        '<button data-act="contribs">' + t('acc_contribs') + '</button>' +
+        '<button data-act="favs">' + t('acc_lists') + '</button>' +
+        (user.email_verified ? '' : '<button data-act="resend">' + t('acc_resend') + '</button>') +
+        '<button data-act="logout">' + t('acc_logout') + '</button>';
     } else {
-      box.innerHTML = '<button class="primary" data-act="login">👤 Se connecter / S\'inscrire</button>';
+      box.innerHTML = '<button class="primary" data-act="login">' + t('acc_signin_up') + '</button>';
     }
     box.querySelectorAll('button').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -107,12 +107,12 @@
           '<div class="cg-menu-name">' + escapeHtml(user.display_name) + '</div>' +
           '<div class="cg-menu-email">' + escapeHtml(user.email) + '</div>' +
         '</div>' +
-        '<button class="cg-menu-item" data-act="profile">👤 Mon profil</button>' +
-        '<button class="cg-menu-item" data-act="contribs">📋 Mes contributions</button>' +
-        '<button class="cg-menu-item" data-act="favs">❤ Mes listes</button>' +
+        '<button class="cg-menu-item" data-act="profile">' + t('acc_profile') + '</button>' +
+        '<button class="cg-menu-item" data-act="contribs">' + t('acc_contribs') + '</button>' +
+        '<button class="cg-menu-item" data-act="favs">' + t('acc_lists') + '</button>' +
         (user.email_verified ? '' :
-          '<button class="cg-menu-item" data-act="resend">✉ Renvoyer la vérification</button>') +
-        '<button class="cg-menu-item" data-act="logout">↪ Se déconnecter</button>' +
+          '<button class="cg-menu-item" data-act="resend">' + t('acc_resend') + '</button>') +
+        '<button class="cg-menu-item" data-act="logout">' + t('acc_logout') + '</button>' +
       '</div>'
     );
     var btn = $('#accountBtn');
@@ -139,36 +139,36 @@
       '<div class="cg-overlay hidden" role="dialog" aria-modal="true" aria-label="Compte">' +
         '<div class="cg-modal">' +
           '<button class="cg-modal-close" aria-label="Fermer">✕</button>' +
-          '<div class="cg-modal-logo"><div class="m">CIGAR ODYSSEY</div><div class="s">ESPACE MEMBRE</div></div>' +
+          '<div class="cg-modal-logo"><div class="m">CIGAR ODYSSEY</div><div class="s">' + t('acc_area') + '</div></div>' +
           '<div class="cg-msg hidden" id="cgMsg"></div>' +
           '<div class="cg-tabs" id="cgTabs">' +
-            '<button class="cg-tab active" data-tab="login">Connexion</button>' +
-            '<button class="cg-tab" data-tab="register">Inscription</button>' +
+            '<button class="cg-tab active" data-tab="login">' + t('acc_login_tab') + '</button>' +
+            '<button class="cg-tab" data-tab="register">' + t('acc_register_tab') + '</button>' +
           '</div>' +
           // Connexion
           '<form class="cg-form active" data-form="login">' +
-            '<div class="cg-field"><label>Email</label><input type="email" name="email" autocomplete="email" required></div>' +
-            '<div class="cg-field"><label>Mot de passe</label><input type="password" name="password" autocomplete="current-password" required></div>' +
-            '<button type="submit" class="cg-submit">Se connecter</button>' +
-            '<div class="cg-alt"><button type="button" class="cg-link" data-go="forgot">Mot de passe oublié ?</button></div>' +
+            '<div class="cg-field"><label>' + t('acc_email') + '</label><input type="email" name="email" autocomplete="email" required></div>' +
+            '<div class="cg-field"><label>' + t('acc_password') + '</label><input type="password" name="password" autocomplete="current-password" required></div>' +
+            '<button type="submit" class="cg-submit">' + t('acc_signin') + '</button>' +
+            '<div class="cg-alt"><button type="button" class="cg-link" data-go="forgot">' + t('acc_forgot') + '</button></div>' +
           '</form>' +
           // Inscription
           '<form class="cg-form" data-form="register">' +
-            '<div class="cg-field"><label>Nom d\'affichage</label><input type="text" name="display_name" autocomplete="nickname" maxlength="80" required></div>' +
-            '<div class="cg-field"><label>Email</label><input type="email" name="email" autocomplete="email" required></div>' +
-            '<div class="cg-field"><label>Mot de passe (8+ caractères)</label><input type="password" name="password" autocomplete="new-password" minlength="8" required></div>' +
-            '<button type="submit" class="cg-submit">Créer mon compte</button>' +
+            '<div class="cg-field"><label>' + t('acc_display_name') + '</label><input type="text" name="display_name" autocomplete="nickname" maxlength="80" required></div>' +
+            '<div class="cg-field"><label>' + t('acc_email') + '</label><input type="email" name="email" autocomplete="email" required></div>' +
+            '<div class="cg-field"><label>' + t('acc_password_min') + '</label><input type="password" name="password" autocomplete="new-password" minlength="8" required></div>' +
+            '<button type="submit" class="cg-submit">' + t('acc_create') + '</button>' +
           '</form>' +
           // Mot de passe oublié
           '<form class="cg-form" data-form="forgot">' +
-            '<div class="cg-field"><label>Email</label><input type="email" name="email" autocomplete="email" required></div>' +
-            '<button type="submit" class="cg-submit">Envoyer le lien</button>' +
-            '<div class="cg-alt"><button type="button" class="cg-link" data-go="login">Retour à la connexion</button></div>' +
+            '<div class="cg-field"><label>' + t('acc_email') + '</label><input type="email" name="email" autocomplete="email" required></div>' +
+            '<button type="submit" class="cg-submit">' + t('acc_send_link') + '</button>' +
+            '<div class="cg-alt"><button type="button" class="cg-link" data-go="login">' + t('acc_back_login') + '</button></div>' +
           '</form>' +
           // Réinitialisation (depuis lien email)
           '<form class="cg-form" data-form="reset">' +
-            '<div class="cg-field"><label>Nouveau mot de passe (8+ caractères)</label><input type="password" name="password" autocomplete="new-password" minlength="8" required></div>' +
-            '<button type="submit" class="cg-submit">Réinitialiser</button>' +
+            '<div class="cg-field"><label>' + t('acc_newpass_min') + '</label><input type="password" name="password" autocomplete="new-password" minlength="8" required></div>' +
+            '<button type="submit" class="cg-submit">' + t('acc_reset') + '</button>' +
           '</form>' +
         '</div>' +
       '</div>'
@@ -247,7 +247,7 @@
 
     req.then(function (res) {
       submit.disabled = false;
-      if (!res.ok) { setMsg((res.data && res.data.error) || 'Erreur.', 'err'); return; }
+      if (!res.ok) { setMsg((res.data && res.data.error) || t('acc_error'), 'err'); return; }
 
       if (kind === 'login' || kind === 'register') {
         user = res.data.user;
@@ -263,9 +263,9 @@
         }
         maybeVerifyBanner();
       } else if (kind === 'forgot') {
-        setMsg(res.data.message || 'Si un compte existe, un email a été envoyé.', 'ok');
+        setMsg(res.data.message || t('acc_forgot_sent'), 'ok');
       } else if (kind === 'reset') {
-        setMsg('Mot de passe mis à jour. Vous pouvez vous connecter.', 'ok');
+        setMsg(t('acc_pass_updated'), 'ok');
         setTimeout(function () { showForm('login'); }, 1500);
       }
     });
@@ -286,7 +286,7 @@
   function doResend() {
     api('resend', 'POST').then(function (res) {
       if (menu) menu.classList.add('hidden');
-      toast(res.ok ? 'Email de vérification renvoyé.' : ((res.data && res.data.error) || 'Erreur.'), res.ok ? 'ok' : 'err');
+      toast(res.ok ? t('acc_verif_sent') : ((res.data && res.data.error) || t('acc_error')), res.ok ? 'ok' : 'err');
     });
   }
 
@@ -307,7 +307,7 @@
       '<div class="cg-overlay hidden" role="dialog" aria-modal="true" aria-label="Mes contributions">' +
         '<div class="cg-modal cg-modal-wide">' +
           '<button class="cg-modal-close" aria-label="Fermer">✕</button>' +
-          '<div class="cg-modal-logo"><div class="m">MES CONTRIBUTIONS</div></div>' +
+          '<div class="cg-modal-logo"><div class="m">' + t('acc_my_contribs') + '</div></div>' +
           '<div id="cgContribList" class="cg-contrib-list"></div>' +
         '</div>' +
       '</div>'
@@ -325,7 +325,7 @@
   }
 
   function statusBadge(s) {
-    var map = { pending: 'En attente', approved: 'Approuvé', rejected: 'Rejeté' };
+    var map = { pending: 'En attente', approved: t('acc_approved'), rejected: t('acc_rejected') };
     return '<span class="cg-status cg-status-' + s + '">' + (map[s] || s) + '</span>';
   }
 
@@ -337,7 +337,7 @@
       .then(function (data) {
         var list = (data && data.contributions) || [];
         if (data && data.error) { box.innerHTML = '<div class="cg-contrib-empty">' + escapeHtml(data.error) + '</div>'; return; }
-        if (!list.length) { box.innerHTML = '<div class="cg-contrib-empty">Vous n\'avez pas encore proposé d\'établissement.</div>'; return; }
+        if (!list.length) { box.innerHTML = '<div class="cg-contrib-empty">' + t('acc_no_contrib') + '</div>'; return; }
         box.innerHTML = list.map(function (c) {
           return '<div class="cg-contrib-item">' +
             '<div class="cg-contrib-main">' +
@@ -348,7 +348,7 @@
           '</div>';
         }).join('');
       })
-      .catch(function () { box.innerHTML = '<div class="cg-contrib-empty">Erreur réseau.</div>'; });
+      .catch(function () { box.innerHTML = '<div class="cg-contrib-empty">' + t('acc_net_error') + '</div>'; });
   }
 
   // Exige un compte à l'email vérifié ; sinon invite à agir. Retourne bool.
@@ -374,7 +374,7 @@
     if (!user || user.email_verified) return;
     var banner = el(
       '<div class="cg-verify-banner" id="cgVerifyBanner">' +
-        '<span>✉ Confirmez votre email pour contribuer et noter.</span>' +
+        '<span>'+t('acc_confirm_email')+'</span>' +
         '<button class="cg-link" id="cgResendLink">Renvoyer l\'email</button>' +
       '</div>'
     );
@@ -433,6 +433,14 @@
       requireVerified: requireVerified,
       openMyContributions: openMyContributions,
       updateUser: function (u) { if (u) { user = u; renderHeader(); } },
+      // L'entete, le menu et la modale sont rendus une fois : sans ce
+      // rafraichissement, ils restent dans la langue du chargement.
+      refreshLang: function () {
+        renderHeader();
+        renderMobileMenu();
+        if (overlay) { overlay.remove(); overlay = null; }
+        maybeVerifyBanner();
+      },
       toast: toast,
       api: api
     };

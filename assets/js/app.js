@@ -506,6 +506,9 @@ window.onLangChange = function(lang) {
   if (typeof window.expRefreshLang === 'function') window.expRefreshLang();
   // Liste « Explorer sans le globe » : memes titres de groupe a retraduire.
   if (typeof window._globeA11yRefresh === 'function') window._globeA11yRefresh();
+  // Espace membre : bouton, menu et modale sont rendus une fois.
+  if (window.CGAccount && typeof window.CGAccount.refreshLang === 'function')
+    window.CGAccount.refreshLang();
   document.querySelectorAll('.mlang-btn').forEach(function(b) {
     b.classList.toggle('active', b.getAttribute('data-lang') === lang);
   });
