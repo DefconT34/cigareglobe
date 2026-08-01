@@ -1,4 +1,4 @@
-# Espace client CigarGlobe — cahier des charges
+# Espace client CigarOdyssey — cahier des charges
 
 > Cadrage validé le 2026-07-26. Décisions produit : comptes complets,
 > authentification **email + mot de passe**, **compte requis** pour contribuer

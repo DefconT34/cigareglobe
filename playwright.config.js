@@ -56,7 +56,7 @@ function baseDeTest() {
       if (m) nom = m[1].trim().replace(/^["']|["']$/g, '');
     } catch { /* pas de .env : integration continue, DB_NAME vient de l'environnement */ }
   }
-  return (nom || 'cigareglobe') + '_test';
+  return (nom || 'cigarodyssey') + '_test';
 }
 
 const DB_TEST = baseDeTest();

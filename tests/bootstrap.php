@@ -54,7 +54,7 @@ function report_and_exit(): void {
 
 // ── Base de test isolee ──────────────────────────────────
 function test_db_name(): string {
-    return getenv('TEST_DB') ?: (DB_NAME !== '' ? DB_NAME . '_test' : 'cigareglobe_test');
+    return getenv('TEST_DB') ?: (DB_NAME !== '' ? DB_NAME . '_test' : 'cigarodyssey_test');
 }
 
 /** Connexion au serveur MySQL sans base selectionnee. */

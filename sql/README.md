@@ -1,4 +1,4 @@
-# Base de données CigarGlobe
+# Base de données CigarOdyssey
 
 Base MySQL (`utf8mb4` / `utf8mb4_unicode_ci`). 19 tables : atlas
 (pays producteurs, marchés, lounges, marques, photos, Habanos…) +

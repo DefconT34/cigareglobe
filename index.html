@@ -23,13 +23,27 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="CigarOdyssey">
-  <!-- Open Graph pour le partage -->
-  <meta property="og:title" content="CigarOdyssey">
-  <meta property="og:description" content="CigarOdyssey — L'atlas mondial interactif du cigare premium. Pays producteurs, marchés, 198 lounges dans 75 pays.">
-  <meta property="og:image" content="http://localhost/og-image.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"CigarOdyssey","description":"Atlas interactif mondial du cigare premium","url":"http://localhost/"}</script>
+  <meta name="application-name" content="CigarOdyssey">
+
+  <!-- ══ Référencement & partage ═══════════════════════════
+       Les URL absolues pointent le domaine de production : Open Graph
+       et les données structurées n'acceptent pas de chemin relatif.
+       Elles désignaient la machine locale jusqu'ici, si bien que toute
+       carte de partage renvoyait le lecteur chez lui. -->
+  <link rel="canonical" href="https://cigarodyssey.com/">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CigarOdyssey">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:url" content="https://cigarodyssey.com/">
+  <meta property="og:title" content="CigarOdyssey — L'atlas mondial du cigare premium">
+  <meta property="og:description" content="Globe interactif des pays producteurs et des marchés du cigare, et annuaire des caves et lounges dans 92 pays.">
+  <meta property="og:image" content="https://cigarodyssey.com/og-image.jpg">
+  <meta property="og:image:alt" content="Globe interactif des pays producteurs de cigares">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CigarOdyssey — L'atlas mondial du cigare premium">
+  <meta name="twitter:description" content="Globe interactif des pays producteurs et des marchés du cigare, et annuaire des caves et lounges dans 92 pays.">
+  <meta name="twitter:image" content="https://cigarodyssey.com/og-image.jpg">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"CigarOdyssey","alternateName":"Cigar Odyssey","description":"Atlas interactif mondial du cigare premium : pays producteurs, marchés et annuaire des caves et lounges.","url":"https://cigarodyssey.com/","applicationCategory":"TravelApplication","inLanguage":["fr","en","es","de","zh","ar"],"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥃</text></svg>">
 <link rel="stylesheet" href="assets/css/account.css">
 </head>

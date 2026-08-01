@@ -37,8 +37,8 @@ jobs:
           DB_PORT: '3306'
           DB_USER: root
           DB_PASS: root
-          DB_NAME: cigareglobe
-          TEST_DB: cigareglobe_test
+          DB_NAME: cigarodyssey
+          TEST_DB: cigarodyssey_test
         run: php tests/run.php
 
   e2e:
@@ -84,8 +84,8 @@ jobs:
           DB_PORT: '3306'
           DB_USER: root
           DB_PASS: root
-          DB_NAME: cigareglobe
-          TEST_DB: cigareglobe_test
+          DB_NAME: cigarodyssey
+          TEST_DB: cigarodyssey_test
         run: npm run test:e2e
 
       - name: Conserver le rapport en cas d'échec

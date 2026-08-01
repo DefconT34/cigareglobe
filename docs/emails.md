@@ -1,6 +1,6 @@
 # Emails transactionnels et délivrabilité
 
-CigarGlobe envoie trois messages, tous indispensables au fonctionnement
+CigarOdyssey envoie trois messages, tous indispensables au fonctionnement
 du compte : confirmation d'adresse, réinitialisation de mot de passe,
 notification de contribution à l'administration. Si l'un d'eux tombe
 dans les indésirables, le membre est bloqué. Ce document explique le
@@ -46,7 +46,7 @@ Dans `.env` :
 MAIL_DRIVER=brevo
 MAIL_API_KEY=xkeysib-...
 MAIL_FROM=noreply@votredomaine.com
-MAIL_FROM_NAME=CigarGlobe
+MAIL_FROM_NAME=CigarOdyssey
 MAIL_REPLY_TO=contact@votredomaine.com
 MAIL_LOG_ONLY=false
 ```

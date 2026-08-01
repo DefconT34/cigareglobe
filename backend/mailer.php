@@ -75,8 +75,8 @@ function _mail_log(string $to, string $subject, string $body, string $status): v
 function _mail_from(): array {
     $addr = defined('MAIL_FROM') && MAIL_FROM !== ''
           ? MAIL_FROM
-          : ('noreply@' . ($_SERVER['HTTP_HOST'] ?? 'cigareglobe.com'));
-    $name = defined('MAIL_FROM_NAME') && MAIL_FROM_NAME !== '' ? MAIL_FROM_NAME : 'CigarGlobe';
+          : ('noreply@' . ($_SERVER['HTTP_HOST'] ?? 'cigarodyssey.com'));
+    $name = defined('MAIL_FROM_NAME') && MAIL_FROM_NAME !== '' ? MAIL_FROM_NAME : 'CigarOdyssey';
     return [$addr, $name];
 }
 
@@ -206,7 +206,7 @@ function mail_build_mime(string $subject, string $html, string $text): array {
     if (defined('MAIL_REPLY_TO') && MAIL_REPLY_TO !== '') $headers .= 'Reply-To: ' . MAIL_REPLY_TO . "\r\n";
     $headers .= 'Date: ' . date('r') . "\r\n";
     $headers .= 'Message-ID: <' . bin2hex(random_bytes(16)) . '@' . $domain . ">\r\n";
-    $headers .= "X-Mailer: CigarGlobe\r\n";
+    $headers .= "X-Mailer: CigarOdyssey\r\n";
     $headers .= "Auto-Submitted: auto-generated\r\n";
 
     $body  = "--$boundary\r\n"
@@ -279,7 +279,7 @@ function email_template(string $title, string $intro, string $btnLabel, string $
     $safe = fn($s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     return '<div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;background:#100C07;color:#E0C88A;padding:32px 28px;border-radius:12px">'
          . '<div style="text-align:center;margin-bottom:24px">'
-         . '<div style="font-family:Georgia,serif;font-size:20px;color:#C9A227;letter-spacing:.15em">CIGAR GLOBE</div>'
+         . '<div style="font-family:Georgia,serif;font-size:20px;color:#C9A227;letter-spacing:.15em">CIGAR ODYSSEY</div>'
          . '<div style="font-size:10px;color:#6B5030;letter-spacing:.25em;margin-top:4px">THE WORLD\'S PREMIUM CIGAR ATLAS</div>'
          . '</div>'
          . '<h1 style="font-size:18px;color:#E8C040;font-weight:normal">' . $safe($title) . '</h1>'

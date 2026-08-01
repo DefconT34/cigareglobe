@@ -160,5 +160,5 @@ function password_error(string $p): string {
 function site_url(): string {
     if (defined('SITE_URL') && SITE_URL) return rtrim(SITE_URL, '/');
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    return $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'cigareglobe.com');
+    return $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'cigarodyssey.com');
 }

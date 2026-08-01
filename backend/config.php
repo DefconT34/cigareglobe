@@ -1,6 +1,6 @@
 <?php
 // ════════════════════════════════════════════════════════
-// config.php — Configuration CigarGlobe
+// config.php — Configuration CigarOdyssey
 // ────────────────────────────────────────────────────────
 // Ce fichier ne contient AUCUN secret : il lit les accès depuis
 // le fichier .env (à la racine du projet, ignoré par Git).
@@ -24,7 +24,7 @@
         }
         // Une variable d'environnement réelle est prioritaire sur le .env
         // (convention dotenv). Permet par exemple de viser une base de test :
-        //   DB_NAME=cigareglobe_test php tests/run.php
+        //   DB_NAME=cigarodyssey_test php tests/run.php
         if (getenv($k) !== false) continue;
         $_ENV[$k] = $v;
         putenv("$k=$v");
@@ -94,8 +94,8 @@ function cors_headers(bool $with_credentials = false): void {
 
 // ── Espace client / emails ────────────────────────────────
 if (env('SITE_URL') !== null)       define('SITE_URL',       env('SITE_URL'));
-define('MAIL_FROM',      env('MAIL_FROM', 'noreply@cigareglobe.com'));
-define('MAIL_FROM_NAME', env('MAIL_FROM_NAME', 'CigarGlobe'));
+define('MAIL_FROM',      env('MAIL_FROM', 'noreply@cigarodyssey.com'));
+define('MAIL_FROM_NAME', env('MAIL_FROM_NAME', 'CigarOdyssey'));
 if (strtolower((string)env('MAIL_LOG_ONLY', 'false')) === 'true') define('MAIL_LOG_ONLY', true);
 if (strtolower((string)env('MAIL_DEBUG',    'false')) === 'true') define('MAIL_DEBUG', true);
 

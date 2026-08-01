@@ -2,7 +2,7 @@
 // Stratégie : Network First partout — données toujours fraîches
 // ════════════════════════════════════════════════════════
 
-var CACHE_NAME  = 'cigar-odyssey-v5';   // bump : strategie de cache des assets applicatifs
+var CACHE_NAME  = 'cigar-odyssey-v6';   // bump : nom et domaine unifies (CigarOdyssey)
 var CACHE_SHELL = ['/', '/index.html'];
 
 // ── Installation ──────────────────────────────────────────

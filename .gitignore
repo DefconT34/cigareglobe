@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════
-# CigarGlobe — fichiers à ne jamais versionner
+# CigarOdyssey — fichiers à ne jamais versionner
 # ═══════════════════════════════════════════════════════════
 
 # Secrets — variables d'environnement (utiliser .env.example comme modèle)

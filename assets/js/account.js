@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   account.js — Espace client CigarGlobe (Étape A)
+   account.js — Espace client CigarOdyssey (Étape A)
    Gère : état de session, modale connexion/inscription/mot de passe
    oublié/réinitialisation, CSRF, bandeau de vérification email.
    Code isolé du monolithe index.html (amorce restructuration front).
@@ -139,7 +139,7 @@
       '<div class="cg-overlay hidden" role="dialog" aria-modal="true" aria-label="Compte">' +
         '<div class="cg-modal">' +
           '<button class="cg-modal-close" aria-label="Fermer">✕</button>' +
-          '<div class="cg-modal-logo"><div class="m">CIGAR GLOBE</div><div class="s">ESPACE MEMBRE</div></div>' +
+          '<div class="cg-modal-logo"><div class="m">CIGAR ODYSSEY</div><div class="s">ESPACE MEMBRE</div></div>' +
           '<div class="cg-msg hidden" id="cgMsg"></div>' +
           '<div class="cg-tabs" id="cgTabs">' +
             '<button class="cg-tab active" data-tab="login">Connexion</button>' +

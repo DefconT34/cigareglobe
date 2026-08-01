@@ -223,7 +223,7 @@ function action_submit(): void {
     // pouvait bloquer la requête sur un délai SMTP.
     if (ADMIN_EMAIL !== '' && ADMIN_EMAIL !== 'vous@example.com' && ADMIN_EMAIL !== 'votre@email.com') {
         $esc     = fn($s) => htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
-        $subject = '[CigarGlobe] ' . ($auto_approved ? 'Contribution publiée (confiance)' : 'Nouvelle contribution')
+        $subject = '[CigarOdyssey] ' . ($auto_approved ? 'Contribution publiée (confiance)' : 'Nouvelle contribution')
                  . ' : ' . $body['name'];
         $html = '<p><strong>' . $esc($body['name']) . '</strong><br>'
               . $esc($body['city']) . ' — ' . $esc($body['country_name']) . '<br>'

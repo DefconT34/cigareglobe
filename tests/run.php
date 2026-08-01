@@ -2,7 +2,7 @@
 // Ligne de commande uniquement : ce harnais reconstruit la base de test.
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 // ════════════════════════════════════════════════════════
-// tests/run.php — Tests de fumee de l'API CigarGlobe
+// tests/run.php — Tests de fumee de l'API CigarOdyssey
 // ────────────────────────────────────────────────────────
 // Verifie les comportements essentiels : authentification, protection
 // CSRF, gating des contributions, avis et moderation, favoris, profil,
@@ -16,7 +16,7 @@ if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 
 require_once __DIR__ . '/bootstrap.php';
 
-tprint('CigarGlobe — tests de fumee de l\'API');
+tprint('CigarOdyssey — tests de fumee de l\'API');
 tprint('Base de test : ' . test_db_name());
 
 setup_test_database();

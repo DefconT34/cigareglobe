@@ -61,7 +61,7 @@ function dns_utilisable(string $domain): string {
     return 'ok';
 }
 
-echo "CigarGlobe — diagnostic de delivrabilite\n";
+echo "CigarOdyssey — diagnostic de delivrabilite\n";
 
 // ── Configuration ─────────────────────────────────────────
 titre('Configuration');
@@ -190,10 +190,10 @@ if ($to !== '') {
     $html = email_template(
         'Test de delivrabilite',
         'Ce message confirme que le transport ' . $driver . ' fonctionne. Si vous le lisez depuis votre boite de reception (et non depuis les indesirables), la configuration est bonne.',
-        'Ouvrir CigarGlobe', (defined('SITE_URL') ? SITE_URL : 'https://example.com'),
+        'Ouvrir CigarOdyssey', (defined('SITE_URL') ? SITE_URL : 'https://example.com'),
         'Message emis par tools/mail_doctor.php.'
     );
-    $ok = send_email($to, 'CigarGlobe — test de delivrabilite', $html);
+    $ok = send_email($to, 'CigarOdyssey — test de delivrabilite', $html);
     if ($ok) {
         line('ok', 'Message accepte par le transport.',
              "Verifiez la reception, et surtout le dossier indesirables.\n"

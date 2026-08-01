@@ -26,8 +26,12 @@ async function ouvrir(page, url = '/') {
   // intercepte les clics. Il se retire APRES l'arrivee des donnees :
   // attendre les seules donnees laissait les clics rebondir dessus
   // jusqu'a expiration du test.
+  // 30 s : en emulation mobile, le globe met sensiblement plus longtemps
+  // a s'initialiser, et le serveur mono-requete allonge encore le
+  // chargement. C'est une tolerance d'infrastructure, pas une mesure de
+  // performance — les tests de contenu ont leurs propres delais.
   await expect(page.locator('#loading-overlay'))
-    .toBeHidden({ timeout: 20_000 });
+    .toBeHidden({ timeout: 30_000 });
 
   return page;
 }

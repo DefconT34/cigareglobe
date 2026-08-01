@@ -1,4 +1,4 @@
-# CigarGlobe — feuille de route
+# CigarOdyssey — feuille de route
 
 Suivi des chantiers. Après chaque chantier terminé : cocher ici, puis
 re-présenter la liste restante et suggérer le point suivant.
@@ -26,19 +26,20 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
 - **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
 - **C5** : tests de bout en bout Playwright (36 parcours : globe, panneaux, recherche, Explorer, langues, a11y, mobile) + jeu de donnees versionne + CI
+- **B3** : nom & domaine unifiés — CigarOdyssey / cigarodyssey.com partout (backend, emails, SEO, manifeste, CI, docs)
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
 
 ## ⏳ À faire
 
 ### A. Sécurité & robustesse
 - [x] ~~**A1** — Clé admin hors URL (session + CSRF)~~ ✅
-- [ ] **A2** — Restreindre le CORS au domaine réel (garder `*` en local) · P · dépend de B3
+- [ ] **A2** — Restreindre le CORS au domaine réel (garder `*` en local) · P · **débloqué**
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
 - [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→006) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
-- [ ] **B3** — Nom & domaine unifiés (CigarOdyssey/Globe/World → un seul + SEO/manifest/MAIL_FROM) · P→M · débloque A2/B2
+- [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
 ### C. Qualité & structure
 - [x] ~~**C1** — Externalisation du front (CSS + 23 modules JS hors index.html)~~ ✅
@@ -63,4 +64,4 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → **B3** → A2 → B1 → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → **A2** → B1 → D6/C1b (optionnels)

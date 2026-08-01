@@ -1,6 +1,6 @@
 <?php
 // ════════════════════════════════════════════════════════
-// auth.php — API d'authentification CigarGlobe (Étape A)
+// auth.php — API d'authentification CigarOdyssey (Étape A)
 // ────────────────────────────────────────────────────────
 // Actions :
 //   GET  ?action=me         → { user|null, csrf }
@@ -198,7 +198,7 @@ function action_forgot(PDO $db): void {
             send_email($email, 'Réinitialisation de votre mot de passe',
                 email_template(
                     'Réinitialisation du mot de passe',
-                    'Vous avez demandé à réinitialiser votre mot de passe CigarGlobe. Ce lien expire dans 1 heure.',
+                    'Vous avez demandé à réinitialiser votre mot de passe CigarOdyssey. Ce lien expire dans 1 heure.',
                     'Choisir un nouveau mot de passe', $url,
                     'Si vous n\'êtes pas à l\'origine de cette demande, ignorez cet email.'
                 ));
@@ -265,7 +265,7 @@ function send_verification_email(PDO $db, int $uid, string $email, string $name)
     send_email($email, 'Confirmez votre adresse email',
         email_template(
             'Bienvenue, ' . $name . ' !',
-            'Merci de rejoindre CigarGlobe. Confirmez votre adresse email pour pouvoir contribuer et noter les établissements. Ce lien expire dans 24 heures.',
+            'Merci de rejoindre CigarOdyssey. Confirmez votre adresse email pour pouvoir contribuer et noter les établissements. Ce lien expire dans 24 heures.',
             'Confirmer mon email', $url
         ));
 }

@@ -1,7 +1,7 @@
 {
   "name": "CigarOdyssey",
   "short_name": "CigarOdyssey",
-  "description": "The World's Premium Cigar Atlas — Producing countries, global markets & 198 verified lounges in 75 countries",
+  "description": "The World's Premium Cigar Atlas — Producing countries, global markets and a directory of cigar lounges worldwide",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0F0803",

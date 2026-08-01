@@ -1,11 +1,11 @@
-# CigarGlobe
+# CigarOdyssey
 
 Atlas interactif mondial du cigare premium : globe des pays producteurs
 et marchés, annuaire de lounges & caves (avec photos, notes et avis), et
 espace membre (contributions, favoris, profil). PWA multilingue
 (fr/en/es/de/zh/ar).
 
-> Le projet apparaît sous plusieurs noms dans le code (CigarGlobe /
+> Le projet apparaît sous plusieurs noms dans le code (CigarOdyssey /
 > CigarOdyssey) — unification prévue (voir `docs/roadmap.md`, chantier B3).
 
 ## Stack
@@ -26,8 +26,8 @@ espace membre (contributions, favoris, profil). PWA multilingue
 
 1. **Base de données** — créer la base et importer le schéma :
    ```bash
-   mysql -u root -p -e "CREATE DATABASE cigareglobe CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-   mysql -u root -p cigareglobe < sql/schema.sql
+   mysql -u root -p -e "CREATE DATABASE cigarodyssey CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+   mysql -u root -p cigarodyssey < sql/schema.sql
    ```
    (puis importer un jeu de données si disponible — voir `sql/README.md`).
 
