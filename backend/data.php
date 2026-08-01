@@ -92,6 +92,57 @@ function lounge_desc_col(): string {
         : "COALESCE(NULLIF(description_{$lang}, ''), description) AS `desc`";
 }
 
+/**
+ * Langue demandee, validee. Le francais est la langue de reference :
+ * c'est lui qui est stocke dans la colonne sans suffixe.
+ */
+function langue_courante(): string {
+    $l = $_GET['lang'] ?? '';
+    return in_array($l, ['en','es','de','zh','ar'], true) ? $l : 'fr';
+}
+
+/**
+ * Applique la langue courante a une ligne : pour chaque champ traduisible,
+ * la colonne « champ_xx » remplace « champ » si elle est renseignee, puis
+ * toutes les colonnes de langue sont retirees de la reponse.
+ *
+ * Le repli est volontaire : une traduction absente laisse le francais
+ * plutot qu'un vide, ce qui permet de remplir le contenu progressivement.
+ */
+function traduire(array $ligne, array $champs): array {
+    $lang = langue_courante();
+    foreach ($champs as $champ) {
+        if ($lang !== 'fr') {
+            $col = $champ . '_' . $lang;
+            if (isset($ligne[$col]) && $ligne[$col] !== '') $ligne[$champ] = $ligne[$col];
+        }
+        foreach (['en','es','de','zh','ar'] as $l) unset($ligne[$champ . '_' . $l]);
+    }
+    return $ligne;
+}
+
+/**
+ * Champs traduisibles, par table.
+ *
+ * Une fonction plutot qu'une constante : le routage de ce fichier
+ * s'execute avant les declarations qui le suivent, et « const » n'est
+ * pas remontee comme le sont les fonctions.
+ */
+function champs_traduits(string $table): array {
+    return [
+        'producer_countries' => ['region','production','rev_detail','harvest','climate','soil','notes'],
+        'markets'            => ['consumption','cigars','trend','note'],
+        'production_zones'   => ['note'],
+        'habanos_presence'   => ['status','ownership','description','festival'],
+        'brands'             => ['history','gamme','celebrities','pairings'],
+    ][$table] ?? [];
+}
+
+/** Raccourci : traduit une ligne selon la table dont elle provient. */
+function traduire_table(array $ligne, string $table): array {
+    return traduire($ligne, champs_traduits($table));
+}
+
 /** Colonnes enrichies communes aux deux endpoints. */
 function lounge_extra_cols(): string {
     return ', hours, maps_url, website, instagram'
@@ -158,14 +209,17 @@ function action_globe(PDO $db): void {
          FROM producer_countries ORDER BY name"
     )->fetchAll();
     $json_c = ['tabacaleras','regions','varieties','brands'];
-    $countries = array_map(fn($r) => row_parse($r, $json_c), $countries);
+    $countries = array_map(
+        fn($r) => traduire_table(row_parse($r, $json_c), 'producer_countries'),
+        $countries
+    );
 
     // Zones de production (toutes)
-    $zones_raw = $db->query("SELECT country_id,name,lat,lon,note,color FROM production_zones")->fetchAll();
+    $zones_raw = $db->query("SELECT * FROM production_zones")->fetchAll();
     $zones = [];
     foreach ($zones_raw as $z) {
         $cid = $z['country_id']; unset($z['country_id']);
-        $zones[$cid][] = $z;
+        $zones[$cid][] = traduire_table($z, 'production_zones');
     }
 
     // Les contours des pays producteurs proviennent desormais de la carte
@@ -175,10 +229,12 @@ function action_globe(PDO $db): void {
 
     // Marchés
     $markets = $db->query(
-        "SELECT id,name,flag,lat,lon,rank_num AS `rank`,consumption,cigars,share,trend,top_brands,note,color
-         FROM markets ORDER BY rank_num"
+        "SELECT *, rank_num AS `rank` FROM markets ORDER BY rank_num"
     )->fetchAll();
-    $markets = array_map(fn($r) => row_parse($r, ['top_brands']), $markets);
+    $markets = array_map(
+        fn($r) => traduire_table(row_parse($r, ['top_brands']), 'markets'),
+        $markets
+    );
     // rename top_brands → topBrands for JS compat
     $markets = array_map(function($m) {
         $m['topBrands'] = $m['top_brands']; unset($m['top_brands']);
@@ -228,7 +284,7 @@ function action_country(PDO $db): void {
     $c->execute([$id]);
     $country = $c->fetch();
     if (!$country) { http_response_code(404); jout(err('not_found_country', 'Pays introuvable')); }
-    $country = row_parse($country, ['tabacaleras','regions','varieties','brands']);
+    $country = traduire_table(row_parse($country, ['tabacaleras','regions','varieties','brands']), 'producer_countries');
 
     $g = $db->prepare("SELECT * FROM producer_geo WHERE country_id = ?");
     $g->execute([$id]);
@@ -241,16 +297,17 @@ function action_country(PDO $db): void {
         'independent'=>$geo_row['independent'],
     ] : [];
 
-    $z = $db->prepare("SELECT name,lat,lon,note,color FROM production_zones WHERE country_id = ? ORDER BY id");
+    $z = $db->prepare("SELECT * FROM production_zones WHERE country_id = ? ORDER BY id");
     $z->execute([$id]);
-    $zones = $z->fetchAll();
+    $zones = array_map(function ($x) { unset($x['country_id']); return traduire_table($x, 'production_zones'); },
+                       $z->fetchAll());
 
     $h = $db->prepare("SELECT * FROM habanos_presence WHERE country_id = ?");
     $h->execute([$id]);
     $hab_row = $h->fetch();
     $habanos = null;
     if ($hab_row) {
-        $habanos = row_parse($hab_row, ['factories','marques_officielles','distributeurs','certifications']);
+        $habanos = traduire_table(row_parse($hab_row, ['factories','marques_officielles','distributeurs','certifications']), 'habanos_presence');
         $habanos['present'] = (bool)$habanos['present'];
         unset($habanos['country_id']);
         // rename keys for JS compat
@@ -323,26 +380,9 @@ function action_brand(PDO $db): void {
     $stmt->execute([$name]);
     $brand = $stmt->fetch();
     if (!$brand) { http_response_code(404); jout(err('not_found_brand', 'Marque introuvable')); }
-    // Sélectionner la bonne langue pour tous les champs traduisibles
-    $lang = in_array($_GET['lang'] ?? '', ['en','es','de','zh','ar']) ? $_GET['lang'] : 'fr';
-    if ($lang !== 'fr') {
-        // Chaque champ : utiliser la colonne langue si remplie, sinon fallback FR
-        $translatable = ['history', 'gamme', 'celebrities', 'pairings'];
-        foreach ($translatable as $field) {
-            $col = $field . '_' . $lang;
-            if (isset($brand[$col]) && !empty($brand[$col])) {
-                $brand[$field] = $brand[$col];
-            }
-        }
-    }
-    // Nettoyer TOUTES les colonnes multilingues (garder uniquement la langue sélectionnée)
-    $langs_all = ['en','es','de','zh','ar'];
-    $fields_ml = ['history','gamme','celebrities','pairings'];
-    foreach ($fields_ml as $field) {
-        foreach ($langs_all as $l) {
-            unset($brand[$field . '_' . $l]);
-        }
-    }
+    // Langue et nettoyage des colonnes multilingues : meme traitement que
+    // pour les autres tables de l'atlas.
+    $brand = traduire_table($brand, 'brands');
     // Colonnes legacy à nettoyer aussi
     foreach (['notes_en','notes_es','notes_de','notes_zh','notes_ar'] as $col) {
         unset($brand[$col]);
@@ -364,7 +404,7 @@ function action_market(PDO $db): void {
     $stmt->execute([$id]);
     $m = $stmt->fetch();
     if (!$m) { http_response_code(404); jout(err('not_found_market', 'Marché introuvable')); }
-    $m = row_parse($m, ['top_brands']);
+    $m = traduire_table(row_parse($m, ['top_brands']), 'markets');
     $m['topBrands'] = $m['top_brands']; unset($m['top_brands']);
     $m['rank'] = (int)$m['rank_num']; unset($m['rank_num']);
 
@@ -386,7 +426,8 @@ function action_all(PDO $db): void {
         $brands[$b['name']] = $b;
     }
 
-    $habanos_raw = $db->query("SELECT * FROM habanos_presence")->fetchAll();
+    $habanos_raw = array_map(fn($h) => traduire_table($h, 'habanos_presence'),
+                             $db->query("SELECT * FROM habanos_presence")->fetchAll());
     $habanos = [];
     foreach ($habanos_raw as $h) {
         $cid = $h['country_id']; unset($h['country_id']);

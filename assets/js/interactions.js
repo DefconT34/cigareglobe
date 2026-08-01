@@ -197,9 +197,19 @@ window.addEventListener('mousemove', e => {
       : hit.type === 'market'
         ? hit.data.flag + ' ' + hit.data.name.toUpperCase() + ' ' + t('tip_market').replace('{n}', hit.data.rank)
         : hit.data.flag + ' ' + hit.data.name.toUpperCase() + ' ' + t('tip_lounges');
-    tip.style.left = (e.clientX + 14) + 'px';
-    tip.style.top  = (e.clientY - 16) + 'px';
+    // Le texte doit etre pose avant la mesure, sinon la largeur est
+    // celle de l'infobulle precedente.
     tip.textContent = label;
+    // Maintenir l'infobulle dans la fenetre : pres d'un bord elle
+    // debordait et se retrouvait coupee — d'autant plus en arabe, ou
+    // elle part vers la gauche.
+    var lr = tip.getBoundingClientRect();
+    var gx = e.clientX + 14;
+    if (gx + lr.width > window.innerWidth - 8) gx = e.clientX - 14 - lr.width;
+    if (gx < 8) gx = 8;
+    var gy = Math.max(8, Math.min(e.clientY - 16, window.innerHeight - lr.height - 8));
+    tip.style.left = gx + 'px';
+    tip.style.top  = gy + 'px';
     tip.classList.add('tip-on');
     tip.setAttribute('aria-hidden', 'false');
     globe.style.cursor = 'pointer';

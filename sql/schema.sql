@@ -33,7 +33,7 @@ CREATE TABLE `approved_lounges` (
   KEY `idx_country` (`country_id`),
   KEY `idx_approved` (`approved_at` DESC),
   CONSTRAINT `fk_approved_contrib` FOREIGN KEY (`contribution_id`) REFERENCES `contributions` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `auth_attempts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -45,7 +45,7 @@ CREATE TABLE `auth_attempts` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_aa_ip_action_time` (`ip`,`action`,`created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `brands`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -70,11 +70,6 @@ CREATE TABLE `brands` (
   `history_ar` text COLLATE utf8mb4_unicode_ci COMMENT 'Histoire en arabe',
   `gamme_en` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Gammes en anglais',
   `gamme_es` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Gammes en espagnol',
-  `notes_en` text COLLATE utf8mb4_unicode_ci COMMENT 'Note sommelier EN',
-  `notes_es` text COLLATE utf8mb4_unicode_ci COMMENT 'Note sommelier ES',
-  `notes_de` text COLLATE utf8mb4_unicode_ci COMMENT 'Note sommelier DE',
-  `notes_zh` text COLLATE utf8mb4_unicode_ci COMMENT 'Note sommelier ZH',
-  `notes_ar` text COLLATE utf8mb4_unicode_ci COMMENT 'Note sommelier AR',
   `gamme_de` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Gammes en allemand',
   `gamme_zh` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Gammes en chinois',
   `gamme_ar` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Gammes en arabe',
@@ -137,7 +132,7 @@ CREATE TABLE `contributions` (
   KEY `idx_country` (`country_id`),
   KEY `idx_status` (`status`),
   KEY `idx_contrib_user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `email_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -154,7 +149,7 @@ CREATE TABLE `email_tokens` (
   KEY `idx_et_user` (`user_id`),
   KEY `idx_et_token` (`token_hash`),
   CONSTRAINT `fk_et_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `favorites`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -171,7 +166,7 @@ CREATE TABLE `favorites` (
   KEY `idx_fav_user` (`user_id`),
   KEY `idx_fav_target` (`target_type`,`target_id`),
   CONSTRAINT `fk_fav_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `habanos_presence`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -193,6 +188,26 @@ CREATE TABLE `habanos_presence` (
   `description` text COLLATE utf8mb4_unicode_ci,
   `festival` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `certifications` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `status_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ownership_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ownership_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ownership_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ownership_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ownership_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description_en` text COLLATE utf8mb4_unicode_ci,
+  `description_es` text COLLATE utf8mb4_unicode_ci,
+  `description_de` text COLLATE utf8mb4_unicode_ci,
+  `description_zh` text COLLATE utf8mb4_unicode_ci,
+  `description_ar` text COLLATE utf8mb4_unicode_ci,
+  `festival_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `festival_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `festival_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `festival_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `festival_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`country_id`),
   CONSTRAINT `habanos_presence_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `producer_countries` (`id`),
   CONSTRAINT `habanos_presence_chk_1` CHECK (json_valid(`factories`)),
@@ -235,7 +250,7 @@ CREATE TABLE `lounge_photos` (
   KEY `idx_approved` (`is_approved`),
   KEY `idx_lounge_approved` (`lounge_id`,`is_approved`),
   CONSTRAINT `lounge_photos_ibfk_1` FOREIGN KEY (`lounge_id`) REFERENCES `lounges` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=443 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `lounge_ratings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -252,7 +267,7 @@ CREATE TABLE `lounge_ratings` (
   KEY `idx_ip` (`voter_ip`),
   CONSTRAINT `lounge_ratings_ibfk_1` FOREIGN KEY (`lounge_id`) REFERENCES `lounges` (`id`) ON DELETE CASCADE,
   CONSTRAINT `lounge_ratings_chk_1` CHECK ((`rating` between 1 and 5))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `lounges`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -287,7 +302,7 @@ CREATE TABLE `lounges` (
   KEY `idx_country_verified` (`country_id`,`is_verified`),
   KEY `idx_rating` (`rating` DESC),
   KEY `idx_country_rating` (`country_id`,`is_verified`,`rating`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2556 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `markets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -307,6 +322,26 @@ CREATE TABLE `markets` (
   `note` text COLLATE utf8mb4_unicode_ci,
   `color` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `consumption_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `consumption_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `consumption_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `consumption_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `consumption_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cigars_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cigars_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cigars_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cigars_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cigars_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `trend_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `trend_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `trend_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `trend_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `trend_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `note_en` text COLLATE utf8mb4_unicode_ci,
+  `note_es` text COLLATE utf8mb4_unicode_ci,
+  `note_de` text COLLATE utf8mb4_unicode_ci,
+  `note_zh` text COLLATE utf8mb4_unicode_ci,
+  `note_ar` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   CONSTRAINT `markets_chk_1` CHECK (json_valid(`top_brands`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -336,6 +371,41 @@ CREATE TABLE `producer_countries` (
   `brands` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Array of {name, desc, iconic}',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `region_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `region_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `region_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `region_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `region_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `production_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `production_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `production_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `production_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `production_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rev_detail_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rev_detail_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rev_detail_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rev_detail_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rev_detail_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `harvest_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `harvest_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `harvest_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `harvest_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `harvest_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `climate_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `climate_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `climate_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `climate_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `climate_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `soil_en` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `soil_es` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `soil_de` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `soil_zh` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `soil_ar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `notes_en` text COLLATE utf8mb4_unicode_ci,
+  `notes_es` text COLLATE utf8mb4_unicode_ci,
+  `notes_de` text COLLATE utf8mb4_unicode_ci,
+  `notes_zh` text COLLATE utf8mb4_unicode_ci,
+  `notes_ar` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   CONSTRAINT `producer_countries_chk_1` CHECK (json_valid(`tabacaleras`)),
   CONSTRAINT `producer_countries_chk_2` CHECK (json_valid(`regions`)),
@@ -372,10 +442,15 @@ CREATE TABLE `production_zones` (
   `lon` decimal(8,4) NOT NULL,
   `note` text COLLATE utf8mb4_unicode_ci,
   `color` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `note_en` text COLLATE utf8mb4_unicode_ci,
+  `note_es` text COLLATE utf8mb4_unicode_ci,
+  `note_de` text COLLATE utf8mb4_unicode_ci,
+  `note_zh` text COLLATE utf8mb4_unicode_ci,
+  `note_ar` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   KEY `country_id` (`country_id`),
   CONSTRAINT `production_zones_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `producer_countries` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `review_flags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -392,7 +467,7 @@ CREATE TABLE `review_flags` (
   KEY `fk_flag_user` (`user_id`),
   CONSTRAINT `fk_flag_review` FOREIGN KEY (`review_id`) REFERENCES `reviews` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_flag_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `reviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -411,7 +486,7 @@ CREATE TABLE `reviews` (
   UNIQUE KEY `uq_reviews_user_lounge` (`user_id`,`lounge_id`),
   KEY `idx_reviews_lounge` (`lounge_id`),
   CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -430,7 +505,7 @@ CREATE TABLE `users` (
   `last_login_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_users_email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -444,7 +519,7 @@ CREATE TABLE `votes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_vote` (`contribution_id`,`voter_ip`),
   CONSTRAINT `fk_votes_contrib` FOREIGN KEY (`contribution_id`) REFERENCES `contributions` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

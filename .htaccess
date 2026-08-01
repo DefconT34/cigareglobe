@@ -61,12 +61,35 @@
   Require all denied
 </FilesMatch>
 
-# ── Réécriture HTTPS ──────────────────────────────────────
+# ── Réécriture ────────────────────────────────────────────
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # HTTPS d'abord
   RewriteCond %{HTTPS} off
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # ── Une URL par langue ──────────────────────────────────
+  # Le français reste à la racine ; les cinq autres langues ont leur
+  # préfixe. index.php sert index.html en adaptant lang, dir, titre,
+  # description, canonique et hreflang — ce qu'un moteur de recherche
+  # lit avant d'exécuter le JavaScript.
+  #
+  # Sans barre finale : on redirige, pour n'avoir qu'une seule URL
+  # indexable par langue.
+  RewriteRule ^(en|es|de|zh|ar)$ /$1/ [R=301,L]
+  RewriteRule ^(en|es|de|zh|ar)/?$ /index.php?lang=$1 [L,QSA]
+
+  # La racine passe aussi par index.php (français).
+  RewriteRule ^$ /index.php?lang=fr [L,QSA]
+
+  # Plan de site : genere, pour que le domaine suive SITE_URL.
+  RewriteRule ^sitemap\.xml$ /sitemap.php [L]
 </IfModule>
+
+# index.php prime sur index.html : sans cela, Apache servirait le
+# fichier statique et court-circuiterait tout le travail ci-dessus.
+DirectoryIndex index.php index.html
 
 # ── Page d'erreur personnalisée ───────────────────────────
 ErrorDocument 404 /index.html

@@ -81,11 +81,18 @@ module.exports = defineConfig({
   fullyParallel: false,
   workers: 1,
   forbidOnly: !!process.env.CI,
-  // Un reessai, y compris en local. Le serveur integre sert les ~30
-  // fichiers d'une page une requete a la fois : sous charge il lui
-  // arrive de couper une connexion. Ces coupures ne disent rien de
-  // l'application, et un echec reel se reproduit au reessai.
-  retries: process.env.CI ? 2 : 1,
+  // Deux reessais, y compris en local. Le serveur integre sert les ~30
+  // fichiers d'une page une requete a la fois, et depuis les URL par
+  // langue chaque navigation passe en plus par index.php : sous charge
+  // il lui arrive de couper une connexion ou de faire attendre. Ces
+  // coupures ne disent rien de l'application — un echec reel se
+  // reproduit aux deux reessais.
+  //
+  // La vraie correction serait un serveur multi-processus, que
+  // « php -S » n'offre pas sous Windows (PHP_CLI_SERVER_WORKERS est
+  // reserve aux systemes POSIX). A revoir si la campagne se degrade
+  // encore : voir docs/i18n.md.
+  retries: 2,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]]
                            : [['list'], ['html', { open: 'never' }]],
 

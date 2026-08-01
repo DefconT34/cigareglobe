@@ -1,0 +1,15 @@
+# CigarOdyssey — robots.txt
+# Le plan de site declare les six versions linguistiques et leurs
+# correspondances hreflang (voir sitemap.php).
+
+User-agent: *
+Allow: /
+
+# Espaces techniques : rien a indexer, et l'administration ne doit pas
+# apparaitre dans les resultats.
+Disallow: /backend/
+Disallow: /tests/
+Disallow: /tools/
+Disallow: /uploads/
+
+Sitemap: https://cigarodyssey.com/sitemap.xml

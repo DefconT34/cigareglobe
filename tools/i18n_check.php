@@ -43,7 +43,12 @@ function i18n_parse(string $chemin): array {
 
         // Plusieurs paires peuvent partager une ligne (« a:'x', b:'y', »).
         if (preg_match_all('/([A-Za-z_][A-Za-z0-9_]*)\s*:\s*(["\'])(.*?)(?<!\\\\)\2/', $l, $m, PREG_SET_ORDER)) {
-            foreach ($m as $x) $out[$langue][$x[1]] = $x[3];
+            // Les valeurs sont des litteraux JavaScript : leurs
+            // echappements doivent etre rendus, sinon une apostrophe
+            // ressortirait precedee de sa barre oblique.
+            foreach ($m as $x) {
+                $out[$langue][$x[1]] = stripcslashes($x[3]);
+            }
         }
     }
     return $out;

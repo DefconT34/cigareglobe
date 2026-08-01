@@ -26,6 +26,9 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **E3** : frontières réelles pour les pays producteurs (table `country_polygons` supprimée, migration 005)
 - **E4** : audit géométrique des 152 points du globe — 2 coordonnées corrigées (migration 006)
 - **C5** : tests de bout en bout Playwright (36 parcours : globe, panneaux, recherche, Explorer, langues, a11y, mobile) + jeu de donnees versionne + CI
+- **F6** : référencement multilingue — URLs par langue (`/en/`…), hreflang, sitemap, `index.php` qui sert le bon en-tête
+- **F3** : colonnes de traduction du contenu (migration 007) + repli dans `data.php`
+- **F5** : RTL arabe vérifié, infobulle bornée à la fenêtre
 - **F2** : messages du serveur — 35 codes stables, traduits côté front par `tErr()`, jamais par PHP
 - **F1** : interface entièrement traduite — 102 clés dans 6 langues, 12 modules câblés, 3 modules qui ne se retraduisaient jamais corrigés
 - **F7** : garde-fous multilingues — parité des clés, couverture du contenu en base, balayage des 6 langues à cliquet, RTL `#side-fabs` corrigé
@@ -67,10 +70,10 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**F7** — Garde-fous : parité des clés (`tools/i18n_check.php`, 12 vérifications) + balayage des 6 langues avec cliquet~~ ✅
 - [x] ~~**F1** — Rapatrier les chaînes codées en dur du front dans `i18n.js`~~ ✅ · 102 clés, 12 modules
 - [x] ~~**F2** — Codes d'erreur côté serveur, traduits côté front~~ ✅ · 35 codes, 10 vérifications
-- [ ] **F5** — RTL arabe : vérifier les composants récents (`#side-fabs`, champ Explorer) · P
-- [ ] **F6** — Référencement multilingue (`hreflang`, `lang` dynamique, URLs par langue) · M · **décision requise**
-- [ ] **F3** — Colonnes de traduction manquantes, 6 tables (migration 007) · M
-- [ ] **F4** — Remplir le contenu (~514 segments → ~2 570 traductions) · G · dépend de F3
+- [x] ~~**F5** — RTL arabe vérifié de bout en bout~~ ✅ · infobulle bornée à la fenêtre
+- [x] ~~**F6** — Référencement multilingue : URLs par langue, hreflang, sitemap~~ ✅
+- [x] ~~**F3** — Colonnes de traduction manquantes (migration 007)~~ ✅
+- [ ] **F4** — Remplir le contenu · G · outillage livré, champs courts faits, **~310 valeurs distinctes restantes**
 
 ### E. Dette technique
 - [x] ~~**E1** — Simplifier `data.php` (DESCRIBE défensifs retirés)~~ ✅
@@ -79,4 +82,4 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → **B1** → F3/F4/F6 → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → **B1** → F3/F4/F6 → D6/C1b (optionnels)

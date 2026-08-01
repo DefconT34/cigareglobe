@@ -358,6 +358,11 @@ const I18N = {
     err_file_missing:'Aucun fichier reçu.',
     err_file_invalid:'Fichier refusé.',
     err_upload_failed:'L\'envoi a échoué. Réessayez.',
+
+    /* Referencement par langue (lot F6) */
+    seo_title:'CigarOdyssey — L\'atlas mondial du cigare premium',
+    seo_description:'Globe interactif des pays producteurs et des marchés du cigare, et annuaire des caves et lounges dans 92 pays.',
+    seo_image_alt:'Globe interactif des pays producteurs de cigares',
   },
 
   en: {
@@ -714,6 +719,11 @@ const I18N = {
     err_file_missing:'No file received.',
     err_file_invalid:'File rejected.',
     err_upload_failed:'Upload failed. Please try again.',
+
+    /* Referencement par langue (lot F6) */
+    seo_title:'CigarOdyssey — The World\'s Premium Cigar Atlas',
+    seo_description:'Interactive globe of cigar producing countries and markets, with a directory of cellars and lounges in 92 countries.',
+    seo_image_alt:'Interactive globe of cigar producing countries',
   },
 
   es: {
@@ -1070,6 +1080,11 @@ const I18N = {
     err_file_missing:'No se ha recibido ningún archivo.',
     err_file_invalid:'Archivo rechazado.',
     err_upload_failed:'La subida ha fallado. Inténtalo de nuevo.',
+
+    /* Referencement par langue (lot F6) */
+    seo_title:'CigarOdyssey — El atlas mundial del puro premium',
+    seo_description:'Globo interactivo de los países productores y los mercados del puro, con un directorio de bodegas y salones en 92 países.',
+    seo_image_alt:'Globo interactivo de los países productores de puros',
   },
 
   de: {
@@ -1426,6 +1441,11 @@ const I18N = {
     err_file_missing:'Keine Datei empfangen.',
     err_file_invalid:'Datei abgelehnt.',
     err_upload_failed:'Der Upload ist fehlgeschlagen. Bitte erneut versuchen.',
+
+    /* Referencement par langue (lot F6) */
+    seo_title:'CigarOdyssey — Der Weltatlas der Premium-Zigarre',
+    seo_description:'Interaktiver Globus der Zigarren-Erzeugerländer und -Märkte, mit einem Verzeichnis von Kellern und Lounges in 92 Ländern.',
+    seo_image_alt:'Interaktiver Globus der Zigarren-Erzeugerländer',
   },
 
   zh: {
@@ -1782,6 +1802,11 @@ const I18N = {
     err_file_missing:'未收到文件。',
     err_file_invalid:'文件被拒绝。',
     err_upload_failed:'上传失败，请重试。',
+
+    /* Referencement par langue (lot F6) */
+    seo_title:'CigarOdyssey — 全球优质雪茄地图',
+    seo_description:'雪茄生产国与市场的交互式地球仪，并收录 92 个国家的雪茄窖与雪茄馆名录。',
+    seo_image_alt:'雪茄生产国交互式地球仪',
   },
 
   ar: {
@@ -2138,10 +2163,22 @@ const I18N = {
     err_file_missing:'لم يُستلم أي ملف.',
     err_file_invalid:'الملف مرفوض.',
     err_upload_failed:'فشل الرفع. أعد المحاولة.',
+
+    /* Referencement par langue (lot F6) */
+    seo_title:'CigarOdyssey — أطلس السيجار الفاخر حول العالم',
+    seo_description:'كرة أرضية تفاعلية لبلدان إنتاج السيجار وأسواقه، مع دليل للأقبية والصالات في 92 بلدًا.',
+    seo_image_alt:'كرة أرضية تفاعلية لبلدان إنتاج السيجار',
   },
 };
 
-let currentLang = 'fr';
+// La langue initiale vient du serveur : index.php pose <html lang="xx">
+// selon le préfixe de l'URL. S'y fier plutôt que de repartir du français
+// évite un éclair de contenu français avant le premier applyLang, et
+// garde l'affichage cohérent avec l'URL partagée.
+let currentLang = (function () {
+  var l = (document.documentElement.getAttribute('lang') || 'fr').toLowerCase();
+  return ['fr','en','es','de','zh','ar'].indexOf(l) >= 0 ? l : 'fr';
+})();
 window.currentLang = currentLang; // expose globally
 
 function t(key){
@@ -2294,11 +2331,41 @@ function applyLang(lang){
 window.applyLang = applyLang; // expose for cross-file access
 
 
-// Lang button event listeners (desktop .lang-btn + mobile .mlang-btn)
+/**
+ * URL publique d'une langue, en conservant la page courante.
+ * Le français vit à la racine, les autres sous leur préfixe (/en/…).
+ */
+function urlLangue(lang) {
+  var chemin = location.pathname.replace(/^\/(en|es|de|zh|ar)(\/|$)/, '/');
+  if (lang !== 'fr') chemin = '/' + lang + chemin;
+  // Le parametre ?lang= n'a de sens que pour le repli sans reecriture :
+  // on ne le propage pas, l'information est deja dans le chemin.
+  var q = location.search.replace(/([?&])lang=[a-z]{2}&?/, '$1').replace(/[?&]$/, '');
+  return chemin.replace(/\/{2,}/g, '/') + q + location.hash;
+}
+window.urlLangue = urlLangue;
+
+// Changer de langue change d'URL : c'est ce qui rend les six versions
+// partageables et indexables. Le choix persiste donc naturellement,
+// sans stockage local.
+// Le gabarit est ecrit en francais : si le serveur sert une autre
+// langue, il faut appliquer la traduction une fois au demarrage, sinon
+// seuls les modules qui appellent t() eux-memes seraient traduits.
+if (currentLang !== 'fr') {
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', function () { applyLang(currentLang); });
+  else applyLang(currentLang);
+}
+
 document.querySelectorAll('.lang-btn,.mlang-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
-    applyLang(btn.getAttribute('data-lang'));
-    // Note: mobile menu close is handled by app.js patchApplyLang
+    var lang = btn.getAttribute('data-lang');
+    if (lang === window.currentLang) return;
+    var cible = urlLangue(lang);
+    // Repli sur la bascule en place si les URL par langue ne sont pas
+    // servies (ouverture directe du fichier, serveur sans réécriture).
+    if (location.protocol === 'file:') { applyLang(lang); return; }
+    location.assign(cible);
   });
 });
 
