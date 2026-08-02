@@ -38,10 +38,28 @@ espace membre (contributions, favoris, profil). PWA multilingue
 
 3. **Serveur** — servir la racine du projet (le PHP doit avoir pdo_mysql) :
    ```bash
-   php -S 127.0.0.1:8099 -t .
-   # avec WAMP : C:\wamp64\bin\php\php8.x\php.exe -S 127.0.0.1:8099 -t .
+   php -S 127.0.0.1:8099 -t . tools/dev-router.php
+   # avec WAMP : C:\wamp64\bin\php\php8.x\php.exe -S 127.0.0.1:8099 -t . tools/dev-router.php
    ```
-   → http://127.0.0.1:8099/index.html
+   → http://127.0.0.1:8099/
+
+   **Le routeur n'est pas facultatif.** `php -S` ignore le `.htaccess` :
+   sans lui, `/.env` est servi en clair — accès MySQL, clés d'API, clé
+   d'administration. `tools/dev-router.php` rejoue les interdictions
+   d'Apache et les URL par langue (`/en/`, `/es/`…), qui sinon ne
+   fonctionnent qu'en production.
+
+   **Tester depuis un mobile** — écouter sur toutes les interfaces :
+   ```bash
+   php -S 0.0.0.0:8099 -t . tools/dev-router.php
+   ```
+   Puis, une seule fois, autoriser le port dans le pare-feu Windows
+   (PowerShell **administrateur**) :
+   ```powershell
+   New-NetFirewallRule -DisplayName "CigarOdyssey dev 8099" -Direction Inbound -Protocol TCP -LocalPort 8099 -Action Allow -Profile Private
+   ```
+   `-Profile Private` limite l'ouverture aux réseaux privés. Le mobile
+   doit être sur le même Wi-Fi ; l'adresse se lit avec `ipconfig`.
 
 > Les endpoints backend sont relatifs (`/backend/…`) : le front et l'API
 > sont servis depuis la même origine, aucune configuration d'URL à faire.
