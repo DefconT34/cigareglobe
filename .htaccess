@@ -65,8 +65,20 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # HTTPS d'abord
+  # HTTPS d'abord — sauf en local, où il n'y a pas de certificat.
+  #
+  # Sans ces exceptions, un Apache de développement redirige vers
+  # https://127.0.0.1:8080, port qui ne sert pas de TLS : le navigateur
+  # reçoit une connexion fermée et le site paraît hors service. Les
+  # adresses écartées ne peuvent pas désigner un serveur public —
+  # boucle locale, plages privées RFC 1918, et le domaine .local.
   RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP_HOST} !^localhost(:\d+)?$ [NC]
+  RewriteCond %{HTTP_HOST} !^127\.\d+\.\d+\.\d+(:\d+)?$
+  RewriteCond %{HTTP_HOST} !^192\.168\.\d+\.\d+(:\d+)?$
+  RewriteCond %{HTTP_HOST} !^10\.\d+\.\d+\.\d+(:\d+)?$
+  RewriteCond %{HTTP_HOST} !^172\.(1[6-9]|2\d|3[01])\.\d+\.\d+(:\d+)?$
+  RewriteCond %{HTTP_HOST} !\.local(:\d+)?$ [NC]
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # ── Une URL par langue ──────────────────────────────────
