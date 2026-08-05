@@ -74,9 +74,36 @@ function est_francais(string $v): bool {
     return ($nFr >= 3 && $nFr > 2 * $nEn) || ($nFr >= 1 && $nEn === 0);
 }
 
-/** Texte ampute par le decoupage sur l'apostrophe. */
+/**
+ * Du francais egare dans une colonne de langue.
+ *
+ * est_francais() ne convient PAS ici : elle compte des mots outils que
+ * l'espagnol partage largement. « La Casa del Habano oficial de Lisboa »
+ * n'a aucun mot anglais et deux mots communs au francais — elle serait
+ * declaree francaise, et vider sur cette base detruirait des traductions
+ * correctes. La simulation l'a montre avant tout degat.
+ *
+ * On n'utilise donc que des marqueurs qu'aucune des cinq langues cibles
+ * ne produit : « dans l' », « clientele », « selection » (é + ction),
+ * « officielle », « quartier », « avec », « fondee ».
+ */
+function francais_egare(string $v): bool {
+    return (bool)preg_match(
+        '/(\bdans l[easy\']|\bde référence\b|\bau c(oe|œ)ur\b|\bavec \b|\bclientèle\b|'
+        . '\bsélection\b|\bfondée?\b|\bétablissement\b|\bà cigares\b|\boffici[ae]lle\b|'
+        . '\ble quartier\b|\bquartier des\b|\bcave à\b|\bvieille ville\b|\brez-de-chaussée\b|'
+        . '\bsous-sol\b|\bfumoirs?\b|\bréférence absolue\b)/iu', $v);
+}
+
+/**
+ * Texte ampute par le decoupage sur l'apostrophe.
+ *
+ * Insensible a la casse : une valeur reduite a « L' » — majuscule, donc
+ * debut de phrase — echappait au filtre et restait en base, comptee
+ * pour une traduction.
+ */
 function est_tronque(string $v): bool {
-    return (bool)preg_match('/(\b[ldsnjt]\'|\bde l\'|\bd\')\s*$/u', $v);
+    return (bool)preg_match('/(\b[ldsnjt]\'|\bde l\'|\bd\')\s*$/iu', $v);
 }
 
 $appliquer = in_array('--appliquer', $argv, true);
@@ -85,9 +112,15 @@ $perdues   = in_array('--perdues', $argv, true);
 // Jamais la colonne source : elle, il faut la reecrire a la main, et
 // l'effacer ferait disparaitre le peu qui subsiste.
 $vider     = in_array('--vider-tronquees', $argv, true);
+// Vide les colonnes de langue qui portent encore du FRANÇAIS — copie
+// conforme de la source, ou français passé à la substitution mot à mot.
+// Une colonne pleine passe pour traduite : c'est ainsi que des centaines
+// de valeurs ont compté comme faites pendant des mois. Vidées, elles
+// ressortent a l'export et peuvent etre traduites pour de bon.
+$viderFr   = in_array('--vider-francais', $argv, true);
 
 $db = getDB();
-$repare = 0; $vues = 0; $tronquees = [];
+$repare = 0; $vues = 0; $tronquees = []; $francaisEgare = [];
 $exemples = [];
 
 foreach (plan_contenu() as $table => $champs) {
@@ -104,7 +137,7 @@ foreach (plan_contenu() as $table => $champs) {
             $col = $champ . ($l ? '_' . $l : '');
             if (!in_array($col, $cols, true)) continue;
 
-            $q = $db->query("SELECT `$pk` k, `$col` v FROM `$table`
+            $q = $db->query("SELECT `$pk` k, `$col` v, `$champ` src FROM `$table`
                              WHERE `$col` IS NOT NULL AND `$col` <> ''");
             $st = $db->prepare("UPDATE `$table` SET `$col` = ? WHERE `$pk` = ?");
 
@@ -120,6 +153,25 @@ foreach (plan_contenu() as $table => $champs) {
                         continue;
                     }
                 }
+                // Du francais dans une colonne de langue n'est pas une
+                // traduction. On ne touche jamais la colonne source ($l
+                // vide) : c'est elle qui EST le francais.
+                // Une traduction IDENTIQUE a sa source n'est pas une
+                // traduction. C'est le signal le plus sur — il ne depend
+                // d'aucune liste de marqueurs, et rattrape ce que la
+                // detection par mots-cles laisse passer : « Cave
+                // historique du centre-ville… » recopiee dans _en ne
+                // contient aucun de mes marqueurs, et passait donc.
+                $copieConforme = ($l !== '' && trim($v) === trim((string)$r['src']));
+                if ($copieConforme || ($l !== '' && francais_egare($v))) {
+                    $francaisEgare[] = ['t' => $table, 'c' => $col, 'k' => $r['k'], 'v' => $v];
+                    if ($viderFr) {
+                        $db->prepare("UPDATE `$table` SET `$col` = NULL WHERE `$pk` = ?")
+                           ->execute([$r['k']]);
+                        continue;
+                    }
+                }
+
                 if (!est_francais($v)) continue;
 
                 $neuf = $v;
@@ -149,7 +201,9 @@ if ($perdues) {
 
 printf("%d valeur(s) examinee(s)\n", $vues);
 printf("%d valeur(s) %s\n", $repare, $appliquer ? 'reparee(s)' : 'reparable(s) [simulation]');
-printf("%d valeur(s) tronquee(s) — irrecuperables (voir --perdues)\n\n", count($tronquees));
+printf("%d valeur(s) tronquee(s) — irrecuperables (voir --perdues)\n", count($tronquees));
+printf("%d valeur(s) de FRANCAIS %s dans une colonne de langue\n\n",
+       count($francaisEgare), $viderFr ? 'videe(s)' : 'egare(s) [--vider-francais]');
 
 foreach ($exemples as $e) {
     echo "  [", $e['c'], "]\n";
