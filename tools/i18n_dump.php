@@ -26,19 +26,7 @@ require_once __DIR__ . '/i18n_contenu_plan.php';
 
 $db = getDB();
 
-/** Cle primaire d'une table, telle que declaree par MySQL. */
-function cle_primaire(PDO $db, string $table): ?string {
-    foreach ($db->query("DESCRIBE `$table`") as $c) {
-        if ($c['Key'] === 'PRI') return $c['Field'];
-    }
-    return null;
-}
-
-function colonnes(PDO $db, string $table): array {
-    $out = [];
-    foreach ($db->query("DESCRIBE `$table`") as $c) $out[] = $c['Field'];
-    return $out;
-}
+// cle_primaire() et colonnes_de() vivent dans i18n_contenu_plan.php.
 
 echo "-- CigarOdyssey — traductions du contenu\n";
 echo "-- Genere par tools/i18n_dump.php le " . date('Y-m-d') . "\n";
@@ -48,7 +36,7 @@ echo "SET NAMES utf8mb4;\n\n";
 $total = 0;
 foreach (plan_contenu() as $table => $champs) {
     $pk   = cle_primaire($db, $table);
-    $cols = colonnes($db, $table);
+    $cols = colonnes_de($db, $table);
     if (!$pk) { fwrite(STDERR, "  ignore (pas de cle primaire) : $table\n"); continue; }
 
     $traduites = [];
@@ -90,6 +78,26 @@ try {
     }
 } catch (Throwable $e) {
     fwrite(STDERR, "  content_translations absente : " . $e->getMessage() . "\n");
+}
+
+// ── Fraicheur (migration 009) ─────────────────────────────
+// Sans elle, une restauration rendrait toutes les traductions
+// « non scellees » : on saurait de nouveau qu'elles existent, plus de
+// quel francais elles sont issues.
+echo "\n-- ── translation_status " . str_repeat('─', 31) . "\n";
+try {
+    $q = $db->query('SELECT entite, entite_id, champ, lang, source_hash, statut
+                     FROM translation_status ORDER BY entite, entite_id, champ, lang');
+    foreach ($q as $r) {
+        $total++;
+        echo "INSERT INTO translation_status (entite, entite_id, champ, lang, source_hash, statut) VALUES ("
+           . $db->quote($r['entite']) . ', ' . $db->quote($r['entite_id']) . ', '
+           . $db->quote($r['champ']) . ', ' . $db->quote($r['lang']) . ', '
+           . $db->quote($r['source_hash']) . ', ' . $db->quote($r['statut'])
+           . ") ON DUPLICATE KEY UPDATE source_hash = VALUES(source_hash), statut = VALUES(statut);\n";
+    }
+} catch (Throwable $e) {
+    fwrite(STDERR, "  translation_status absente : " . $e->getMessage() . "\n");
 }
 
 fwrite(STDERR, "$total traduction(s) exportee(s)\n");

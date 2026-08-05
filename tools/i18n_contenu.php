@@ -199,7 +199,7 @@ if ($posImport !== false) {
     $data = json_decode(file_get_contents($fichier), true);
     if (!is_array($data)) { fwrite(STDERR, "ABANDON : JSON invalide.\n"); exit(2); }
 
-    $ecrits = 0; $ignores = 0;
+    $ecrits = 0; $ignores = 0; $scelles = 0;
     foreach ($data as $cle => $valeurs) {
         [$table, $champ] = array_pad(explode('.', $cle, 2), 2, '');
         if (!isset(plan_contenu()[$table]) || !in_array($champ, plan_contenu()[$table], true)) {
@@ -217,10 +217,16 @@ if ($posImport !== false) {
                 $st = $db->prepare($sql);
                 $st->execute([$txt, $src]);
                 $ecrits += $st->rowCount();
+
+                // Retenir de QUEL francais cette traduction est issue.
+                // Sans cela la table de fraicheur serait perimee des le
+                // premier lot importe, et ne saurait plus rien dire.
+                if ($st->rowCount() > 0) $scelles += sceller($db, $table, $champ, $l, $src);
             }
         }
     }
-    printf("%d ligne(s) mise(s) a jour, %d traduction(s) vide(s) ignoree(s).\n", $ecrits, $ignores);
+    printf("%d ligne(s) mise(s) a jour, %d traduction(s) vide(s) ignoree(s), %d empreinte(s) posee(s).\n",
+           $ecrits, $ignores, $scelles);
     exit(0);
 }
 

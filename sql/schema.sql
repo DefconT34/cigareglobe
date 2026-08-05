@@ -536,6 +536,24 @@ CREATE TABLE `content_translations` (
   PRIMARY KEY (`source_hash`,`lang`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+--
+-- Table structure for table `translation_status`  (migration 009)
+--
+
+DROP TABLE IF EXISTS `translation_status`;
+CREATE TABLE `translation_status` (
+  `entite` varchar(32) NOT NULL COMMENT 'table d''origine',
+  `entite_id` varchar(64) NOT NULL COMMENT 'cle primaire de la ligne',
+  `champ` varchar(32) NOT NULL COMMENT 'colonne source, sans suffixe',
+  `lang` char(2) NOT NULL,
+  `source_hash` char(40) NOT NULL COMMENT 'sha1 du francais traduit',
+  `statut` enum('machine','relu') NOT NULL DEFAULT 'machine',
+  `maj` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`entite`,`entite_id`,`champ`,`lang`),
+  KEY `idx_statut` (`statut`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
