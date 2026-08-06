@@ -162,7 +162,18 @@ foreach (plan_contenu() as $table => $champs) {
                 // detection par mots-cles laisse passer : « Cave
                 // historique du centre-ville… » recopiee dans _en ne
                 // contient aucun de mes marqueurs, et passait donc.
-                $copieConforme = ($l !== '' && trim($v) === trim((string)$r['src']));
+                //
+                // Exception : certaines valeurs sont identiques par
+                // NECESSITE, et la longueur seule ne les distingue pas.
+                // « Nov – Jan » s'ecrit de meme en anglais ; « Swedish
+                // Match / Altadis USA / General Cigar » fait 43
+                // caracteres et ne se traduit pas davantage — ce sont des
+                // raisons sociales. Le vrai critere est la PROSE : au-dela
+                // de dix mots, l'identite ne s'explique plus par des noms
+                // propres.
+                $mots = preg_split('/[^\p{L}\p{N}]+/u', trim($v), -1, PREG_SPLIT_NO_EMPTY);
+                $copieConforme = ($l !== '' && count($mots) >= 10
+                                  && trim($v) === trim((string)$r['src']));
                 if ($copieConforme || ($l !== '' && francais_egare($v))) {
                     $francaisEgare[] = ['t' => $table, 'c' => $col, 'k' => $r['k'], 'v' => $v];
                     if ($viderFr) {
