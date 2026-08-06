@@ -73,4 +73,46 @@ test.describe('Langues', () => {
     await page.evaluate(() => applyLang('fr'));
     await expect(page.locator('#exp-search')).toHaveAttribute('placeholder', initial);
   });
+
+  // Regression : commit 863aa65 (F6, les URL par langue). Sous /en/,
+  // /ar/... un chemin relatif ecrit dans un fichier JS designe
+  // /en/assets/..., qui n'existe pas. index.php ancre les href et src du
+  // BALISAGE a la racine, mais il ne voit pas les fetch caches dans les
+  // scripts : flags.js chargeait ainsi la carte du monde depuis une
+  // adresse introuvable.
+  //
+  // L'echec etait silencieux — un catch, un avertissement de console —
+  // et le globe s'affichait en sphere nue : ni continents, ni
+  // frontieres, dans les cinq langues prefixees. Seul le francais, qui
+  // reste a la racine, y echappait.
+  //
+  // Le test passe par les VRAIES URL de langue : servirStatiqueDepuisDisque()
+  // ne masque rien, un chemin prefixe n'existant pas sur le disque non plus.
+  for (const langue of ['en', 'ar']) {
+    test(`le globe garde ses continents sous /${langue}/`, async ({ page }) => {
+      await ouvrir(page, `/${langue}/`);
+
+      await expect
+        .poll(async () => page.evaluate(() => (window.worldFeatures || []).length),
+              { timeout: 20_000, message: `la carte du monde n'arrive pas sous /${langue}/` })
+        .toBeGreaterThan(100);
+    });
+  }
+
+  test('la carte du monde se sert depuis la racine, pas depuis la langue', async ({ page }) => {
+    const demandes = [];
+    page.on('request', (r) => {
+      if (r.url().includes('countries-110m.json')) demandes.push(new URL(r.url()).pathname);
+    });
+
+    await ouvrir(page, '/es/');
+    await expect.poll(async () => demandes.length, { timeout: 20_000 }).toBeGreaterThan(0);
+
+    // C'est le chemin demande qui compte : un 404 rattrape par un repli
+    // passerait inapercu si l'on ne verifiait que le resultat.
+    expect(demandes, 'la carte est demandee sous le prefixe de langue')
+      .toEqual(expect.arrayContaining(['/assets/data/countries-110m.json']));
+    expect(demandes.some((p) => /^\/(en|es|de|zh|ar)\//.test(p)),
+           'un chemin prefixe par la langue subsiste').toBe(false);
+  });
 });

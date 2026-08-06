@@ -19,7 +19,17 @@ async function loadWorldMap() {
   const loader = document.getElementById('map-loading');
   if(loader){ loader.style.opacity='1'; loader.style.transform='translateX(-50%) translateY(0)'; }
   try {
-    const resp = await fetch('assets/data/countries-110m.json');
+    // Chemin ANCRE A LA RACINE, pas relatif au document. Depuis les URL
+    // par langue (F6), la page vit sous /en/, /es/... et un chemin
+    // relatif y designe /en/assets/... — introuvable. index.php ancre
+    // deja les href/src du balisage, mais il ne voit pas les fetch
+    // ecrits dans un fichier JS : celui-ci lui echappait.
+    const resp = await fetch('/assets/data/countries-110m.json');
+    // Sans ce controle, la page d'erreur 404 (ErrorDocument -> index.html)
+    // etait analysee comme du JSON : l'echec n'apparaissait qu'en
+    // avertissement de console, et le globe s'affichait en sphere nue,
+    // sans continents ni frontieres, dans les cinq langues.
+    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' sur la carte du monde');
     const topo = await resp.json();
     const geo = topojson.feature(topo, topo.objects.countries);
     worldFeatures = geo.features;
