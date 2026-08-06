@@ -75,7 +75,15 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**F6** — Référencement multilingue : URLs par langue, hreflang, sitemap~~ ✅
 - [x] ~~**F3** — Colonnes de traduction manquantes (migration 007)~~ ✅
 - [x] ~~**F4** — Contenu de l'atlas traduit~~ ✅ · les 4 tables de référence à 100 % dans les 6 langues
-- [ ] **F4b** — Prose longue : `brands` (40 valeurs) et 178 descriptions d'établissements · G · **relève d'un service de traduction**, outillage prêt
+- [~] **F4b** — Prose longue · **98 % fait** (4 350 / 4 430)
+  - [x] ~~499 descriptions d'établissements, 5 langues~~ ✅ audit à zéro sur tous les axes
+  - [x] ~~`brands.celebrities`, `brands.pairings`~~ ✅ 100 %
+  - [ ] **`brands.history`** — 10 sources, texte simple, 1 547 car. de moyenne (~60 000 car. à produire)
+  - [ ] **`brands.gamme`** — 10 sources, JSON structuré, 905 car.
+  - Reprise : `php tools/i18n_contenu.php --exporter`, puis un script PHP qui bâtit le JSON
+    (ne jamais échapper à la main) et lit les clés sources **par indice**. Voir `docs/i18n.md`.
+  - Contrôles à repasser après chaque lot : `i18n_reparer.php` (simulation),
+    `i18n_fraicheur.php`, et régénérer `sql/traductions.sql` via `i18n_dump.php`.
 - [x] ~~**F4c** — Texte libre dans les colonnes JSON : migration 008 (`content_translations`), 101 valeurs distinctes → 505 traductions, export à zéro. Corrige aussi le rendu qui figeait le bloc Habanos en français.~~ ✅
 
 ### E. Dette technique
