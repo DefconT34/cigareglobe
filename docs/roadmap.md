@@ -75,15 +75,15 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**F6** — Référencement multilingue : URLs par langue, hreflang, sitemap~~ ✅
 - [x] ~~**F3** — Colonnes de traduction manquantes (migration 007)~~ ✅
 - [x] ~~**F4** — Contenu de l'atlas traduit~~ ✅ · les 4 tables de référence à 100 % dans les 6 langues
-- [~] **F4b** — Prose longue · **98 % fait** (4 350 / 4 430)
+- [x] ~~**F4b** — Prose longue~~ ✅ **100 %** (4 545 / 4 545) · export à zéro
   - [x] ~~499 descriptions d'établissements, 5 langues~~ ✅ audit à zéro sur tous les axes
   - [x] ~~`brands.celebrities`, `brands.pairings`~~ ✅ 100 %
-  - [ ] **`brands.history`** — 10 sources, texte simple, 1 547 car. de moyenne (~60 000 car. à produire)
-  - [ ] **`brands.gamme`** — 10 sources, JSON structuré, 905 car.
-  - Reprise : `php tools/i18n_contenu.php --exporter`, puis un script PHP qui bâtit le JSON
-    (ne jamais échapper à la main) et lit les clés sources **par indice**. Voir `docs/i18n.md`.
-  - Contrôles à repasser après chaque lot : `i18n_reparer.php` (simulation),
-    `i18n_fraicheur.php`, et régénérer `sql/traductions.sql` via `i18n_dump.php`.
+  - [x] ~~`brands.history`~~ ✅ 10 sources × 4 langues, ~62 000 car. produits
+  - [x] ~~`brands.gamme`~~ ✅ 10 sources × 4 langues, JSON reconstruit à partir de la source
+  - [x] ~~**55 valeurs `[]`**~~ ✅ onze marques dont les cinq colonnes `gamme_*` valaient
+    « tableau vide » : pleines pour les compteurs, mais `traduire()` les préférait au
+    français et la section gamme s'affichait **vide** hors français. Nouveau garde-fou
+    `tools/i18n_json.php`. Voir `docs/i18n.md`.
 - [x] ~~**F4c** — Texte libre dans les colonnes JSON : migration 008 (`content_translations`), 101 valeurs distinctes → 505 traductions, export à zéro. Corrige aussi le rendu qui figeait le bloc Habanos en français.~~ ✅
 
 ### E. Dette technique
