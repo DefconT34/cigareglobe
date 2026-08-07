@@ -12,7 +12,7 @@
 // vivent dans i18n.js comme tout le reste.
 //
 // C'est aussi ce qui evite de faire retomber les compteurs de
-// traduction : verser 89 pays dans des colonnes traduisibles aurait
+// traduction : verser 90 pays dans des colonnes traduisibles aurait
 // ajoute autant de valeurs vides aux six langues.
 //
 // FORMAT   ISO: [mois, jour, annee, type]
@@ -45,7 +45,7 @@
 //       annee dans le calendrier gregorien ; 14/05/1948 est la date de la
 //       declaration, pas celle de la celebration
 //
-// A RELIRE. Ces 89 dates sont saisies de memoire, pas extraites d'une
+// A RELIRE. Ces 90 dates sont saisies de memoire, pas extraites d'une
 // source faisant autorite. La lecon des traductions vaut ici : une
 // valeur presente n'est pas une valeur verifiee.
 // ════════════════════════════════════════════════════════
@@ -109,6 +109,7 @@ var FETES_NATIONALES = {
   LU: [ 6, 23, null, 'n'],  // Luxembourg — anniversaire du Grand-Duc
   MA: [11, 18, 1956, 'i'],  // Maroc — de la France
   MC: [11, 19, null, 'n'],  // Monaco — Fete du Prince
+  MF: [ 7, 14, 1789, 'n'],  // Saint-Martin — collectivite francaise (migration 010)
   ML: [ 9, 22, 1960, 'i'],  // Mali — de la France
   MX: [ 9, 16, 1810, 'i'],  // Mexique — Grito de Dolores
   MY: [ 8, 31, 1957, 'i'],  // Malaisie — Hari Merdeka
@@ -129,7 +130,9 @@ var FETES_NATIONALES = {
   SA: [ 9, 23, 1932, 'n'],  // Arabie saoudite — unification du royaume
   SG: [ 8,  9, 1965, 'i'],  // Singapour — de la Malaisie
   SN: [ 4,  4, 1960, 'i'],  // Senegal — de la France
-  SX: [11, 11, null, 'n'],  // Saint-Martin — Sint Maarten Day
+  SX: [11, 11, null, 'n'],  // Sint Maarten — partie NEERLANDAISE de l'ile, aucun
+                            // etablissement au catalogue ; conserve pour le jour ou
+                            // il y en aurait, et pour ne pas confondre avec MF
   TG: [ 4, 27, 1960, 'i'],  // Togo — de la France
   TH: [12,  5, null, 'n'],  // Thailande — Fete nationale
   TR: [10, 29, 1923, 'n'],  // Turquie — Fete de la Republique
@@ -146,7 +149,7 @@ var FETES_NATIONALES = {
  * Code ISO alpha-2 d'un drapeau emoji.
  *
  * Les tables ne portent pas toutes un code : lounge_countries.iso_code
- * est vide sur 19 des 93 lignes, et producer_countries n'en a aucun. Le
+ * est vide sur 18 des 92 lignes, et producer_countries n'en a aucun. Le
  * drapeau, lui, est present partout et l'encode deja — deux « indicateurs
  * regionaux » Unicode qui sont les deux lettres decalees de 0x1F1E6.
  *

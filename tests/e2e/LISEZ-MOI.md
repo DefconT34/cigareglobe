@@ -42,7 +42,7 @@ PHP_BIN=/chemin/vers/php npm run test:e2e
 
 Sans pays ni marchés, `data.php` renvoie des tableaux vides et le globe
 s'affiche nu. `tests/fixtures/atlas.sql` fournit donc les tables de
-référence complètes (12 pays producteurs, 10 marchés, 93 pays à
+référence complètes (12 pays producteurs, 10 marchés, 92 pays à
 lounges, 37 zones), 40 établissements et les 4 marques emblématiques de
 Cuba.
 
