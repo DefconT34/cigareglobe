@@ -144,8 +144,10 @@ function openLex(c) {
       : (geo.timezone || '—');
 
     document.getElementById('lexBody').innerHTML =
-      '<div class="lex-coords">📍 ' + (geo.coords || (c.lat+'°N '+Math.abs(c.lon)+'°O')) +
-        (window.ficheDistanceHtml ? window.ficheDistanceHtml(c) : '') + '</div>' +
+      '<div class="lex-coords">' +
+        '<span class="lex-coords-val">📍 ' + (geo.coords || (c.lat+'°N '+Math.abs(c.lon)+'°O')) + '</span>' +
+        (window.ficheDistanceHtml ? window.ficheDistanceHtml(c) : '') +
+      '</div>' +
       '<div class="lex-sec">'+t('lex_general')+'</div>' +
       '<div class="lex-row"><span class="lex-k">'+t('lex_capital')+'</span><span class="lex-v">' + (geo.capital||'—') + '</span></div>' +
       '<div class="lex-row"><span class="lex-k">'+t('lex_population')+'</span><span class="lex-v">' + (geo.pop||'—') + '</span></div>' +

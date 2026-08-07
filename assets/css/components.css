@@ -935,32 +935,47 @@ body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 1
   .fiche-pays { grid-template-columns: 1fr; }
 }
 
-/* ══ DISTANCE À CÔTÉ DES COORDONNÉES (panneau gauche) ════
-   Se pose sur la même ligne que « 📍 21°N 80°O » : c'est la même
-   question — où est-ce, par rapport à moi. */
-.lex-coords { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.lex-dist {
-  margin-left: auto; flex: none;
-  padding: 1px 7px; border-radius: 9px;
-  background: var(--gold-p); border: 1px solid var(--gold);
-  font-family: 'Lato', sans-serif; font-size: 10px; color: var(--gold);
-  white-space: nowrap;
-}
-.lex-dist-btn { cursor: pointer; }
-.lex-dist-btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
-.lex-dist-btn:disabled { opacity: .6; cursor: progress; }
-.lex-dist-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-[dir="rtl"] .lex-dist { margin-left: 0; margin-right: auto; }
+/* ══ DISTANCE DANS LE CARTOUCHE DE COORDONNÉES ══════════
+   Deux rangées d'un même cartouche, séparées par un filet, plutôt que
+   deux éléments serrés sur une ligne : « Calculer la distance » ne tient
+   pas à côté de « 04°N 12°E » dans un panneau de 280 px.
 
-/* Distance sur une fiche d'établissement : au bout de la ligne de liens,
-   après « comment j'y vais ». */
-.lc-dist {
-  display: inline-block; margin-left: auto;
-  padding: 2px 8px; border-radius: 9px;
-  background: var(--gold-p); border: 1px solid var(--gold);
-  font-family: 'Lato', sans-serif; font-size: 10.5px; color: var(--gold);
-  white-space: nowrap;
+   Le cartouche gardait un `padding:8px` unique : il passe sur chaque
+   rangée, sinon le filet de séparation ne va pas d'un bord à l'autre. */
+.lex-coords { display: flex; flex-direction: column; align-items: stretch; padding: 0; gap: 0; }
+.lex-coords-val { padding: 8px; }
+
+/* Cinzel, interlettrage large, rayon 2px, or : la même écriture que
+   .tier-badge et .tag. La pastille Lato à rayon 9px d'avant jurait avec
+   tout ce qui l'entourait. */
+.lex-dist, .lex-dist-btn {
+  display: block; width: 100%;
+  padding: 6px 8px;
+  border: none; border-top: 1px solid var(--panel-border);
+  background: transparent;
+  font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--gold); text-align: center;
 }
-.lc-dist-btn { cursor: pointer; background: none; }
-.lc-dist-btn:disabled { opacity: .6; cursor: progress; }
-[dir="rtl"] .lc-dist { margin-left: 0; margin-right: auto; }
+.lex-dist-btn { cursor: pointer; transition: background .18s, letter-spacing .18s; }
+.lex-dist-btn:hover:not(:disabled) { background: var(--gold-p); letter-spacing: .26em; }
+.lex-dist-btn:disabled { opacity: .55; cursor: progress; }
+.lex-dist-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+/* La valeur obtenue mérite d'être lue, pas seulement repérée. */
+.lex-dist { font-size: 10px; letter-spacing: .12em; background: var(--gold-p); }
+
+/* Distance sur une fiche d'établissement : dernière puce de la ligne de
+   liens, donc calquée sur .lc-link — même gabarit, couleur or pour la
+   distinguer d'un lien cliquable vers l'extérieur. */
+.lc-dist, .lc-dist-btn {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px 8px; border-radius: 3px;
+  background: var(--gold-p); border: 1px solid var(--gold);
+  color: var(--gold); font-size: 10px; white-space: nowrap;
+}
+.lc-dist-btn {
+  cursor: pointer; font-family: inherit;
+  transition: background .18s, color .18s;
+}
+.lc-dist-btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
+.lc-dist-btn:disabled { opacity: .55; cursor: progress; }
+.lc-dist-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }

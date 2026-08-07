@@ -111,7 +111,10 @@
     var lang = langueCourante();
     var h = heureLocale(d[2], lang);
     return {
-      devise:  nomDe('currency', d[0], lang) + ' (' + d[0] + ')',
+      // Le code ISO n'est ajoute que si le nom localise n'en porte pas
+      // deja un entre parentheses : Intl rend « franc CFA (BEAC) », et y
+      // accoler « (XAF) » donnait « franc CFA (BEAC) (XAF) ».
+      devise:  (function (n) { return /\(/.test(n) ? n : n + ' (' + d[0] + ')'; })(nomDe('currency', d[0], lang)),
       langue:  d[1].split(',').map(function (l) { return nomDe('language', l, lang); }).join(' · '),
       heure:   h ? h.heure : null,
       fuseau:  h ? h.fuseau : null,
@@ -129,12 +132,16 @@
    */
   function ficheDistanceHtml(pays) {
     if (pays.lat == null || pays.lon == null) return '';
+    // Une rangee a part, sous la coordonnee, separee par un filet : le
+    // libelle « Calculer la distance » ne tient pas a cote de « 04°N
+    // 12°E » dans un panneau de 280 px, et les serrer sur une ligne
+    // donnait ce cartouche a l'etroit.
     if (window.positionUtilisateur) {
       var km = distanceKm(window.positionUtilisateur.lat, window.positionUtilisateur.lon, pays.lat, pays.lon);
       return '<span class="lex-dist" id="lex-dist">↔ ' + _echap(formateKm(km, langueCourante())) + '</span>';
     }
-    return '<button type="button" class="lex-dist lex-dist-btn" id="lex-dist-btn">↔ '
-         + _echap(t('fiche_distance_btn')) + '</button>';
+    return '<button type="button" class="lex-dist-btn" id="lex-dist-btn">'
+         + '<span aria-hidden="true">↔</span> ' + _echap(t('fiche_distance_btn')) + '</button>';
   }
 
   function _echap(s) {
