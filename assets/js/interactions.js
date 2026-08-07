@@ -186,8 +186,21 @@ window.addEventListener('mousemove', e => {
   }
 
   // Hover detection (desktop only)
+  //
+  // Ce gestionnaire vit sur `window` et non sur le canvas, et il le faut :
+  // un glisser doit continuer a suivre la souris quand elle sort du globe,
+  // sinon la rotation se fige des qu'on deborde. Mais le SURVOL, lui, n'a
+  // rien a faire ailleurs que sur le globe : hitTest() ne connait que des
+  // coordonnees d'ecran, il repondait donc aussi bien sous un panneau, et
+  // l'infobulle decrivait un marqueur cache derriere l'interface.
+  //
+  // `e.target` est l'element reellement survole — le gestionnaire recoit
+  // l'evenement par propagation. Les surfaces en pointer-events:none
+  // (l'infobulle elle-meme, le voile de fete nationale) n'y apparaissent
+  // jamais et ne masquent donc pas le globe.
+  var surLeGlobe = (e.target === globe);
   hoverCountry = null; hoverMarket = null; hoverLoungeCountry = null;
-  const hit = hitTest(e.clientX, e.clientY);
+  const hit = surLeGlobe ? hitTest(e.clientX, e.clientY) : null;
   if (hit) {
     if      (hit.type === 'country') hoverCountry       = hit.data;
     else if (hit.type === 'market')  hoverMarket        = hit.data;

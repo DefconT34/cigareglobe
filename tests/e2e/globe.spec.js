@@ -131,5 +131,57 @@ test.describe('Globe', () => {
       await page.mouse.move(5, 700);
       await expect(page.locator('#tip')).toBeHidden();
     });
+
+    // Regression : le gestionnaire de mousemove vit sur `window`, pas sur
+    // le canvas — il le faut, sinon un glisser se fige des que la souris
+    // sort du globe. Mais hitTest() ne connait que des coordonnees
+    // d'ecran : il repondait aussi bien SOUS un panneau, et l'infobulle
+    // decrivait un marqueur cache derriere l'interface.
+    test('reste masquee quand le curseur survole un panneau', async ({ page }) => {
+      await ouvrir(page, '/?country=cuba');
+      await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+      // Un point qui est A LA FOIS dans le panneau et sur une cible du
+      // globe : sans cette double condition, le test passerait meme si
+      // le defaut etait intact.
+      const point = await page.evaluate(() => {
+        const p = document.getElementById('panel').getBoundingClientRect();
+        for (let x = Math.ceil(p.left) + 4; x < p.right - 4; x += 3) {
+          for (let y = Math.ceil(p.top) + 4; y < p.bottom - 4; y += 3) {
+            if (hitTest(x, y)) return { x, y };
+          }
+        }
+        return null;
+      });
+      test.skip(!point, 'aucune cible du globe ne passe sous le panneau');
+
+      await page.mouse.move(point.x, point.y);
+      await expect(page.locator('#tip')).toBeHidden();
+
+      // Et le survol reste nul : sans cela le marqueur cache resterait
+      // mis en avant dans le rendu, invisiblement.
+      const survol = await page.evaluate(() => ({
+        pays: hoverCountry, marche: hoverMarket, lounges: hoverLoungeCountry,
+      }));
+      expect(survol).toEqual({ pays: null, marche: null, lounges: null });
+    });
+
+    test('le glisser continue de suivre la souris hors du globe', async ({ page }) => {
+      await ouvrir(page, '/?country=cuba');
+      await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+      const avant = await page.evaluate(() => ({ x: rotX, y: rotY }));
+      await page.mouse.move(250, 400);
+      await page.mouse.down();
+      // La souris sort du globe et traverse le panneau, comme dans un
+      // vrai geste : la rotation doit continuer de suivre.
+      await page.mouse.move(400, 380);
+      await page.mouse.move(700, 320);
+      const apres = await page.evaluate(() => ({ x: rotX, y: rotY }));
+      await page.mouse.up();
+
+      expect(apres).not.toEqual(avant);
+      await expect(page.locator('#tip')).toBeHidden();
+    });
   });
 });

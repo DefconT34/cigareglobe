@@ -59,7 +59,7 @@ Même discipline que `sql/schema.sql` — voir `sql/README.md`.
 
 | Fichier | Couvre |
 |---|---|
-| `globe.spec.js` | chargement, peinture du canvas, colonne de boutons, infobulle |
+| `globe.spec.js` | chargement, peinture du canvas, colonne de boutons, infobulle, glisser hors du globe |
 | `search.spec.js` | ouverture, raccourci, loupe unique, recherche d'un pays |
 | `panels.spec.js` | fiche pays, exclusivité des deux panneaux, modale de marque, fête nationale |
 | `explorer.spec.js` | ouverture, champ de filtre, filtres texte et région |
