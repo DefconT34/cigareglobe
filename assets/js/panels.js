@@ -133,15 +133,26 @@ function openLex(c) {
   document.getElementById('lex').classList.add('open');
 
   function renderLexBody(geo, zones) {
+    // `producer_geo` n'a AUCUNE colonne de langue et n'est pas dans le
+    // plan de traduction : ses devise/langue/fuseau s'affichaient en
+    // francais dans les six langues. Intl les nomme correctement ; la
+    // valeur de la base reste le repli si le pays n'est pas connu.
+    var inf = window.ficheInfos ? window.ficheInfos(c) : null;
+    var heureHtml = inf && inf.heure
+      ? '<strong id="lex-heure">' + inf.heure + '</strong> <em>' + inf.fuseau + '</em>'
+        + (inf.multi ? '<span class="fiche-note" title="' + t('fiche_multifuseau') + '">*</span>' : '')
+      : (geo.timezone || '—');
+
     document.getElementById('lexBody').innerHTML =
-      '<div class="lex-coords">📍 ' + (geo.coords || (c.lat+'°N '+Math.abs(c.lon)+'°O')) + '</div>' +
+      '<div class="lex-coords">📍 ' + (geo.coords || (c.lat+'°N '+Math.abs(c.lon)+'°O')) +
+        (window.ficheDistanceHtml ? window.ficheDistanceHtml(c) : '') + '</div>' +
       '<div class="lex-sec">'+t('lex_general')+'</div>' +
       '<div class="lex-row"><span class="lex-k">'+t('lex_capital')+'</span><span class="lex-v">' + (geo.capital||'—') + '</span></div>' +
       '<div class="lex-row"><span class="lex-k">'+t('lex_population')+'</span><span class="lex-v">' + (geo.pop||'—') + '</span></div>' +
       '<div class="lex-row"><span class="lex-k">'+t('lex_area')+'</span><span class="lex-v">' + (geo.area||'—') + '</span></div>' +
-      '<div class="lex-row"><span class="lex-k">'+t('lex_currency')+'</span><span class="lex-v">' + (geo.currency||'—') + '</span></div>' +
-      '<div class="lex-row"><span class="lex-k">'+t('lex_language')+'</span><span class="lex-v">' + (geo.language||'—') + '</span></div>' +
-      '<div class="lex-row"><span class="lex-k">'+t('lex_timezone')+'</span><span class="lex-v">' + (geo.timezone||'—') + '</span></div>' +
+      '<div class="lex-row"><span class="lex-k">'+t('lex_currency')+'</span><span class="lex-v">' + (inf && inf.devise ? inf.devise : (geo.currency||'—')) + '</span></div>' +
+      '<div class="lex-row"><span class="lex-k">'+t('lex_language')+'</span><span class="lex-v">' + (inf && inf.langue ? inf.langue : (geo.language||'—')) + '</span></div>' +
+      '<div class="lex-row"><span class="lex-k">'+t('lex_timezone')+'</span><span class="lex-v">' + heureHtml + '</span></div>' +
       '<div class="lex-row"><span class="lex-k">'+t('lex_gdp')+'</span><span class="lex-v">' + (geo.gdp||'—') + '</span></div>' +
       '<div class="lex-row"><span class="lex-k">'+t('lex_independence')+'</span><span class="lex-v">' + (geo.independent||'—') + '</span></div>' +
       '<div class="lex-sec">'+t('lex_tobacco')+'</div>' +
@@ -163,6 +174,11 @@ function openLex(c) {
           '<span class="lex-v" style="font-family:\'Cinzel\',serif;font-size:9px;color:var(--gold)">' +
           Math.abs(z.lat).toFixed(1)+'°'+(z.lat>0?'N':'S')+' '+Math.abs(z.lon).toFixed(1)+'°'+(z.lon>0?'E':'O')+'</span></div>';
       }).join('');
+
+    // Apres l'injection seulement : l'horloge et le bouton de distance
+    // visent des elements du DOM. Ici plutot que chez les appelants —
+    // renderLexBody en a deux, et l'un d'eux est differe.
+    if (window.ficheActiver) window.ficheActiver(c);
   }
 
   // Use cached data if available (GEO_INFO and ZONES filled by inline bundle or previous fetch)
@@ -264,10 +280,6 @@ function _renderPanel(c) {
 
   document.getElementById('panelBody').innerHTML =
     '<span class="tier-badge" style="background:' + tc.bg + ';border-color:' + tc.border + ';color:' + tc.color + '">' + tc.text + '</span>' +
-    // Encart pratique : devise, langue, heure locale, distance. Place
-    // ici a dessein — c'est ce qu'on se demande avant de lire les
-    // chiffres de production. Vide si le pays n'est pas dans la table.
-    (window.ficheHtml ? window.ficheHtml(c) : '') +
     '<div class="rev-box"><div>' +
       '<div class="rev-lbl">'+t('rev_annual')+'</div>' +
       '<div class="rev-amt">' + (c.revenue||'—') + '</div>' +
@@ -292,8 +304,6 @@ function _renderPanel(c) {
     '<div id="panel-lounges"></div>' +
     '<div class="habanos-zone">' + habanos + '</div>';
 
-  // Apres l'injection seulement : l'horloge vise un element du DOM.
-  if (window.ficheActiver) window.ficheActiver(c);
 }
 
 function brandCard(b, c) {

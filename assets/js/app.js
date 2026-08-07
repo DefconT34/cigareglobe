@@ -160,6 +160,40 @@ function _loadMyRatings(callback) {
     .catch(function()  { _myRatings = {}; })
     .finally(function() { if (callback) callback(_myRatings); });
 }
+/**
+ * Met a jour les distances deja affichees quand la position arrive.
+ *
+ * L'utilisateur peut autoriser la geolocalisation depuis la fiche pays
+ * alors que des etablissements sont deja a l'ecran. Sans cela, il
+ * faudrait rouvrir chaque fiche pour voir la distance apparaitre.
+ */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('.lc-dist-btn') : null;
+  if (!b || !navigator.geolocation) return;
+  b.disabled = true;
+  b.textContent = t('contrib_geo_encours');
+  navigator.geolocation.getCurrentPosition(function (p) {
+    window.positionUtilisateur = { lat: p.coords.latitude, lon: p.coords.longitude };
+    window.rafraichirDistancesLounges();
+  }, function (err) {
+    b.disabled = false;
+    b.textContent = (err && err.code === 1) ? t('contrib_geo_refus') : t('contrib_geo_echec');
+  }, { timeout: 12000, maximumAge: 300000 });
+});
+
+window.rafraichirDistancesLounges = function () {
+  if (!window.positionUtilisateur || !window.distanceKm) return;
+  var P = window.positionUtilisateur, lang = window.currentLang || 'fr';
+  document.querySelectorAll('.lc-dist-btn').forEach(function (b) {
+    var la = parseFloat(b.getAttribute('data-lat')), lo = parseFloat(b.getAttribute('data-lon'));
+    if (isNaN(la) || isNaN(lo)) return;
+    var sp = document.createElement('span');
+    sp.className = 'lc-dist';
+    sp.textContent = '↔ ' + window.formateKm(window.distanceKm(P.lat, P.lon, la, lo), lang);
+    b.parentNode.replaceChild(sp, b);
+  });
+};
+
 // Réinitialise le cache des notes (appelé par account.js à la connexion/déconnexion)
 window._resetMyRatings = function() { _myRatings = null; };
 
@@ -269,6 +303,35 @@ function _renderLoungeCards(c, list, body, opts) {
     var phone = l.phone    ? '<a class="lc-link" href="tel:'+E(l.phone)+'">📞 '+_escHtml(l.phone)+'</a>' : '';
     var mapsU = _safeUrl(l.maps_url), webU = _safeUrl(l.website);
     var maps  = mapsU ? '<a class="lc-link" href="'+E(mapsU)+'" target="_blank" rel="noopener noreferrer">🗺 Maps</a>' : '';
+
+    // ── Itineraire et distance ───────────────────────────
+    // L'ITINERAIRE ne demande pas de coordonnees : Google resout une
+    // destination en texte. Il fonctionne donc sur les 499 fiches des
+    // aujourd'hui, avec l'adresse deja saisie. Si la position de
+    // l'utilisateur est connue, elle sert d'origine ; sinon Google part
+    // de la position du navigateur.
+    var dest = [l.name, l.city, (l.country_name || '')].filter(Boolean).join(', ');
+    var orig = window.positionUtilisateur
+      ? window.positionUtilisateur.lat + ',' + window.positionUtilisateur.lon : '';
+    var itinU = 'https://www.google.com/maps/dir/?api=1'
+              + (orig ? '&origin=' + encodeURIComponent(orig) : '')
+              + '&destination=' + encodeURIComponent(dest);
+    var itin = '<a class="lc-link" href="'+E(itinU)+'" target="_blank" rel="noopener noreferrer">🧭 '+_escHtml(t('lc_itineraire'))+'</a>';
+
+    // La DISTANCE, elle, exige une position pour l'etablissement. Elles
+    // sont NULL sur la quasi-totalite des fiches (migration 012) : on
+    // n'affiche rien plutot qu'une approximation prise sur le pays, qui
+    // donnerait la meme valeur aux 31 etablissements americains.
+    var dist = '';
+    if (l.lat != null && l.lon != null && window.positionUtilisateur && window.distanceKm) {
+      var dkm = window.distanceKm(window.positionUtilisateur.lat, window.positionUtilisateur.lon,
+                                  parseFloat(l.lat), parseFloat(l.lon));
+      dist = '<span class="lc-dist" data-lat="'+E(l.lat)+'" data-lon="'+E(l.lon)+'">↔ '
+           + _escHtml(window.formateKm(dkm, window.currentLang || 'fr')) + '</span>';
+    } else if (l.lat != null && l.lon != null) {
+      dist = '<button type="button" class="lc-link lc-dist-btn" data-lat="'+E(l.lat)+'" data-lon="'+E(l.lon)+'">↔ '
+           + _escHtml(t('fiche_distance_btn')) + '</button>';
+    }
     var web   = webU  ? '<a class="lc-link" href="'+E(webU)+'" target="_blank" rel="noopener noreferrer">🌐 Site</a>' : '';
     var insta = l.instagram? '<a class="lc-link" href="https://instagram.com/'+E(String(l.instagram).replace('@',''))+'" target="_blank" rel="noopener noreferrer">📸 '+_escHtml(l.instagram)+'</a>' : '';
     var hours = l.hours    ? '<div class="lc-hours">🕐 '+_escHtml(l.hours)+'</div>' : '';
@@ -305,7 +368,9 @@ function _renderLoungeCards(c, list, body, opts) {
           '<span style="font-size:9px;color:var(--text2);margin-left:3px">'+r.toFixed(1)+'</span></span>'
         : '';
     }
-    var links = [phone,maps,web,insta].filter(Boolean).join('');
+    // L'itineraire suit la carte, la distance ferme la ligne : on va du
+    // « ou est-ce » au « comment j'y vais » puis au « c'est loin ? ».
+    var links = [phone,maps,itin,web,insta,dist].filter(Boolean).join('');
     return (
       '<div class="lc-card">' +
         '<div class="lc-top">' +

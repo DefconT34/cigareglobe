@@ -391,6 +391,7 @@ const I18N = {
     fiche_distance:'Distance',
     fiche_distance_btn:'Calculer',
     fiche_multifuseau:'Heure de la capitale : ce pays compte plusieurs fuseaux.',
+    lc_itineraire:'Itinéraire',
   },
 
   en: {
@@ -780,6 +781,7 @@ const I18N = {
     fiche_distance:'Distance',
     fiche_distance_btn:'Calculate',
     fiche_multifuseau:'Capital time: this country spans several time zones.',
+    lc_itineraire:'Directions',
   },
 
   es: {
@@ -1169,6 +1171,7 @@ const I18N = {
     fiche_distance:'Distancia',
     fiche_distance_btn:'Calcular',
     fiche_multifuseau:'Hora de la capital: este país tiene varios husos horarios.',
+    lc_itineraire:'Cómo llegar',
   },
 
   de: {
@@ -1558,6 +1561,7 @@ const I18N = {
     fiche_distance:'Entfernung',
     fiche_distance_btn:'Berechnen',
     fiche_multifuseau:'Zeit der Hauptstadt: dieses Land hat mehrere Zeitzonen.',
+    lc_itineraire:'Route',
   },
 
   zh: {
@@ -1947,6 +1951,7 @@ const I18N = {
     fiche_distance:'距离',
     fiche_distance_btn:'计算',
     fiche_multifuseau:'首都时间：该国横跨多个时区。',
+    lc_itineraire:'路线',
   },
 
   ar: {
@@ -2336,6 +2341,7 @@ const I18N = {
     fiche_distance:'المسافة',
     fiche_distance_btn:'احسب',
     fiche_multifuseau:'توقيت العاصمة: لهذا البلد أكثر من منطقة زمنية.',
+    lc_itineraire:'المسار',
   },
 };
 

@@ -312,6 +312,8 @@ CREATE TABLE `lounges` (
   `description_de` text COLLATE utf8mb4_unicode_ci COMMENT 'Description en allemand',
   `description_zh` text COLLATE utf8mb4_unicode_ci COMMENT 'Description en chinois',
   `description_ar` text COLLATE utf8mb4_unicode_ci COMMENT 'Description en arabe',
+  `lat` decimal(10,7) DEFAULT NULL COMMENT 'Position exacte, si connue (contribution geolocalisee)',
+  `lon` decimal(10,7) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_country_name` (`country_id`,`name`(191)),
   KEY `idx_country` (`country_id`),

@@ -240,7 +240,10 @@ function traduire_table(array $ligne, string $table, ?PDO $db = null): array {
 
 /** Colonnes enrichies communes aux deux endpoints. */
 function lounge_extra_cols(): string {
-    return ', hours, maps_url, website, instagram'
+    // lat/lon (migration 012) : NULL sur la quasi-totalite des fiches
+    // aujourd'hui. Le front n'affiche la distance que lorsqu'elles
+    // existent — jamais d'approximation par le pays.
+    return ', hours, maps_url, website, instagram, lat, lon'
          . ', ROUND(COALESCE(rating, 0), 1) AS rating, COALESCE(rating_count, 0) AS rating_count';
 }
 

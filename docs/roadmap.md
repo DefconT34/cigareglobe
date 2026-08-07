@@ -76,12 +76,26 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - Le panneau d'un marché héritait du drapeau du pays précédent
   - Les tricolores verticaux (Cameroun, Mexique) ne flottaient pas ; `prefers-reduced-motion` ajouté
 - [x] ~~**D10** — Fiche pratique du pays : devise, langue, heure + fuseau, distance~~ ✅
-  - Sous le badge de niveau, avant les revenus — avant les chiffres de production, pas après
-  - `data.pays.js` ne contient que des **codes** ; `Intl` les nomme dans la langue du visiteur,
-    donc **zéro dette de traduction** (6 intitulés seulement passent par `t()`)
-  - Heure rafraîchie à la minute, arrêtée avec la fiche ; astérisque sur les pays multi-fuseaux
-  - Distance calculée **sur demande** (haversine), jamais de géolocalisation à l'ouverture
+  - **Dans le panneau GAUCHE**, celui des données de pays — il portait déjà des lignes
+    Devise/Langue/Fuseau, un encart de plus à droite faisait doublon (retiré)
+  - A révélé une fuite monolingue : `producer_geo` n'a **aucune colonne de langue** et n'est pas
+    dans le plan de traduction. « Peso cubain », « Espagnol », « UTC−5 » s'affichaient en
+    français dans les six langues. Le balayage i18n ne l'avait jamais vu — il n'ouvre pas de
+    fiche pays. `Intl` les nomme désormais correctement, la base servant de repli
+  - Et une donnée fausse : la base disait « UTC−5 » pour Cuba, qui est à **UTC−4** en heure
+    d'été. L'heure vivante corrige d'elle-même
+  - `data.pays.js` ne contient que des **codes** → **zéro dette de traduction**
+  - Distance à côté des coordonnées, calculée **sur demande** (haversine)
   - **Données à relire** — saisies de mémoire, comme les dates de fête
+- [x] ~~**D12** — Itinéraire et distance sur chaque fiche d'établissement~~ ✅ · migration 012
+  - **Itinéraire** : fonctionne sur les **499 fiches dès aujourd'hui** — Google résout une
+    destination en texte, l'adresse suffit. Origine = position de l'utilisateur si connue
+  - **Distance** : exige des coordonnées. `lounges` n'en avait aucune, et les 419 `maps_url`
+    sont des URL de *recherche* par nom, pas des points. Migration 012 ajoute `lat`/`lon`,
+    servies par `data.php` ; la distance ne s'affiche **que** pour un établissement qui en a
+  - **0/499 aujourd'hui.** Elles se rempliront par les contributions géolocalisées (D8).
+    Approximer par les coordonnées du pays a été écarté : les 31 établissements américains
+    auraient affiché la même distance, présentée comme celle du lounge
 - [x] ~~**D11** — Rebond du marqueur sélectionné~~ ✅
   - Courbe de balle : saut 9 px, rebond secondaire 2 px, **pause au sol** — ce qui distingue
     un rebond d'un clignotement ; ombre portée pour le relief
