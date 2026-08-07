@@ -36,6 +36,46 @@ try {
 // Horloge d'animation : figée (valeur stable) si reduced-motion.
 function animNow(){ return _reduceMotion ? 0 : Date.now(); }
 
+// ── Rebond du marqueur sélectionné ───────────────────────
+// Hauteur du saut, en pixels, pour le SEUL marqueur sélectionné.
+//
+// Ce n'est pas une sinusoïde : une sinusoïde flotte, elle ne rebondit
+// pas. La courbe imite une balle — un saut franc, un rebond secondaire
+// bien plus court, puis une pause au sol. C'est la pause qui fait la
+// différence entre « professionnel » et « clignotant » : sans elle, le
+// marqueur ne cesse jamais de bouger et fatigue l'œil sur une fiche
+// qu'on lit pendant plusieurs minutes.
+//
+// Ne dépend d'aucun état : appelée une fois par trame, pour un seul
+// marqueur. Les autres ne la voient jamais.
+//
+// animNow() ne convient pas ici : figée à 0, elle rendrait une hauteur
+// CONSTANTE non nulle, laissant le marqueur suspendu en l'air. On teste
+// donc _reduceMotion explicitement pour retomber au sol.
+var BOND_PERIODE = 1500;   // ms — cycle complet, pause comprise
+var BOND_HAUTEUR = 9;      // px — au-delà, le marqueur se décolle du pays
+function bondSelection(){
+  if (_reduceMotion) return 0;
+  var p = (Date.now() % BOND_PERIODE) / BOND_PERIODE;
+  if (p < 0.50) return BOND_HAUTEUR * Math.sin(Math.PI * (p / 0.50));
+  if (p < 0.72) return BOND_HAUTEUR * 0.26 * Math.sin(Math.PI * ((p - 0.50) / 0.22));
+  return 0;                // au repos : le marqueur touche son pays
+}
+
+/** Ombre portée au sol : c'est elle qui donne le relief au saut. */
+function bondOmbre(x, y, taille, bond, fade){
+  if (bond < 0.4) return;
+  gc.save();
+  // Plus le marqueur monte, plus l'ombre s'élargit et pâlit.
+  var k = bond / BOND_HAUTEUR;
+  gc.globalAlpha = fade * 0.20 * (1 - k * 0.7);
+  gc.beginPath();
+  gc.ellipse(x, y + taille * 0.35, taille * (0.75 + k * 0.35), taille * 0.26, 0, 0, Math.PI * 2);
+  gc.fillStyle = '#000';
+  gc.fill();
+  gc.restore();
+}
+
 // ── Inertie du drag (momentum au relâché) ────────────────
 var velX = 0, velY = 0, _inertia = false, _lastMoveT = 0;
 
@@ -377,6 +417,10 @@ function drawMarkets(){
     var isHov = hoverMarket && hoverMarket.id===m.id;
     var pulse = Math.sin(now*.0018+m.lat*.4)*.5+.5;
     var size = isSel?11:isHov?9:7;
+    var bondM = isSel ? bondSelection() : 0;
+    bondOmbre(pj.x, pj.y, size, bondM, fade);
+    gc.save();
+    if (bondM) gc.translate(0, -bondM);
     // Glow
     var glowR = 18+pulse*8+(isSel?10:0)+(isHov?5:0);
     var grd = gc.createRadialGradient(pj.x,pj.y,4,pj.x,pj.y,glowR);
@@ -413,6 +457,7 @@ function drawMarkets(){
       gc.beginPath(); gc.arc(pj.x,pj.y,size+6,0,Math.PI*2);
       gc.strokeStyle='#1A6BB5'; gc.lineWidth=2; gc.stroke();
     }
+    gc.restore();            // referme le repere souleve par le rebond
     gc.globalAlpha = 1;
   });
 }
@@ -464,6 +509,10 @@ function drawLoungeCountries(){
     var pulse = Math.sin(now * .0014 + lc.lat * .3) * .5 + .5;
     var size  = isSel ? 11 : isHov ? 9 : 7;   // bigger - more visible
     var h     = size * 1.8;
+    var bondL = isSel ? bondSelection() : 0;
+    bondOmbre(pj.x, pj.y, size, bondL, fade);
+    gc.save();
+    if (bondL) gc.translate(0, -bondL);
 
     // Outer glow
     var glowR = 18 + pulse*8 + (isSel?10:0) + (isHov?5:0);
@@ -514,6 +563,7 @@ function drawLoungeCountries(){
       gc.beginPath(); gc.arc(pj.x, pj.y, size+5, 0, Math.PI*2);
       gc.strokeStyle = '#C060FF'; gc.lineWidth = 2; gc.stroke();
     }
+    gc.restore();            // referme le repere souleve par le rebond
     gc.globalAlpha = 1;
   });
 }
@@ -647,6 +697,15 @@ function drawGlobe(){
     var pulse2=Math.sin(now2*.002+c.lat*.5)*.5+.5;
     var size2=isActive?14:isHov?11:8;
     var glowR2=20+pulse2*10+(isActive?12:0);
+    // Le rebond ne concerne QUE le marqueur selectionne : les autres ne
+    // subissent aucun decalage, et leur trace est inchangee.
+    var bond2 = isActive ? bondSelection() : 0;
+    bondOmbre(pj.x, pj.y, size2, bond2, fade);
+    gc.save();
+    // Une seule translation du repere souleve halo, pastille, drapeau et
+    // etiquette ensemble. Decaler chaque coordonnee a la main aurait
+    // laisse un element au sol au premier oubli.
+    if (bond2) gc.translate(0, -bond2);
     var grd2=gc.createRadialGradient(pj.x,pj.y,3,pj.x,pj.y,glowR2);
     grd2.addColorStop(0,c.color+'55'); grd2.addColorStop(1,c.color+'00');
     gc.beginPath(); gc.arc(pj.x,pj.y,glowR2,0,Math.PI*2);
@@ -656,7 +715,6 @@ function drawGlobe(){
     dg2.addColorStop(0,'#fff9'); dg2.addColorStop(0.3,c.color); dg2.addColorStop(1,c.color+'aa');
     gc.fillStyle=dg2; gc.fill();
     gc.strokeStyle='rgba(255,255,255,0.6)'; gc.lineWidth=1; gc.stroke();
-    if(isActive) drawZones(c.id, c.color);
     // Flag emoji
     if(isActive||isHov){
       gc.save(); gc.font=(isActive?'18px':'14px')+' serif';
@@ -668,6 +726,10 @@ function drawGlobe(){
     if(isActive||isHov||zoomScale>1.4){
       drawGlobeLabel(c.name, pj.x, pj.y + size2 + 5, isActive, tc);
     }
+    gc.restore();
+    // Les zones de production sont d'AUTRES points geographiques : elles
+    // restent au sol, sinon le pays entier semblerait decoller.
+    if(isActive) drawZones(c.id, c.color);
     gc.globalAlpha=1;
   });
 

@@ -184,4 +184,65 @@ test.describe('Globe', () => {
       await expect(page.locator('#tip')).toBeHidden();
     });
   });
+
+  // ── Rebond du marqueur selectionne ────────────────────
+  test.describe('rebond du marqueur', () => {
+
+    test('un seul marqueur est souleve, jamais les autres', async ({ page }) => {
+      await ouvrir(page, '/?country=cuba');
+      await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+      // On espionne gc.translate : c'est le SEUL mecanisme qui deplace
+      // un marqueur. Compter les appels prouve directement qu'aucun
+      // autre marqueur ne bouge — une capture d'ecran ne le dirait pas.
+      const frames = await page.evaluate(() => {
+        const vraiT = gc.translate, vraiNow = Date.now, base = 1700000000000;
+        let decalages = [];
+        gc.translate = function (x, y) {
+          if (x === 0 && y !== 0) decalages.push(Math.round(y * 10) / 10);
+          return vraiT.apply(gc, arguments);
+        };
+        const out = [0.25, 0.60, 0.90].map((ph) => {
+          decalages = [];
+          Date.now = () => base + Math.round(ph * BOND_PERIODE);
+          drawGlobe();
+          return { phase: ph, decalages: decalages.slice() };
+        });
+        Date.now = vraiNow; gc.translate = vraiT;
+        return out;
+      });
+
+      for (const f of frames) {
+        expect(f.decalages.length,
+               `phase ${f.phase} : ${f.decalages.length} marqueur(s) souleve(s)`)
+          .toBeLessThanOrEqual(1);
+        for (const d of f.decalages) expect(d).toBeLessThan(0);   // vers le haut
+      }
+      // Au moins une phase souleve reellement, sinon le test ne prouve rien.
+      expect(frames.some((f) => f.decalages.length === 1)).toBe(true);
+      // Et au moins une le repose : c'est la pause qui distingue un
+      // rebond d'un clignotement perpetuel.
+      expect(frames.some((f) => f.decalages.length === 0)).toBe(true);
+    });
+
+    test('aucun mouvement si l\'utilisateur demande moins d\'animations', async ({ page }) => {
+      await ouvrir(page, '/?country=cuba');
+      const hauteurs = await page.evaluate(() => {
+        const sauv = _reduceMotion;
+        _reduceMotion = true;
+        const h = [0, 0.25, 0.5, 0.75].map((ph) => {
+          const vraiNow = Date.now;
+          Date.now = () => 1700000000000 + Math.round(ph * BOND_PERIODE);
+          const v = bondSelection();
+          Date.now = vraiNow;
+          return v;
+        });
+        _reduceMotion = sauv;
+        return h;
+      });
+      // Zero, pas « constant » : une valeur figee non nulle laisserait le
+      // marqueur suspendu en l'air, ce qui serait pire que l'animation.
+      expect(hauteurs).toEqual([0, 0, 0, 0]);
+    });
+  });
 });

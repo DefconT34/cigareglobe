@@ -14,6 +14,11 @@ mktBtn.addEventListener('click', ()=>{
 function openMarketPanel(m){
   if (window.celebrerFeteAuClic) window.celebrerFeteAuClic(m);
 
+  // Le panneau des marches partage son en-tete avec la fiche pays. Sans
+  // arret, le drapeau anime du pays precedent restait affiche sous le
+  // nom du marche : « Japon » sur le drapeau cubain.
+  if (window.stopFlags) window.stopFlags();
+
   // m is already full from globe load — no extra API call needed
   document.getElementById('bFlag').textContent   = m.flag;
   document.getElementById('bName').textContent   = m.name;

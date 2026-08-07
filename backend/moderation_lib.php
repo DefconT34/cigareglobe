@@ -49,12 +49,16 @@ function approve_contribution(PDO $db, int $id): bool {
         $db->prepare("UPDATE contributions SET status='approved', approved_at=NOW() WHERE id=?")->execute([$id]);
     }
     $db->prepare(
+        // lat/lon suivent la contribution : recueillir une position sur
+        // place puis la perdre a l'approbation serait pire que de ne pas
+        // la demander (migration 011).
         "INSERT IGNORE INTO approved_lounges
-         (contribution_id, country_id, country_name, name, city, type, phone, description, source_url)
-         VALUES (?,?,?,?,?,?,?,?,?)"
+         (contribution_id, country_id, country_name, name, city, type, phone, description, source_url, lat, lon)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?)"
     )->execute([$id, $row['country_id'], $row['country_name'],
         $row['name'], $row['city'], $row['type'],
-        $row['phone'], $row['description'], $row['source_url']]);
+        $row['phone'], $row['description'], $row['source_url'],
+        $row['lat'] ?? null, $row['lon'] ?? null]);
 
     if (!empty($row['user_id'])) maybe_promote_contributor($db, (int)$row['user_id']);
     return true;

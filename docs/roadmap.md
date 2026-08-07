@@ -64,6 +64,30 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D4** — Globe : navigation clavier + alternative textuelle~~ ✅
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
 - [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [x] ~~**D8** — Position sur place dans « Signaler un établissement »~~ ✅ · migration 011
+  - `lat`/`lon` sur `contributions` **et** `approved_lounges` : la position survit à l'approbation
+  - Jamais demandée d'office ; un refus n'empêche pas l'envoi. Le serveur écarte hors-plage,
+    non numérique, latitude seule et le point (0,0) — sans refuser la contribution
+  - 8 vérifications dans `tests/run.php`
+- [x] ~~**D9** — Drapeaux animés : 4 défauts corrigés~~ ✅
+  - **Cuba avait une bande centrale rouge** au lieu de bleue
+  - Les trois boucles ne s'arrêtaient jamais — dont une repeignant un canvas **plein écran**
+    à chaque trame, panneau fermé (`stopFlags()`)
+  - Le panneau d'un marché héritait du drapeau du pays précédent
+  - Les tricolores verticaux (Cameroun, Mexique) ne flottaient pas ; `prefers-reduced-motion` ajouté
+- [x] ~~**D10** — Fiche pratique du pays : devise, langue, heure + fuseau, distance~~ ✅
+  - Sous le badge de niveau, avant les revenus — avant les chiffres de production, pas après
+  - `data.pays.js` ne contient que des **codes** ; `Intl` les nomme dans la langue du visiteur,
+    donc **zéro dette de traduction** (6 intitulés seulement passent par `t()`)
+  - Heure rafraîchie à la minute, arrêtée avec la fiche ; astérisque sur les pays multi-fuseaux
+  - Distance calculée **sur demande** (haversine), jamais de géolocalisation à l'ouverture
+  - **Données à relire** — saisies de mémoire, comme les dates de fête
+- [x] ~~**D11** — Rebond du marqueur sélectionné~~ ✅
+  - Courbe de balle : saut 9 px, rebond secondaire 2 px, **pause au sol** — ce qui distingue
+    un rebond d'un clignotement ; ombre portée pour le relief
+  - Une seule translation du repère par image, vérifiée en instrumentant `gc.translate` :
+    aucun autre marqueur n'est déplacé. Les zones de production restent au sol
+  - `prefers-reduced-motion` → hauteur **zéro**, pas une valeur figée qui suspendrait le marqueur
 - [x] ~~**D7** — Fête nationale : bannière et confettis au clic sur un pays, le jour dit~~ ✅
   - 90 dates dans `assets/js/data.fetes.js`, indexées par code ISO **dérivé du drapeau emoji**
     (`lounge_countries.iso_code` est vide sur 18 lignes ; le drapeau, lui, est partout)

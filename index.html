@@ -277,6 +277,8 @@
 <script src="assets/js/data.geo.js"></script>
 <script src="assets/js/data.zones.js"></script>
 <script src="assets/js/data.fetes.js"></script>
+<script src="assets/js/data.pays.js"></script>
+<script src="assets/js/fiche.js"></script>
 <script src="assets/js/fete.js"></script>
 <script src="assets/js/panels.js"></script>
 <script src="assets/js/markets.js"></script>
@@ -321,6 +323,13 @@
         <div class="contrib-row">
           <label class="contrib-label" for="c-city" data-i18n="contrib_city_lbl">Ville / Adresse <span>*</span></label>
           <input class="contrib-input" id="c-city" type="text" placeholder="Ex: Abidjan, Zone 4" data-i18n-ph="contrib_city_ph">
+        </div>
+        <!-- Position sur place : facultative, et jamais demandée d'office.
+             Le navigateur n'ouvre sa fenêtre d'autorisation qu'au clic. -->
+        <div class="contrib-row contrib-geo">
+          <button type="button" class="contrib-geo-btn" id="c-geo-btn" data-i18n="contrib_geo_btn">📍 Je suis sur place</button>
+          <span class="contrib-geo-state" id="c-geo-state" role="status" aria-live="polite"></span>
+          <button type="button" class="contrib-geo-clear" id="c-geo-clear" hidden data-i18n="contrib_geo_clear">Retirer</button>
         </div>
         <div class="contrib-row-2">
           <div class="contrib-row" style="margin-bottom:0">

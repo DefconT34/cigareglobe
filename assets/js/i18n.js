@@ -373,6 +373,24 @@ const I18N = {
     fete_nationale:'Fête nationale',
     fete_depuis:'depuis {annee}',
     fete_fermer:'Fermer la célébration',
+
+    /* Position sur place (formulaire de contribution) */
+    contrib_geo_btn:'📍 Je suis sur place',
+    contrib_geo_clear:'Retirer',
+    contrib_geo_encours:'Localisation…',
+    contrib_geo_ok:'Position relevée : {lat}, {lon} (± {m} m)',
+    contrib_geo_refus:'Position refusée. Le signalement reste valable sans elle.',
+    contrib_geo_lent:"Localisation trop longue. Réessayez à l’extérieur.",
+    contrib_geo_echec:'Localisation impossible pour le moment.',
+    contrib_geo_indispo:'Localisation indisponible sur cet appareil.',
+
+    /* Fiche pratique du pays (devise, langue, heure, distance) */
+    fiche_devise:'Devise',
+    fiche_langue:'Langue',
+    fiche_heure:'Heure locale',
+    fiche_distance:'Distance',
+    fiche_distance_btn:'Calculer',
+    fiche_multifuseau:'Heure de la capitale : ce pays compte plusieurs fuseaux.',
   },
 
   en: {
@@ -744,6 +762,24 @@ const I18N = {
     fete_nationale:'National Day',
     fete_depuis:'since {annee}',
     fete_fermer:'Close the celebration',
+
+    /* Position sur place (formulaire de contribution) */
+    contrib_geo_btn:'📍 I am here',
+    contrib_geo_clear:'Remove',
+    contrib_geo_encours:'Locating…',
+    contrib_geo_ok:'Position recorded: {lat}, {lon} (± {m} m)',
+    contrib_geo_refus:'Location denied. The report is still valid without it.',
+    contrib_geo_lent:'Locating took too long. Try again outdoors.',
+    contrib_geo_echec:'Location unavailable right now.',
+    contrib_geo_indispo:'Location not supported on this device.',
+
+    /* Fiche pratique du pays (devise, langue, heure, distance) */
+    fiche_devise:'Currency',
+    fiche_langue:'Language',
+    fiche_heure:'Local time',
+    fiche_distance:'Distance',
+    fiche_distance_btn:'Calculate',
+    fiche_multifuseau:'Capital time: this country spans several time zones.',
   },
 
   es: {
@@ -1115,6 +1151,24 @@ const I18N = {
     fete_nationale:'Fiesta Nacional',
     fete_depuis:'desde {annee}',
     fete_fermer:'Cerrar la celebración',
+
+    /* Position sur place (formulaire de contribution) */
+    contrib_geo_btn:'📍 Estoy aquí',
+    contrib_geo_clear:'Quitar',
+    contrib_geo_encours:'Localizando…',
+    contrib_geo_ok:'Posición registrada: {lat}, {lon} (± {m} m)',
+    contrib_geo_refus:'Ubicación denegada. El aviso sigue siendo válido sin ella.',
+    contrib_geo_lent:'La localización tardó demasiado. Inténtelo al aire libre.',
+    contrib_geo_echec:'Ubicación no disponible por ahora.',
+    contrib_geo_indispo:'Ubicación no compatible con este dispositivo.',
+
+    /* Fiche pratique du pays (devise, langue, heure, distance) */
+    fiche_devise:'Moneda',
+    fiche_langue:'Idioma',
+    fiche_heure:'Hora local',
+    fiche_distance:'Distancia',
+    fiche_distance_btn:'Calcular',
+    fiche_multifuseau:'Hora de la capital: este país tiene varios husos horarios.',
   },
 
   de: {
@@ -1486,6 +1540,24 @@ const I18N = {
     fete_nationale:'Nationalfeiertag',
     fete_depuis:'seit {annee}',
     fete_fermer:'Feier schließen',
+
+    /* Position sur place (formulaire de contribution) */
+    contrib_geo_btn:'📍 Ich bin vor Ort',
+    contrib_geo_clear:'Entfernen',
+    contrib_geo_encours:'Standort wird ermittelt…',
+    contrib_geo_ok:'Position erfasst: {lat}, {lon} (± {m} m)',
+    contrib_geo_refus:'Standort abgelehnt. Die Meldung bleibt auch ohne ihn gültig.',
+    contrib_geo_lent:'Standortermittlung dauerte zu lange. Im Freien erneut versuchen.',
+    contrib_geo_echec:'Standort derzeit nicht verfügbar.',
+    contrib_geo_indispo:'Standortbestimmung auf diesem Gerät nicht möglich.',
+
+    /* Fiche pratique du pays (devise, langue, heure, distance) */
+    fiche_devise:'Währung',
+    fiche_langue:'Sprache',
+    fiche_heure:'Ortszeit',
+    fiche_distance:'Entfernung',
+    fiche_distance_btn:'Berechnen',
+    fiche_multifuseau:'Zeit der Hauptstadt: dieses Land hat mehrere Zeitzonen.',
   },
 
   zh: {
@@ -1857,6 +1929,24 @@ const I18N = {
     fete_nationale:'国庆日',
     fete_depuis:'自 {annee} 年',
     fete_fermer:'关闭庆祝提示',
+
+    /* Position sur place (formulaire de contribution) */
+    contrib_geo_btn:'📍 我就在现场',
+    contrib_geo_clear:'移除',
+    contrib_geo_encours:'定位中…',
+    contrib_geo_ok:'已记录位置：{lat}, {lon}（± {m} 米）',
+    contrib_geo_refus:'已拒绝定位。不提供位置，报告依然有效。',
+    contrib_geo_lent:'定位耗时过长，请到室外再试。',
+    contrib_geo_echec:'目前无法定位。',
+    contrib_geo_indispo:'此设备不支持定位。',
+
+    /* Fiche pratique du pays (devise, langue, heure, distance) */
+    fiche_devise:'货币',
+    fiche_langue:'语言',
+    fiche_heure:'当地时间',
+    fiche_distance:'距离',
+    fiche_distance_btn:'计算',
+    fiche_multifuseau:'首都时间：该国横跨多个时区。',
   },
 
   ar: {
@@ -2228,6 +2318,24 @@ const I18N = {
     fete_nationale:'العيد الوطني',
     fete_depuis:'منذ {annee}',
     fete_fermer:'إغلاق التهنئة',
+
+    /* Position sur place (formulaire de contribution) */
+    contrib_geo_btn:'📍 أنا في المكان',
+    contrib_geo_clear:'إزالة',
+    contrib_geo_encours:'جارٍ تحديد الموقع…',
+    contrib_geo_ok:'الموقع مسجَّل: {lat}، {lon} (± {m} م)',
+    contrib_geo_refus:'رُفض تحديد الموقع. البلاغ يبقى صالحاً بدونه.',
+    contrib_geo_lent:'استغرق تحديد الموقع وقتاً طويلاً. أعد المحاولة في الخارج.',
+    contrib_geo_echec:'تعذّر تحديد الموقع حالياً.',
+    contrib_geo_indispo:'تحديد الموقع غير مدعوم على هذا الجهاز.',
+
+    /* Fiche pratique du pays (devise, langue, heure, distance) */
+    fiche_devise:'العملة',
+    fiche_langue:'اللغة',
+    fiche_heure:'التوقيت المحلي',
+    fiche_distance:'المسافة',
+    fiche_distance_btn:'احسب',
+    fiche_multifuseau:'توقيت العاصمة: لهذا البلد أكثر من منطقة زمنية.',
   },
 };
 

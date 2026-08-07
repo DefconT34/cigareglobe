@@ -180,6 +180,10 @@ function openLoungePanel(c, background) {
   // fete salue un clic de l'utilisateur, pas un rendu preparatoire.
   if (!background && window.celebrerFeteAuClic) window.celebrerFeteAuClic(c);
 
+  // Meme raison que pour les marches : un pays a lounges n'a pas de
+  // drapeau dessine, il ne doit pas heriter de celui d'un producteur.
+  if (!background && window.stopFlags) window.stopFlags();
+
   // Reciproque de _fillPanelLounges : on retire l'extrait de la fiche pays
   // pour ne jamais avoir deux fois les memes cartes (identifiants uniques).
   var excerpt = document.getElementById('panel-lounges');

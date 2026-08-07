@@ -127,8 +127,14 @@ function drawFlag(cvs,id,t=0){
   }
   function vStripe(col,x1f,x2f){
     c.fillStyle=col;
-    const pw=W*(x2f-x1f);
-    c.fillRect(W*x1f,0,pw,H);
+    // Ondule comme hStripe. Sans cela les drapeaux a bandes VERTICALES
+    // (Cameroun, Mexique) restaient parfaitement immobiles tandis que
+    // tous les autres flottaient — l'incoherence se voyait d'autant plus
+    // que ces deux pays sont des producteurs majeurs.
+    // Le rectangle deborde en hauteur : decale par la vague, un rectangle
+    // exactement haut de H laisserait une bande transparente au bord.
+    const x0=Math.floor(W*x1f), x1=Math.ceil(W*x2f);
+    for(let x=x0;x<x1;x+=2){const wv=w(x);c.fillRect(x,wv-H*.06,2,H*1.12);}
   }
   function star5(sx,sy,r,r2,fill){
     c.fillStyle=fill;c.beginPath();
@@ -159,7 +165,11 @@ function drawFlag(cvs,id,t=0){
       }
       break;
     case'cuba':
-      ['#002A8F','#FFFFFF','#CC0000','#FFFFFF','#002A8F'].forEach((col,i)=>hStripe(col,i/5,(i+1)/5));
+      // Cinq bandes ALTERNEES bleu/blanc — trois bleues, deux blanches.
+      // La bande centrale etait peinte en rouge : le rouge du drapeau
+      // cubain n'apparait que dans le triangle de hampe, dessine juste
+      // apres. Le pays emblematique du site portait donc un drapeau faux.
+      ['#002A8F','#FFFFFF','#002A8F','#FFFFFF','#002A8F'].forEach((col,i)=>hStripe(col,i/5,(i+1)/5));
       c.fillStyle='#CC0000';c.beginPath();c.moveTo(0,0);c.lineTo(H*.62,H/2);c.lineTo(0,H);c.closePath();c.fill();
       star5(H*.21,H/2,H*.09,H*.038,'#FFFFFF');
       break;
@@ -235,25 +245,69 @@ function drawFlag(cvs,id,t=0){
 }
 
 var flagT=0,flagRaf=null,bannerRaf=null,lexBannerRaf=null;
-function animateFlags(id,bgCvs,panelCvs,lexCvs){
+
+// Les douze pays producteurs sont les seuls dont drawFlag() sait tracer
+// le drapeau ; tout autre identifiant tombait sur trois bandes grises.
+var FLAGS_DESSINES = ['usa','cuba','nicaragua','dominican','honduras','ecuador',
+                      'cameroon','brazil','indonesia','mexico','panama','philippines'];
+
+/**
+ * Arrete les trois boucles et efface les canvas.
+ *
+ * Rien ne les arretait : `animateFlags` annulait la precedente au moment
+ * d'en lancer une nouvelle, et c'etait tout. Fermer la fiche pays
+ * laissait donc trois requestAnimationFrame tourner indefiniment, dont
+ * un qui repeint un canvas AUX DIMENSIONS DE LA FENETRE a chaque trame,
+ * pour un element devenu invisible.
+ *
+ * Effacer compte autant qu'arreter : le panneau est partage avec les
+ * marches et les pays a lounges, qui n'ont pas de drapeau dessine. Sans
+ * effacement, ouvrir la fiche du Japon apres celle de Cuba affichait le
+ * nom du Japon sur le drapeau cubain.
+ */
+function stopFlags(){
   if(flagRaf)cancelAnimationFrame(flagRaf);
   if(bannerRaf)cancelAnimationFrame(bannerRaf);
   if(lexBannerRaf)cancelAnimationFrame(lexBannerRaf);
+  flagRaf=bannerRaf=lexBannerRaf=null;
+  ['flag-canvas','panel-flag-cvs','lex-flag-cvs'].forEach(function(id){
+    var cv=document.getElementById(id);
+    if(cv&&cv.width&&cv.height)cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+  });
+}
+
+function animateFlags(id,bgCvs,panelCvs,lexCvs){
+  stopFlags();
+  // Pays sans drapeau dessine : mieux vaut aucun drapeau qu'un mauvais.
+  // L'emoji du pays reste affiche dans l'en-tete du panneau.
+  if(FLAGS_DESSINES.indexOf(id)===-1)return;
+
   const fw=window.innerWidth,fh=window.innerHeight;
   bgCvs.width=fw;bgCvs.height=fh;
+  panelCvs.width=420;panelCvs.height=115;
+  if(lexCvs){lexCvs.width=280;lexCvs.height=100;}
+
+  // « Moins d'animations » : le drapeau est peint UNE fois. On garde
+  // l'image — c'est une information sur le pays — on retire le mouvement.
+  var fige=(typeof window._reduceMotion==='boolean')?window._reduceMotion:false;
+  if(fige){
+    drawFlag(bgCvs,id,0);drawFlag(panelCvs,id,0);
+    if(lexCvs)drawFlag(lexCvs,id,0);
+    return;
+  }
+
   function l1(){drawFlag(bgCvs,id,flagT++);flagRaf=requestAnimationFrame(l1);}
   l1();
-  panelCvs.width=420;panelCvs.height=115;
   let bt=0;
   function l2(){drawFlag(panelCvs,id,bt++);bannerRaf=requestAnimationFrame(l2);}
   l2();
   if(lexCvs){
-    lexCvs.width=280;lexCvs.height=100;
     let lt=0;
     function l3(){drawFlag(lexCvs,id,lt++);lexBannerRaf=requestAnimationFrame(l3);}
     l3();
   }
 }
+window.stopFlags=stopFlags;
 
 // ════════════════════════════════════════════════════════
 // COUNTRY DATA

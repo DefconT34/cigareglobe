@@ -125,6 +125,56 @@ eq('mes contributions : en attente de moderation', 'pending', $r['json']['contri
 $row = test_pdo()->query("SELECT contributor_email FROM contributions LIMIT 1")->fetch();
 eq('soumission : email pris sur le compte, pas sur le formulaire', 'alice@test.local', $row['contributor_email']);
 
+// ── Position relevee sur place (migration 011) ───────────
+// Elle vient du client : elle doit etre validee, et jamais bloquer un
+// signalement par ailleurs valable. Chaque cas est envoye sous un nom
+// distinct, l'anti-doublon refusant deux fois le meme.
+$coord = function (string $nom, $lat, $lon) use ($base, $alice, $contrib) {
+    // Le quota est de 3 envois par 24 h pour un membre ordinaire, et ce
+    // bloc en fait six. On antidate les precedents plutot que de
+    // promouvoir Alice : la promotion changerait le chemin teste, les
+    // contributeurs de confiance etant publies sans moderation.
+    test_pdo()->exec("UPDATE contributions
+                         SET created_at = DATE_SUB(NOW(), INTERVAL 48 HOUR)");
+    $c = array_merge($contrib, ['name' => $nom]);
+    if ($lat !== null) $c['lat'] = $lat;
+    if ($lon !== null) $c['lon'] = $lon;
+    $r = post_json($base, $alice, '/backend/api.php?action=submit', $c);
+    if ($r['status'] !== 200) return ['http' => $r['status']];
+    $q = test_pdo()->prepare('SELECT lat, lon FROM contributions WHERE name = ?');
+    $q->execute([$nom]);
+    return $q->fetch(PDO::FETCH_ASSOC) ?: [];
+};
+
+$p = $coord('Havane centre', 23.1136, -82.3666);
+eq('position : une coordonnee valable est enregistree', '23.1136000', $p['lat']);
+eq('position : longitude enregistree',                  '-82.3666000', $p['lon']);
+
+$p = $coord('Hors plage', 191.5, -82.3);
+eq('position : latitude hors plage ignoree, envoi accepte', null, $p['lat']);
+
+$p = $coord('Capteur muet', 0, 0);
+eq('position : le point (0,0) est un capteur muet, pas un lieu', null, $p['lat']);
+
+$p = $coord('Latitude seule', 23.1136, null);
+eq('position : une latitude sans longitude ne designe rien', null, $p['lat']);
+
+$p = $coord('Texte a la place', 'ici', 'la-bas');
+eq('position : valeur non numerique ignoree', null, $p['lat']);
+
+$p = $coord('Sans position', null, null);
+eq('position : absente, le signalement passe quand meme', null, $p['lat']);
+
+// La position doit survivre a l'approbation : la recueillir puis la
+// perdre serait pire que de ne pas la demander.
+$idPos = (int)test_pdo()->query("SELECT id FROM contributions WHERE name = 'Havane centre'")->fetchColumn();
+require_once PROJECT_ROOT . '/backend/moderation_lib.php';
+approve_contribution(test_pdo(), $idPos);
+$q = test_pdo()->prepare('SELECT lat, lon FROM approved_lounges WHERE contribution_id = ?');
+$q->execute([$idPos]);
+$ap = $q->fetch(PDO::FETCH_ASSOC) ?: [];
+eq('position : conservee a l\'approbation', '23.1136000', $ap['lat'] ?? null);
+
 // ════════════════════════════════════════════════════════
 section('Avis et moderation');
 

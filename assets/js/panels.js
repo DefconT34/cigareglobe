@@ -264,6 +264,10 @@ function _renderPanel(c) {
 
   document.getElementById('panelBody').innerHTML =
     '<span class="tier-badge" style="background:' + tc.bg + ';border-color:' + tc.border + ';color:' + tc.color + '">' + tc.text + '</span>' +
+    // Encart pratique : devise, langue, heure locale, distance. Place
+    // ici a dessein — c'est ce qu'on se demande avant de lire les
+    // chiffres de production. Vide si le pays n'est pas dans la table.
+    (window.ficheHtml ? window.ficheHtml(c) : '') +
     '<div class="rev-box"><div>' +
       '<div class="rev-lbl">'+t('rev_annual')+'</div>' +
       '<div class="rev-amt">' + (c.revenue||'—') + '</div>' +
@@ -287,6 +291,9 @@ function _renderPanel(c) {
     '<div class="sn">' + _tr(c.notes||'') + '</div>' +
     '<div id="panel-lounges"></div>' +
     '<div class="habanos-zone">' + habanos + '</div>';
+
+  // Apres l'injection seulement : l'horloge vise un element du DOM.
+  if (window.ficheActiver) window.ficheActiver(c);
 }
 
 function brandCard(b, c) {
@@ -309,6 +316,10 @@ document.getElementById('panelClose').onclick = function() {
   document.getElementById('lex').classList.remove('open');
   selCountry = null;
   document.getElementById('flag-bg').classList.remove('visible');
+  // Sans cela, trois boucles d'animation continuaient de peindre un
+  // canvas plein ecran devenu invisible, jusqu'a la fiche suivante.
+  if (window.stopFlags) window.stopFlags();
+  if (window.ficheArreter) window.ficheArreter();
   setTimeout(function() { autoRot = true; }, 1500);
 };
 

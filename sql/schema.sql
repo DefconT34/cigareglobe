@@ -28,12 +28,14 @@ CREATE TABLE `approved_lounges` (
   `maps_url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `website` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `instagram` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lat` decimal(10,7) DEFAULT NULL,
+  `lon` decimal(10,7) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_contrib` (`contribution_id`),
   KEY `idx_country` (`country_id`),
   KEY `idx_approved` (`approved_at` DESC),
   CONSTRAINT `fk_approved_contrib` FOREIGN KEY (`contribution_id`) REFERENCES `contributions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `auth_attempts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -45,7 +47,7 @@ CREATE TABLE `auth_attempts` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_aa_ip_action_time` (`ip`,`action`,`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `brands`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -106,6 +108,18 @@ CREATE TABLE `brands` (
   CONSTRAINT `brands_chk_9` CHECK (json_valid(`gamme_zh`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `content_translations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `content_translations` (
+  `source_hash` char(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 du texte source',
+  `lang` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `source_text` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'conservé pour la relecture',
+  `target_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`source_hash`,`lang`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `contributions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -128,11 +142,13 @@ CREATE TABLE `contributions` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `approved_at` datetime DEFAULT NULL,
+  `lat` decimal(10,7) DEFAULT NULL COMMENT 'Position relevée sur place, si le contributeur l a partagée',
+  `lon` decimal(10,7) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_country` (`country_id`),
   KEY `idx_status` (`status`),
   KEY `idx_contrib_user` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `email_tokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -149,7 +165,7 @@ CREATE TABLE `email_tokens` (
   KEY `idx_et_user` (`user_id`),
   KEY `idx_et_token` (`token_hash`),
   CONSTRAINT `fk_et_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `favorites`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -166,7 +182,7 @@ CREATE TABLE `favorites` (
   KEY `idx_fav_user` (`user_id`),
   KEY `idx_fav_target` (`target_type`,`target_id`),
   CONSTRAINT `fk_fav_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `habanos_presence`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -250,7 +266,7 @@ CREATE TABLE `lounge_photos` (
   KEY `idx_approved` (`is_approved`),
   KEY `idx_lounge_approved` (`lounge_id`,`is_approved`),
   CONSTRAINT `lounge_photos_ibfk_1` FOREIGN KEY (`lounge_id`) REFERENCES `lounges` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=443 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `lounge_ratings`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -267,7 +283,7 @@ CREATE TABLE `lounge_ratings` (
   KEY `idx_ip` (`voter_ip`),
   CONSTRAINT `lounge_ratings_ibfk_1` FOREIGN KEY (`lounge_id`) REFERENCES `lounges` (`id`) ON DELETE CASCADE,
   CONSTRAINT `lounge_ratings_chk_1` CHECK ((`rating` between 1 and 5))
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `lounges`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -302,7 +318,7 @@ CREATE TABLE `lounges` (
   KEY `idx_country_verified` (`country_id`,`is_verified`),
   KEY `idx_rating` (`rating` DESC),
   KEY `idx_country_rating` (`country_id`,`is_verified`,`rating`)
-) ENGINE=InnoDB AUTO_INCREMENT=2556 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `markets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -450,7 +466,7 @@ CREATE TABLE `production_zones` (
   PRIMARY KEY (`id`),
   KEY `country_id` (`country_id`),
   CONSTRAINT `production_zones_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `producer_countries` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `review_flags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -467,7 +483,7 @@ CREATE TABLE `review_flags` (
   KEY `fk_flag_user` (`user_id`),
   CONSTRAINT `fk_flag_review` FOREIGN KEY (`review_id`) REFERENCES `reviews` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_flag_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `reviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -486,7 +502,22 @@ CREATE TABLE `reviews` (
   UNIQUE KEY `uq_reviews_user_lounge` (`user_id`,`lounge_id`),
   KEY `idx_reviews_lounge` (`lounge_id`),
   CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `translation_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `translation_status` (
+  `entite` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'table d''origine',
+  `entite_id` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'clé primaire de la ligne',
+  `champ` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'colonne source, sans suffixe',
+  `lang` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `source_hash` char(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 du français traduit',
+  `statut` enum('machine','relu') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'machine' COMMENT 'relu = vérifié par un humain',
+  `maj` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entite`,`entite_id`,`champ`,`lang`),
+  KEY `idx_statut` (`statut`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -505,7 +536,7 @@ CREATE TABLE `users` (
   `last_login_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_users_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `votes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -519,41 +550,8 @@ CREATE TABLE `votes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_vote` (`contribution_id`,`voter_ip`),
   CONSTRAINT `fk_votes_contrib` FOREIGN KEY (`contribution_id`) REFERENCES `contributions` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `content_translations`  (migration 008)
---
-
-DROP TABLE IF EXISTS `content_translations`;
-CREATE TABLE `content_translations` (
-  `source_hash` char(40) NOT NULL COMMENT 'sha1 du texte source',
-  `lang` char(2) NOT NULL,
-  `source_text` text NOT NULL COMMENT 'conserve pour la relecture',
-  `target_text` text NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`source_hash`,`lang`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
---
--- Table structure for table `translation_status`  (migration 009)
---
-
-DROP TABLE IF EXISTS `translation_status`;
-CREATE TABLE `translation_status` (
-  `entite` varchar(32) NOT NULL COMMENT 'table d''origine',
-  `entite_id` varchar(64) NOT NULL COMMENT 'cle primaire de la ligne',
-  `champ` varchar(32) NOT NULL COMMENT 'colonne source, sans suffixe',
-  `lang` char(2) NOT NULL,
-  `source_hash` char(40) NOT NULL COMMENT 'sha1 du francais traduit',
-  `statut` enum('machine','relu') NOT NULL DEFAULT 'machine',
-  `maj` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`entite`,`entite_id`,`champ`,`lang`),
-  KEY `idx_statut` (`statut`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

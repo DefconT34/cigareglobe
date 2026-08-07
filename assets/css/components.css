@@ -871,3 +871,66 @@ body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 1
 /* RTL : le drapeau passe a droite, la croix a gauche. */
 [dir="rtl"] .fete-carte  { padding: 12px 16px 12px 14px; flex-direction: row-reverse; }
 [dir="rtl"] .fete-fermer { margin-left: 0; margin-right: auto; }
+
+/* ══ CONTRIBUTION — position sur place ═══════════════════
+   Ligne facultative du formulaire « Signaler un établissement ». */
+.contrib-geo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.contrib-geo-btn, .contrib-geo-clear {
+  flex: none; padding: 7px 12px; cursor: pointer;
+  background: var(--bg3); border: 1px solid var(--panel-border); border-radius: 3px;
+  font-family: 'Lato', sans-serif; font-size: 12px; color: var(--text);
+}
+.contrib-geo-btn:hover:not(:disabled), .contrib-geo-clear:hover { border-color: var(--gold); color: var(--gold); }
+.contrib-geo-btn:disabled { opacity: .55; cursor: progress; }
+.contrib-geo-btn:focus-visible, .contrib-geo-clear:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.contrib-geo-clear { font-size: 11px; padding: 5px 9px; }
+/* Le message d'état porte le résultat ET les refus : il doit rester
+   lisible sur une ligne étroite plutôt que pousser les boutons. */
+.contrib-geo-state {
+  flex: 1 1 160px; min-width: 0;
+  font-family: 'Lato', sans-serif; font-size: 11.5px; color: var(--text2); line-height: 1.35;
+}
+.contrib-geo-state.ok { color: var(--grn); }
+.contrib-geo-state.ko { color: #C0401A; }
+[data-theme="dark"] .contrib-geo-state.ko, [data-theme="midnight"] .contrib-geo-state.ko { color: #FF8A6B; }
+
+/* ══ FICHE PRATIQUE DU PAYS ══════════════════════════════
+   Devise, langue, heure locale, distance. Deux colonnes sur bureau, une
+   seule quand la place manque — l'heure et la devise doivent rester
+   lisibles avant tout. */
+.fiche-pays {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px; margin: 10px 0 4px;
+  background: var(--panel-border); border: 1px solid var(--panel-border);
+  border-radius: 4px; overflow: hidden;
+}
+.fiche-item {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 11px; background: var(--bg2); min-width: 0;
+}
+.fiche-k {
+  font-family: 'Cinzel', serif; font-size: 7.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--text2);
+}
+.fiche-v {
+  font-family: 'Lato', sans-serif; font-size: 12px; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.fiche-v strong { font-size: 13.5px; font-weight: 700; }
+/* Le code de devise et le sigle de fuseau : présents mais secondaires. */
+.fiche-v em {
+  font-style: normal; font-size: 10px; color: var(--text2);
+  letter-spacing: .04em;
+}
+.fiche-note { color: var(--gold); cursor: help; margin-left: 2px; }
+.fiche-geo {
+  padding: 2px 8px; cursor: pointer;
+  background: none; border: 1px solid var(--gold); border-radius: 3px;
+  font-family: 'Lato', sans-serif; font-size: 11px; color: var(--gold);
+}
+.fiche-geo:hover:not(:disabled) { background: var(--gold-p); }
+.fiche-geo:disabled { opacity: .6; cursor: progress; }
+.fiche-geo:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@media (max-width: 420px) {
+  .fiche-pays { grid-template-columns: 1fr; }
+}

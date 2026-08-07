@@ -60,6 +60,11 @@ window.openContribModal = function(prefilledCountry) {
     if (sel) sel.value = prefilledCountry;
   }
 
+  // La position d'un signalement precedent ne doit pas se reporter sur
+  // le suivant : ce serait attribuer a un etablissement les coordonnees
+  // d'un autre. Le formulaire repart toujours sans position.
+  if (typeof _geoOublier === 'function') _geoOublier();
+
   modal.setAttribute('aria-hidden','false');
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -220,7 +225,12 @@ function submitContribution() {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (window.CGAccount ? window.CGAccount.csrf : '') },
-    body: JSON.stringify({ country_id:country, country_name:country_name, name:name, city:city, type:type, phone:phone, description:desc, source_url:source })
+    // lat/lon ne partent que si le contributeur les a explicitement
+    // relevées. Absentes, elles ne figurent même pas dans la charge utile.
+    body: JSON.stringify(Object.assign(
+      { country_id:country, country_name:country_name, name:name, city:city, type:type, phone:phone, description:desc, source_url:source },
+      _geoPos ? { lat:_geoPos.lat, lon:_geoPos.lon } : {}
+    ))
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
@@ -280,9 +290,72 @@ function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── Position relevée sur place ───────────────────────────
+// Le contributeur qui se trouve devant l'établissement connaît sa
+// position au mètre près. Une adresse en texte libre, non.
+//
+// Rien n'est demandé d'office : le navigateur n'ouvre sa fenêtre
+// d'autorisation qu'au clic, et la position ne quitte le poste qu'avec
+// le formulaire, au moment de l'envoi. Un refus n'empêche rien — les
+// coordonnées restent facultatives de bout en bout, y compris en base
+// (migration 011).
+var _geoPos = null;
+
+function _geoEtat(texte, classe) {
+  var el = document.getElementById('c-geo-state');
+  if (!el) return;
+  el.textContent = texte;
+  el.className = 'contrib-geo-state' + (classe ? ' ' + classe : '');
+}
+
+function _geoOublier() {
+  _geoPos = null;
+  _geoEtat('');
+  var c = document.getElementById('c-geo-clear');
+  if (c) c.hidden = true;
+}
+
+function _geoDemander() {
+  var btn = document.getElementById('c-geo-btn');
+  if (!navigator.geolocation) { _geoEtat(t('contrib_geo_indispo'), 'ko'); return; }
+
+  btn.disabled = true;
+  _geoEtat(t('contrib_geo_encours'));
+
+  navigator.geolocation.getCurrentPosition(function (pos) {
+    btn.disabled = false;
+    var c = pos.coords;
+    _geoPos = { lat: c.latitude, lon: c.longitude };
+    // La précision est affichée telle quelle : à 2 km près, mieux vaut
+    // que le contributeur le sache et renonce que d'envoyer un point
+    // faux avec l'assurance d'un point juste.
+    var m = Math.round(c.accuracy || 0);
+    _geoEtat(t('contrib_geo_ok')
+      .replace('{lat}', c.latitude.toFixed(5))
+      .replace('{lon}', c.longitude.toFixed(5))
+      .replace('{m}', m), 'ok');
+    var cl = document.getElementById('c-geo-clear');
+    if (cl) cl.hidden = false;
+  }, function (err) {
+    btn.disabled = false;
+    _geoPos = null;
+    // Un refus n'est pas une panne : on le dit autrement qu'une erreur
+    // technique, pour ne pas laisser croire que le site a échoué.
+    var cle = err && err.code === 1 ? 'contrib_geo_refus'
+            : err && err.code === 3 ? 'contrib_geo_lent'
+            : 'contrib_geo_echec';
+    _geoEtat(t(cle), 'ko');
+  }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
+}
+
 // ── Wire up events ────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   populateCountrySelect();
+
+  var geoBtn = document.getElementById('c-geo-btn');
+  if (geoBtn) geoBtn.addEventListener('click', _geoDemander);
+  var geoClear = document.getElementById('c-geo-clear');
+  if (geoClear) geoClear.addEventListener('click', _geoOublier);
 
   // Floating button — pre-fills with selected country
   var floatBtn = document.getElementById('contrib-btn');

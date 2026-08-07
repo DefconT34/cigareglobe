@@ -190,11 +190,31 @@ function action_submit(): void {
         json_out(err('already_reported', 'Cet établissement a déjà été signalé pour ce pays.'), 409);
     }
 
+    // Position relevée sur place (migration 011) — facultative.
+    //
+    // Elle vient du client : on ne lui fait pas confiance. Hors plage,
+    // non numérique ou absente, on stocke NULL plutôt que de refuser
+    // l'envoi — une coordonnée douteuse ne doit pas faire perdre un
+    // signalement par ailleurs valable. Le couple est tout ou rien :
+    // une latitude sans longitude ne désigne rien.
+    $lat = $lon = null;
+    if (isset($body['lat'], $body['lon']) && is_numeric($body['lat']) && is_numeric($body['lon'])) {
+        $la = (float)$body['lat'];
+        $lo = (float)$body['lon'];
+        // (0, 0) est au large du golfe de Guinée : c'est la signature
+        // d'un capteur muet, pas d'un établissement.
+        if ($la >= -90 && $la <= 90 && $lo >= -180 && $lo <= 180
+            && !($la === 0.0 && $lo === 0.0)) {
+            $lat = round($la, 7);
+            $lon = round($lo, 7);
+        }
+    }
+
     // Insertion (attribuée au compte)
     $stmt = $db->prepare(
         "INSERT INTO contributions
-         (user_id, country_id, country_name, name, city, type, phone, description, source_url, contributor_email, contributor_ip)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+         (user_id, country_id, country_name, name, city, type, phone, description, source_url, contributor_email, contributor_ip, lat, lon)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
     $stmt->execute([
         (int)$user['id'],
@@ -208,6 +228,8 @@ function action_submit(): void {
         clean($body['source_url']  ?? '', 500),
         $user['email'],
         $ip,
+        $lat,
+        $lon,
     ]);
 
     $id = (int)$db->lastInsertId();
