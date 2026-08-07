@@ -61,7 +61,7 @@ Même discipline que `sql/schema.sql` — voir `sql/README.md`.
 |---|---|
 | `globe.spec.js` | chargement, peinture du canvas, colonne de boutons, infobulle |
 | `search.spec.js` | ouverture, raccourci, loupe unique, recherche d'un pays |
-| `panels.spec.js` | fiche pays, exclusivité des deux panneaux, modale de marque |
+| `panels.spec.js` | fiche pays, exclusivité des deux panneaux, modale de marque, fête nationale |
 | `explorer.spec.js` | ouverture, champ de filtre, filtres texte et région |
 | `i18n.spec.js` | changement de langue sur les deux champs de recherche |
 | `a11y.spec.js` | clavier, étiquettes, alternative textuelle du globe |
@@ -149,3 +149,17 @@ profonds déjà supportés par l'application :
 ```
 /?country=cuba     /?lounge=<id>     /?brand=Cohiba     /?market=<id>
 ```
+
+## Forcer la fête nationale
+
+La célébration ne se déclenche que le jour de la fête du pays cliqué. Un
+test qui attendrait cette date ne s'exécuterait qu'une fois l'an, et
+échouerait les 364 autres jours. `?fete=<ISO>` force le cas :
+
+```
+/?country=cuba&fete=CU
+```
+
+Ce n'est pas une porte dérobée de circonstance : le paramètre n'accepte
+que deux lettres, comparées à une table fermée. Un code inconnu ne
+produit rien.

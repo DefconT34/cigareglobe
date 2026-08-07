@@ -194,6 +194,10 @@ document.getElementById('lexClose').onclick = function() {
 // RIGHT DETAIL PANEL
 // ════════════════════════════════════════════════════════
 function openPanel(c) {
+  // Fete nationale : ne fait quelque chose QUE le bon jour, et n'empeche
+  // jamais le panneau de s'ouvrir (aucun retour n'est teste).
+  if (window.celebrerFeteAuClic) window.celebrerFeteAuClic(c);
+
   animateFlags(c.id,
     document.getElementById('flag-canvas'),
     document.getElementById('panel-flag-cvs'),

@@ -55,6 +55,48 @@ function i18n_parse(string $chemin): array {
 }
 
 /**
+ * Valeurs coupees net par une apostrophe non echappee.
+ *
+ * La parite des cles ne suffit pas a garantir que le fichier est du
+ * JavaScript VALIDE. Ecrire fete_independance:'Jour de l'independance'
+ * casse le script entier — plus une seule traduction ne s'affiche — et
+ * pourtant la cle est bien la, avec une valeur tronquee a « Jour de l ».
+ * Le compte reste juste, l'application est morte.
+ *
+ * C'est arrive. La detection est simple : apres la valeur, un litteral
+ * bien forme n'est suivi que d'une virgule, d'une accolade ou de la fin
+ * de la ligne. Une lettre a cet endroit signifie que la chaine s'est
+ * refermee trop tot.
+ */
+function i18n_apostrophes(string $chemin): array {
+    $lignes = explode("\n", file_get_contents($chemin));
+    $pb = [];
+    $langue = null;
+    foreach ($lignes as $i => $l) {
+        // Meme machine a etats que i18n_parse : hors des blocs de langue
+        // vit du VRAI code JavaScript, ou « x:'y' » suivi d'autre chose
+        // est parfaitement legitime (ternaires, objets de config). Les y
+        // inclure produisait deux faux positifs sur un fichier sain.
+        if ($langue === null) {
+            if (preg_match('/^  ([a-z]{2})\s*:\s*\{\s*$/', $l, $m)) $langue = $m[1];
+            continue;
+        }
+        if (preg_match('/^  \},?\s*$/', $l)) { $langue = null; continue; }
+
+        if (!preg_match_all('/([A-Za-z_][A-Za-z0-9_]*)\s*:\s*(["\'])(.*?)(?<!\\\\)\2/',
+                            $l, $m, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) continue;
+        foreach ($m as $x) {
+            $fin   = $x[0][1] + strlen($x[0][0]);
+            $suite = ltrim(substr($l, $fin));
+            if ($suite === '' || $suite[0] === ',' || $suite[0] === '}'
+                || substr($suite, 0, 2) === '//' || substr($suite, 0, 2) === '/*') continue;
+            $pb[] = ['ligne' => $i + 1, 'cle' => $x[1][0], 'suite' => rtrim(substr($suite, 0, 40))];
+        }
+    }
+    return $pb;
+}
+
+/**
  * Ecarts de cles entre le francais et chaque autre langue.
  * Retourne ['en' => ['manquantes' => [...], 'en_trop' => [...]], …].
  */
@@ -146,7 +188,20 @@ if (PHP_SAPI === 'cli' && !defined('I18N_CHECK_INCLUDE')) {
         }
     }
 
+    // ── Litteraux coupes net ─────────────────────────────
+    // Verifie avant la parite : un fichier qui ne s'execute pas rend le
+    // decompte des cles sans objet.
+    $coupees = i18n_apostrophes($fichier);
     echo "\n";
+    if ($coupees) {
+        $bloquant += count($coupees);
+        printf("%d valeur(s) refermee(s) trop tot — apostrophe non echappee :\n", count($coupees));
+        foreach ($coupees as $c) {
+            printf("  ligne %-5d %-24s … %s\n", $c['ligne'], $c['cle'], $c['suite']);
+        }
+        echo "Le fichier ne s'execute pas : aucune traduction ne s'affiche.\n";
+    }
+
     if ($bloquant === 0) {
         echo "Parite des cles : OK.\n";
         echo "Les valeurs identiques au francais sont signalees a titre indicatif —\n";

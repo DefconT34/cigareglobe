@@ -64,6 +64,17 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D4** — Globe : navigation clavier + alternative textuelle~~ ✅
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
 - [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [x] ~~**D7** — Fête nationale : bannière et confettis au clic sur un pays, le jour dit~~ ✅
+  - 89 dates dans `assets/js/data.fetes.js`, indexées par code ISO **dérivé du drapeau emoji**
+    (`lounge_countries.iso_code` est vide sur 19 lignes ; le drapeau, lui, est partout)
+  - Hors base, volontairement : y verser 89 pays aurait fait retomber les compteurs de
+    traduction de 100 % à moins. Une date ne se traduit pas ; seuls les libellés
+    passent par `t()` (4 clés × 6 langues)
+  - Ne se déclenche que le bon jour, une fois par pays et par visite, n'intercepte
+    aucun clic, respecte `prefers-reduced-motion`, mirroité en RTL
+  - Pour le voir : `?fete=CU`, ou `testerFete('BR')` en console
+  - **Les 89 dates restent à relire** — saisies de mémoire, pas extraites d'une source
+    faisant autorité. Même réserve que les traductions.
 
 ### F. Internationalisation
 *Audit et plan détaillés : `docs/i18n.md`. Les 222 clés de `i18n.js` sont

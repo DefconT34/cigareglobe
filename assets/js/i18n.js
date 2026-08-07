@@ -367,6 +367,12 @@ const I18N = {
     /* Cartes de marque (audit multilingue) */
     brand_details:'DÉTAILS →',
     brand_expand:'▶ Histoire & gamme',
+
+    /* Fete nationale (celebration au clic sur un pays) */
+    fete_independance:"Jour de l'indépendance",
+    fete_nationale:'Fête nationale',
+    fete_depuis:'depuis {annee}',
+    fete_fermer:'Fermer la célébration',
   },
 
   en: {
@@ -732,6 +738,12 @@ const I18N = {
     /* Cartes de marque (audit multilingue) */
     brand_details:'DETAILS →',
     brand_expand:'▶ History & range',
+
+    /* Fete nationale (celebration au clic sur un pays) */
+    fete_independance:'Independence Day',
+    fete_nationale:'National Day',
+    fete_depuis:'since {annee}',
+    fete_fermer:'Close the celebration',
   },
 
   es: {
@@ -1097,6 +1109,12 @@ const I18N = {
     /* Cartes de marque (audit multilingue) */
     brand_details:'DETALLES →',
     brand_expand:'▶ Historia y gama',
+
+    /* Fete nationale (celebration au clic sur un pays) */
+    fete_independance:'Día de la Independencia',
+    fete_nationale:'Fiesta Nacional',
+    fete_depuis:'desde {annee}',
+    fete_fermer:'Cerrar la celebración',
   },
 
   de: {
@@ -1462,6 +1480,12 @@ const I18N = {
     /* Cartes de marque (audit multilingue) */
     brand_details:'DETAILS →',
     brand_expand:'▶ Geschichte & Sortiment',
+
+    /* Fete nationale (celebration au clic sur un pays) */
+    fete_independance:'Unabhängigkeitstag',
+    fete_nationale:'Nationalfeiertag',
+    fete_depuis:'seit {annee}',
+    fete_fermer:'Feier schließen',
   },
 
   zh: {
@@ -1827,6 +1851,12 @@ const I18N = {
     /* Cartes de marque (audit multilingue) */
     brand_details:'详情 →',
     brand_expand:'▶ 历史与系列',
+
+    /* Fete nationale (celebration au clic sur un pays) */
+    fete_independance:'独立纪念日',
+    fete_nationale:'国庆日',
+    fete_depuis:'自 {annee} 年',
+    fete_fermer:'关闭庆祝提示',
   },
 
   ar: {
@@ -2192,6 +2222,12 @@ const I18N = {
     /* Cartes de marque (audit multilingue) */
     brand_details:'التفاصيل →',
     brand_expand:'▶ التاريخ والتشكيلة',
+
+    /* Fete nationale (celebration au clic sur un pays) */
+    fete_independance:'عيد الاستقلال',
+    fete_nationale:'العيد الوطني',
+    fete_depuis:'منذ {annee}',
+    fete_fermer:'إغلاق التهنئة',
   },
 };
 

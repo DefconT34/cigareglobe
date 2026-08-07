@@ -12,6 +12,8 @@ mktBtn.addEventListener('click', ()=>{
 });
 
 function openMarketPanel(m){
+  if (window.celebrerFeteAuClic) window.celebrerFeteAuClic(m);
+
   // m is already full from globe load — no extra API call needed
   document.getElementById('bFlag').textContent   = m.flag;
   document.getElementById('bName').textContent   = m.name;

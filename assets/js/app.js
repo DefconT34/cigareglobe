@@ -176,6 +176,10 @@ function openLoungePanel(c, background) {
   var el = document.getElementById('lounge-panel');
   if (!el) return;
 
+  // Pas de celebration quand le panneau s'ouvre en arriere-plan : la
+  // fete salue un clic de l'utilisateur, pas un rendu preparatoire.
+  if (!background && window.celebrerFeteAuClic) window.celebrerFeteAuClic(c);
+
   // Reciproque de _fillPanelLounges : on retire l'extrait de la fiche pays
   // pour ne jamais avoir deux fois les memes cartes (identifiants uniques).
   var excerpt = document.getElementById('panel-lounges');
