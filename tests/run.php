@@ -136,7 +136,7 @@ $coord = function (string $nom, $lat, $lon) use ($base, $alice, $contrib) {
     // contributeurs de confiance etant publies sans moderation.
     test_pdo()->exec("UPDATE contributions
                          SET created_at = DATE_SUB(NOW(), INTERVAL 48 HOUR)");
-    $c = array_merge($contrib, ['name' => $nom]);
+    $c = array_merge($contrib, ['name' => $nom, 'country_id' => 'coordland', 'country_name' => 'Coordland']);
     if ($lat !== null) $c['lat'] = $lat;
     if ($lon !== null) $c['lon'] = $lon;
     $r = post_json($base, $alice, '/backend/api.php?action=submit', $c);
@@ -169,11 +169,48 @@ eq('position : absente, le signalement passe quand meme', null, $p['lat']);
 // perdre serait pire que de ne pas la demander.
 $idPos = (int)test_pdo()->query("SELECT id FROM contributions WHERE name = 'Havane centre'")->fetchColumn();
 require_once PROJECT_ROOT . '/backend/moderation_lib.php';
+// Le contributeur doit etre prevenu : on releve la taille du journal
+// des emails avant l'approbation pour ne lire que ce qu'elle ajoute.
+$MAIL_AV = is_file($MAIL_LOG) ? filesize($MAIL_LOG) : 0;
 approve_contribution(test_pdo(), $idPos);
 $q = test_pdo()->prepare('SELECT lat, lon FROM approved_lounges WHERE contribution_id = ?');
 $q->execute([$idPos]);
 $ap = $q->fetch(PDO::FETCH_ASSOC) ?: [];
 eq('position : conservee a l\'approbation', '23.1136000', $ap['lat'] ?? null);
+// -- L'approbation cree un vrai etablissement (migration 013) --
+// Le defaut d'origine : l'approbation n'ecrivait que dans
+// `approved_lounges`, servie par une requete filtrant sur une colonne
+// `status` inexistante. L'erreur SQL etait avalee par un catch, la
+// liste revenait vide, et l'etablissement n'apparaissait JAMAIS sur le
+// site. Le moderateur voyait « Approuve », le visiteur ne voyait rien.
+$l = test_pdo()->prepare('SELECT country_id, lat, is_verified FROM lounges WHERE contribution_id = ?');
+$l->execute([$idPos]);
+$fiche = $l->fetch(PDO::FETCH_ASSOC) ?: [];
+eq('approbation : une ligne est creee dans lounges', 'coordland', $fiche['country_id'] ?? null);
+eq('approbation : la fiche est servie (is_verified)', '1', (string)($fiche['is_verified'] ?? ''));
+eq('approbation : la position suit jusqu\'au catalogue', '23.1136000', $fiche['lat'] ?? null);
+
+// Le point qui compte vraiment : l'API la sert.
+$r = http('GET', $base . '/backend/data.php?action=lounges&id=coordland&lang=fr');
+$noms = array_column($r['json']['static'] ?? [], 'name');
+eq('approbation : l\'etablissement apparait sur le site', true, in_array('Havane centre', $noms, true));
+
+// Notification du contributeur : c'est le moment ou l'on remercie
+// quelqu'un, et jusqu'ici rien ne partait.
+$mail = (string)@file_get_contents($MAIL_LOG, false, null, $MAIL_AV);
+check('approbation : le contributeur est prevenu par email',
+      str_contains($mail, 'alice@test.local') && str_contains($mail, 'en ligne'));
+check('approbation : l\'email pointe la fiche creee',
+      (bool)preg_match('/[?&]lounge=[0-9]+/', $mail));
+$MAIL_AV2 = is_file($MAIL_LOG) ? filesize($MAIL_LOG) : 0;
+
+// Rejouer l'approbation ne doit pas dupliquer la fiche.
+approve_contribution(test_pdo(), $idPos);
+$n = test_pdo()->prepare('SELECT COUNT(*) FROM lounges WHERE contribution_id = ?');
+$n->execute([$idPos]);
+eq('approbation : rejouee, elle ne duplique pas', 1, (int)$n->fetchColumn());
+eq('approbation : rejouee, elle ne renotifie pas', 0,
+   strlen((string)@file_get_contents($MAIL_LOG, false, null, $MAIL_AV2)));
 
 // ════════════════════════════════════════════════════════
 section('Avis et moderation');

@@ -8,6 +8,13 @@
 // ════════════════════════════════════════════════════════
 
 require_once __DIR__ . '/config.php';
+// send_email() : admin.php n'incluait pas le mailer, et la notification
+// d'approbation part d'ici, quel que soit le chemin d'approbation.
+require_once __DIR__ . '/mailer.php';
+// site_url() y vit : le lien de l'email doit pointer le site public,
+// pas l'hote de la requete. api.php et admin.php l'incluaient deja,
+// mais ce fichier doit tenir seul — il est aussi appele par les tests.
+require_once __DIR__ . '/auth_lib.php';
 
 /** Rôles dont les contributions sont publiées sans modération. */
 function is_trusted_role(?string $role): bool {
@@ -39,13 +46,22 @@ function maybe_promote_contributor(PDO $db, int $user_id): bool {
  * chemins d'approbation (vote communautaire, modération admin,
  * publication directe d'un contributeur de confiance).
  */
-function approve_contribution(PDO $db, int $id): bool {
+/**
+ * @param bool $notifier Prevenir l'auteur par email. Faux pour la
+ *        publication directe d'un contributeur de confiance : il vient de
+ *        cliquer « Envoyer », l'interface le lui a deja dit, et un email
+ *        arrivant dans la seconde ferait mecanique plutot qu'attentionne.
+ */
+function approve_contribution(PDO $db, int $id, bool $notifier = true): bool {
     $stmt = $db->prepare("SELECT * FROM contributions WHERE id = ?");
     $stmt->execute([$id]);
     $row = $stmt->fetch();
     if (!$row) return false;
 
-    if ($row['status'] !== 'approved') {
+    // Une approbation rejouee ne renotifie rien : meme garde-fou que
+    // pour l'insertion, l'email etant bien plus visible qu'une ligne.
+    $transition = $row['status'] !== 'approved';
+    if ($transition) {
         $db->prepare("UPDATE contributions SET status='approved', approved_at=NOW() WHERE id=?")->execute([$id]);
     }
     $db->prepare(
@@ -60,8 +76,88 @@ function approve_contribution(PDO $db, int $id): bool {
         $row['phone'], $row['description'], $row['source_url'],
         $row['lat'] ?? null, $row['lon'] ?? null]);
 
+    // ── L'etablissement entre au catalogue ────────────────
+    // Une approbation cree une VRAIE ligne dans `lounges`. Auparavant
+    // elle n'atteignait que `approved_lounges`, servie par une requete
+    // filtrant sur une colonne `status` inexistante : l'erreur etait
+    // avalee, et l'etablissement n'apparaissait jamais sur le site.
+    //
+    // En passant par `lounges`, la fiche gagne notation, avis, favoris,
+    // photos et colonnes de traduction — tout ce dont les fiches
+    // « communautaires » etaient privees.
+    $ins = $db->prepare(
+        "INSERT IGNORE INTO lounges
+           (contribution_id, country_id, name, city, type, phone, description, source, lat, lon, is_verified)
+         VALUES (?,?,?,?,?,?,?,?,?,?,1)"
+    );
+    $ins->execute([$id, $row['country_id'], $row['name'], $row['city'], $row['type'],
+                   $row['phone'], $row['description'], $row['source_url'],
+                   $row['lat'] ?? null, $row['lon'] ?? null]);
+
+    // Zero ligne inseree = un etablissement de ce nom existe deja dans ce
+    // pays (contrainte uq_country_name), ou l'approbation est rejouee.
+    // On le JOURNALISE : c'est exactement ce genre de silence qui a
+    // rendu le defaut precedent invisible pendant des mois.
+    if ($ins->rowCount() === 0) {
+        error_log(sprintf('[moderation] contribution #%d approuvee sans creer de fiche : '
+            . '« %s » existe deja dans %s, ou approbation rejouee.',
+            $id, $row['name'], $row['country_id']));
+    }
+
+    if ($notifier && $transition) notifier_contributeur($db, $row);
+
     if (!empty($row['user_id'])) maybe_promote_contributor($db, (int)$row['user_id']);
     return true;
+}
+
+/**
+ * Previent l'auteur que son etablissement est en ligne.
+ *
+ * Jusqu'ici une contribution approuvee ne disait rien a celui qui
+ * l'avait proposee : il devait retourner voir son espace membre pour le
+ * decouvrir. C'est pourtant le moment ou l'on tient a le remercier.
+ *
+ * Le lien ouvre la fiche elle-meme (?lounge=<id>), pas la page
+ * d'accueil : le contributeur veut VOIR son ajout, pas le chercher.
+ *
+ * L'email est en francais, comme les autres du site. Les traduire
+ * suppose de connaitre la langue du compte, que `users` ne stocke pas.
+ */
+function notifier_contributeur(PDO $db, array $row): void {
+    $email = trim((string)($row['contributor_email'] ?? ''));
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return;
+
+    $nom = '';
+    if (!empty($row['user_id'])) {
+        $u = $db->prepare('SELECT display_name FROM users WHERE id = ?');
+        $u->execute([(int)$row['user_id']]);
+        $nom = trim((string)$u->fetchColumn());
+    }
+
+    // Identifiant de la fiche creee, pour un lien qui l'ouvre directement.
+    $f = $db->prepare('SELECT id FROM lounges WHERE contribution_id = ?');
+    $f->execute([(int)$row['id']]);
+    $loungeId = (int)$f->fetchColumn();
+    $url = site_url() . ($loungeId ? '/?lounge=' . $loungeId : '/');
+
+    $titre = $nom !== '' ? 'Merci, ' . $nom . ' !' : 'Merci pour votre contribution !';
+    // Texte accentué : celui-ci part chez un lecteur, pas dans un
+    // journal. email_template() l'échappe pour le HTML, et
+    // mail_text_from_html() redécode les entités pour l'alternative
+    // texte — les deux versions se lisent correctement.
+    $intro = '« ' . $row['name'] . ' » (' . $row['city'] . ', ' . $row['country_name'] . ')'
+           . ' vient d\'être publié sur CigarOdyssey. Votre signalement a été vérifié'
+           . ' puis ajouté à l\'atlas : il est désormais visible par tous les visiteurs.';
+
+    // Un échec d'envoi ne doit jamais faire échouer l'approbation :
+    // l'établissement est publié, c'est l'essentiel.
+    try {
+        send_email($email, 'Votre établissement est en ligne — ' . $row['name'],
+            email_template($titre, $intro, 'Voir la fiche', $url,
+                'Vous recevez cet email parce que vous avez proposé un établissement sur CigarOdyssey.'));
+    } catch (Throwable $e) {
+        error_log('[moderation] notification non envoyee (#' . $row['id'] . ') : ' . $e->getMessage());
+    }
 }
 
 /**

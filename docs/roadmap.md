@@ -63,7 +63,21 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
 - [x] ~~**D4** — Globe : navigation clavier + alternative textuelle~~ ✅
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
-- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [x] ~~**D13** — L'approbation crée un vrai établissement, et prévient l'auteur~~ ✅ · migration 013
+  - **Défaut corrigé** : `data.php` lisait `approved_lounges WHERE status = 'approved'` —
+    colonne qui n'a jamais existé. L'erreur SQL était avalée par un `catch` posé pour
+    tolérer l'absence de la table, la liste revenait vide **en silence**, et un
+    établissement approuvé n'apparaissait **jamais** sur le site
+  - L'approbation crée désormais une ligne dans `lounges` : notation, avis, favoris,
+    photos, colonnes de traduction et `lat`/`lon` viennent avec
+  - `contribution_id` unique → un rejeu ne duplique pas ; une insertion sans effet est
+    **journalisée** plutôt que muette (c'est le silence qui avait masqué le défaut)
+  - Cohiba’r repris au passage : la Côte d'Ivoire passe de 14 à 15 établissements
+  - **Email au contributeur** à l'approbation, pointant la fiche créée (`?lounge=<id>`).
+    Pas d'email pour la publication directe d'un contributeur de confiance : l'interface
+    le lui dit déjà, un envoi dans la seconde ferait mécanique
+  - 9 vérifications, dont la présence de l'email et son absence au rejeu
 - [x] ~~**D8** — Position sur place dans « Signaler un établissement »~~ ✅ · migration 011
   - `lat`/`lon` sur `contributions` **et** `approved_lounges` : la position survit à l'approbation
   - Jamais demandée d'office ; un refus n'empêche pas l'envoi. Le serveur écarte hors-plage,

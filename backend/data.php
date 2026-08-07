@@ -447,28 +447,21 @@ function action_lounges(PDO $db): void {
         return $r;
     }, $stmt->fetchAll());
 
-    // Community-approved lounges — optionnel (table peut ne pas exister)
-    $community = [];
-    try {
-        $comm = $db->prepare(
-            "SELECT name, city, type, phone,
-                    '' AS price, description AS `desc`, source_url AS source,
-                    NULL AS hours, NULL AS maps_url, NULL AS website, NULL AS instagram,
-                    NULL AS rating, 0 AS rating_count
-             FROM approved_lounges
-             WHERE country_id = ? AND status = 'approved'
-             ORDER BY approved_at DESC"
-        );
-        $comm->execute([$id]);
-        $community = $comm->fetchAll();
-    } catch (Throwable $e) {
-        // Table approved_lounges absente — ignorer
-    }
-
+    // Plus de bloc « community » : depuis la migration 013, une
+    // approbation cree une vraie ligne dans `lounges`, donc deja
+    // presente ci-dessus. La requete precedente filtrait sur une colonne
+    // `status` que `approved_lounges` n'a jamais eue ; l'erreur SQL etait
+    // avalee par un catch pose pour tolerer l'absence de la table, et la
+    // liste revenait vide EN SILENCE — les etablissements approuves
+    // n'apparaissaient jamais sur le site.
+    //
+    // La cle `community` est conservee, vide : les deux chargeurs du
+    // front font « (data.static||[]).concat(data.community||[]) », et un
+    // navigateur servant encore l'ancien script ne doit pas trebucher.
     jout([
         'static'    => $static,
-        'community' => $community,
-        'total'     => count($static) + count($community),
+        'community' => [],
+        'total'     => count($static),
     ]);
 }
 function action_brand(PDO $db): void {

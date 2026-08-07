@@ -237,7 +237,10 @@ function action_submit(): void {
     // Contributeur de confiance : publication immédiate, sans file de modération
     $auto_approved = false;
     if (is_trusted_role($user['role'])) {
-        $auto_approved = approve_contribution($db, $id);
+        // Pas de notification : le contributeur vient de cliquer
+        // « Envoyer », et l'interface lui annonce deja la publication
+        // directe. Un email dans la seconde ferait mecanique.
+        $auto_approved = approve_contribution($db, $id, false);
     }
 
     // Notification à l'administration. Passe par send_email() : l'appel
