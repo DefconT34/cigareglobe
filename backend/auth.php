@@ -84,11 +84,15 @@ function action_register(PDO $db): void {
     $chk->execute([$email]);
     if ($chk->fetch()) respond(err('email_taken', 'Un compte existe déjà avec cet email.'), 409);
 
+    // Langue de correspondance (migration 014) : celle du site au moment
+    // de l'inscription, sinon celle du navigateur, sinon le français.
+    $lang = langue_demandee($b['lang'] ?? null);
+
     $hash = password_hash($pass, PASSWORD_DEFAULT);
     $ins  = $db->prepare(
-        "INSERT INTO users (email, password_hash, display_name) VALUES (?, ?, ?)"
+        "INSERT INTO users (email, password_hash, display_name, lang) VALUES (?, ?, ?, ?)"
     );
-    $ins->execute([$email, $hash, mb_substr($name, 0, 80)]);
+    $ins->execute([$email, $hash, mb_substr($name, 0, 80), $lang]);
     $uid = (int)$db->lastInsertId();
 
     // Connexion immédiate (email non vérifié → gating à la contribution, Étape B)

@@ -293,3 +293,97 @@ function email_template(string $title, string $intro, string $btnLabel, string $
          . ($footer ? '<p style="font-size:11px;color:#6B5030;margin-top:20px">' . $safe($footer) . '</p>' : '')
          . '</div>';
 }
+
+// ════════════════════════════════════════════════════════
+// TRADUCTION DES EMAILS
+// ────────────────────────────────────────────────────────
+// EXCEPTION ASSUMÉE À LA RÈGLE DU LOT F2. `config.php` la pose ainsi :
+// « Le serveur ne traduit pas. Le front lit le code et cherche la clé. »
+// Elle tient parce qu'un message d'API est toujours affiché par un front
+// qui, lui, connaît la langue du visiteur.
+//
+// Un email n'a pas de front. Personne d'autre que PHP ne peut le
+// traduire. D'où ce dictionnaire — volontairement minuscule, et qui doit
+// le rester : tout ce qui peut être traduit côté client doit l'être là.
+//
+// La langue vient de `users.lang` (migration 014). À défaut, français.
+// ════════════════════════════════════════════════════════
+
+/** Textes des emails, par clé puis par langue. */
+function mail_i18n(): array {
+    return [
+        'appr_sujet' => [
+            'fr' => 'Votre établissement est en ligne',
+            'en' => 'Your venue is now live',
+            'es' => 'Su establecimiento ya está publicado',
+            'de' => 'Ihr Etablissement ist online',
+            'zh' => '您提交的场所已上线',
+            'ar' => 'تم نشر المكان الذي اقترحته',
+        ],
+        'appr_titre_nom' => [
+            'fr' => 'Merci, {nom} !',
+            'en' => 'Thank you, {nom}!',
+            'es' => '¡Gracias, {nom}!',
+            'de' => 'Danke, {nom}!',
+            'zh' => '{nom}，谢谢您！',
+            'ar' => 'شكراً لك يا {nom}!',
+        ],
+        'appr_titre' => [
+            'fr' => 'Merci pour votre contribution !',
+            'en' => 'Thank you for your contribution!',
+            'es' => '¡Gracias por su contribución!',
+            'de' => 'Danke für Ihren Beitrag!',
+            'zh' => '感谢您的贡献！',
+            'ar' => 'شكراً على مساهمتك!',
+        ],
+        'appr_corps' => [
+            'fr' => '« {lieu} » ({ville}, {pays}) vient d\'être publié sur CigarOdyssey. '
+                  . 'Votre signalement a été vérifié puis ajouté à l\'atlas : il est désormais '
+                  . 'visible par tous les visiteurs.',
+            'en' => '“{lieu}” ({ville}, {pays}) has just been published on CigarOdyssey. '
+                  . 'Your submission was reviewed and added to the atlas: it is now visible '
+                  . 'to every visitor.',
+            'es' => '«{lieu}» ({ville}, {pays}) acaba de publicarse en CigarOdyssey. '
+                  . 'Su propuesta ha sido verificada y añadida al atlas: ya es visible '
+                  . 'para todos los visitantes.',
+            'de' => '„{lieu}“ ({ville}, {pays}) wurde soeben auf CigarOdyssey veröffentlicht. '
+                  . 'Ihr Hinweis wurde geprüft und in den Atlas aufgenommen — er ist nun für '
+                  . 'alle Besucher sichtbar.',
+            'zh' => '「{lieu}」（{ville}，{pays}）已发布至 CigarOdyssey。'
+                  . '您提交的信息经核实后已收入图册，现在所有访客都能看到。',
+            'ar' => '«{lieu}» ({ville}، {pays}) نُشر للتوّ على CigarOdyssey. '
+                  . 'تمّ التحقّق من بلاغك وإضافته إلى الأطلس، وهو الآن ظاهر لجميع الزوّار.',
+        ],
+        'appr_bouton' => [
+            'fr' => 'Voir la fiche',   'en' => 'View the venue',
+            'es' => 'Ver la ficha',    'de' => 'Zum Eintrag',
+            'zh' => '查看条目',         'ar' => 'عرض البطاقة',
+        ],
+        'appr_pied' => [
+            'fr' => 'Vous recevez cet email parce que vous avez proposé un établissement sur CigarOdyssey.',
+            'en' => 'You are receiving this email because you submitted a venue to CigarOdyssey.',
+            'es' => 'Recibe este correo porque propuso un establecimiento en CigarOdyssey.',
+            'de' => 'Sie erhalten diese E-Mail, weil Sie CigarOdyssey ein Etablissement vorgeschlagen haben.',
+            'zh' => '您收到此邮件，是因为您曾向 CigarOdyssey 提交过一个场所。',
+            'ar' => 'وصلتك هذه الرسالة لأنك اقترحت مكاناً على CigarOdyssey.',
+        ],
+    ];
+}
+
+/**
+ * Texte d'email traduit, avec substitution des variables.
+ *
+ *   mail_t('appr_bouton', 'de')                       → « Zum Eintrag »
+ *   mail_t('appr_titre_nom', 'es', ['nom' => 'Ana'])  → « ¡Gracias, Ana! »
+ *
+ * Repli sur le français si la langue est inconnue, et sur la clé si le
+ * texte manque — comme t() côté front, pour que l'absence se voie.
+ */
+function mail_t(string $cle, ?string $lang = null, array $vars = []): string {
+    $d = mail_i18n()[$cle] ?? null;
+    if (!$d) return $cle;
+    $l = in_array((string)$lang, ['fr','en','es','de','zh','ar'], true) ? (string)$lang : 'fr';
+    $s = $d[$l] ?? $d['fr'] ?? $cle;
+    foreach ($vars as $k => $v) $s = str_replace('{' . $k . '}', (string)$v, $s);
+    return $s;
+}

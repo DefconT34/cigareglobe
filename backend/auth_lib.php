@@ -65,7 +65,7 @@ function csrf_verify(): void {
 function current_user(PDO $db): ?array {
     if (empty($_SESSION['uid'])) return null;
     $stmt = $db->prepare(
-        "SELECT id, email, display_name, role, email_verified, avatar_url, bio, status, created_at, last_login_at
+        "SELECT id, email, display_name, role, email_verified, avatar_url, bio, lang, status, created_at, last_login_at
          FROM users WHERE id = ? AND status = 'active'"
     );
     $stmt->execute([(int)$_SESSION['uid']]);
@@ -123,6 +123,7 @@ function user_public(array $u): array {
         'email_verified' => (bool)$u['email_verified'],
         'avatar_url'     => $u['avatar_url'] ?? null,
         'bio'            => $u['bio'] ?? null,
+        'lang'           => $u['lang'] ?? null,
     ];
 }
 
@@ -154,6 +155,45 @@ function password_error(string $p): string {
     if (strlen($p) < 8)   return 'Le mot de passe doit contenir au moins 8 caractères.';
     if (strlen($p) > 200) return 'Mot de passe trop long.';
     return '';
+}
+
+// ── Langue de correspondance ──────────────────────────────
+/** Les six langues du site. Une valeur hors liste est ignorée. */
+function langues_site(): array {
+    return ['fr', 'en', 'es', 'de', 'zh', 'ar'];
+}
+
+/**
+ * Langue à retenir pour un nouveau compte.
+ *
+ * Cascade à trois niveaux, du plus fiable au plus général :
+ *
+ *   1. la langue dans laquelle la personne NAVIGUAIT en s'inscrivant.
+ *      Ce n'est pas une déduction mais un choix — elle a cliqué son
+ *      drapeau, ou est arrivée par /de/ ;
+ *   2. l'en-tête Accept-Language du navigateur, envoyé gratuitement par
+ *      tous, et qui reflète la langue du système ;
+ *   3. le français.
+ *
+ * Déduire la langue du PAYS a été écarté : ce n'est pas une fonction
+ * (Cameroun, Suisse, Belgique, Singapour en ont plusieurs), et obtenir
+ * le pays aurait demandé une base GeoIP — la dépendance payante qu'on
+ * voulait éviter. Voir migration 014.
+ */
+function langue_demandee(?string $souhaitee = null): string {
+    $ok = langues_site();
+    $l  = strtolower(trim((string)$souhaitee));
+    if (in_array($l, $ok, true)) return $l;
+
+    // Accept-Language : « fr-CH,fr;q=0.9,en;q=0.8 ». On ne garde que le
+    // code primaire de chaque entrée, dans l'ordre d'arrivee — les
+    // navigateurs les listent deja par preference decroissante.
+    $hdr = (string)($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
+    foreach (explode(',', $hdr) as $morceau) {
+        $code = strtolower(trim(explode('-', explode(';', $morceau)[0])[0]));
+        if (in_array($code, $ok, true)) return $code;
+    }
+    return 'fr';
 }
 
 // ── URL du site (pour les liens email) ────────────────────

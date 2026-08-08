@@ -1,0 +1,34 @@
+-- ═══════════════════════════════════════════════════════════════════
+-- Migration 014 — Langue du compte
+-- ───────────────────────────────────────────────────────────────────
+-- L'email d'approbation (migration 013) partait en français, quelle que
+-- soit la personne. Il fallait savoir dans quelle langue lui écrire.
+--
+-- CE QUI A ÉTÉ ÉCARTÉ
+--
+--   Déduire la langue du PAYS. Ce n'est pas une fonction : le Cameroun
+--   en a deux, la Suisse trois, la Belgique trois, Singapour trois —
+--   c'est écrit dans data.pays.js. Et connaître le pays aurait exigé une
+--   base GeoIP, donc la dépendance payante qu'on cherchait à éviter.
+--
+--   Un champ « nationalité » à l'inscription. La nationalité n'est pas
+--   la langue (un Algérien écrit souvent en français, un Belge peut être
+--   néerlandophone), cela ajoute de la friction pour un usage rare, et
+--   c'est une donnée personnelle collectée sans nécessité.
+--
+-- CE QUI EST RETENU
+--
+--   La langue dans laquelle la personne NAVIGUAIT en s'inscrivant. Ce
+--   n'est pas une déduction mais un choix : elle a cliqué son drapeau ou
+--   est arrivée par /de/. Le repli suit `Accept-Language`, envoyé
+--   gratuitement par tout navigateur, puis le français.
+--
+--   Modifiable dans le profil : une valeur fausse reste corrigible par
+--   la personne concernée, ce qu'aucune déduction ne permet.
+--
+-- NULL est un état utile : « jamais renseigné », distinct d'un choix
+-- explicite du français. Les comptes existants le restent.
+-- ═══════════════════════════════════════════════════════════════════
+
+ALTER TABLE users
+  ADD COLUMN lang VARCHAR(5) NULL DEFAULT NULL COMMENT 'Langue de correspondance : fr, en, es, de, zh, ar';

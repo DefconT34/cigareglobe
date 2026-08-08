@@ -201,7 +201,15 @@ $mail = (string)@file_get_contents($MAIL_LOG, false, null, $MAIL_AV);
 check('approbation : le contributeur est prevenu par email',
       str_contains($mail, 'alice@test.local') && str_contains($mail, 'en ligne'));
 check('approbation : l\'email pointe la fiche creee',
-      (bool)preg_match('/[?&]lounge=[0-9]+/', $mail));
+      (bool)preg_match('/[?&]lounge=[0-9]+/', $mail));
+
+// Langue de correspondance (migration 014). Alice s'est inscrite sans
+// preciser de langue et sans Accept-Language : elle est donc en
+// francais, et l'email doit l'etre aussi.
+$lg = test_pdo()->query("SELECT lang FROM users WHERE email = 'alice@test.local'")->fetchColumn();
+eq('langue : renseignee a l\'inscription', 'fr', $lg);
+check('langue : l\'email suit la langue du compte',
+      str_contains($mail, 'etablissement est en ligne') || str_contains($mail, 'tablissement est en ligne'));
 $MAIL_AV2 = is_file($MAIL_LOG) ? filesize($MAIL_LOG) : 0;
 
 // Rejouer l'approbation ne doit pas dupliquer la fiche.

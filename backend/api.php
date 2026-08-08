@@ -759,10 +759,15 @@ function action_profile_update(): void {
     $name   = clean($body['display_name'] ?? '', 80);
     $bio    = clean($body['bio']    ?? '', 500);
     $avatar = clean($body['avatar'] ?? '', 16);   // emoji ou courte chaîne
+    // Langue de correspondance (migration 014). Renseignee a
+    // l'inscription depuis la langue du site ; modifiable ici, car une
+    // valeur fausse doit rester corrigible par la personne concernee.
+    // Absente du corps : on ne touche pas a la valeur enregistree.
+    $lang = isset($body['lang']) ? langue_demandee((string)$body['lang']) : null;
     if ($name === '') json_out(err('name_required', 'Nom d\'affichage requis.'), 400);
 
-    $db->prepare("UPDATE users SET display_name = ?, bio = ?, avatar_url = ? WHERE id = ?")
-       ->execute([$name, $bio ?: null, $avatar ?: null, $u['id']]);
+    $db->prepare("UPDATE users SET display_name = ?, bio = ?, avatar_url = ?, lang = COALESCE(?, lang) WHERE id = ?")
+       ->execute([$name, $bio ?: null, $avatar ?: null, $lang, $u['id']]);
 
     json_out(['success' => true, 'user' => user_public(current_user($db))]);
 }

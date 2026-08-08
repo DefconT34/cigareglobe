@@ -127,11 +127,18 @@ function notifier_contributeur(PDO $db, array $row): void {
     $email = trim((string)($row['contributor_email'] ?? ''));
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return;
 
-    $nom = '';
+    // Nom d'usage ET langue de correspondance, en une seule requête.
+    // La langue vient de `users.lang` (migration 014) : celle dans
+    // laquelle la personne naviguait en s'inscrivant. Un compte
+    // antérieur à la migration n'en a pas — repli sur le français.
+    $nom = ''; $lang = 'fr';
     if (!empty($row['user_id'])) {
-        $u = $db->prepare('SELECT display_name FROM users WHERE id = ?');
+        $u = $db->prepare('SELECT display_name, lang FROM users WHERE id = ?');
         $u->execute([(int)$row['user_id']]);
-        $nom = trim((string)$u->fetchColumn());
+        if ($c = $u->fetch(PDO::FETCH_ASSOC)) {
+            $nom  = trim((string)$c['display_name']);
+            $lang = (string)($c['lang'] ?: 'fr');
+        }
     }
 
     // Identifiant de la fiche creee, pour un lien qui l'ouvre directement.
@@ -140,21 +147,24 @@ function notifier_contributeur(PDO $db, array $row): void {
     $loungeId = (int)$f->fetchColumn();
     $url = site_url() . ($loungeId ? '/?lounge=' . $loungeId : '/');
 
-    $titre = $nom !== '' ? 'Merci, ' . $nom . ' !' : 'Merci pour votre contribution !';
-    // Texte accentué : celui-ci part chez un lecteur, pas dans un
-    // journal. email_template() l'échappe pour le HTML, et
-    // mail_text_from_html() redécode les entités pour l'alternative
-    // texte — les deux versions se lisent correctement.
-    $intro = '« ' . $row['name'] . ' » (' . $row['city'] . ', ' . $row['country_name'] . ')'
-           . ' vient d\'être publié sur CigarOdyssey. Votre signalement a été vérifié'
-           . ' puis ajouté à l\'atlas : il est désormais visible par tous les visiteurs.';
+    // Les textes viennent de mail_i18n() — le seul endroit où PHP
+    // traduit, et une exception assumée à la règle du lot F2. Un email
+    // n'a pas de front pour le faire à sa place. Voir mailer.php.
+    $titre = $nom !== ''
+        ? mail_t('appr_titre_nom', $lang, ['nom' => $nom])
+        : mail_t('appr_titre', $lang);
+    $intro = mail_t('appr_corps', $lang, [
+        'lieu'  => $row['name'],
+        'ville' => $row['city'],
+        'pays'  => $row['country_name'],
+    ]);
 
     // Un échec d'envoi ne doit jamais faire échouer l'approbation :
     // l'établissement est publié, c'est l'essentiel.
     try {
-        send_email($email, 'Votre établissement est en ligne — ' . $row['name'],
-            email_template($titre, $intro, 'Voir la fiche', $url,
-                'Vous recevez cet email parce que vous avez proposé un établissement sur CigarOdyssey.'));
+        send_email($email, mail_t('appr_sujet', $lang) . ' — ' . $row['name'],
+            email_template($titre, $intro, mail_t('appr_bouton', $lang), $url,
+                mail_t('appr_pied', $lang)));
     } catch (Throwable $e) {
         error_log('[moderation] notification non envoyee (#' . $row['id'] . ') : ' . $e->getMessage());
     }

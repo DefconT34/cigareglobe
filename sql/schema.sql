@@ -538,6 +538,7 @@ CREATE TABLE `users` (
   `status` enum('active','suspended') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_login_at` datetime DEFAULT NULL,
+  `lang` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Langue de correspondance : fr, en, es, de, zh, ar',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_users_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

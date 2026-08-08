@@ -78,6 +78,18 @@ Effort : P = Petit · M = Moyen · G = Gros.
     Pas d'email pour la publication directe d'un contributeur de confiance : l'interface
     le lui dit déjà, un envoi dans la seconde ferait mécanique
   - 9 vérifications, dont la présence de l'email et son absence au rejeu
+- [x] ~~**D14** — L'email d'approbation dans la langue de l'utilisateur~~ ✅ · migration 014
+  - `users.lang` renseigné à l'inscription depuis la **langue du site** — un choix, pas une
+    déduction. Repli sur `Accept-Language`, puis le français. Modifiable dans le profil
+  - **Écarté** : déduire la langue du pays (Cameroun fr·en, Suisse de·fr·it, Belgique
+    nl·fr·de — ce n'est pas une fonction, et il faudrait une base GeoIP payante) ;
+    un champ nationalité (≠ langue, friction, donnée collectée sans nécessité)
+  - **Aucun service payant** : le corps de l'email est fait de six phrases fixes,
+    traduites une fois dans `mail_i18n()`
+  - Première et **seule exception** à la règle F2 « le serveur ne traduit pas » — un email
+    n'a pas de front pour le faire. Documenté dans `docs/i18n.md`
+  - [ ] Reste : la **description libre** du contributeur, qui elle demanderait un service
+    de traduction. Décision reportée
 - [x] ~~**D8** — Position sur place dans « Signaler un établissement »~~ ✅ · migration 011
   - `lat`/`lon` sur `contributions` **et** `approved_lounges` : la position survit à l'approbation
   - Jamais demandée d'office ; un refus n'empêche pas l'envoi. Le serveur écarte hors-plage,

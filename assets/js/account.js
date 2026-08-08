@@ -241,7 +241,15 @@
 
     var req;
     if (kind === 'login')        req = api('login', 'POST', data);
-    else if (kind === 'register')req = api('register', 'POST', data);
+    else if (kind === 'register') {
+      // Langue de correspondance : celle dans laquelle la personne
+      // navigue AU MOMENT de son inscription. C'est un choix qu'elle a
+      // deja fait — drapeau clique, ou arrivee par /de/ — pas une
+      // deduction. Le serveur retombe sur Accept-Language si elle
+      // manque, puis sur le francais.
+      data.lang = window.currentLang || 'fr';
+      req = api('register', 'POST', data);
+    }
     else if (kind === 'forgot')  req = api('forgot', 'POST', data);
     else if (kind === 'reset')   req = api('reset', 'POST', { token: resetToken, password: data.password });
 
