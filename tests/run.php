@@ -305,7 +305,32 @@ eq('profil : passeport alimente par les lieux visites', ['testland'], $r['json']
 
 $r = post_json($base, $alice, '/backend/api.php?action=profile_update',
                ['display_name' => 'Alice B.', 'bio' => 'Amatrice de cigares.', 'avatar' => 'AB']);
-eq('profil : mise a jour', 'Alice B.', $r['json']['user']['display_name']);
+eq('profil : mise a jour', 'Alice B.', $r['json']['user']['display_name']);
+
+// ── Langue de correspondance dans le profil (migration 014) ──
+// Le piege : langue_demandee() retombe TOUJOURS sur une langue valable
+// (Accept-Language, puis francais). C'est juste a l'inscription, faux
+// ici — envoyer une valeur inconnue remettait le compte en francais,
+// ecrasant une preference deliberee.
+$lireLang = function () {
+    return test_pdo()->query("SELECT lang FROM users WHERE email = 'alice@test.local'")->fetchColumn();
+};
+$majLang = function ($v) use ($base, $alice) {
+    return post_json($base, $alice, '/backend/api.php?action=profile_update',
+                     ['display_name' => 'Alice B.', 'bio' => '', 'avatar' => '', 'lang' => $v]);
+};
+
+$majLang('ar');
+eq('profil : une langue valable est enregistree', 'ar', $lireLang());
+$majLang('klingon');
+eq('profil : une langue inconnue ne change rien', 'ar', $lireLang());
+$majLang('');
+eq('profil : une langue vide ne change rien', 'ar', $lireLang());
+$r = post_json($base, $alice, '/backend/api.php?action=profile_update',
+               ['display_name' => 'Alice B.', 'bio' => '', 'avatar' => '']);
+eq('profil : langue absente du corps, valeur conservee', 'ar', $lireLang());
+eq('profil : la langue est renvoyee au client', 'ar', $r['json']['user']['lang'] ?? null);
+$majLang('fr');
 
 $r = http('GET', $base . '/backend/api.php?action=profile', ['jar' => $anon]);
 eq('profil : consultation refusee sans compte ni identifiant', 401, $r['status']);

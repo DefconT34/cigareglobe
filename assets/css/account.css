@@ -294,3 +294,17 @@ body.mobile-mode .account-btn { padding: 6px; }
 }
 #mm-account button.primary { background: var(--gold); color: #fff; border-color: var(--gold); }
 #mm-account button:hover { border-color: var(--gold); }
+
+/* Sélecteur de langue du profil : même gabarit que les champs texte
+   voisins, et une note explicative sous le champ — sans elle, on croit
+   que ce réglage change l'affichage du site. */
+.cg-select {
+  width: 100%; padding: 9px 11px;
+  background: var(--bg2, #0A0603); border: 1px solid var(--panel-border, rgba(201,162,39,.2));
+  border-radius: 6px; color: inherit; font-family: inherit; font-size: 13px;
+}
+.cg-select:focus { outline: none; border-color: var(--gold, #C9A227); }
+.cg-hint {
+  margin-top: 5px; font-size: 10.5px; line-height: 1.45;
+  color: var(--text2, #6B5030);
+}

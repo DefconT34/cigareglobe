@@ -106,6 +106,19 @@
       '<div class="cg-field"><label>' + t('prof_avatar') + '</label><input type="text" id="pf-avatar" maxlength="8" value="' + esc(p.avatar_url || '') + '" placeholder="🎩"></div>' +
       '<div class="cg-field"><label>' + t('acc_display_name') + '</label><input type="text" id="pf-name" maxlength="80" value="' + esc(p.display_name || '') + '"></div>' +
       '<div class="cg-field"><label>' + t('prof_bio') + '</label><textarea id="pf-bio" maxlength="500" rows="3" placeholder="' + t('prof_bio_ph') + '">' + esc(p.bio || '') + '</textarea></div>' +
+      // Langue de correspondance (migration 014). Les noms viennent de
+      // I18N[code].lang_name — chaque langue s'ecrit dans sa propre
+      // langue, comme la barre de drapeaux de l'en-tete. Aucune
+      // traduction supplementaire n'est donc necessaire.
+      '<div class="cg-field"><label>' + t('language') + '</label>' +
+        '<select id="pf-lang" class="cg-select">' +
+          Object.keys(window.I18N || {}).map(function (code) {
+            var sel = (p.lang || window.currentLang || 'fr') === code ? ' selected' : '';
+            return '<option value="' + code + '"' + sel + '>' + esc(I18N[code].lang_name) + '</option>';
+          }).join('') +
+        '</select>' +
+        '<div class="cg-hint">' + t('prof_lang_hint') + '</div>' +
+      '</div>' +
       '<div class="cg-prof-edit-actions">' +
         '<button type="button" class="cg-prof-cancel">' + t('ui_cancel') + '</button>' +
         '<button type="button" class="cg-prof-save">Enregistrer</button>' +
@@ -117,13 +130,14 @@
       var name = document.getElementById('pf-name').value.trim();
       var bio  = document.getElementById('pf-bio').value.trim();
       var av   = document.getElementById('pf-avatar').value.trim();
+      var lg   = document.getElementById('pf-lang').value;
       var msg  = document.getElementById('cgProfMsg');
       if (!name) { msg.className = 'cg-msg err'; msg.textContent = t('prof_name_required'); return; }
       var btn = box.querySelector('.cg-prof-save'); btn.disabled = true;
       fetch(apiBase() + '?action=profile_update', {
         method: 'POST', credentials: 'include',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (A ? A.csrf : '') },
-        body: JSON.stringify({ display_name: name, bio: bio, avatar: av })
+        body: JSON.stringify({ display_name: name, bio: bio, avatar: av, lang: lg })
       })
         .then(function (r) { return r.json(); })
         .then(function (d) {

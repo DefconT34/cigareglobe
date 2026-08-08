@@ -87,7 +87,13 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - **Aucun service payant** : le corps de l'email est fait de six phrases fixes,
     traduites une fois dans `mail_i18n()`
   - Première et **seule exception** à la règle F2 « le serveur ne traduit pas » — un email
-    n'a pas de front pour le faire. Documenté dans `docs/i18n.md`
+    n'a pas de front pour le faire. Documenté dans `docs/i18n.md`
+  - **Sélecteur dans le profil** : les noms viennent de `I18N[code].lang_name` (chaque langue
+    dans sa propre langue), donc **une seule clé ajoutée** — la note qui précise que ce
+    réglage gouverne les emails, pas l'affichage du site
+  - **Défaut trouvé en testant** : une valeur invalide écrasait la préférence. `langue_demandee()`
+    retombe toujours sur une langue valable — juste à l'inscription, faux dans le profil où
+    le repli détruisait un choix délibéré. Correspondance stricte désormais, 5 vérifications
   - [ ] Reste : la **description libre** du contributeur, qui elle demanderait un service
     de traduction. Décision reportée
 - [x] ~~**D8** — Position sur place dans « Signaler un établissement »~~ ✅ · migration 011

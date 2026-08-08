@@ -392,6 +392,7 @@ const I18N = {
     fiche_distance_btn:'Calculer la distance',
     fiche_multifuseau:'Heure de la capitale : ce pays compte plusieurs fuseaux.',
     lc_itineraire:'Itinéraire',
+    prof_lang_hint:"Langue de nos emails. L'affichage du site suit les drapeaux en haut de page.",
   },
 
   en: {
@@ -782,6 +783,7 @@ const I18N = {
     fiche_distance_btn:'Calculate distance',
     fiche_multifuseau:'Capital time: this country spans several time zones.',
     lc_itineraire:'Directions',
+    prof_lang_hint:'Language of our emails. The site display follows the flags at the top of the page.',
   },
 
   es: {
@@ -1172,6 +1174,7 @@ const I18N = {
     fiche_distance_btn:'Calcular la distancia',
     fiche_multifuseau:'Hora de la capital: este país tiene varios husos horarios.',
     lc_itineraire:'Cómo llegar',
+    prof_lang_hint:'Idioma de nuestros correos. La visualización del sitio sigue las banderas de arriba.',
   },
 
   de: {
@@ -1562,6 +1565,7 @@ const I18N = {
     fiche_distance_btn:'Entfernung berechnen',
     fiche_multifuseau:'Zeit der Hauptstadt: dieses Land hat mehrere Zeitzonen.',
     lc_itineraire:'Route',
+    prof_lang_hint:'Sprache unserer E-Mails. Die Anzeige der Website richtet sich nach den Flaggen oben.',
   },
 
   zh: {
@@ -1952,6 +1956,7 @@ const I18N = {
     fiche_distance_btn:'计算距离',
     fiche_multifuseau:'首都时间：该国横跨多个时区。',
     lc_itineraire:'路线',
+    prof_lang_hint:'我们发送邮件所用的语言。网站显示语言由页面顶部的旗帜决定。',
   },
 
   ar: {
@@ -2342,6 +2347,7 @@ const I18N = {
     fiche_distance_btn:'احسب المسافة',
     fiche_multifuseau:'توقيت العاصمة: لهذا البلد أكثر من منطقة زمنية.',
     lc_itineraire:'المسار',
+    prof_lang_hint:'لغة رسائلنا الإلكترونية. أما لغة عرض الموقع فتتبع الأعلام في أعلى الصفحة.',
   },
 };
 

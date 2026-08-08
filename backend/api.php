@@ -743,6 +743,10 @@ function action_profile(): void {
             'bio'          => $u['bio'] ?? null,
             'role'         => $u['role'],
             'created_at'   => $u['created_at'],
+            // Uniquement sur SON PROPRE profil : la langue de
+            // correspondance est une preference, pas une information
+            // publique. `$uid > 0` designe la consultation d'un tiers.
+            'lang'         => empty($_GET['user']) ? ($u['lang'] ?? null) : null,
         ],
         'stats'    => $stats,
         'passport' => $passport,
@@ -763,7 +767,17 @@ function action_profile_update(): void {
     // l'inscription depuis la langue du site ; modifiable ici, car une
     // valeur fausse doit rester corrigible par la personne concernee.
     // Absente du corps : on ne touche pas a la valeur enregistree.
-    $lang = isset($body['lang']) ? langue_demandee((string)$body['lang']) : null;
+    // Ici, contrairement a l'inscription, PAS de langue_demandee() :
+    // elle retombe toujours sur une langue valable (Accept-Language,
+    // puis francais), ce qui est juste pour un compte qui n'en a pas
+    // encore. Dans le profil, ce repli ECRASERAIT la preference
+    // enregistree : envoyer « klingon » remettait le compte en
+    // francais. Une valeur non reconnue doit ne rien changer.
+    $lang = null;
+    if (isset($body['lang'])) {
+        $l = strtolower(trim((string)$body['lang']));
+        if (in_array($l, langues_site(), true)) $lang = $l;
+    }
     if ($name === '') json_out(err('name_required', 'Nom d\'affichage requis.'), 400);
 
     $db->prepare("UPDATE users SET display_name = ?, bio = ?, avatar_url = ?, lang = COALESCE(?, lang) WHERE id = ?")
