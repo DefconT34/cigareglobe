@@ -204,9 +204,11 @@ function openLex(c) {
   }
 }
 
-document.getElementById('lexClose').onclick = function() {
-  document.getElementById('lex').classList.remove('open');
-};
+// La fermeture des panneaux vit dans interactions.js (closePanels).
+// Elle etait ici en double, et comme « .onclick = » REMPLACE au lieu
+// d'ajouter, ce fichier — charge apres — ecrasait silencieusement la
+// version d'interactions.js. Celle-ci ramenait a l'onglet Globe sur
+// mobile ; la sienne non. Le bon code existait, il etait mort.
 
 // ════════════════════════════════════════════════════════
 // RIGHT DETAIL PANEL
@@ -323,17 +325,7 @@ function brandCard(b, c) {
   '</div>';
 }
 
-document.getElementById('panelClose').onclick = function() {
-  document.getElementById('panel').classList.remove('open');
-  document.getElementById('lex').classList.remove('open');
-  selCountry = null;
-  document.getElementById('flag-bg').classList.remove('visible');
-  // Sans cela, trois boucles d'animation continuaient de peindre un
-  // canvas plein ecran devenu invisible, jusqu'a la fiche suivante.
-  if (window.stopFlags) window.stopFlags();
-  if (window.ficheArreter) window.ficheArreter();
-  setTimeout(function() { autoRot = true; }, 1500);
-};
+// (voir la note ci-dessus : panelClose est gere par closePanels)
 
 // ════════════════════════════════════════════════════════
 // BRAND MODAL — chargement lazy depuis MySQL

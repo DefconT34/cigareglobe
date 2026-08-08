@@ -65,7 +65,21 @@ Même discipline que `sql/schema.sql` — voir `sql/README.md`.
 | `explorer.spec.js` | ouverture, champ de filtre, filtres texte et région |
 | `i18n.spec.js` | changement de langue sur les deux champs de recherche |
 | `a11y.spec.js` | clavier, étiquettes, alternative textuelle du globe |
-| `responsive.spec.js` | mode mobile (projet `chromium-mobile`, Pixel 7) |
+| `responsive.spec.js` | mode mobile (projet `chromium-mobile`, Pixel 7), reprise du globe après fermeture |
+
+## L'angle mort qui a coûté deux défauts
+
+Deux fois dans la même journée, la campagne est passée au vert pendant
+qu'un défaut bien visible attendait sous les yeux :
+
+- le globe **sans continents** dans les cinq langues préfixées — aucun
+  parcours n'ouvrait la page sous `/en/` ou `/ar/` ;
+- le globe **figé sur mobile** après fermeture d'un panneau par sa croix —
+  les parcours ouvraient des panneaux, ils n'en fermaient aucun.
+
+La leçon est la même : **un parcours qui n'exécute pas le geste ne dit
+rien sur ce geste.** Quand vous ajoutez un test, demandez-vous ce qu'il
+NE traverse pas — c'est là que se logent les défauts suivants.
 
 Plusieurs tests portent la mention **Régression** avec le commit
 d'origine : ils gardent un défaut déjà corrigé de revenir. Quand vous

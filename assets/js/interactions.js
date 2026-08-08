@@ -304,7 +304,16 @@ function closePanels() {
     const b = document.getElementById(id);
     if (b) b.classList.remove('has-content');
   });
+  // Retour a l'onglet Globe sur mobile. C'est VITAL, pas cosmetique :
+  // la boucle de rendu se met en pause hors de cet onglet (_globeHidden)
+  // et seul switchMobileTab('globe') la relance. Sans cet appel, fermer
+  // un panneau par sa croix laissait le globe FIGE — il reapparaissait
+  // immobile, et l'utilisateur croyait l'application plantee.
   if (typeof switchMobileTab === 'function') switchMobileTab('globe');
+  // Animations du drapeau et horloge de la fiche : sans arret, trois
+  // boucles continuaient de peindre un canvas plein ecran invisible.
+  if (window.stopFlags) window.stopFlags();
+  if (window.ficheArreter) window.ficheArreter();
   setTimeout(() => { autoRot = true; }, 1500);
 }
 

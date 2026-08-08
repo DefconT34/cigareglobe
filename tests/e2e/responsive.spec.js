@@ -86,4 +86,53 @@ test.describe('Mobile', () => {
     const boite = await champ.boundingBox();
     expect(boite.width).toBeGreaterThan(150);
   });
+
+  // ── Regression : le globe restait FIGE apres fermeture ──
+  // Sur mobile, la boucle de rendu se met en pause hors de l'onglet
+  // Globe (_globeHidden), et seul switchMobileTab('globe') la relance.
+  //
+  // `interactions.js` definissait bien une fermeture qui appelait
+  // switchMobileTab('globe') — mais `panels.js`, charge APRES,
+  // reassignait panelClose.onclick. Or « .onclick = » remplace au lieu
+  // d'ajouter : le bon gestionnaire etait mort, et fermer un panneau par
+  // sa croix laissait le globe immobile. L'utilisateur croyait
+  // l'application plantee ; il fallait taper l'onglet Globe pour la
+  // reveiller, ce que personne ne devine.
+  //
+  // Invisible sur bureau : _globeHidden() exige la classe mobile-mode.
+  test('le globe repart apres fermeture d\'un panneau par la croix', async ({ page }) => {
+    await ouvrir(page, '/');
+    await expect(page.locator('body')).toHaveClass(/mobile-mode/, { timeout: 20_000 });
+
+    const resultat = await page.evaluate(async () => {
+      const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+      const vrai = window.drawGlobe;
+      let n = 0;
+      window.drawGlobe = function () { n++; return vrai.apply(null, arguments); };
+
+      // Ouvrir un pays producteur : l'onglet bascule, la boucle se met en pause
+      selectEntity('country', COUNTRIES.find((c) => c.id === 'cuba'));
+      await pause(500);
+      const ongletOuvert = mobileActiveTab;
+
+      // Le geste qui plantait : fermer par la croix, PAS par la barre du bas
+      document.getElementById('panelClose').click();
+      await pause(400);
+      n = 0;
+      await pause(600);
+
+      const out = { ongletOuvert, ongletFerme: mobileActiveTab, rendus: n };
+      window.drawGlobe = vrai;
+      return out;
+    });
+
+    // Le panneau avait bien pris la main…
+    expect(resultat.ongletOuvert).toBe('panel');
+    // …et la croix rend la main au globe.
+    expect(resultat.ongletFerme).toBe('globe');
+    // Le seul critere qui compte : ca redessine. Zero = fige.
+    expect(resultat.rendus,
+           'le globe ne se redessine plus apres fermeture par la croix')
+      .toBeGreaterThan(0);
+  });
 });

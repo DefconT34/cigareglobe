@@ -80,7 +80,18 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
 - [x] ~~**D4** — Globe : navigation clavier + alternative textuelle~~ ✅
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
-- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [x] ~~**D15** — Globe figé sur mobile après fermeture d'un panneau~~ ✅
+  - Sur mobile la boucle de rendu se met en pause hors de l'onglet Globe ; seul
+    `switchMobileTab('globe')` la relance. Fermer par la **croix** ne le faisait pas :
+    le panneau disparaissait, le globe réapparaissait **immobile**
+  - Cause : `interactions.js` définissait la bonne fermeture, mais `panels.js` — chargé
+    après — réassignait `panelClose.onclick`. **`.onclick =` remplace au lieu d'ajouter** :
+    le bon gestionnaire était mort depuis l'introduction du mode mobile
+  - Invisible sur bureau (`_globeHidden()` exige `mobile-mode`) et invisible en test :
+    les 46 parcours ouvraient des panneaux sans jamais en fermer un en mode mobile
+  - Fermeture unifiée dans `closePanels()`, doublons supprimés, test de non-régression
+    vérifié dans les deux sens
 - [x] ~~**D13** — L'approbation crée un vrai établissement, et prévient l'auteur~~ ✅ · migration 013
   - **Défaut corrigé** : `data.php` lisait `approved_lounges WHERE status = 'approved'` —
     colonne qui n'a jamais existé. L'erreur SQL était avalée par un `catch` posé pour
