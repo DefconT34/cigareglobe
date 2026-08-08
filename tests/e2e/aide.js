@@ -83,4 +83,41 @@ function collecteErreurs(page) {
   return erreurs;
 }
 
-module.exports = { ouvrir, collecteErreurs };
+/**
+ * Rend les noms de marques dont la FICHE COMPLETE se charge vraiment.
+ *
+ * Les pays annoncent leurs marques dans les donnees du globe, mais
+ * l'atlas de test ne porte le detail que de quelques-unes : demander
+ * les autres rend un 404, et BRANDS_DB reste vide. Un test qui prendrait
+ * « la premiere marque du premier pays » tomberait donc sur une fiche
+ * sans nom et sans histoire — et verifierait le rendu de rien.
+ *
+ * « action=all » donne la liste des marques REELLEMENT en base, en une
+ * requete. Essayer les candidates une a une pour voir lesquelles
+ * repondent couterait autant de 404 que de marques annoncees, sur un
+ * serveur qui ne traite qu'une requete a la fois — c'est ce qui faisait
+ * expirer le parcours en emulation mobile.
+ *
+ * @param {number} combien nombre de marques attendues
+ */
+async function marquesChargeables(page, combien = 1) {
+  return page.evaluate(async (combien) => {
+    const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+    const tout = await (await fetch('/backend/data.php?action=all&lang=fr')).json();
+    const enBase = new Set(Object.keys(tout.brands || tout.BRANDS || {}));
+
+    const ok = [];
+    for (const c of (window.COUNTRIES || [])) {
+      for (const b of (c.brands || [])) {
+        if (ok.length >= combien || !enBase.has(b.name)) continue;
+        openBrand(b.name, c.id);
+        for (let i = 0; i < 60 && !(window.BRANDS_DB || {})[b.name]; i++) await pause(100);
+        if ((window.BRANDS_DB || {})[b.name]) ok.push({ nom: b.name, cid: c.id });
+      }
+    }
+    document.getElementById('bmodal').classList.remove('open');
+    return ok;
+  }, combien);
+}
+
+module.exports = { ouvrir, collecteErreurs, marquesChargeables };

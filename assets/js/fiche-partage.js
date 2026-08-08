@@ -51,6 +51,58 @@
     };
   }
 
+  // ══ FILIGRANE ═══════════════════════════════════════════
+  // Une feuille de tabac, dessinée en courbes plutôt qu'importée : une
+  // image de fond serait un aller-retour réseau de plus au moment
+  // précis où l'on veut partager, et le partage natif n'attend pas.
+  //
+  // Les nervures ne sont pas décoratives — sans elles, la silhouette se
+  // lit comme une goutte. C'est le rachis et les nervures secondaires
+  // qui disent « feuille ».
+  //
+  // Opacité 5 % : à 10 % on la voit derrière le texte, à 2 % elle
+  // disparaît une fois l'image recompressée par WhatsApp.
+  function feuille(g, cx, cy, taille, angle, alpha, couleur) {
+    g.save();
+    g.translate(cx, cy);
+    g.rotate(angle);
+    var W = taille * 0.33;                       // demi-largeur au plus large
+
+    g.globalAlpha = alpha;
+    g.fillStyle = couleur;
+    g.beginPath();
+    g.moveTo(0, 0);
+    g.bezierCurveTo(W * 1.05, -taille * 0.18, W * 0.95, -taille * 0.62, 0, -taille);
+    g.bezierCurveTo(-W * 0.95, -taille * 0.62, -W * 1.05, -taille * 0.18, 0, 0);
+    g.closePath();
+    g.fill();
+
+    // Rachis + nervures secondaires, un peu plus marquées que le limbe.
+    g.globalAlpha = alpha * 2.1;
+    g.strokeStyle = couleur;
+    g.lineWidth = Math.max(1, taille * 0.006);
+    g.beginPath(); g.moveTo(0, -taille * 0.02); g.lineTo(0, -taille * 0.96); g.stroke();
+    for (var i = 0.12; i < 0.86; i += 0.13) {
+      // Les nervures sont plus longues au milieu de la feuille, comme
+      // la largeur du limbe qui les porte.
+      var w = W * (1 - Math.abs(i - 0.42) * 0.9);
+      for (var s = -1; s <= 1; s += 2) {
+        g.beginPath();
+        g.moveTo(0, -taille * i);
+        g.quadraticCurveTo(s * w * 0.55, -taille * (i + 0.05), s * w * 0.82, -taille * (i + 0.14));
+        g.stroke();
+      }
+    }
+    g.restore();
+  }
+
+  /** Trois feuilles en fond, posées dans les angles que le texte n'occupe pas. */
+  function filigrane(g, c) {
+    feuille(g, L + 60, H + 80, 700, -0.60, 0.050, c.or);   // grande, angle bas-droit
+    feuille(g, L + 60, -80,    520, -2.50, 0.045, c.or);   // haut-droit, retombante
+    feuille(g, -60,    H + 40, 400,  0.60, 0.045, c.or);   // bas-gauche, petite
+  }
+
   /**
    * Découpe un texte en lignes qui tiennent dans une largeur.
    * measureText est le seul juge : compter les caractères se trompe dès
@@ -79,10 +131,83 @@
     ctx.fillRect(x, y, l, 1);
   }
 
+  /** L'interlettrage n'existe pas sur canvas : on le pose lettre à lettre. */
+  function interlettre(g, txt, x, y, ecart, rtl) {
+    var cx = x;
+    for (var i = 0; i < txt.length; i++) {
+      g.fillText(txt[i], cx, y);
+      cx += (g.measureText(txt[i]).width + ecart) * (rtl ? -1 : 1);
+    }
+  }
+
+  /** Les libellés du site portent un emoji ; la fiche est en or et en Cinzel. */
+  function sansEmoji(s) {
+    return String(s || '').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '').trim();
+  }
+
+  // ══ LES DISTINCTIONS ════════════════════════════════════
+  // Le bas de la fiche était vide sous l'histoire, avec une seule
+  // médaille posée dans le blanc. Les notes sont pourtant ce qui donne
+  // sa valeur à la maison — elles ferment la fiche, en grille, comme
+  // dans l'article.
+  var DIST_MAX = 6;             // deux colonnes, trois rangs
+  var DIST_TITRE = 46;          // hauteur du titre de section
+  var DIST_ITEM = 76, DIST_GAP = 14;
+
+  function distHauteur(n) {
+    if (!n) return 0;
+    var rangs = Math.ceil(n / 2);
+    return DIST_TITRE + rangs * DIST_ITEM + (rangs - 1) * DIST_GAP;
+  }
+
+  function distDessiner(g, c, liste, y, rtl) {
+    var largeur = L - M * 2;
+    var colL = (largeur - 24) / 2;
+
+    g.font = '400 22px "Cinzel", serif';
+    g.fillStyle = c.or;
+    g.textAlign = rtl ? 'right' : 'left';
+    interlettre(g, sansEmoji(t('bm_distinctions')).toUpperCase(), rtl ? L - M : M, y, 5, rtl);
+    y += DIST_TITRE - 12;
+
+    liste.forEach(function (s, i) {
+      var col = i % 2, rang = Math.floor(i / 2);
+      var bx = rtl
+        ? L - M - colL - col * (colL + 24)
+        : M + col * (colL + 24);
+      var by = y + rang * (DIST_ITEM + DIST_GAP);
+
+      g.fillStyle = c.orPale;
+      g.fillRect(bx, by, colL, DIST_ITEM);
+      g.fillStyle = c.or;
+      g.fillRect(rtl ? bx + colL - 5 : bx, by, 5, DIST_ITEM);   // le liseré, côté marge
+
+      // Un 100/100 s'écrit « 100 » : le pictogramme du site ne
+      // survivrait pas au canvas, et le chiffre est plus fort.
+      var xNote = rtl ? bx + colL - 26 : bx + 26;
+      var xInfo = rtl ? bx + colL - 112 : bx + 112;
+      g.textAlign = rtl ? 'right' : 'left';
+      g.font = '900 42px "Playfair Display", serif';
+      g.fillStyle = c.texte;
+      g.fillText(String(s.score), xNote, by + 54);
+
+      g.font = '700 20px "Lato", sans-serif';
+      g.fillStyle = c.texte;
+      var titre = lignes(g, s.source + ' · ' + s.year, colL - 136, 1).lignes[0] || '';
+      g.fillText(titre, xInfo, s.vitola ? by + 34 : by + 46);
+      if (s.vitola) {
+        g.font = '400 18px "Lato", sans-serif';
+        g.fillStyle = c.texte2;
+        var v = lignes(g, s.vitola, colL - 136, 1);
+        g.fillText(v.reste ? v.lignes[0] + '…' : v.lignes[0], xInfo, by + 60);
+      }
+    });
+  }
+
   /**
    * Dessine la fiche et rend un Blob PNG.
-   * @param {object} b   marque (BRANDS_DB)
-   * @param {object} ctx pays d'origine { flag, name }
+   * @param {object} b    marque (BRANDS_DB)
+   * @param {object} pays pays d'origine { flag, name }
    */
   async function dessiner(b, pays) {
     var c = palette();
@@ -109,6 +234,7 @@
     // ── Fond ─────────────────────────────────────────────
     g.fillStyle = c.fond;
     g.fillRect(0, 0, L, H);
+    filigrane(g, c);                    // avant tout le reste : c'est un fond
     // Bandeau or en tête, signature discrète de la marque du site
     g.fillStyle = c.or;
     g.fillRect(0, 0, L, 10);
@@ -131,14 +257,7 @@
     // même chose, partout.
     var surtitre = (t('bm_maison') || 'MAISON') + ' · '
                  + ((pays && pays.name) ? pays.name.toUpperCase() : '');
-    // L'interlettrage n'existe pas sur canvas : on le pose lettre à lettre.
-    (function espace(txt, ecart) {
-      var cx = x;
-      for (var i = 0; i < txt.length; i++) {
-        g.fillText(txt[i], cx, y);
-        cx += (g.measureText(txt[i]).width + ecart) * (rtl ? -1 : 1);
-      }
-    })(surtitre, 6);
+    interlettre(g, surtitre, x, y, 6, rtl);
     y += 62;
 
     // ── Nom de la maison ─────────────────────────────────
@@ -159,14 +278,23 @@
     filet(g, M, y, largeur, c.or);
     y += 56;
 
+    // ── Ce que le bas réserve ────────────────────────────
+    // On réserve la place des distinctions AVANT de couler l'histoire :
+    // c'est le texte qui s'adapte à la grille, jamais l'inverse. Sans
+    // distinction, l'histoire récupère toute la hauteur.
+    var dist = (b.scores || []).slice()
+      .sort(function (a, z) { return z.score - a.score; })
+      .slice(0, DIST_MAX);
+    var blocH = distHauteur(dist.length);
+    var yPied = H - 118;                          // le filet du pied
+    var yDist = yPied - 52 - blocH;
+    var hauteurDispo = yDist - 46 - y;
+
     // ── L'histoire ───────────────────────────────────────
-    // C'est le cœur de la fiche : tout le reste lui laisse la place.
-    // On calcule d'abord ce qui tient, et on ferme sur une phrase.
     g.font = '400 27px "Lato", sans-serif';
     g.fillStyle = c.texte;
-    var hauteurDispo = H - y - 250;          // 250 : distinctions + pied
-    var interligne = 47;                      // 27px × 1.75
-    var maxL = Math.floor(hauteurDispo / interligne);
+    var interligne = 47;                          // 27px × 1.75
+    var maxL = Math.max(1, Math.floor(hauteurDispo / interligne));
     var res = lignes(g, b.history, largeur, maxL);
     res.lignes.forEach(function (l, i) {
       // Dernière ligne tronquée : on la ferme proprement.
@@ -178,37 +306,16 @@
       y += interligne;
     });
 
-    // ── Une distinction, s'il y en a une ─────────────────
-    var meilleur = (b.scores || []).slice().sort(function (a, z) { return z.score - a.score; })[0];
-    if (meilleur) {
-      y = H - 216;
-      var badgeL = 300, badgeH = 78;
-      var bx = rtl ? L - M - badgeL : M;
-      g.fillStyle = c.orPale;
-      g.fillRect(bx, y - 52, badgeL, badgeH);
-      g.fillStyle = c.or;
-      g.fillRect(bx, y - 52, 5, badgeH);
-      g.textAlign = 'left'; g.direction = 'ltr';
-      g.font = '900 40px "Playfair Display", serif';
-      g.fillText(meilleur.score === 100 ? '100' : String(meilleur.score), bx + 26, y);
-      g.font = '400 19px "Lato", sans-serif';
-      g.fillStyle = c.texte2;
-      g.fillText(meilleur.source + ' · ' + meilleur.year, bx + 100, y - 6);
-      g.textAlign = rtl ? 'right' : 'left';
-      g.direction = rtl ? 'rtl' : 'ltr';
-    }
+    // ── Les distinctions ─────────────────────────────────
+    if (dist.length) distDessiner(g, c, dist, yDist + 22, rtl);
 
     // ── Pied : la signature ──────────────────────────────
-    filet(g, M, H - 118, largeur, c.trait);
+    g.textAlign = rtl ? 'right' : 'left';
+    g.direction = rtl ? 'rtl' : 'ltr';
+    filet(g, M, yPied, largeur, c.trait);
     g.font = '400 24px "Cinzel", serif';
     g.fillStyle = c.or;
-    (function espace(txt, ecart) {
-      var cx = rtl ? L - M : M;
-      for (var i = 0; i < txt.length; i++) {
-        g.fillText(txt[i], cx, H - 70);
-        cx += (g.measureText(txt[i]).width + ecart) * (rtl ? -1 : 1);
-      }
-    })('CIGAR ODYSSEY', 7);
+    interlettre(g, 'CIGAR ODYSSEY', rtl ? L - M : M, H - 70, 7, rtl);
     g.font = '400 20px "Lato", sans-serif';
     g.fillStyle = c.texte2;
     g.textAlign = rtl ? 'left' : 'right';
@@ -217,12 +324,66 @@
     return new Promise(function (res) { cv.toBlob(res, 'image/png'); });
   }
 
+  // ══ LE PARTAGE ══════════════════════════════════════════
+  // Sur téléphone, le bon partage est celui du SYSTÈME : la feuille
+  // native connaît les applications installées, les contacts récents et
+  // les conventions de la plateforme. Rien de ce qu'on écrirait ne
+  // ferait mieux.
+  //
+  // Encore faut-il y arriver. navigator.share() exige une « activation
+  // transitoire » : l'appel doit partir du geste de l'utilisateur. Or
+  // dessiner la fiche demande de charger cinq polices puis d'encoder un
+  // PNG de 230 Ko — bien assez pour que Safari considère le geste
+  // périmé et refuse le partage. Une fiche parfaite qu'on ne peut pas
+  // envoyer ne sert à rien.
+  //
+  // D'où la préparation en amont : la fiche est dessinée dès que
+  // l'article est affiché, pendant que le visiteur lit. Au moment du
+  // geste, l'image est là, et share() part sans le moindre await.
+  var _cache = { nom: null, blob: null, encours: null };
+
+  function preparer(nom, cid) {
+    if (_cache.nom === nom && (_cache.blob || _cache.encours)) return _cache.encours;
+    var b = (window.BRANDS_DB || {})[nom];
+    if (!b) return null;
+    _cache = { nom: nom, blob: null, encours: null };
+    var p = dessiner(b, paysDe(nom, cid))
+      .then(function (blob) { if (_cache.nom === nom) _cache.blob = blob; return blob; })
+      .catch(function () { return null; });
+    _cache.encours = p;
+    return p;
+  }
+
+  function paysDe(nom, cid) {
+    var pays = (window.COUNTRIES || []);
+    return (cid && pays.find(function (x) { return x.id === cid; }))
+      || pays.find(function (x) {
+           return (x.brands || []).some(function (m) { return m.name === nom; });
+         })
+      || null;
+  }
+
+  function fichier(blob, nom) {
+    return new File([blob], nom.replace(/[^\w-]+/g, '_') + '.png', { type: 'image/png' });
+  }
+
+  function telecharger(blob, nom) {
+    if (!blob) return false;
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nom.replace(/[^\w-]+/g, '_') + '.png';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    return true;
+  }
+
   /**
-   * Partage la fiche d'une marque.
+   * Envoie la fiche. AUCUN await avant navigator.share() : c'est la
+   * condition pour que le geste de l'utilisateur compte encore.
    *
    * Trois chemins, du meilleur au plus modeste :
-   *   1. partage natif AVEC l'image — le destinataire voit la fiche
-   *      directement dans sa conversation ;
+   *   1. partage natif AVEC l'image — la fiche apparaît dans la
+   *      conversation, lisible sans clic ;
    *   2. partage natif sans fichier (navigateurs qui refusent les
    *      fichiers) — titre, résumé et lien ;
    *   3. téléchargement de l'image, pour l'envoyer à la main.
@@ -230,44 +391,48 @@
    * Le lien accompagne toujours l'image : la fiche donne envie, le lien
    * mène à l'article complet et à ses cinq autres langues.
    */
-  async function partager(nom) {
+  function envoyer(nom, blob, resume, url) {
+    var titre = nom + ' — CigarOdyssey';
+    if (blob && navigator.canShare && navigator.share) {
+      var f = fichier(blob, nom);
+      if (navigator.canShare({ files: [f] })) {
+        return navigator.share({ files: [f], title: titre, text: resume + '\n' + url })
+          .then(function () { return true; })
+          .catch(function (e) {
+            if (e && e.name === 'AbortError') return false;
+            return telecharger(blob, nom);
+          });
+      }
+    }
+    if (navigator.share) {
+      return navigator.share({ title: titre, text: resume, url: url })
+        .then(function () { return true; })
+        .catch(function (e) {
+          if (e && e.name === 'AbortError') return false;
+          return telecharger(blob, nom);
+        });
+    }
+    return Promise.resolve(telecharger(blob, nom));
+  }
+
+  function partager(nom, cid) {
     var b = (window.BRANDS_DB || {})[nom];
-    if (!b) return false;
-    var pays = (window.COUNTRIES || []).find(function (x) {
-      return (x.brands || []).some(function (m) { return m.name === nom; });
-    }) || null;
+    if (!b) return Promise.resolve(false);
 
     var url = location.origin + location.pathname + '?brand=' + encodeURIComponent(nom);
     var resume = String(b.history || '').replace(/\s+/g, ' ').trim();
     if (resume.length > 200) resume = resume.slice(0, 200).replace(/[\s,;:—-]+$/, '') + '…';
 
-    var blob = null;
-    try { blob = await dessiner(b, pays); } catch (e) { blob = null; }
+    // Fiche déjà prête : on part dans le geste, sans une seule micro-tâche.
+    if (_cache.nom === nom && _cache.blob) return envoyer(nom, _cache.blob, resume, url);
 
-    if (blob && navigator.canShare) {
-      var f = new File([blob], nom.replace(/[^\w-]+/g, '_') + '.png', { type: 'image/png' });
-      if (navigator.canShare({ files: [f] })) {
-        try {
-          await navigator.share({ files: [f], title: nom + ' — CigarOdyssey', text: resume + '\n' + url });
-          return true;
-        } catch (e) { if (e && e.name === 'AbortError') return false; }
-      }
-    }
-    if (navigator.share) {
-      try { await navigator.share({ title: nom + ' — CigarOdyssey', text: resume, url: url }); return true; }
-      catch (e) { if (e && e.name === 'AbortError') return false; }
-    }
-    if (blob) {
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = nom.replace(/[^\w-]+/g, '_') + '.png';
-      a.click();
-      setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
-      return true;
-    }
-    return false;
+    // Sinon on la dessine — le partage natif refusera peut-être, le
+    // téléchargement prendra alors le relais.
+    return (preparer(nom, cid) || Promise.resolve(null))
+      .then(function (blob) { return envoyer(nom, blob, resume, url); });
   }
 
-  window.ficheMarqueBlob = dessiner;    // exposé pour les tests
-  window.partagerMarque  = partager;
+  window.ficheMarqueBlob   = dessiner;    // exposé pour les tests
+  window.preparerFicheMarque = preparer;
+  window.partagerMarque    = partager;
 })();

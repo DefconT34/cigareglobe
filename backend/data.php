@@ -299,7 +299,15 @@ function action_lounges_all(PDO $db): void {
 }
 
 // ── Globe : données légères pour l'affichage initial ────
-function action_globe(PDO $db): void {
+//
+// $rendre = true : renvoie le tableau au lieu de l'émettre. C'est
+// « action=all » qui en a besoin, pour y ajouter les marques.
+// Il capturait auparavant la sortie par ob_start() — mais jout()
+// termine le script (exit), si bien que la capture ne rendait jamais la
+// main : `action=all` répondait le globe seul, et le bloc qui ajoutait
+// `brands` et `habanos` n'était jamais atteint. Silencieux, puisque la
+// réponse restait un JSON valide.
+function action_globe(PDO $db, bool $rendre = false): ?array {
     // Pays producteurs (sans notes longues, sans brands détail)
     $countries = $db->query(
         // SELECT * et non une liste figee : traduire_table() a besoin des
@@ -365,13 +373,16 @@ function action_globe(PDO $db): void {
         ];
     }
 
-    jout([
+    $payload = [
         'countries'        => $countries,
         'zones'            => $zones,
         'markets'          => $markets,
         'lounge_countries' => $lounge_countries,
         'geo'              => $geo,
-    ]);
+    ];
+    if ($rendre) return $payload;
+    jout($payload);
+    return null;
 }
 
 // ── Country : détail complet d'un pays producteur ────────
@@ -505,11 +516,8 @@ function action_market(PDO $db): void {
 
 // ── All : tout en un seul appel (fallback / preload) ─────
 function action_all(PDO $db): void {
-    // Reuse globe action but also include brands
-    ob_start();
-    action_globe($db);
-    $globe_json = ob_get_clean();
-    $globe = json_decode($globe_json, true);
+    // Le globe, puis les marques par-dessus.
+    $globe = action_globe($db, true);
 
     $brands_raw = $db->query("SELECT name,country_id AS country,founded,history,gamme FROM brands")->fetchAll();
     $brands = [];

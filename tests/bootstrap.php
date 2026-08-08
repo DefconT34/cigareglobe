@@ -106,6 +106,14 @@ function setup_test_database(): PDO {
         "INSERT INTO lounges (id, country_id, name, city, type, is_verified)
          VALUES (1, 'testland', 'Lounge de test', 'Ville', 'Cave & Lounge', 1)"
     );
+    // Une marque, pour que « action=all » ait quelque chose a porter.
+    // Sans elle, la reponse restait vide de marques et l'on ne pouvait
+    // pas distinguer « le bloc n'est jamais atteint » de « il n'y a rien
+    // a servir » — c'est precisement le defaut qui etait passe inapercu.
+    $pdo->exec(
+        "INSERT INTO brands (name, country_id, founded, history, gamme)
+         VALUES ('Marque de test', 'testland', '1900', 'Histoire de test', '[]')"
+    );
     return $pdo;
 }
 

@@ -201,7 +201,7 @@ $mail = (string)@file_get_contents($MAIL_LOG, false, null, $MAIL_AV);
 check('approbation : le contributeur est prevenu par email',
       str_contains($mail, 'alice@test.local') && str_contains($mail, 'en ligne'));
 check('approbation : l\'email pointe la fiche creee',
-      (bool)preg_match('/[?&]lounge=[0-9]+/', $mail));
+      (bool)preg_match('/[?&]lounge=[0-9]+/', $mail));
 
 // Langue de correspondance (migration 014). Alice s'est inscrite sans
 // preciser de langue et sans Accept-Language : elle est donc en
@@ -305,7 +305,7 @@ eq('profil : passeport alimente par les lieux visites', ['testland'], $r['json']
 
 $r = post_json($base, $alice, '/backend/api.php?action=profile_update',
                ['display_name' => 'Alice B.', 'bio' => 'Amatrice de cigares.', 'avatar' => 'AB']);
-eq('profil : mise a jour', 'Alice B.', $r['json']['user']['display_name']);
+eq('profil : mise a jour', 'Alice B.', $r['json']['user']['display_name']);
 
 // ── Langue de correspondance dans le profil (migration 014) ──
 // Le piege : langue_demandee() retombe TOUJOURS sur une langue valable
@@ -351,6 +351,16 @@ eq('lounges : repli sur le francais si traduction absente', 'Lounge de test', $r
 
 $r = http('GET', $base . '/backend/data.php?action=lounges_all', ['jar' => $anon]);
 check('lounges_all : regroupement par pays', isset($r['json']['lounges']['testland']));
+
+// « all » servait le globe SEUL. Il capturait la sortie de action_globe
+// par ob_start(), mais jout() termine le script : la capture ne rendait
+// jamais la main, et le bloc qui ajoute brands/habanos etait mort. La
+// reponse restant un JSON valide, rien ne le signalait.
+$r = http('GET', $base . '/backend/data.php?action=all', ['jar' => $anon]);
+eq('all : reponse valide', 200, $r['status']);
+check('all : porte le globe', isset($r['json']['countries'], $r['json']['markets']));
+check('all : porte AUSSI les marques', !empty($r['json']['brands']));
+check('all : porte AUSSI la presence Habanos', array_key_exists('habanos', $r['json']));
 
 $r = http('GET', $base . '/backend/data.php?action=inconnue', ['jar' => $anon]);
 eq('action inconnue : refus', 404, $r['status']);

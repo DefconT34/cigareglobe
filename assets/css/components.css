@@ -1035,9 +1035,47 @@ button, a, input, select, textarea, label,
 [dir="rtl"] .bm-share { right: auto; left: 46px; }
 [dir="rtl"] .bm-close { right: auto; left: 12px; }
 
+/* ══ PARTAGE SUR TÉLÉPHONE ══════════════════════════════
+   Une pastille de 26 px dans un en-tête n'est pas une option de
+   partage sur mobile : elle est sous la cible tactile de 44 px, elle
+   voisine la croix de fermeture, et son 🔗 annonce un lien alors que
+   le bouton envoie une fiche image.
+
+   Ici : pleine largeur, à la FIN de l'article — on partage ce qu'on
+   vient de lire, pas ce qu'on commence. La charte tient : Cinzel
+   capitales interlettrées, or sur or pâle, filet plutôt que relief. */
+.bm-share-cta {
+  display: none;
+  width: 100%; margin: 26px 0 4px; padding: 15px 18px;
+  align-items: center; gap: 14px;
+  background: var(--gold-p); color: var(--text);
+  border: 1px solid var(--gold); border-radius: 3px;
+  cursor: pointer; text-align: left;
+  transition: background .2s, color .2s;
+}
+.bm-share-cta:active { background: var(--gold); color: var(--panel-bg); }
+.bm-share-cta:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.bm-share-cta-ico { font-size: 20px; line-height: 1; color: var(--gold); }
+.bm-share-cta:active .bm-share-cta-ico { color: var(--panel-bg); }
+.bm-share-cta-txt { display: flex; flex-direction: column; gap: 3px; }
+.bm-share-cta-txt span {
+  font-family: Cinzel, serif; font-size: 11px;
+  letter-spacing: .18em; text-transform: uppercase;
+}
+.bm-share-cta-txt em {
+  font-family: Lato, sans-serif; font-style: normal;
+  font-size: 11px; color: var(--text2); letter-spacing: .02em;
+}
+.bm-share-cta.wait { opacity: .6; pointer-events: none; }
+[dir="rtl"] .bm-share-cta { text-align: right; }
+
 /* Sur téléphone, la mesure idéale dépasse la largeur disponible : on
    rend la marge à la lecture plutôt que de la gaspiller en gouttières. */
 @media (max-width: 640px) {
   .bm-body { padding: 14px 18px 22px; }
   .bm-hist { font-size: 15px; line-height: 1.8; max-width: none; }
+  .bm-share-cta { display: flex; }
+  /* Deux boutons de partage dans la même modale, c'est un de trop :
+     la pastille cède la place à celui qui se lit. */
+  .bm-share { display: none; }
 }

@@ -341,8 +341,21 @@ function openBrand(name, cid) {
   // L'URL suit la lecture : rafraichir ou copier la barre d'adresse
   // ramene sur cet article, et c'est ce lien que partage le bouton.
   try { history.replaceState({ brand: name }, '', location.pathname + '?brand=' + encodeURIComponent(name)); } catch (e) {}
-  var partage = document.getElementById('bmShare');
-  if (partage) partage.onclick = function () { partagerMarque(name, cid); };
+  // Deux declencheurs, une seule action : la pastille de l'en-tete sur
+  // grand ecran, le bouton pleine largeur en fin d'article sur telephone.
+  ['bmShare', 'bmShareCta'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.onclick = function () {
+      // La fiche est normalement deja dessinee (voir _renderBrand). Si
+      // le visiteur a ete plus rapide que le rendu, on le dit plutot
+      // que de laisser un bouton mort une seconde.
+      el.classList.add('wait');
+      Promise.resolve(partagerMarque(name, cid)).then(function () {
+        el.classList.remove('wait');
+      }, function () { el.classList.remove('wait'); });
+    };
+  });
 
   // Afficher skeleton immédiatement
   var c = COUNTRIES.find(function(x){ return x.id === cid; }) || {flag:'',name:cid};
@@ -469,6 +482,24 @@ function _renderBrand(name, cid) {
       '</ul>';
     limitEl.style.display = '';
   } else if (limitEl) { limitEl.style.display = 'none'; }
+
+  // ── La fiche de partage, dessinee pendant la lecture ───
+  // navigator.share() exige que l'appel parte du geste de
+  // l'utilisateur. Dessiner la fiche (cinq polices + un PNG de 230 Ko)
+  // prend assez de temps pour que Safari juge le geste perime et
+  // refuse le partage. On dessine donc maintenant, pendant que le
+  // visiteur lit : au moment du clic, l'image attend deja.
+  //
+  // Le delai porte une echeance : requestIdleCallback sans « timeout »
+  // peut ne JAMAIS se declencher sur une page occupee, et c'est
+  // exactement notre cas — le globe s'anime en continu. Sans echeance,
+  // la fiche n'etait pas prete au clic et le partage repartait pour une
+  // seconde et demie, soit precisement le defaut qu'on corrige ici.
+  var dessine = function () {
+    try { if (window.preparerFicheMarque) preparerFicheMarque(name, cid); } catch (e) {}
+  };
+  if (window.requestIdleCallback) requestIdleCallback(dessine, { timeout: 600 });
+  else setTimeout(dessine, 300);
 }
 
 

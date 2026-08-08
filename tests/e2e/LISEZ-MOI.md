@@ -65,7 +65,16 @@ Même discipline que `sql/schema.sql` — voir `sql/README.md`.
 | `explorer.spec.js` | ouverture, champ de filtre, filtres texte et région |
 | `i18n.spec.js` | changement de langue sur les deux champs de recherche |
 | `a11y.spec.js` | clavier, étiquettes, alternative textuelle du globe |
-| `responsive.spec.js` | mode mobile (projet `chromium-mobile`, Pixel 7), reprise du globe après fermeture |
+| `responsive.spec.js` | mode mobile (projet `chromium-mobile`, Pixel 7), reprise du globe après fermeture, bouton de partage |
+| `partage.spec.js` | la fiche image : format, distinctions, filigrane — **vérifiés en relisant les pixels du PNG** |
+
+La fiche de partage n'existe nulle part dans le DOM : c'est un canvas
+encodé en PNG. Aucun sélecteur ne peut en dire quoi que ce soit. Un
+parcours qui se contenterait d'appeler la fonction et de constater
+qu'elle rend un Blob ne prouverait rien du **contenu** de l'image —
+d'où la relecture des pixels, et les contre-épreuves qui
+l'accompagnent (sans distinction, aucune médaille ; sans texte, la
+teinte du filigrane demeure).
 
 ## L'angle mort qui a coûté deux défauts
 

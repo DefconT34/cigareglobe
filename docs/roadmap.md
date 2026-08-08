@@ -51,7 +51,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 
 ### C. Qualité & structure
 - [x] ~~**C1** — Externalisation du front (CSS + 23 modules JS hors index.html)~~ ✅
-- [ ] **C1b** — (optionnel) Migration Vite/ESM (build + import/export) · G · à évaluer, non prioritaire · le filet de tests front existe désormais
+- [ ] **C1b** — (optionnel) Migration Vite/ESM (build + import/export) · G · à évaluer, non prioritaire · le filet de tests front existe désormais
   - **Son seul bénéfice concret est déjà acquis** : le cache-busting, obtenu en quelques
     lignes dans `index.php`, sans étape de build. Le déploiement reste une copie de fichiers.
   - Ce qu'apporterait encore Vite : dépendances explicites (79 globales → imports), 31 requêtes
@@ -80,7 +80,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
 - [x] ~~**D4** — Globe : navigation clavier + alternative textuelle~~ ✅
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
-- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
 - [x] ~~**D16** — Zoom : double-tape sur le globe, plus nulle part ailleurs~~ ✅
   - `touch-action: manipulation` sur tous les éléments interactifs : le zoom natif du
     navigateur ne se déclenche plus sur un bouton, et le délai de ~300 ms disparaît
@@ -109,6 +109,30 @@ Effort : P = Petit · M = Moyen · G = Gros.
     en « Minuit » y ferait un trou noir
   - **Pas de drapeau emoji** : un canvas Windows rend les indicateurs régionaux en losanges,
     et l'image est produite sur le poste du visiteur
+- [x] ~~**D18** — Le partage, pour de vrai sur téléphone~~ ✅
+  - Sur mobile, un **vrai bouton** en fin d'article — pleine largeur, libellé, 63 px de haut.
+    La pastille 🔗 de l'en-tête faisait 26 px, sous la cible tactile de 44 px, collée à la
+    croix de fermeture, et son pictogramme annonçait un lien là où le bouton envoie une fiche
+  - **Le geste doit survivre au dessin.** `navigator.share()` exige une activation
+    transitoire : dessiner la fiche (5 polices + un PNG de 300 Ko) prend **1,1 s** — assez
+    pour que Safari juge le geste périmé et refuse. La fiche est donc dessinée pendant la
+    lecture ; au clic, `share()` part en **2 ms**. Mesuré dans les deux sens
+  - Défaut trouvé par ce test : `requestIdleCallback` **sans échéance ne se déclenche jamais**
+    sur une page animée. La préparation était morte, le partage repartait pour 1,6 s.
+    `{ timeout: 600 }` la garantit
+  - **Le bas de la fiche porte les distinctions** : grille de deux colonnes, six notes au
+    plus, l'histoire s'adaptant à la place restante — jamais l'inverse
+  - **Filigrane de feuilles de tabac**, dessiné en courbes (une image serait un aller-retour
+    réseau au moment précis du partage). Les nervures ne sont pas décoratives : sans elles la
+    silhouette se lit comme une goutte. 5 % d'opacité — à 10 % on la voit derrière le texte,
+    à 2 % elle ne survit pas à la recompression de WhatsApp
+  - Vérifié **en relisant les pixels du PNG** : rien de tout cela n'est dans le DOM
+    (`tests/e2e/partage.spec.js`)
+- [x] ~~**E5** — `action=all` ne servait que le globe~~ ✅
+  - Il capturait la sortie de `action_globe()` par `ob_start()`, mais `jout()` **termine le
+    script** : la capture ne rendait jamais la main et le bloc qui ajoute `brands` et
+    `habanos` était mort. La réponse restait un JSON valide — rien ne le signalait
+  - Trouvé en écrivant un test qui s'appuyait dessus. 4 vérifications ajoutées
 - [x] ~~**D15** — Globe figé sur mobile après fermeture d'un panneau~~ ✅
   - Sur mobile la boucle de rendu se met en pause hors de l'onglet Globe ; seul
     `switchMobileTab('globe')` la relance. Fermer par la **croix** ne le faisait pas :
@@ -143,7 +167,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - **Aucun service payant** : le corps de l'email est fait de six phrases fixes,
     traduites une fois dans `mail_i18n()`
   - Première et **seule exception** à la règle F2 « le serveur ne traduit pas » — un email
-    n'a pas de front pour le faire. Documenté dans `docs/i18n.md`
+    n'a pas de front pour le faire. Documenté dans `docs/i18n.md`
   - **Sélecteur dans le profil** : les noms viennent de `I18N[code].lang_name` (chaque langue
     dans sa propre langue), donc **une seule clé ajoutée** — la note qui précise que ce
     réglage gouverne les emails, pas l'affichage du site

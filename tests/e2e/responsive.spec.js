@@ -10,7 +10,7 @@
 // ════════════════════════════════════════════════════════
 
 const { test, expect } = require('@playwright/test');
-const { ouvrir } = require('./aide');
+const { ouvrir, marquesChargeables } = require('./aide');
 
 test.describe('Mobile', () => {
 
@@ -134,5 +134,96 @@ test.describe('Mobile', () => {
     expect(resultat.rendus,
            'le globe ne se redessine plus apres fermeture par la croix')
       .toBeGreaterThan(0);
+  });
+
+  // ── Le partage, pour de vrai ───────────────────────────
+  // Sur telephone, le bon partage est celui du systeme. Encore faut-il
+  // pouvoir l'atteindre : la pastille de l'en-tete faisait 26 px, sous
+  // la cible tactile de 44 px, collee a la croix de fermeture, et son
+  // pictogramme annoncait un lien la ou le bouton envoie une fiche.
+  test('le partage est un vrai bouton, en fin d\'article', async ({ page }) => {
+    await ouvrir(page, '/');
+    await expect(page.locator('body')).toHaveClass(/mobile-mode/, { timeout: 20_000 });
+
+    const [m] = await marquesChargeables(page, 1);
+    expect(m, 'aucune fiche de marque ne s\'est chargee').toBeTruthy();
+    await page.evaluate((m) => openBrand(m.nom, m.cid), m);
+
+    const cta = page.locator('#bmShareCta');
+    await expect(cta).toBeVisible();
+    // La pastille cede la place : deux boutons de partage, c'est un de trop.
+    await expect(page.locator('#bmShare')).toBeHidden();
+
+    const boite = await cta.boundingBox();
+    expect(boite.height, 'sous 44 px, la cible n\'est pas tactile')
+      .toBeGreaterThanOrEqual(44);
+    // Il porte un libelle, pas seulement un pictogramme.
+    await expect(cta).toContainText(/PARTAGER|SHARE|COMPARTIR|TEILEN/i);
+  });
+
+  // ── Le geste doit survivre au dessin ───────────────────
+  // navigator.share() exige une « activation transitoire » : l'appel
+  // doit partir du geste. Dessiner la fiche demande de charger cinq
+  // polices puis d'encoder un PNG de 300 Ko — assez pour que Safari
+  // juge le geste perime et REFUSE le partage. La fiche est donc
+  // dessinee pendant la lecture (voir _renderBrand), et le clic n'a
+  // plus qu'a l'envoyer.
+  test('la fiche est prete avant le clic, sinon le systeme refuse le partage', async ({ page }) => {
+    await ouvrir(page, '/');
+    await expect(page.locator('body')).toHaveClass(/mobile-mode/, { timeout: 20_000 });
+
+    // Deux marques distinctes : la fiche est mise en cache par nom, et
+    // la contre-epreuve doit partir d'un cache froid.
+    const marques = await marquesChargeables(page, 2);
+    expect(marques.length, 'il faut deux fiches chargeables').toBe(2);
+
+    const mesure = await page.evaluate(async (marques) => {
+      const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      // On simule un telephone qui accepte le partage de fichiers, et
+      // on chronometre le delai entre le clic et l'appel a share().
+      let vu = null, t0 = 0;
+      const orig = { s: navigator.share, c: navigator.canShare };
+      Object.defineProperty(navigator, 'canShare', { configurable: true, value: () => true });
+      Object.defineProperty(navigator, 'share', { configurable: true, value: (d) => {
+        vu = { delai: performance.now() - t0, fichiers: (d.files || []).length };
+        return Promise.resolve();
+      } });
+
+      const clic = async (m, lecture) => {
+        vu = null;
+        document.getElementById('bmodal').classList.remove('open');
+        openBrand(m.nom, m.cid);
+        for (let i = 0; i < 80 && !(window.BRANDS_DB || {})[m.nom]; i++) await pause(100);
+        await pause(lecture);                       // le visiteur lit… ou pas
+        t0 = performance.now();
+        document.getElementById('bmShareCta').click();
+        for (let i = 0; i < 80 && !vu; i++) await pause(100);
+        return vu;
+      };
+
+      // 1. Cas normal : l'article est reste affiche le temps d'etre lu.
+      const chaud = await clic(marques[0], 3000);
+      // 2. CONTRE-EPREUVE : clic immediat, la fiche n'a pas pu etre
+      //    dessinee. Sans elle, le cas 1 passerait meme si la
+      //    preparation en amont etait supprimee — il suffirait que le
+      //    dessin soit rapide.
+      const froid = await clic(marques[1], 0);
+
+      Object.defineProperty(navigator, 'share', { configurable: true, value: orig.s });
+      Object.defineProperty(navigator, 'canShare', { configurable: true, value: orig.c });
+      return { chaud, froid };
+    }, marques);
+
+    // La fiche part AVEC l'image, pas juste un lien.
+    expect(mesure.chaud.fichiers, 'le partage doit emporter la fiche').toBe(1);
+    // Et elle part dans le geste : quelques millisecondes, pas une seconde.
+    expect(mesure.chaud.delai,
+           'share() appele trop tard : Safari considererait le geste perime')
+      .toBeLessThan(150);
+    // La contre-epreuve : dessiner coute reellement du temps.
+    expect(mesure.froid.delai,
+           'si dessiner etait instantane, la preparation en amont ne prouverait rien')
+      .toBeGreaterThan(200);
   });
 });
