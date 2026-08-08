@@ -80,7 +80,26 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
 - [x] ~~**D4** — Globe : navigation clavier + alternative textuelle~~ ✅
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
-- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [x] ~~**D16** — Zoom : double-tape sur le globe, plus nulle part ailleurs~~ ✅
+  - `touch-action: manipulation` sur tous les éléments interactifs : le zoom natif du
+    navigateur ne se déclenche plus sur un bouton, et le délai de ~300 ms disparaît
+  - Le globe garde `touch-action: none` et compose lui-même la double-tape (aucun
+    évènement `dbltap` n'existe) ; il zoome **vers le point visé**, comme la molette
+  - Plafond **3 → 6**. Les bornes étaient recopiées à **cinq** endroits, dont la jauge du
+    curseur — les relever sans elle aurait bloqué le curseur en haut. Centralisées dans
+    `clampZoom()`
+- [x] ~~**D17** — Partager une marque comme un article~~ ✅
+  - **Aperçu propre à la marque** : `index.php` lit `?brand=`, récupère l'histoire dans la
+    langue demandée et écrit les balises Open Graph. Impossible en JavaScript — les robots
+    de WhatsApp, LinkedIn ou Slack lisent le HTML brut sans l'exécuter
+  - Le **cache de page** inclut la marque, sinon le premier partage figeait sa carte pour
+    tout le site. La clé vient de la **base**, jamais de l'URL : un tiers ne peut pas créer
+    de fichiers de cache à volonté
+  - Lisibilité : mesure à 34 em (**63 caractères par ligne**), corps 12 → 14,5 px,
+    interligne 1,75 ; sur téléphone la mesure s'efface au profit du texte
+  - Bouton de partage sur la fiche (`navigator.share` avec titre et résumé, repli
+    presse-papiers) et `data-i18n-title` ajouté au moteur i18n pour les infobulles
 - [x] ~~**D15** — Globe figé sur mobile après fermeture d'un panneau~~ ✅
   - Sur mobile la boucle de rendu se met en pause hors de l'onglet Globe ; seul
     `switchMobileTab('globe')` la relance. Fermer par la **croix** ne le faisait pas :

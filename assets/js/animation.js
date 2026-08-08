@@ -126,7 +126,7 @@ if (typeof COUNTRIES !== 'undefined' && COUNTRIES.length > 0) {
 function updateZoomUI(){
   const pct=Math.round(zoomScale*100);
   document.getElementById('zoom-lbl').textContent=pct+'%';
-  const minZ=0.4,maxZ=3;
+  const minZ=ZOOM_MIN,maxZ=ZOOM_MAX;   // suit les bornes reelles
   const frac=(zoomScale-minZ)/(maxZ-minZ);
   const h=Math.max(4,Math.round(60*frac));
   document.getElementById('zoom-thumb').style.height=h+'px';

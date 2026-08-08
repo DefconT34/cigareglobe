@@ -228,6 +228,11 @@
       <div class="bm-ey"      id="bmEy"></div>
       <div class="bm-name"    id="bmName"></div>
       <div class="bm-founded" id="bmFounded"></div>
+      <!-- Le français vit dans l'attribut, comme partout ailleurs :
+           data-i18n-title ne fait que le remplacer dans les cinq autres
+           langues. Sans lui, l'infobulle restait vide en français. -->
+      <button class="bm-share" id="bmShare" data-i18n-title="bm_partager"
+              title="Partager l'article" aria-label="Partager l'article">🔗</button>
       <button class="bm-close" id="bmClose" aria-label="Close brand modal">✕</button>
     </div>
     <div class="bm-body">

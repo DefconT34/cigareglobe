@@ -48,11 +48,11 @@
         case 'ArrowUp':    rotX -= STEP_ROT; break;
         case 'ArrowDown':  rotX += STEP_ROT; break;
         case '+': case '=':
-          zoomScale = Math.min(zoomScale + STEP_ZOOM, 3);
+          zoomScale = clampZoom(zoomScale + STEP_ZOOM);
           announce(t('a11y_zoom').replace('{n}', Math.round(zoomScale * 100)));
           break;
         case '-': case '_':
-          zoomScale = Math.max(zoomScale - STEP_ZOOM, 0.4);
+          zoomScale = clampZoom(zoomScale - STEP_ZOOM);
           announce(t('a11y_zoom').replace('{n}', Math.round(zoomScale * 100)));
           break;
         case 'Home': case '0':

@@ -3,8 +3,8 @@
 // ════════════════════════════════════════════════════════
 
 // ── Zoom buttons ────────────────────────────────────────
-document.getElementById('zIn').onclick    = () => { zoomScale = Math.min(zoomScale + .2, 3); };
-document.getElementById('zOut').onclick   = () => { zoomScale = Math.max(zoomScale - .2, .4); };
+document.getElementById('zIn').onclick    = () => { zoomScale = clampZoom(zoomScale + .3); };
+document.getElementById('zOut').onclick   = () => { zoomScale = clampZoom(zoomScale - .3); };
 document.getElementById('zReset').onclick = () => { zoomScale = 1; };
 // ── Zoom molette centré sur le curseur ──────────────────
 // Le globe est toujours dessiné au centre de l'écran : « zoomer vers le
@@ -60,7 +60,7 @@ function _zoomAtCursor(clientX, clientY, newZoom) {
 
 globe.addEventListener('wheel', e => {
   e.preventDefault();
-  var next = Math.max(.4, Math.min(3, zoomScale - e.deltaY * .0008));
+  var next = clampZoom(zoomScale - e.deltaY * .0008);
   if (next === zoomScale) return;
   _zoomAtCursor(e.clientX, e.clientY, next);        // repli géré à l'intérieur
   zoomScale = next;
@@ -242,6 +242,40 @@ globe.addEventListener('click', e => {
   handleSelect(e.clientX, e.clientY);
 });
 
+// ── Double-clic / double-tape : zoomer sur le point vise ──
+// Le zoom natif du navigateur est retire partout (touch-action dans
+// components.css). En echange, le globe le rend ici — mais en mieux :
+// il zoome VERS le point touche, en reutilisant _zoomAtCursor, la meme
+// mecanique que la molette. Un double-clic au large de l'Atlantique ne
+// recentre donc pas sur l'Europe.
+var PAS_DOUBLE = 1.6;   // facteur par double-tape
+
+function _zoomerVers(x, y) {
+  var next = clampZoom(zoomScale * PAS_DOUBLE);
+  if (next === zoomScale) return;          // deja au maximum
+  _zoomAtCursor(x, y, next);               // repli centre gere a l'interieur
+  zoomScale = next;
+  autoRot = false;                          // on vient de designer un endroit
+}
+
+globe.addEventListener('dblclick', function (e) {
+  e.preventDefault();
+  _zoomerVers(e.clientX, e.clientY);
+});
+
+// Tactile : aucun evenement « dbltap » n'existe, on le compose. Deux
+// tapes a moins de 300 ms et de 30 px l'une de l'autre — au-dela, ce
+// sont deux tapes distinctes sur deux marqueurs voisins.
+var _tapT = 0, _tapX = 0, _tapY = 0;
+function _estDoubleTape(x, y) {
+  var t = Date.now();
+  var oui = (t - _tapT < 300) && Math.hypot(x - _tapX, y - _tapY) < 30;
+  // Une double-tape reconnue remet le compteur a zero : sans cela une
+  // troisieme tape rapide compterait comme une seconde double.
+  _tapT = oui ? 0 : t; _tapX = x; _tapY = y;
+  return oui;
+}
+
 // ── Touch ───────────────────────────────────────────────
 // Tracks touch to distinguish tap from drag
 var _touchStartX = 0, _touchStartY = 0, _touchMoved = false;
@@ -284,6 +318,15 @@ globe.addEventListener('touchend', e => {
 
   // It's a TAP — detect what was tapped
   const touch = e.changedTouches[0];
+
+  // Double-tape : zoomer, et NE PAS ouvrir de fiche. Sans ce retour, la
+  // seconde tape selectionnait le marqueur en meme temps qu'elle zoomait,
+  // et le panneau s'ouvrait par-dessus le geste.
+  if (_estDoubleTape(touch.clientX, touch.clientY)) {
+    _zoomerVers(touch.clientX, touch.clientY);
+    return;
+  }
+
   const tapped = handleSelect(touch.clientX, touch.clientY);
 
   // Resume auto-rotation only if nothing was tapped

@@ -393,6 +393,7 @@ const I18N = {
     fiche_multifuseau:'Heure de la capitale : ce pays compte plusieurs fuseaux.',
     lc_itineraire:'Itinéraire',
     prof_lang_hint:"Langue de nos emails. L'affichage du site suit les drapeaux en haut de page.",
+    bm_partager:"Partager l'article",
   },
 
   en: {
@@ -784,6 +785,7 @@ const I18N = {
     fiche_multifuseau:'Capital time: this country spans several time zones.',
     lc_itineraire:'Directions',
     prof_lang_hint:'Language of our emails. The site display follows the flags at the top of the page.',
+    bm_partager:'Share this article',
   },
 
   es: {
@@ -1175,6 +1177,7 @@ const I18N = {
     fiche_multifuseau:'Hora de la capital: este país tiene varios husos horarios.',
     lc_itineraire:'Cómo llegar',
     prof_lang_hint:'Idioma de nuestros correos. La visualización del sitio sigue las banderas de arriba.',
+    bm_partager:'Compartir el artículo',
   },
 
   de: {
@@ -1566,6 +1569,7 @@ const I18N = {
     fiche_multifuseau:'Zeit der Hauptstadt: dieses Land hat mehrere Zeitzonen.',
     lc_itineraire:'Route',
     prof_lang_hint:'Sprache unserer E-Mails. Die Anzeige der Website richtet sich nach den Flaggen oben.',
+    bm_partager:'Artikel teilen',
   },
 
   zh: {
@@ -1957,6 +1961,7 @@ const I18N = {
     fiche_multifuseau:'首都时间：该国横跨多个时区。',
     lc_itineraire:'路线',
     prof_lang_hint:'我们发送邮件所用的语言。网站显示语言由页面顶部的旗帜决定。',
+    bm_partager:'分享这篇文章',
   },
 
   ar: {
@@ -2348,6 +2353,7 @@ const I18N = {
     fiche_multifuseau:'توقيت العاصمة: لهذا البلد أكثر من منطقة زمنية.',
     lc_itineraire:'المسار',
     prof_lang_hint:'لغة رسائلنا الإلكترونية. أما لغة عرض الموقع فتتبع الأعلام في أعلى الصفحة.',
+    bm_partager:'مشاركة المقال',
   },
 };
 
@@ -2414,6 +2420,18 @@ function applyLang(lang){
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
     const key = el.getAttribute('data-i18n-ph');
     el.placeholder = t(key);
+  });
+
+  // Infobulles — data-i18n-title. Un bouton réduit à une icône n'a que
+  // son title pour se nommer : le laisser en dur le rendait muet dans
+  // cinq langues sur six, et illisible pour un lecteur d'écran qui s'en
+  // sert à défaut d'aria-label.
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    el.title = t(key);
+    // Une icône seule n'a pas de texte accessible : le title sert alors
+    // aussi de nom, sauf si un aria-label explicite existe déjà.
+    if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', t(key));
   });
 
   // Update <option data-i18n> (select options)

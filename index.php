@@ -88,6 +88,57 @@ $altImg = tr('seo_image_alt');
 $urlIci = url_langue($lang);
 $image  = racine() . '/og-image.jpg';
 
+// ── Aperçu propre à une marque (?brand=Cohiba) ────────────
+// Partager l'histoire d'une maison doit ressembler à partager un
+// ARTICLE, pas un lien vers un site. Or la carte d'aperçu est la
+// première impression : elle arrive avant le clic, et jusqu'ici tous
+// les liens partagés se ressemblaient — même titre, même résumé.
+//
+// Les balises ne peuvent pas être posées par le JavaScript : les robots
+// de WhatsApp, LinkedIn ou Slack lisent le HTML brut, sans l'exécuter.
+// C'est donc au serveur de les écrire, ici, avant l'envoi.
+//
+// La description suit la langue demandée (colonnes history_xx de la
+// migration 007), avec repli sur le français comme partout ailleurs.
+$marque = trim((string)($_GET['brand'] ?? ''));
+$marqueOk = null;
+if ($marque !== '' && mb_strlen($marque) <= 100) {
+    try {
+        require_once __DIR__ . '/backend/config.php';
+        $db  = getDB();
+        $col = $lang === 'fr' ? 'history' : 'history_' . $lang;
+        // Nom de colonne construit depuis une liste fermée (LANGUES),
+        // jamais depuis l'entrée : aucune injection possible.
+        $q = $db->prepare("SELECT name, founded, COALESCE(NULLIF(`$col`, ''), history) AS histoire
+                           FROM brands WHERE name = ? LIMIT 1");
+        $q->execute([$marque]);
+        $marqueOk = $q->fetch(PDO::FETCH_ASSOC) ?: null;
+    } catch (Throwable $e) {
+        // Base injoignable : on sert l'aperçu générique plutôt que rien.
+        $marqueOk = null;
+    }
+}
+if ($marqueOk) {
+    $titre  = $marqueOk['name'] . ' — ' . tr('seo_title');
+    // Un résumé, pas un début de phrase coupé net : on s'arrête à la fin
+    // d'une phrase quand il y en a une dans les 300 premiers caractères.
+    $h = trim(preg_replace('/\s+/u', ' ', (string)$marqueOk['histoire']));
+    $extrait = mb_substr($h, 0, 300);
+    if (mb_strlen($h) > 300) {
+        // On ne coupe QUE sur une vraie fin de phrase. Le tiret cadratin
+        // avait été admis au départ : il abrégeait au milieu d'une
+        // incise, et « +1 » ne gardait alors que l'espace qui le
+        // précède — le résumé finissait sans ponctuation du tout.
+        $coupe = mb_strrpos($extrait, '. ');
+        $extrait = ($coupe !== false && $coupe > 120)
+            ? mb_substr($extrait, 0, $coupe + 1)      // le point est conservé
+            : rtrim($extrait, " \t\n\r\0\x0B,;:—-") . '…';
+    }
+    $desc   = $extrait;
+    $altImg = $marqueOk['name'];
+    $urlIci = url_langue($lang) . '?brand=' . rawurlencode($marqueOk['name']);
+}
+
 // ── Liens alternatifs ─────────────────────────────────────
 // x-default désigne la version servie à un visiteur dont la langue
 // n'est couverte par aucune des six : ici la racine française.
@@ -122,8 +173,14 @@ foreach (array_merge(glob(__DIR__ . '/assets/js/*.js') ?: [],
 // L'hote entre dans la cle : les URL canoniques et hreflang en
 // dependent, un site joignable par plusieurs noms servirait sinon
 // des canoniques errones depuis le cache.
+// La MARQUE entre dans la clé : sans elle, la première page servie avec
+// un aperçu de marque serait rendue à tous les visiteurs suivants, quel
+// que soit leur lien. Le nom retenu vient de la BASE, jamais de l'URL —
+// une marque inconnue retombe sur la page générique et sa clé, ce qui
+// interdit à un tiers de créer des fichiers de cache à volonté.
 $pageCache = __DIR__ . '/backend/cache/page_' . $lang . '_'
-           . substr(sha1(racine() . '|' . (int)$pretty), 0, 12) . '.html';
+           . substr(sha1(racine() . '|' . (int)$pretty
+                    . '|' . ($marqueOk['name'] ?? '')), 0, 12) . '.html';
 
 if (is_file($pageCache) && filemtime($pageCache) >= $empreinte) {
     header('Content-Type: text/html; charset=utf-8');

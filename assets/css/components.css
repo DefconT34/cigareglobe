@@ -979,3 +979,65 @@ body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 1
 .lc-dist-btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
 .lc-dist-btn:disabled { opacity: .55; cursor: progress; }
 .lc-dist-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ══ DOUBLE-TAP : ZOOM DU NAVIGATEUR SUPPRIMÉ ═══════════
+   Sur mobile, deux tapes rapprochées déclenchent le zoom natif du
+   navigateur. Sur un bouton, c'est toujours indésirable : on tape deux
+   fois parce que la première n'a pas semblé répondre, et la page part
+   en zoom au lieu d'agir.
+
+   « manipulation » conserve le défilement et le pincer-zoomer, et ne
+   retire QUE le double-tap. C'est aussi ce qui supprime le délai de
+   ~300 ms que les navigateurs s'accordaient pour distinguer une tape
+   simple d'une double — les boutons répondent donc plus vite.
+
+   Le globe est absent de cette liste : il porte déjà « touch-action:none »
+   et gère lui-même ses gestes, double-tape comprise (interactions.js). */
+button, a, input, select, textarea, label,
+.side-fab, .mnav-tab, .lang-btn, .theme-btn, .lc-link, .tag,
+.cg-tab, .brand-card, .lex-zone-item, #zoom-ctrl, #zoom-ctrl * {
+  touch-action: manipulation;
+}
+
+/* ══ ARTICLE DE MARQUE — LISIBILITÉ ═════════════════════
+   L'histoire d'une maison fait 1 500 caractères en moyenne : c'est de
+   la lecture longue, pas une légende. Trois réglages de typographie
+   séparent un bloc de texte d'un article.
+
+   1. LA LARGEUR DE LIGNE. Au-delà d'environ 70 caractères, l'œil perd
+      le début de la ligne suivante. 34em l'y ramène, quelle que soit la
+      largeur de l'écran — c'est pour cela que la modale peut s'élargir
+      sans que le texte suive.
+   2. LE CORPS. 12px pour un texte long est une taille d'étiquette.
+   3. L'INTERLIGNE et l'espace entre paragraphes, qui donnent au regard
+      où se poser. */
+.bm-box { width: 680px; }
+.bm-hist {
+  font-size: 14.5px; line-height: 1.75; color: var(--text);
+  max-width: 34em; margin: 0 auto 22px;
+  white-space: pre-line;
+}
+/* La première ligne annonce le ton : c'est l'usage en presse. */
+.bm-hist::first-line { font-size: 15.5px; }
+.gam-story { font-size: 12.5px; line-height: 1.68; }
+
+.bm-share {
+  position: absolute; top: 12px; right: 46px;
+  width: 26px; height: 26px; padding: 0;
+  background: var(--bg3); border: none; border-radius: 50%;
+  cursor: pointer; font-size: 12px; color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s, color .2s;
+}
+.bm-share:hover { background: var(--gold); color: var(--panel-bg); }
+.bm-share.ok    { background: var(--grn); color: #fff; }
+.bm-share:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+[dir="rtl"] .bm-share { right: auto; left: 46px; }
+[dir="rtl"] .bm-close { right: auto; left: 12px; }
+
+/* Sur téléphone, la mesure idéale dépasse la largeur disponible : on
+   rend la marge à la lecture plutôt que de la gaspiller en gouttières. */
+@media (max-width: 640px) {
+  .bm-body { padding: 14px 18px 22px; }
+  .bm-hist { font-size: 15px; line-height: 1.8; max-width: none; }
+}

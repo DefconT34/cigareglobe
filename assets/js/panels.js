@@ -330,9 +330,48 @@ function brandCard(b, c) {
 // ════════════════════════════════════════════════════════
 // BRAND MODAL — chargement lazy depuis MySQL
 // ════════════════════════════════════════════════════════
+/**
+ * Partage de l'article d'une marque.
+ *
+ * Le lien porte ?brand=<nom>, et index.php en tire des balises Open
+ * Graph propres a la maison : le destinataire voit le nom et les
+ * premieres lignes de son histoire AVANT de cliquer. Sans cela, tous
+ * les liens partages se ressemblaient dans son fil.
+ *
+ * navigator.share ouvre la feuille native du telephone ; a defaut, on
+ * copie dans le presse-papiers. Le titre et le resume sont transmis :
+ * partager une URL nue, c'est partager un lien, pas un article.
+ */
+function partagerMarque(name) {
+  var b = BRANDS_DB[name] || {};
+  var url = location.origin + location.pathname + '?brand=' + encodeURIComponent(name);
+  var resume = String(b.history || '').replace(/\s+/g, ' ').trim();
+  if (resume.length > 200) resume = resume.slice(0, 200).replace(/[\s,;:—-]+$/, '') + '…';
+
+  var btn = document.getElementById('bmShare');
+  if (navigator.share) {
+    navigator.share({ title: name + ' — CigarOdyssey', text: resume, url: url })
+      .catch(function () { /* partage annule : rien a signaler */ });
+    return;
+  }
+  navigator.clipboard.writeText(url).then(function () {
+    if (!btn) return;
+    var avant = btn.textContent;
+    btn.textContent = '✓';
+    btn.classList.add('ok');
+    setTimeout(function () { btn.textContent = avant; btn.classList.remove('ok'); }, 1500);
+  }).catch(function () {});
+}
+
 function openBrand(name, cid) {
   var modal = document.getElementById('bmodal');
   modal.classList.add('open');
+
+  // L'URL suit la lecture : rafraichir ou copier la barre d'adresse
+  // ramene sur cet article, et c'est ce lien que partage le bouton.
+  try { history.replaceState({ brand: name }, '', location.pathname + '?brand=' + encodeURIComponent(name)); } catch (e) {}
+  var partage = document.getElementById('bmShare');
+  if (partage) partage.onclick = function () { partagerMarque(name); };
 
   // Afficher skeleton immédiatement
   var c = COUNTRIES.find(function(x){ return x.id === cid; }) || {flag:'',name:cid};

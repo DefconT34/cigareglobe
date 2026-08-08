@@ -19,6 +19,13 @@ var selCountry = null, hoverCountry = null;
 var showMarkets = false, selMarket = null, hoverMarket = null;
 var showLounges = true, selLoungeCountry = null, hoverLoungeCountry = null;  // visible by default
 var zoomScale = 1;
+// Bornes du zoom, en UN SEUL endroit : elles etaient recopiees a quatre
+// reprises (les deux boutons, la molette, le clavier) plus une
+// cinquieme dans la jauge de updateZoomUI. Relever le maximum sans
+// toucher la jauge aurait laisse le curseur bloque en haut bien avant
+// le zoom reel.
+var ZOOM_MIN = 0.4, ZOOM_MAX = 6;
+function clampZoom(z){ return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z)); }
 // Géré par CG.state
 animating = false; animStartTime = 0; animDuration = 1200;
 var animFromX = 0, animFromY = 0, animToX = 0, animToY = 0;
