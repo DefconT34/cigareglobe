@@ -100,6 +100,15 @@ Effort : P = Petit · M = Moyen · G = Gros.
     interligne 1,75 ; sur téléphone la mesure s'efface au profit du texte
   - Bouton de partage sur la fiche (`navigator.share` avec titre et résumé, repli
     presse-papiers) et `data-i18n-title` ajouté au moteur i18n pour les infobulles
+  - **Le partage produit une IMAGE**, pas un lien copié : une fiche 1080×1350 lue
+    directement dans la conversation, sans clic. Le lien l'accompagne, il ne la remplace pas
+    (`assets/js/fiche-partage.js`)
+  - La fiche cite la typographie de l'article au pixel près — l'interlettrage du surtitre est
+    posé **lettre à lettre**, un canvas n'en ayant pas
+  - **Thème clair imposé** : une carte est vue par d'autres, dans des fils blancs ; une fiche
+    en « Minuit » y ferait un trou noir
+  - **Pas de drapeau emoji** : un canvas Windows rend les indicateurs régionaux en losanges,
+    et l'image est produite sur le poste du visiteur
 - [x] ~~**D15** — Globe figé sur mobile après fermeture d'un panneau~~ ✅
   - Sur mobile la boucle de rendu se met en pause hors de l'onglet Globe ; seul
     `switchMobileTab('globe')` la relance. Fermer par la **croix** ne le faisait pas :

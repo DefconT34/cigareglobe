@@ -393,7 +393,8 @@ const I18N = {
     fiche_multifuseau:'Heure de la capitale : ce pays compte plusieurs fuseaux.',
     lc_itineraire:'Itinéraire',
     prof_lang_hint:"Langue de nos emails. L'affichage du site suit les drapeaux en haut de page.",
-    bm_partager:"Partager l'article",
+    bm_partager:"Partager l'article",
+    bm_maison:'Maison',
   },
 
   en: {
@@ -785,7 +786,8 @@ const I18N = {
     fiche_multifuseau:'Capital time: this country spans several time zones.',
     lc_itineraire:'Directions',
     prof_lang_hint:'Language of our emails. The site display follows the flags at the top of the page.',
-    bm_partager:'Share this article',
+    bm_partager:'Share this article',
+    bm_maison:'House',
   },
 
   es: {
@@ -1177,7 +1179,8 @@ const I18N = {
     fiche_multifuseau:'Hora de la capital: este país tiene varios husos horarios.',
     lc_itineraire:'Cómo llegar',
     prof_lang_hint:'Idioma de nuestros correos. La visualización del sitio sigue las banderas de arriba.',
-    bm_partager:'Compartir el artículo',
+    bm_partager:'Compartir el artículo',
+    bm_maison:'Casa',
   },
 
   de: {
@@ -1569,7 +1572,8 @@ const I18N = {
     fiche_multifuseau:'Zeit der Hauptstadt: dieses Land hat mehrere Zeitzonen.',
     lc_itineraire:'Route',
     prof_lang_hint:'Sprache unserer E-Mails. Die Anzeige der Website richtet sich nach den Flaggen oben.',
-    bm_partager:'Artikel teilen',
+    bm_partager:'Artikel teilen',
+    bm_maison:'Haus',
   },
 
   zh: {
@@ -1961,7 +1965,8 @@ const I18N = {
     fiche_multifuseau:'首都时间：该国横跨多个时区。',
     lc_itineraire:'路线',
     prof_lang_hint:'我们发送邮件所用的语言。网站显示语言由页面顶部的旗帜决定。',
-    bm_partager:'分享这篇文章',
+    bm_partager:'分享这篇文章',
+    bm_maison:'名庄',
   },
 
   ar: {
@@ -2353,7 +2358,8 @@ const I18N = {
     fiche_multifuseau:'توقيت العاصمة: لهذا البلد أكثر من منطقة زمنية.',
     lc_itineraire:'المسار',
     prof_lang_hint:'لغة رسائلنا الإلكترونية. أما لغة عرض الموقع فتتبع الأعلام في أعلى الصفحة.',
-    bm_partager:'مشاركة المقال',
+    bm_partager:'مشاركة المقال',
+    bm_maison:'دار',
   },
 };
 
