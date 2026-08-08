@@ -51,7 +51,24 @@ Effort : P = Petit · M = Moyen · G = Gros.
 
 ### C. Qualité & structure
 - [x] ~~**C1** — Externalisation du front (CSS + 23 modules JS hors index.html)~~ ✅
-- [ ] **C1b** — (optionnel) Migration Vite/ESM (build + import/export) · G · à évaluer, non prioritaire · le filet de tests front existe désormais
+- [ ] **C1b** — (optionnel) Migration Vite/ESM (build + import/export) · G · à évaluer, non prioritaire · le filet de tests front existe désormais
+  - **Son seul bénéfice concret est déjà acquis** : le cache-busting, obtenu en quelques
+    lignes dans `index.php`, sans étape de build. Le déploiement reste une copie de fichiers.
+  - Ce qu'apporterait encore Vite : dépendances explicites (79 globales → imports), 31 requêtes
+    → 3, minification. Réel, mais rentable sur un code qui grossit à plusieurs mains
+  - Ce qu'il coûterait ici : le déploiement cesse d'être une copie ; la réécriture des balises
+    par `index.php`, l'interception disque de `tests/e2e/statique.js` et le cache du service
+    worker sont tous indexés sur les chemins actuels ; et **5 outils PHP lisent `i18n.js`
+    comme un fichier texte** — source et bundle pourraient diverger, ce qui est précisément
+    la classe de bogues que ce dépôt produit en série
+- [x] ~~**C1c** — Cache-busting des fichiers statiques~~ ✅
+  - Le `.htaccess` demande **une semaine** de cache sur les JS/CSS : un visiteur déjà venu
+    gardait l'ancien script sept jours après une mise en ligne. Le correctif des continents
+    du 7 août ne l'aurait atteint qu'une semaine plus tard
+  - `index.php` accroche la date de modification à chaque URL (`?v=6a763ab2`), **par fichier** :
+    modifier une feuille de style ne fait pas retélécharger les 520 Ko
+  - L'empreinte du cache de page couvre désormais tous les statiques — sans quoi la page
+    servie aurait gardé l'ancien `?v=` et le cache-busting n'aurait rien busté
 - [x] ~~**C2** — Vrai schéma SQL versionné~~ ✅
 - [x] ~~**C3** — README + doc d'architecture~~ ✅
 - [x] ~~**C4** — Tests de fumée API (50 vérifications) + CI~~ ✅

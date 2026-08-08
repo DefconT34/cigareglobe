@@ -108,7 +108,17 @@ foreach (LANGUES as $l) {
 // resultat strictement identique.
 $gabarit = __DIR__ . '/index.html';
 $i18njs  = __DIR__ . '/assets/js/i18n.js';
+// L'empreinte couvre TOUS les fichiers statiques, pas seulement le
+// gabarit : les URL servies portent désormais leur date de modification
+// (voir plus bas). Sans cela, modifier globe.js ne changerait pas la
+// page mise en cache, donc pas le « ?v= », et le cache-busting ne
+// busterait rien. Deux globs et quelques stat() par requête — négligeable
+// devant la lecture d'index.html qu'ils évitent.
 $empreinte = max(filemtime($gabarit), filemtime($i18njs));
+foreach (array_merge(glob(__DIR__ . '/assets/js/*.js') ?: [],
+                     glob(__DIR__ . '/assets/css/*.css') ?: []) as $f) {
+    $empreinte = max($empreinte, filemtime($f));
+}
 // L'hote entre dans la cle : les URL canoniques et hreflang en
 // dependent, un site joignable par plusieurs noms servirait sinon
 // des canoniques errones depuis le cache.
@@ -125,11 +135,35 @@ if (is_file($pageCache) && filemtime($pageCache) >= $empreinte) {
 $html = file_get_contents($gabarit);
 
 // Les chemins relatifs se résoudraient sous /en/ : on les ancre à la racine.
-$html = str_replace(
-    ['href="assets/', 'src="assets/', 'href="manifest.json"'],
-    ['href="/assets/', 'src="/assets/', 'href="/manifest.json"'],
+//
+// Et on y accroche la DATE DE MODIFICATION du fichier. Le `.htaccess`
+// demande aux navigateurs de garder les JS et CSS **une semaine** ; sans
+// cela, un visiteur déjà venu conserve l'ancien script pendant sept
+// jours après une mise en ligne. Un correctif urgent ne l'atteindrait
+// pas. Avec « ?v=… », l'URL change quand le fichier change : le cache
+// est contourné le jour même, et reste long le reste du temps — ce qui
+// est exactement ce qu'on veut d'un cache.
+//
+// Par fichier, et non un numéro de version global : modifier une seule
+// feuille de style ne doit pas faire retélécharger les 520 Ko.
+//
+// C'est le seul bénéfice concret qu'apporterait une migration Vite/ESM,
+// obtenu ici en quelques lignes et sans étape de build — le déploiement
+// reste une copie de fichiers (voir C1b dans docs/roadmap.md).
+$html = preg_replace_callback(
+    '#\b(href|src)="assets/([^"?]+)"#',
+    function (array $m): string {
+        $chemin = __DIR__ . '/assets/' . $m[2];
+        // Fichier absent : on ancre quand même, mais sans version — une
+        // empreinte inventée ne désignerait rien.
+        $v = is_file($chemin) ? '?v=' . dechex(filemtime($chemin)) : '';
+        return $m[1] . '="/assets/' . $m[2] . $v . '"';
+    },
     $html
 );
+// Le manifeste garde son URL nue : certains outils PWA n'acceptent pas
+// de chaîne de requête, et il ne change presque jamais.
+$html = str_replace('href="manifest.json"', 'href="/manifest.json"', $html);
 
 $e = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 
