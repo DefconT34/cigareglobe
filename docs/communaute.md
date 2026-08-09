@@ -255,7 +255,14 @@ la fonctionnalité a le droit d'être.
 - **Conséquences retenues** : aucune vente, aucune petite annonce, aucun
   échange entre membres ; pas de contenu sponsorisé par un fabricant ou un
   buraliste ; **mention sanitaire** en pied de l'espace communautaire ;
-  **âge minimum 18 ans** déclaré à l'inscription.
+  **âge minimum 18 ans**.
+- ✅ **Portail d'âge à l'arrivée** (`assets/js/agegate.js`), sur tout le site et
+  pas seulement dans l'espace communautaire. Il est **visible par défaut dans le
+  HTML** — construit à l'envers, il suffirait de couper JavaScript pour entrer —
+  et la réponse vit dans `localStorage`, jamais dans un cookie : rien ne part au
+  serveur, rien n'est à déclarer dans une bannière de consentement.
+  Il ne *vérifie* pas l'âge : aucun site ne le peut sans pièce d'identité. Il
+  fait ce que la loi attend d'un éditeur — avertir et demander.
 - ⚠ **Un avis juridique est nécessaire avant mise en ligne**, en particulier
   sur la frontière entre communauté d'amateurs et promotion. Ce document
   n'en tient pas lieu.

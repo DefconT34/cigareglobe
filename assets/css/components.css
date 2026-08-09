@@ -1054,3 +1054,108 @@ button, a, input, select, textarea, label,
 @media (max-width: 640px) {
   .bm-body { padding: 14px 18px 22px; }
 }
+
+/* ══ PORTAIL D'ÂGE ══════════════════════════════════════
+   Le cigare est un produit du tabac : l'accès est réservé aux
+   personnes majeures. Ce n'est pas une modale d'information — elle se
+   dresse AU-DESSUS de tout, écran de chargement compris, et ne se ferme
+   ni par Échap ni par un clic à côté.
+
+   Elle est VISIBLE PAR DÉFAUT : c'est ce qui empêche de la contourner
+   en désactivant JavaScript. Un court script en tête de page pose
+   `age-ok` sur <html> pour qui a déjà répondu, avant le premier rendu —
+   sans quoi le portail clignoterait à chaque page. */
+#agegate {
+  position: fixed; inset: 0; z-index: 100000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: rgba(15, 8, 3, .97);
+}
+.age-ok #agegate { display: none; }
+
+.ag-box {
+  width: min(460px, 100%);
+  padding: 34px 34px 26px;
+  text-align: center;
+  background: #F8F5EE; color: #2A1F14;
+  border: 1px solid #C9A227; border-radius: 4px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .5);
+}
+.ag-ey {
+  font-family: Cinzel, serif; font-size: 10px;
+  letter-spacing: .38em; text-transform: uppercase; color: #7A5200;
+}
+.ag-titre {
+  font-family: 'Playfair Display', serif; font-size: 25px;
+  font-weight: 900; margin: 14px 0 12px; line-height: 1.25;
+}
+.ag-txt {
+  font-family: Lato, sans-serif; font-size: 12.5px; line-height: 1.68;
+  color: #2A1F14; margin: 0 0 22px;
+}
+.ag-btns { display: flex; flex-direction: column; gap: 9px; }
+.ag-oui, .ag-non {
+  width: 100%; padding: 13px 18px; cursor: pointer; border-radius: 3px;
+  font-family: Cinzel, serif; font-size: 10px;
+  letter-spacing: .18em; text-transform: uppercase;
+}
+.ag-oui {
+  background: #C9A227; color: #F8F5EE; border: 1px solid #C9A227;
+}
+.ag-oui:hover { background: #7A5200; border-color: #7A5200; }
+.ag-non {
+  background: none; color: #6B6560; border: 1px solid #B0ADA6;
+}
+.ag-non:hover { border-color: #2A1F14; color: #2A1F14; }
+.ag-oui:focus-visible, .ag-non:focus-visible {
+  outline: 2px solid #7A5200; outline-offset: 2px;
+}
+/* La mention sanitaire n'est pas une note de bas de page : elle est
+   obligatoire, et elle se lit. */
+.ag-sante {
+  margin: 20px 0 0; padding-top: 14px;
+  border-top: 1px solid #B0ADA6;
+  font-family: Lato, sans-serif; font-size: 10.5px; line-height: 1.5;
+  color: #6B6560;
+}
+.ag-refus .ag-titre { color: #6B6560; }
+
+@media (max-width: 480px) {
+  .ag-box { padding: 26px 22px 20px; }
+  .ag-titre { font-size: 21px; }
+}
+
+/* ══ COMMUNAUTÉ — LES DEUX POINTS D'ENTRÉE ══════════════
+   Les deux boutons sortaient SANS style : Arial 13 px, bordure « outset »
+   grise, le rendu par défaut du navigateur. À côté de « MARCHÉS » et
+   « LOUNGES », qui sont des pastilles Cinzel interlettrées, cela se
+   voyait immédiatement — un bouton qui ne ressemble pas au site donne
+   l'impression d'un module collé après coup. */
+
+/* Dans l'en-tête : même gabarit exact que #mktToggle et #loungeToggle,
+   dans l'or du site — c'est son espace à lui, pas une catégorie de
+   l'atlas. */
+#forumBtn {
+  font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: .18em;
+  padding: 5px 11px; border-radius: 16px; cursor: pointer;
+  text-transform: uppercase; white-space: nowrap; transition: all .2s;
+  display: flex; align-items: center; gap: 5px; flex-shrink: 0;
+  border: 1px solid rgba(201, 162, 39, .4);
+  background: rgba(201, 162, 39, .08);
+  color: var(--gold);
+}
+#forumBtn:hover { background: rgba(201, 162, 39, .2); border-color: rgba(201, 162, 39, .7); }
+#forumBtn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Dans le menu mobile : même gabarit que les entrées du compte
+   (#mm-account button), qui sont juste en dessous. */
+.mm-forum {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; text-align: left; padding: 9px 10px; margin-bottom: 4px;
+  border: 1px solid var(--gold-p); background: var(--gold-p);
+  color: var(--text); font-size: 12px; border-radius: 8px; cursor: pointer;
+  font-family: Lato, sans-serif;
+}
+.mm-forum:hover { border-color: var(--gold); }
+.mm-forum .mmf-ico { font-size: 14px; line-height: 1; }
+[dir="rtl"] .mm-forum { text-align: right; }

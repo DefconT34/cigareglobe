@@ -75,6 +75,47 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [x] ~~**D19** — Portail d'âge à l'arrivée (18 ans)~~ ✅
+  - Le cigare est un **produit du tabac** : l'accès est réservé aux personnes majeures.
+    Le portail se dresse au centre, au-dessus de tout — écran de chargement compris —
+    et ne se ferme ni par Échap ni par un clic à côté
+  - **Visible par défaut dans le HTML**, retiré par un court script d'en-tête pour qui a
+    déjà répondu. Construit à l'envers — masqué puis montré par JS — il suffirait de couper
+    JavaScript pour entrer
+  - **Pas de cookie** : la réponse vit dans `localStorage`, sur le poste, et ne part jamais
+    au serveur. Rien à déclarer dans une bannière de consentement
+  - Il ne **vérifie** pas l'âge (aucun site ne le peut sans pièce d'identité) et ne
+    géolocalise pas : l'âge légal varie (18 en France, 21 aux États-Unis, 20 au Japon), le
+    texte renvoie donc à « l'âge légal dans votre pays »
+  - « Non » n'enferme personne : message d'au revoir et retour possible sur sa réponse.
+    Aucune redirection d'autorité vers un site tiers
+  - Les **67 parcours existants le franchissent d'avance** (`aide.js`), sinon ils
+    échoueraient d'un coup sur un calque qui n'est pas leur sujet. 6 parcours dédiés
+- [x] ~~**D20** — Communauté : les deux points d'entrée à la charte, et le menu mobile~~ ✅
+  - Les boutons « Communauté » sortaient **sans style** : Arial 13 px, bordure `outset`
+    grise, le rendu par défaut du navigateur. Dans l'en-tête, la pastille reprend
+    exactement le gabarit de `#mktToggle` / `#loungeToggle`, dans l'or du site — c'est son
+    espace, pas une catégorie de l'atlas. Dans le menu mobile, le gabarit des entrées du
+    compte, juste en dessous
+  - **Voile derrière le menu mobile.** Sur un téléphone de 400 px il couvre un peu plus de
+    la moitié de l'écran, et la fiche ouverte derrière continuait de se lire sur le côté :
+    deux panneaux de même valeur, empilés. Le voile dit lequel a la main, et le clic
+    dessus referme. C'est un **élément à part** et non un `::before` du menu — la fermeture
+    au clic extérieur teste « le menu contient-il la cible ? », et un pseudo-élément aurait
+    désigné le menu lui-même
+  - La feuille passe de 220 px à `min(280px, 86vw)`, défilante quand l'écran est court.
+    Le réglage vit dans `responsive.css`, chargé **après** `components.css` : posé ailleurs,
+    il était écrasé sans bruit
+  - **Le nom du site avait disparu sur téléphone.** L'en-tête est une seule ligne de flex ;
+    à 400 px elle dispose de 376 px, dont 152 pour le titre, 34 pour le compte et 36 pour
+    le menu. « MARCHÉS » et « LOUNGES » en pesaient 160 à elles deux — le bloc de droite
+    débordait et se dessinait **par-dessus** le titre, qui perdait déjà 38 px. Les 106 px
+    de « COMMUNAUTÉ » l'ont effacé entièrement
+  - Sur téléphone, les trois bascules ne gardent que leur **pictogramme** (leur libellé
+    faisait 7 px, il n'était pas lu ; chacune conserve son `aria-label`). Mesuré à 400 px :
+    bloc de gauche **0 → 171 px**, le nom tient enfin en entier. Sous 380 px, le nom passe
+    à 15 px et les pastilles se resserrent de 2 px
+  - Parcours de non-régression : le nom ne doit être **ni tronqué ni recouvert**
 - [x] ~~**E1c** — Espace communautaire, **V1 : les discussions**~~ ✅
   - Cahier des charges : [docs/communaute.md](communaute.md). Décisions retenues : discussions
     seules (événements en V2), **les six langues avec filtre**

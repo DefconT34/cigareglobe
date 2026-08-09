@@ -69,6 +69,7 @@ espace membre (contributions, favoris, profil). PWA multilingue
 ```
 index.html            Application front (globe, panneaux, PWA)
 assets/js/            Modules espace client (account, reviews, favorites, profile)
+                      + forum, agenda, portail d'âge (agegate.js)
 assets/css/           Styles espace client (theme-aware)
 backend/
   config.php          Chargeur .env + connexion PDO (sans secret)

@@ -15,7 +15,24 @@
 #mobile-menu-btn { display:none; width:36px; height:36px; background:var(--bg3); border:1px solid var(--panel-border); border-radius:6px; cursor:pointer; font-size:18px; align-items:center; justify-content:center; color:var(--text); flex-shrink:0; }
 
 /* ── MOBILE DROPDOWN MENU ── */
-#mobile-menu { display:none; position:fixed; top:56px; right:0; width:220px; background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:0 0 0 10px; z-index:300; padding:14px; box-shadow:-4px 4px 24px var(--shd); }
+/* ── Le menu mobile, et son voile ─────────────────────────
+   Sur un telephone de 400 px, le menu couvrait un peu plus de la moitie
+   de l'ecran et la fiche ouverte derriere continuait de se lire sur le
+   cote : deux panneaux de meme valeur, empiles. Le voile dit lequel des
+   deux a la main, et le clic dessus referme.
+
+   Il est SOUS le menu (299) et AU-DESSUS des panneaux (60). C'est un
+   element a part et non un ::before du menu : la fermeture au clic
+   exterieur teste « le menu contient-il la cible ? », et un
+   pseudo-element aurait designe le menu lui-meme. */
+#mmenu-scrim {
+  position: fixed; inset: 0; z-index: 299;
+  background: rgba(0, 0, 0, .38);
+  -webkit-backdrop-filter: blur(1.5px); backdrop-filter: blur(1.5px);
+}
+#mmenu-scrim[hidden] { display: none; }
+
+#mobile-menu { display:none; position:fixed; top:56px; right:0; width:min(280px, 86vw); max-height:calc(100vh - 96px); overflow-y:auto; background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:0 0 0 10px; z-index:300; padding:14px; box-shadow:-8px 8px 32px rgba(0,0,0,.28); }
 #mobile-menu.open { display:block; }
 .mmenu-sec { font-family:'Cinzel',serif; font-size:7px; letter-spacing:.4em; color:var(--gold); text-transform:uppercase; margin:12px 0 6px; padding-bottom:4px; border-bottom:1px solid var(--panel-border); }
 .mmenu-sec:first-child { margin-top:0; }
@@ -81,7 +98,56 @@ body.mobile-mode #theme-bar      { display:none; }
 body.mobile-mode #lang-bar       { display:none; }
 body.mobile-mode .stat-item      { display:none; }
 body.mobile-mode .deco-line      { display:none; }
-body.mobile-mode #mktToggle      { padding:4px 8px; font-size:7px; }
+/* ── L'en-tête sur téléphone : le nom du site d'abord ─────
+   À 400 px, la barre dispose de 376 px. Le titre en réclame 152, le
+   compte 34, le menu 36 — restent ~130 px pour les bascules. « MARCHÉS »
+   et « LOUNGES » en pesaient 160 à elles deux : le bloc de droite
+   débordait et se dessinait PAR-DESSUS le titre, qui disparaissait
+   d'autant. L'ajout de « COMMUNAUTÉ » (106 px) l'a effacé entièrement.
+
+   Sur téléphone, les trois bascules gardent donc leur seul pictogramme.
+   Leur libellé faisait 7 px — il n'était de toute façon pas lu — et
+   chacune conserve son `aria-label`, donc son nom pour un lecteur
+   d'écran. Mesuré : le bloc de gauche repasse de 0 à 171 px, et le nom
+   du site tient enfin en entier.
+
+   MESURES à 400 px (largeur du bloc de gauche) :
+     avec les libellés .............. 0 px   (titre invisible)
+     COMMUNAUTÉ en pictogramme ..... 71 px   (titre coupé)
+     les trois en pictogramme ..... 171 px   (titre entier, 152 px) */
+body.mobile-mode #mktToggle span:last-child,
+body.mobile-mode #loungeToggle span:last-child,
+body.mobile-mode #forumBtn span:last-child { display:none; }
+body.mobile-mode #mktToggle,
+body.mobile-mode #loungeToggle,
+body.mobile-mode #forumBtn { padding:4px 8px; gap:0; font-size:14px; line-height:1.15; }
+/* 8 px d'écart entre les éléments de droite en coûtaient 7 au titre, et
+   « CIGAR ODYSSEY » se coupait sur le Y. Mesuré : à 5 px, le bloc de
+   gauche fait exactement les 152 px que le titre demande. */
+body.mobile-mode .hdr-right { gap:5px; }
+
+/* Le titre ne se fait plus recouvrir : s'il manque malgré tout de la
+   place, il se coupe proprement plutôt que de passer sous les bascules. */
+body.mobile-mode .hdr-left    { min-width:0; overflow:hidden; }
+/* flex-shrink:0 sur .title-block (components.css) gardait ses 152 px et
+   se faisait couper net par le débordement du parent. En le laissant
+   rétrécir, c'est l'ellipse qui prend le relais — un mot tronqué se
+   comprend, une lettre coupée en deux ressemble à un défaut. */
+body.mobile-mode .title-block { min-width:0; flex-shrink:1; }
+body.mobile-mode .title-main  { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* Sous 380 px (les téléphones les plus étroits encore vendus), 18 px
+   demandent 152 px quand il n'en reste que ~130 : le nom passe à 15 px
+   et tient en entier. Mesuré, pas estimé. */
+@media (max-width: 380px) {
+  body.mobile-mode .title-main { font-size:15px; }
+  /* Et deux pixels de moins autour de chaque pastille : 15 px de nom en
+     demandent 127, il n'en restait que 123. Rogner les pastilles coûte
+     moins que rapetisser le nom du site. */
+  body.mobile-mode #mktToggle,
+  body.mobile-mode #loungeToggle,
+  body.mobile-mode #forumBtn { padding:4px 6px; }
+}
 body.mobile-mode #mobile-menu-btn { display:flex; }
 body.mobile-mode #mobile-nav      { display:flex; }
 

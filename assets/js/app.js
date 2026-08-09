@@ -25,11 +25,17 @@ function _safeUrl(u) {
 function isMobile() { return window.innerWidth <= 640; }
 
 // ── Mobile hamburger ─────────────────────────────────────
-var _mMenuBtn = document.getElementById('mobile-menu-btn');
-var _mMenu    = document.getElementById('mobile-menu');
+var _mMenuBtn  = document.getElementById('mobile-menu-btn');
+var _mMenu     = document.getElementById('mobile-menu');
+var _mMenuVoile = document.getElementById('mmenu-scrim');
 
+// Le voile n'est pas decoratif : sur un telephone de 400 px, le menu
+// couvre un peu plus de la moitie de l'ecran, et la fiche ouverte
+// derriere continuait de se lire sur le cote — deux panneaux de meme
+// valeur, empiles. Le voile dit lequel des deux a la main.
 function closeMobileMenu() {
   if (_mMenu) _mMenu.classList.remove('open');
+  if (_mMenuVoile) _mMenuVoile.hidden = true;
   if (_mMenuBtn) _mMenuBtn.setAttribute('aria-expanded', 'false');
 }
 
@@ -37,9 +43,11 @@ if (_mMenuBtn) {
   _mMenuBtn.addEventListener('click', function(e) {
     e.stopPropagation();
     var isOpen = _mMenu.classList.toggle('open');
+    if (_mMenuVoile) _mMenuVoile.hidden = !isOpen;
     _mMenuBtn.setAttribute('aria-expanded', String(isOpen));
   });
 }
+if (_mMenuVoile) _mMenuVoile.addEventListener('click', closeMobileMenu);
 
 document.addEventListener('click', function(e) {
   if (_mMenu && _mMenu.classList.contains('open') &&

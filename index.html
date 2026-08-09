@@ -47,6 +47,11 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥃</text></svg>">
 <link rel="stylesheet" href="assets/css/account.css">
 <link rel="stylesheet" href="assets/css/forum.css">
+<!-- Le portail d'age est VISIBLE PAR DEFAUT dans le HTML : c'est ce qui
+     empeche de le contourner en desactivant JavaScript. Ce court script
+     le retire pour qui a deja repondu, avant le premier rendu, sinon il
+     clignoterait a chaque page. -->
+<script>try{if(localStorage.getItem('cg_age18')==='1')document.documentElement.className+=' age-ok';}catch(e){document.documentElement.className+=' age-ok';}</script>
 </head>
 <body>
 
@@ -132,7 +137,7 @@
     <div class="hdr-divider"></div>
 
     <!-- Markets toggle -->
-    <button id="mktToggle" aria-pressed="false" aria-label="Toggle markets">
+    <button id="mktToggle" aria-pressed="false" aria-label="Toggle markets" data-i18n-title="markets_btn" title="Marchés">
       <span aria-hidden="true">🌍</span>
       <span data-i18n="markets_btn">Marchés</span>
     </button>
@@ -161,9 +166,16 @@
 <div class="deco-line" aria-hidden="true"></div>
 
 <!-- ══ MOBILE MENU ══════════════════════════════════════ -->
+<!-- Le voile est un élément à part, et non un ::before du menu : la
+     fermeture au clic extérieur teste « le menu contient-il la cible ? »,
+     et un pseudo-élément aurait désigné le menu lui-même. -->
+<div id="mmenu-scrim" hidden></div>
 <nav id="mobile-menu" role="navigation" aria-label="Mobile settings">
   <div class="mmenu-sec" data-i18n="forum_titre">Communaute</div>
-  <button id="mm-forum" class="mm-forum" data-i18n="forum_sous_titre">Les echanges entre aficionados</button>
+  <button id="mm-forum" class="mm-forum">
+    <span class="mmf-ico" aria-hidden="true">💬</span>
+    <span data-i18n="forum_sous_titre">Les échanges entre aficionados</span>
+  </button>
   <div class="mmenu-sec">Compte</div>
   <div id="mm-account"><!-- rempli par account.js selon l'état de connexion --></div>
   <div class="mmenu-sec" data-i18n="theme">Thème</div>
@@ -270,6 +282,24 @@
   <button class="zoom-btn" id="zReset" aria-label="Reset zoom">↺</button>
   <div id="zoom-lbl" aria-live="polite">100%</div>
 </div>
+<!-- ══ PORTAIL D'ÂGE ════════════════════════════════════
+     Le cigare est un produit du tabac : l'accès au site est réservé aux
+     personnes majeures. Le portail se dresse au-dessus de tout, écran de
+     chargement compris, et ne se ferme ni par Échap ni par un clic à
+     côté — ce n'est pas une modale d'information. -->
+<div id="agegate" role="dialog" aria-modal="true" aria-labelledby="ag-titre">
+  <div class="ag-box">
+    <div class="ag-ey">CIGAR ODYSSEY</div>
+    <h1 class="ag-titre" id="ag-titre" data-i18n="age_titre">Avez-vous 18 ans ou plus ?</h1>
+    <p class="ag-txt" data-i18n="age_texte">Ce site traite du cigare, un produit du tabac. Son accès est réservé aux personnes ayant l'âge légal pour consommer du tabac dans leur pays — 18 ans en France.</p>
+    <div class="ag-btns">
+      <button class="ag-oui" id="agOui" data-i18n="age_oui">J'ai 18 ans ou plus</button>
+      <button class="ag-non" id="agNon" data-i18n="age_non">Non</button>
+    </div>
+    <p class="ag-sante" data-i18n="age_sante">Le tabac nuit gravement à votre santé et à celle de votre entourage.</p>
+  </div>
+</div>
+
 <!-- ══ TOOLTIP ══════════════════════════════════════════ -->
 <div id="tip" role="tooltip" aria-hidden="true"></div>
 <div id="loading-overlay" style="position:fixed;inset:0;background:rgba(15,8,3,0.97);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
@@ -303,6 +333,7 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/forum.js"></script>
+<script src="assets/js/agegate.js"></script>
 <script src="assets/js/photos.js"></script>
 <script src="assets/js/explorer.js"></script>
 <script src="assets/js/contrib.js"></script>

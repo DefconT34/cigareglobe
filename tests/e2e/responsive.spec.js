@@ -67,6 +67,42 @@ test.describe('Mobile', () => {
       'le bas de la colonne passe sous la barre de navigation').toBeLessThanOrEqual(mesure.hautBarre);
   });
 
+  // ── Regression : le nom du site avait disparu ──────────
+  // L'en-tete est une seule ligne de flex. A 400 px elle dispose de
+  // 376 px : le titre en reclame 152, le compte 34, le menu 36. Les
+  // bascules « MARCHES » et « LOUNGES » en pesaient 160 a elles deux,
+  // et le bloc de droite se dessinait deja PAR-DESSUS le titre ;
+  // l'ajout de « COMMUNAUTE » (106 px) l'a efface entierement.
+  //
+  // Sur telephone les bascules ne gardent donc que leur pictogramme.
+  // Ce parcours verifie le RESULTAT, pas le moyen : le nom du site se
+  // lit en entier, et rien ne passe dessus.
+  test('le nom du site reste lisible en entier', async ({ page }) => {
+    await ouvrir(page, '/');
+    await expect(page.locator('body')).toHaveClass(/mobile-mode/, { timeout: 20_000 });
+
+    const titre = page.locator('.title-main');
+    await expect(titre).toBeVisible();
+    await expect(titre).toContainText('CIGAR');
+
+    const mesure = await page.evaluate(() => {
+      const t = document.querySelector('.title-main');
+      const bloc = document.querySelector('.title-block').getBoundingClientRect();
+      const droite = document.querySelector('.hdr-right').getBoundingClientRect();
+      return {
+        // Coupe par l'ellipse ?
+        coupe: t.scrollWidth > t.clientWidth + 1,
+        // Recouvert par le bloc de droite ?
+        recouvert: droite.left < bloc.right - 1,
+        gauche: Math.round(document.querySelector('.hdr-left').getBoundingClientRect().width),
+      };
+    });
+
+    expect(mesure.gauche, 'le bloc du titre a ete ecrase a zero').toBeGreaterThan(100);
+    expect(mesure.coupe, 'le nom du site est tronque').toBe(false);
+    expect(mesure.recouvert, 'les bascules passent par-dessus le nom du site').toBe(false);
+  });
+
   test('la page ne defile pas horizontalement', async ({ page }) => {
     await ouvrir(page, '/');
     await expect(page.locator('body')).toHaveClass(/mobile-mode/, { timeout: 20_000 });
@@ -153,23 +189,29 @@ test.describe('Mobile', () => {
     const pastille = page.locator('#bmShare');
     await expect(pastille).toBeVisible();
 
-    const mesure = await page.evaluate(() => {
+    // La modale s'OUVRE en s'agrandissant (transform .32s). Mesurer
+    // pendant l'animation vise un point qui n'est pas encore le bon, et
+    // elementFromPoint y rend l'element voisin : le parcours a echoue
+    // une fois pour cette seule raison. On interroge donc jusqu'a ce que
+    // la mesure se stabilise — un vrai defaut, lui, ne se stabilise
+    // jamais et le delai finit par expirer.
+    const mesurer = () => page.evaluate(() => {
       const el = document.getElementById('bmShare');
       const r = el.getBoundingClientRect();
       // Le point vise : 8 px en dehors du cercle, en diagonale. Sans
       // zone sensible, ce point ne touche pas le bouton.
       const x = r.left - 8, y = r.top - 8;
       return {
-        dessin: { l: Math.round(r.width), h: Math.round(r.height) },
+        l: Math.round(r.width), h: Math.round(r.height),
         touche: document.elementFromPoint(x, y) === el,
       };
     });
 
-    // Le dessin ne bouge pas : c'est la pastille du bureau.
-    expect(mesure.dessin.l).toBe(26);
-    expect(mesure.dessin.h).toBe(26);
-    // La cible, elle, deborde : 26 + 9 + 9 = 44 px.
-    expect(mesure.touche, 'la zone sensible de 44 px a disparu').toBe(true);
+    await expect
+      .poll(mesurer, { timeout: 10_000, message: 'la zone sensible de 44 px a disparu' })
+      // Le dessin ne bouge pas : c'est la pastille du bureau. La cible,
+      // elle, deborde : 26 + 9 + 9 = 44 px.
+      .toEqual({ l: 26, h: 26, touche: true });
   });
 
   // ── Le geste doit survivre au dessin ───────────────────

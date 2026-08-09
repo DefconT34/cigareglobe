@@ -15,11 +15,26 @@ const { servirStatiqueDepuisDisque } = require('./statique');
  * s'initialiser. Les echecs qui en decoulent sont intermittents et ne
  * disent rien de l'application.
  */
-async function ouvrir(page, url = '/') {
+async function ouvrir(page, url = '/', opts = {}) {
   // Les fichiers JS/CSS et les ressources tierces sont servis depuis le
   // disque : c'est le seul point de la campagne qui rendait page.goto()
   // instable. Voir statique.js pour les mesures.
   await servirStatiqueDepuisDisque(page);
+
+  // LE PORTAIL D'AGE EST FRANCHI D'AVANCE. Il se dresse au-dessus de
+  // tout et intercepte les clics : sans cela, les 67 parcours
+  // echoueraient d'un coup, non pas sur ce qu'ils verifient mais sur un
+  // calque qui n'est pas leur sujet. Le portail lui-meme a son propre
+  // fichier (age.spec.js), qui passe `portail: false` pour le voir.
+  //
+  // addInitScript s'execute AVANT les scripts de la page, donc avant le
+  // court script d'en-tete qui lit le drapeau : c'est la seule fenetre
+  // ou le poser serve a quelque chose.
+  if (opts.portail !== false) {
+    await page.addInitScript(() => {
+      try { localStorage.setItem('cg_age18', '1'); } catch (e) {}
+    });
+  }
 
   await page.goto(url);
 
