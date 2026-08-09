@@ -75,6 +75,10 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [ ] **E** — **Espace communautaire** (discussions par rubrique, étiquettes, événements) · G
+  - Cahier des charges : [docs/communaute.md](communaute.md) — cadré, **6 décisions à trancher** (§12)
+  - Suppose **B1** faite : une communauté se lance une fois, devant de vrais visiteurs
+  - ⚠ Avis juridique nécessaire avant ouverture (produit du tabac, promotion, âge)
 - [x] ~~**D1** — Modération des avis (signalement + écran admin)~~ ✅
 - [x] ~~**D2** — Contributeur de confiance (promotion + publication directe)~~ ✅
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
