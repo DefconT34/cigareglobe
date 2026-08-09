@@ -341,21 +341,18 @@ function openBrand(name, cid) {
   // L'URL suit la lecture : rafraichir ou copier la barre d'adresse
   // ramene sur cet article, et c'est ce lien que partage le bouton.
   try { history.replaceState({ brand: name }, '', location.pathname + '?brand=' + encodeURIComponent(name)); } catch (e) {}
-  // Deux declencheurs, une seule action : la pastille de l'en-tete sur
-  // grand ecran, le bouton pleine largeur en fin d'article sur telephone.
-  ['bmShare', 'bmShareCta'].forEach(function (id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.onclick = function () {
-      // La fiche est normalement deja dessinee (voir _renderBrand). Si
-      // le visiteur a ete plus rapide que le rendu, on le dit plutot
-      // que de laisser un bouton mort une seconde.
-      el.classList.add('wait');
-      Promise.resolve(partagerMarque(name, cid)).then(function () {
-        el.classList.remove('wait');
-      }, function () { el.classList.remove('wait'); });
-    };
-  });
+  // La meme pastille partout, telephone compris : un bouton qui change
+  // de forme et de place d'un ecran a l'autre se reapprend a chaque fois.
+  var partage = document.getElementById('bmShare');
+  if (partage) partage.onclick = function () {
+    // La fiche est normalement deja dessinee (voir _renderBrand). Si le
+    // visiteur a ete plus rapide que le rendu, le bouton le montre
+    // plutot que de rester mort une seconde.
+    partage.classList.add('wait');
+    Promise.resolve(partagerMarque(name, cid)).then(function () {
+      partage.classList.remove('wait');
+    }, function () { partage.classList.remove('wait'); });
+  };
 
   // Afficher skeleton immédiatement
   var c = COUNTRIES.find(function(x){ return x.id === cid; }) || {flag:'',name:cid};

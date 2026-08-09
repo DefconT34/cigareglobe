@@ -999,26 +999,25 @@ button, a, input, select, textarea, label,
   touch-action: manipulation;
 }
 
-/* ══ ARTICLE DE MARQUE — LISIBILITÉ ═════════════════════
-   L'histoire d'une maison fait 1 500 caractères en moyenne : c'est de
-   la lecture longue, pas une légende. Trois réglages de typographie
-   séparent un bloc de texte d'un article.
+/* ══ ARTICLE DE MARQUE — UNE SEULE TYPOGRAPHIE ══════════
+   L'histoire suit désormais « Profondeur de Gamme » : même corps, même
+   interligne, même largeur.
 
-   1. LA LARGEUR DE LIGNE. Au-delà d'environ 70 caractères, l'œil perd
-      le début de la ligne suivante. 34em l'y ramène, quelle que soit la
-      largeur de l'écran — c'est pour cela que la modale peut s'élargir
-      sans que le texte suive.
-   2. LE CORPS. 12px pour un texte long est une taille d'étiquette.
-   3. L'INTERLIGNE et l'espace entre paragraphes, qui donnent au regard
-      où se poser. */
+   Elle avait été composée à part — 14,5 px sur une mesure de 34 em
+   centrée — au nom de la lecture longue. Vue dans la modale, cette
+   colonne étroite était RENTRÉE de part et d'autre par rapport à tout
+   ce qui la suit, et sensiblement plus grosse : deux articles empilés
+   plutôt qu'un seul. La cohérence de la page l'emporte ici sur le
+   confort théorique d'une mesure idéale.
+
+   Le corps reste en --text, plus soutenu que le --text2 des gammes :
+   c'est le texte principal de la fiche, pas une légende sous un item. */
 .bm-box { width: 680px; }
 .bm-hist {
-  font-size: 14.5px; line-height: 1.75; color: var(--text);
-  max-width: 34em; margin: 0 auto 22px;
+  font-size: 12.5px; line-height: 1.68; color: var(--text);
+  max-width: none; margin: 0 0 16px;
   white-space: pre-line;
 }
-/* La première ligne annonce le ton : c'est l'usage en presse. */
-.bm-hist::first-line { font-size: 15.5px; }
 .gam-story { font-size: 12.5px; line-height: 1.68; }
 
 .bm-share {
@@ -1031,51 +1030,27 @@ button, a, input, select, textarea, label,
 }
 .bm-share:hover { background: var(--gold); color: var(--panel-bg); }
 .bm-share.ok    { background: var(--grn); color: #fff; }
+.bm-share.wait  { opacity: .5; pointer-events: none; }
 .bm-share:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 [dir="rtl"] .bm-share { right: auto; left: 46px; }
 [dir="rtl"] .bm-close { right: auto; left: 12px; }
 
-/* ══ PARTAGE SUR TÉLÉPHONE ══════════════════════════════
-   Une pastille de 26 px dans un en-tête n'est pas une option de
-   partage sur mobile : elle est sous la cible tactile de 44 px, elle
-   voisine la croix de fermeture, et son 🔗 annonce un lien alors que
-   le bouton envoie une fiche image.
+/* Le partage est LE MÊME bouton partout : même pastille, même place.
+   Un bouton qui change de forme et de position d'un écran à l'autre se
+   réapprend à chaque fois.
 
-   Ici : pleine largeur, à la FIN de l'article — on partage ce qu'on
-   vient de lire, pas ce qu'on commence. La charte tient : Cinzel
-   capitales interlettrées, or sur or pâle, filet plutôt que relief. */
-.bm-share-cta {
-  display: none;
-  width: 100%; margin: 26px 0 4px; padding: 15px 18px;
-  align-items: center; gap: 14px;
-  background: var(--gold-p); color: var(--text);
-  border: 1px solid var(--gold); border-radius: 3px;
-  cursor: pointer; text-align: left;
-  transition: background .2s, color .2s;
+   La cible tactile, elle, ne se voit pas : une zone sensible de 44 px
+   est posée autour de la pastille, qui garde ses 26 px à l'œil. C'est
+   le minimum recommandé, et il ne coûte pas un pixel de dessin.
+   `top/right/bottom/left` négatifs plutôt que du remplissage : ajouter
+   du remplissage aurait déplacé la pastille. */
+.bm-share::before {
+  content: ''; position: absolute;
+  top: -9px; right: -9px; bottom: -9px; left: -9px;
 }
-.bm-share-cta:active { background: var(--gold); color: var(--panel-bg); }
-.bm-share-cta:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.bm-share-cta-ico { font-size: 20px; line-height: 1; color: var(--gold); }
-.bm-share-cta:active .bm-share-cta-ico { color: var(--panel-bg); }
-.bm-share-cta-txt { display: flex; flex-direction: column; gap: 3px; }
-.bm-share-cta-txt span {
-  font-family: Cinzel, serif; font-size: 11px;
-  letter-spacing: .18em; text-transform: uppercase;
-}
-.bm-share-cta-txt em {
-  font-family: Lato, sans-serif; font-style: normal;
-  font-size: 11px; color: var(--text2); letter-spacing: .02em;
-}
-.bm-share-cta.wait { opacity: .6; pointer-events: none; }
-[dir="rtl"] .bm-share-cta { text-align: right; }
 
-/* Sur téléphone, la mesure idéale dépasse la largeur disponible : on
-   rend la marge à la lecture plutôt que de la gaspiller en gouttières. */
+/* Sur téléphone, la modale occupe presque tout l'écran : on rend la
+   marge à la lecture plutôt que de la gaspiller en gouttières. */
 @media (max-width: 640px) {
   .bm-body { padding: 14px 18px 22px; }
-  .bm-hist { font-size: 15px; line-height: 1.8; max-width: none; }
-  .bm-share-cta { display: flex; }
-  /* Deux boutons de partage dans la même modale, c'est un de trop :
-     la pastille cède la place à celui qui se lit. */
-  .bm-share { display: none; }
 }

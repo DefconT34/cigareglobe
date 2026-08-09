@@ -394,7 +394,6 @@ const I18N = {
     lc_itineraire:'Itinéraire',
     prof_lang_hint:"Langue de nos emails. L'affichage du site suit les drapeaux en haut de page.",
     bm_partager:"Partager l'article",
-    bm_partager_note:"Une fiche image, prête à envoyer",
     bm_maison:'Maison',
   },
 
@@ -788,7 +787,6 @@ const I18N = {
     lc_itineraire:'Directions',
     prof_lang_hint:'Language of our emails. The site display follows the flags at the top of the page.',
     bm_partager:'Share this article',
-    bm_partager_note:'A picture card, ready to send',
     bm_maison:'House',
   },
 
@@ -1182,7 +1180,6 @@ const I18N = {
     lc_itineraire:'Cómo llegar',
     prof_lang_hint:'Idioma de nuestros correos. La visualización del sitio sigue las banderas de arriba.',
     bm_partager:'Compartir el artículo',
-    bm_partager_note:'Una ficha en imagen, lista para enviar',
     bm_maison:'Casa',
   },
 
@@ -1576,7 +1573,6 @@ const I18N = {
     lc_itineraire:'Route',
     prof_lang_hint:'Sprache unserer E-Mails. Die Anzeige der Website richtet sich nach den Flaggen oben.',
     bm_partager:'Artikel teilen',
-    bm_partager_note:'Eine Bildkarte, sofort versandbereit',
     bm_maison:'Haus',
   },
 
@@ -1970,7 +1966,6 @@ const I18N = {
     lc_itineraire:'路线',
     prof_lang_hint:'我们发送邮件所用的语言。网站显示语言由页面顶部的旗帜决定。',
     bm_partager:'分享这篇文章',
-    bm_partager_note:'图片卡片，即发即用',
     bm_maison:'名庄',
   },
 
@@ -2364,7 +2359,6 @@ const I18N = {
     lc_itineraire:'المسار',
     prof_lang_hint:'لغة رسائلنا الإلكترونية. أما لغة عرض الموقع فتتبع الأعلام في أعلى الصفحة.',
     bm_partager:'مشاركة المقال',
-    bm_partager_note:'بطاقة مصوّرة جاهزة للإرسال',
     bm_maison:'دار',
   },
 };

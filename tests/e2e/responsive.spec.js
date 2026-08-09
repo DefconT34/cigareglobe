@@ -136,12 +136,13 @@ test.describe('Mobile', () => {
       .toBeGreaterThan(0);
   });
 
-  // ── Le partage, pour de vrai ───────────────────────────
-  // Sur telephone, le bon partage est celui du systeme. Encore faut-il
-  // pouvoir l'atteindre : la pastille de l'en-tete faisait 26 px, sous
-  // la cible tactile de 44 px, collee a la croix de fermeture, et son
-  // pictogramme annoncait un lien la ou le bouton envoie une fiche.
-  test('le partage est un vrai bouton, en fin d\'article', async ({ page }) => {
+  // ── Le partage, atteignable au doigt ───────────────────
+  // La pastille est la MEME que sur grand ecran, a la meme place : un
+  // bouton qui change de forme d'un ecran a l'autre se reapprend a
+  // chaque fois. Elle mesure 26 px a l'oeil, sous le minimum tactile de
+  // 44 px — d'ou une zone sensible posee autour, invisible, qu'on
+  // verifie ici en tapant HORS du dessin.
+  test('la pastille de partage est atteignable au doigt', async ({ page }) => {
     await ouvrir(page, '/');
     await expect(page.locator('body')).toHaveClass(/mobile-mode/, { timeout: 20_000 });
 
@@ -149,16 +150,26 @@ test.describe('Mobile', () => {
     expect(m, 'aucune fiche de marque ne s\'est chargee').toBeTruthy();
     await page.evaluate((m) => openBrand(m.nom, m.cid), m);
 
-    const cta = page.locator('#bmShareCta');
-    await expect(cta).toBeVisible();
-    // La pastille cede la place : deux boutons de partage, c'est un de trop.
-    await expect(page.locator('#bmShare')).toBeHidden();
+    const pastille = page.locator('#bmShare');
+    await expect(pastille).toBeVisible();
 
-    const boite = await cta.boundingBox();
-    expect(boite.height, 'sous 44 px, la cible n\'est pas tactile')
-      .toBeGreaterThanOrEqual(44);
-    // Il porte un libelle, pas seulement un pictogramme.
-    await expect(cta).toContainText(/PARTAGER|SHARE|COMPARTIR|TEILEN/i);
+    const mesure = await page.evaluate(() => {
+      const el = document.getElementById('bmShare');
+      const r = el.getBoundingClientRect();
+      // Le point vise : 8 px en dehors du cercle, en diagonale. Sans
+      // zone sensible, ce point ne touche pas le bouton.
+      const x = r.left - 8, y = r.top - 8;
+      return {
+        dessin: { l: Math.round(r.width), h: Math.round(r.height) },
+        touche: document.elementFromPoint(x, y) === el,
+      };
+    });
+
+    // Le dessin ne bouge pas : c'est la pastille du bureau.
+    expect(mesure.dessin.l).toBe(26);
+    expect(mesure.dessin.h).toBe(26);
+    // La cible, elle, deborde : 26 + 9 + 9 = 44 px.
+    expect(mesure.touche, 'la zone sensible de 44 px a disparu').toBe(true);
   });
 
   // ── Le geste doit survivre au dessin ───────────────────
@@ -197,7 +208,7 @@ test.describe('Mobile', () => {
         for (let i = 0; i < 80 && !(window.BRANDS_DB || {})[m.nom]; i++) await pause(100);
         await pause(lecture);                       // le visiteur lit… ou pas
         t0 = performance.now();
-        document.getElementById('bmShareCta').click();
+        document.getElementById('bmShare').click();
         for (let i = 0; i < 80 && !vu; i++) await pause(100);
         return vu;
       };

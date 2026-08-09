@@ -80,7 +80,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅
 - [x] ~~**D4** — Globe : navigation clavier + alternative textuelle~~ ✅
 - [x] ~~**D5** — Globe : zoom centré sur le curseur~~ ✅
-- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
+- [ ] **D6** — Globe : réécriture WebGL (globe.gl/Three.js) · G · optionnel
 - [x] ~~**D16** — Zoom : double-tape sur le globe, plus nulle part ailleurs~~ ✅
   - `touch-action: manipulation` sur tous les éléments interactifs : le zoom natif du
     navigateur ne se déclenche plus sur un bouton, et le délai de ~300 ms disparaît
@@ -96,8 +96,11 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - Le **cache de page** inclut la marque, sinon le premier partage figeait sa carte pour
     tout le site. La clé vient de la **base**, jamais de l'URL : un tiers ne peut pas créer
     de fichiers de cache à volonté
-  - Lisibilité : mesure à 34 em (**63 caractères par ligne**), corps 12 → 14,5 px,
-    interligne 1,75 ; sur téléphone la mesure s'efface au profit du texte
+  - ~~Lisibilité : mesure à 34 em, corps 12 → 14,5 px~~ **revu** : l'histoire suit désormais
+    « Profondeur de Gamme » — 12,5 px, interligne 1,68, pleine largeur. La colonne étroite et
+    centrée était *rentrée* par rapport à tout ce qui la suivait, et sensiblement plus grosse :
+    deux articles empilés plutôt qu'un seul. La cohérence de la page l'emporte sur le confort
+    théorique d'une mesure idéale
   - Bouton de partage sur la fiche (`navigator.share` avec titre et résumé, repli
     presse-papiers) et `data-i18n-title` ajouté au moteur i18n pour les infobulles
   - **Le partage produit une IMAGE**, pas un lien copié : une fiche 1080×1350 lue
@@ -110,9 +113,11 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - **Pas de drapeau emoji** : un canvas Windows rend les indicateurs régionaux en losanges,
     et l'image est produite sur le poste du visiteur
 - [x] ~~**D18** — Le partage, pour de vrai sur téléphone~~ ✅
-  - Sur mobile, un **vrai bouton** en fin d'article — pleine largeur, libellé, 63 px de haut.
-    La pastille 🔗 de l'en-tête faisait 26 px, sous la cible tactile de 44 px, collée à la
-    croix de fermeture, et son pictogramme annonçait un lien là où le bouton envoie une fiche
+  - **Le même bouton partout** : même pastille, même place qu'en bureau. Un bouton qui change
+    de forme et de position d'un écran à l'autre se réapprend à chaque fois
+  - La cible tactile ne se voit pas : une zone sensible de **44 px** entoure la pastille, qui
+    garde ses 26 px à l'œil (`::before` en débord négatif — du remplissage l'aurait déplacée).
+    Vérifiée en tapant **hors du dessin**
   - **Le geste doit survivre au dessin.** `navigator.share()` exige une activation
     transitoire : dessiner la fiche (5 polices + un PNG de 300 Ko) prend **1,1 s** — assez
     pour que Safari juge le geste périmé et refuse. La fiche est donc dessinée pendant la
