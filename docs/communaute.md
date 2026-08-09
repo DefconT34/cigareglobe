@@ -319,31 +319,50 @@ Notes :
   **est** un sujet, il n'en a pas un.
 - Migrations `015` → `018`, puis `sql/schema.sql` régénéré par mysqldump.
 
-## 12. Décisions à trancher
+## 12. Décisions
 
-Je recommande la première option de chaque ligne.
-
-| # | Question | Options |
+| # | Question | Décision |
 |---|---|---|
-| 12.1 | **Périmètre de la V1** | **(a)** Discussions seules, événements en V2 — livrable en ~2 semaines, valide l'appétence · (b) Tout d'un bloc |
-| 12.2 | **Qui peut créer un événement** | **(a)** Contributeurs de confiance · (b) Tout membre vérifié · (c) Sur demande au cas par cas |
-| 12.3 | **Langues** | **(a)** Six langues avec filtre (§9) · (b) FR + EN seulement au départ |
-| 12.4 | **Réputation** | **(a)** Réemployer les badges existants · (b) Points et niveaux dédiés · (c) Rien |
-| 12.5 | **Messagerie privée** | **(a)** Hors périmètre — la charge de modération est disproportionnée · (b) Plus tard |
-| 12.6 | **Modération** | **(a)** Toi seul au départ · (b) Recruter 2 modérateurs bénévoles dès l'ouverture |
+| 12.1 | **Périmètre de la V1** | ✅ **Discussions seules** — événements en V2 |
+| 12.2 | Qui peut créer un événement | *Reporté avec la V2* |
+| 12.3 | **Langues** | ✅ **Les six, avec filtre** (§9) |
+| 12.4 | Réputation | À trancher — les rôles existants (`trusted`) suffisent pour l'instant |
+| 12.5 | Messagerie privée | Hors périmètre |
+| 12.6 | Modération | À trancher avant ouverture publique |
 
 ## 13. Ordre de construction proposé
 
-| Étape | Contenu | Effort |
-|---|---|---|
-| **1** | Migrations, rubriques, sujets et réponses, rendu Markdown, échappement | M |
-| **2** | Étiquettes, page d'étiquette, recherche dans les sujets | P |
-| **3** | Signalement, file de modération, sanctions, plafonds anti-abus | M |
-| **4** | Notifications email + préférences du profil | P |
-| **5** | Ancrage sur l'atlas (sujets liés à un lounge / une marque / un pays) | P |
-| **6** | Événements : champs, inscriptions, agenda, rappels | M |
-| **7** | Événements sur le globe | P |
-| **8** | Référencement : URLs par langue, `sitemap`, `hreflang`, Open Graph par sujet | P |
+| Étape | Contenu | Effort | État |
+|---|---|---|---|
+| **1** | Migration 015, rubriques, sujets et réponses, rendu Markdown, échappement | M | ✅ |
+| **2** | Étiquettes, filtre par étiquette, autocomplétion au seuil de 3 usages | P | ✅ |
+| **3** | Signalement, masquage au seuil, onglet Communauté, plafonds anti-abus | M | ✅ |
+| **4** | Notifications email + préférences du profil | P | ⏳ |
+| **5** | Ancrage sur l'atlas (colonnes `ref_type`/`ref_id` posées ; reste l'affichage sur les fiches) | P | ⏳ |
+| **6** | Événements : champs, inscriptions, agenda, rappels | M | ⏳ V2 |
+| **7** | Événements sur le globe | P | ⏳ V2 |
+| **8** | Référencement : URLs par langue, `sitemap`, `hreflang`, Open Graph par sujet | P | ⏳ |
+
+### Ce que la V1 livre exactement
+
+- 8 rubriques, libellés **dans i18n.js** et non en base : une rubrique est une
+  liste fixe décidée éditorialement, donc de l'interface — le serveur ne traduit
+  toujours pas
+- Sujets et réponses en **fil plat**, Markdown restreint **rendu par le serveur**
+  (`forum_lib.php`) : on échappe tout d'abord, puis on réintroduit une poignée de
+  balises. L'inverse est la façon dont on écrit une faille XSS
+- Le message est stocké **brut** : ce qui est stocké échappé ne peut plus être
+  ré-analysé, ni ré-échappé le jour où le rendu change
+- Filtre de langue par sujet (`lang`), réglé par défaut sur la langue d'affichage
+  **+ l'anglais**
+- Étiquettes libres, plates, non proposées sous 3 usages
+- Signalement → **masquage automatique à 3 signalements distincts**, file dans
+  `admin.php?tab=forum`
+- Plafonds : 3 sujets et 30 messages par jour, 30 s entre deux messages, **pas de
+  lien externe avant 5 messages** — triplés pour un contributeur de confiance
+- Retrait par l'auteur = **pierre tombale**, pas un trou dans la conversation
+- `user_id` nullable avec `ON DELETE SET NULL` : un compte supprimé laisse
+  « Membre supprimé », l'archive reste lisible
 
 **Chaque étape sort avec ses tests** — vérifications d'API dans `tests/run.php`
 et parcours Playwright — selon la règle du dépôt : *un parcours qui n'exécute

@@ -366,6 +366,222 @@ $r = http('GET', $base . '/backend/data.php?action=inconnue', ['jar' => $anon]);
 eq('action inconnue : refus', 404, $r['status']);
 
 // ════════════════════════════════════════════════════════
+section('Espace communautaire');
+
+// Le delai anti-robot (30 s entre deux messages) ferait echouer tout ce
+// qui suit : on recule les messages deja ecrits entre deux etapes,
+// comme on le fait pour le plafond de contributions. Le delai lui-meme
+// est verifie explicitement plus bas.
+$recule = function (int $minutes = 5): void {
+    test_pdo()->exec("UPDATE forum_posts SET created_at = DATE_SUB(created_at, INTERVAL $minutes MINUTE)");
+};
+
+$r = http('GET', $base . '/backend/forum.php?action=sections', ['jar' => $anon]);
+eq('forum : les rubriques sont publiques', 200, $r['status']);
+eq('forum : huit rubriques', 8, count($r['json']['sections']));
+check('forum : les rubriques n\'ont PAS de libelle en base (i18n cote front)',
+      !array_key_exists('label', $r['json']['sections'][0]));
+
+$r = post_json($base, $anon, '/backend/forum.php?action=topic_create',
+               ['section' => 'cigares', 'title' => 'Un titre valable', 'body' => str_repeat('a', 30)]);
+eq('forum : ecrire exige un compte', 401, $r['status']);
+
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create',
+               ['section' => 'cigares', 'title' => 'court', 'body' => str_repeat('a', 30)]);
+eq('forum : titre trop court refuse', 400, $r['status']);
+
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create',
+               ['section' => 'inexistante', 'title' => 'Un titre valable', 'body' => str_repeat('a', 30)]);
+eq('forum : rubrique inconnue refusee', 400, $r['status']);
+
+// ── Le sujet de reference ────────────────────────────────
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
+    'section' => 'conservation',
+    'title'   => 'Hygrometrie : 70 % ou 65 % ?',
+    'body'    => "Je cherche le bon reglage.\n\n- 65 % pour les robustos\n- 70 % pour les doubles coronas",
+    'lang'    => 'fr',
+    'tags'    => ['Hygrométrie', 'cave', 'Hygrométrie'],   // doublon volontaire
+]);
+eq('forum : sujet cree', 201, $r['status']);
+$t_fr = (int)$r['json']['id'];
+eq('forum : le fragment d\'URL replie les accents', 'hygrometrie-70-ou-65', $r['json']['slug']);
+
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_fr", ['jar' => $anon]);
+eq('forum : sujet lisible par un visiteur', 200, $r['status']);
+eq('forum : le sujet porte son premier message', 1, count($r['json']['posts']));
+eq('forum : les etiquettes en double sont fusionnees', 2, count($r['json']['topic']['tags']));
+check('forum : la liste Markdown est rendue',
+      str_contains($r['json']['posts'][0]['html'], '<li>65 % pour les robustos</li>'));
+
+// ── XSS : la lecon d'A3, verifiee dans les deux sens ─────
+$recule();
+$r = post_json($base, $alice, '/backend/forum.php?action=post_create', [
+    'topic_id' => $t_fr,
+    'body'     => 'Attention <script>alert(1)</script> et [piege](javascript:alert(1))',
+]);
+eq('forum : reponse publiee', 201, $r['status']);
+check('forum : la balise script est echappee', str_contains($r['json']['html'], '&lt;script&gt;'));
+check('forum : aucune balise script ne sort', !str_contains($r['json']['html'], '<script>'));
+check('forum : un lien javascript: n\'est pas transforme en lien',
+      !str_contains($r['json']['html'], '<a href="javascript'));
+
+$brut = test_pdo()->query("SELECT body FROM forum_posts ORDER BY id DESC LIMIT 1")->fetchColumn();
+check('forum : le message est stocke BRUT, jamais echappe en base',
+      str_contains($brut, '<script>'));
+
+// ── Le filtre de langue ──────────────────────────────────
+$recule();
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
+    'section' => 'conservation',
+    'title'   => 'Humidor seasoning for beginners',
+    'body'    => 'How long should I season a new humidor before filling it?',
+    'lang'    => 'en',
+]);
+eq('forum : sujet en anglais cree', 201, $r['status']);
+
+$r = http('GET', $base . '/backend/forum.php?action=topics&section=conservation&lang=fr', ['jar' => $anon]);
+eq('forum : filtre sur une langue', 1, count($r['json']['topics']));
+eq('forum : c\'est bien le sujet francais', 'fr', $r['json']['topics'][0]['lang']);
+
+$r = http('GET', $base . '/backend/forum.php?action=topics&section=conservation&lang=fr,en', ['jar' => $anon]);
+eq('forum : filtre sur deux langues', 2, count($r['json']['topics']));
+
+$r = http('GET', $base . '/backend/forum.php?action=topics&section=conservation&lang=all', ['jar' => $anon]);
+eq('forum : « all » ne filtre pas', 2, count($r['json']['topics']));
+
+// Une langue inconnue est ignoree en silence : un parametre bricole ne
+// doit ni faire echouer la page, ni servir de levier d'injection.
+$r = http('GET', $base . '/backend/forum.php?action=topics&section=conservation&lang=klingon', ['jar' => $anon]);
+eq('forum : langue inconnue ignoree, rien ne casse', 200, $r['status']);
+$r = http('GET', $base . "/backend/forum.php?action=topics&lang=fr'+OR+1=1--", ['jar' => $anon]);
+eq('forum : une injection dans le filtre ne rend pas tout', 200, $r['status']);
+
+// ── Etiquettes ───────────────────────────────────────────
+$r = http('GET', $base . '/backend/forum.php?action=topics&tag=hygrometrie', ['jar' => $anon]);
+eq('forum : recherche par etiquette', 1, count($r['json']['topics']));
+
+$r = http('GET', $base . '/backend/forum.php?action=tags', ['jar' => $anon]);
+eq('forum : une etiquette vue une seule fois n\'est pas proposee', 0, count($r['json']['tags']));
+
+// ── Plafonds ─────────────────────────────────────────────
+// Delai entre deux messages : ici on NE recule PAS, c'est le point.
+$r = post_json($base, $alice, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_fr, 'body' => 'Une reponse immediate.']);
+eq('forum : deux messages coup sur coup refuses', 429, $r['status']);
+eq('forum : le refus porte un code stable', 'forum_trop_vite', $r['json']['code']);
+
+$recule();
+$r = post_json($base, $alice, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_fr, 'body' => 'Voir https://exemple.fr pour la methode.']);
+eq('forum : pas de lien externe pour un compte neuf', 429, $r['status']);
+eq('forum : code du blocage des liens', 'forum_liens_bloques', $r['json']['code']);
+
+// Contre-epreuve : le meme message passe pour un contributeur de confiance.
+test_pdo()->exec("UPDATE users SET role = 'trusted' WHERE email = 'alice@test.local'");
+$r = post_json($base, $alice, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_fr, 'body' => 'Voir https://exemple.fr pour la methode.']);
+eq('forum : le contributeur de confiance peut poser un lien', 201, $r['status']);
+test_pdo()->exec("UPDATE users SET role = 'member' WHERE email = 'alice@test.local'");
+
+// ── Signalements : le seuil masque sans attendre ─────────
+// Le message vise est celui de BOB : on ne signale pas le sien, et il
+// faut donc trois comptes distincts en plus de l'auteur.
+$r = post_json($base, $bob, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_fr, 'body' => 'Achetez des cigares pas chers chez moi.']);
+eq('forum : message a signaler publie', 201, $r['status']);
+$cible = (int)$r['json']['id'];
+
+// Deux comptes de plus. Le plafond d'inscriptions par IP est vide entre
+// chacun : toutes ces requetes viennent de 127.0.0.1, et sans cela la
+// deuxieme inscription repartait en « rate_limited » — puis la section
+// « Codes d'erreur », plus loin, echouait a son tour sans rapport
+// apparent avec le forum.
+foreach (['carol' => 'Carol', 'dave' => 'Dave'] as $nom => $affiche) {
+    test_pdo()->exec("DELETE FROM auth_attempts");
+    ${$nom} = new_client($nom);
+    $r = post_json($base, ${$nom}, '/backend/auth.php?action=register',
+                   ['email' => "$nom@test.local", 'password' => 'motdepasse8', 'display_name' => $affiche]);
+    eq("forum : compte $affiche cree pour les signalements", 201, $r['status']);
+    force_verified("$nom@test.local");
+}
+test_pdo()->exec("DELETE FROM auth_attempts");
+
+$r = post_json($base, $bob, '/backend/forum.php?action=flag', ['post_id' => $cible]);
+eq('forum : on ne signale pas son propre message', 400, $r['status']);
+
+$r = post_json($base, $alice, '/backend/forum.php?action=flag', ['post_id' => $cible, 'reason' => 'ad']);
+eq('forum : premier signalement', 1, $r['json']['flags']);
+eq('forum : un signalement ne masque pas', false, $r['json']['hidden']);
+$r = post_json($base, $alice, '/backend/forum.php?action=flag', ['post_id' => $cible]);
+eq('forum : pas de doublon pour un meme membre', 1, $r['json']['flags']);
+
+$r = post_json($base, $carol, '/backend/forum.php?action=flag', ['post_id' => $cible]);
+eq('forum : deuxieme signalement', 2, $r['json']['flags']);
+$r = post_json($base, $dave, '/backend/forum.php?action=flag', ['post_id' => $cible]);
+eq('forum : troisieme signalement, masquage automatique', true, $r['json']['hidden']);
+
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_fr", ['jar' => $anon]);
+$masque = null;
+foreach ($r['json']['posts'] as $p) if ((int)$p['id'] === $cible) $masque = $p;
+check('forum : le message masque reste dans le fil', $masque !== null);
+eq('forum : mais son contenu n\'est plus servi', '', $masque['html']);
+
+// ── Moderation ───────────────────────────────────────────
+$r = http('GET', $base . '/backend/forum.php?action=mod_queue', ['jar' => $bob]);
+eq('forum : la file de moderation n\'est pas publique', 403, $r['status']);
+
+$r = http('GET', $base . '/backend/forum.php?action=mod_queue',
+          ['jar' => $anon, 'headers' => ['X-Admin-Key: test-admin-key']]);
+eq('forum : file de moderation accessible a l\'administration', 200, $r['status']);
+eq('forum : le message signale y figure', 1, count($r['json']['queue']));
+eq('forum : avec ses trois signalements', 3, $r['json']['queue'][0]['flags']);
+
+$r = post_json($base, $anon, '/backend/forum.php?action=moderate',
+               ['post_id' => $cible, 'decision' => 'publier'],
+               ['X-Admin-Key: test-admin-key']);
+eq('forum : decision de publication', 200, $r['status']);
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_fr", ['jar' => $anon]);
+foreach ($r['json']['posts'] as $p) if ((int)$p['id'] === $cible) $masque = $p;
+check('forum : le message retabli redevient lisible', $masque['html'] !== '');
+
+// ── Verrouillage ─────────────────────────────────────────
+post_json($base, $anon, '/backend/forum.php?action=topic_state',
+          ['topic_id' => $t_fr, 'lock' => true], ['X-Admin-Key: test-admin-key']);
+$recule();
+$r = post_json($base, $alice, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_fr, 'body' => 'Encore un mot.']);
+eq('forum : on ne repond pas dans un sujet ferme', 403, $r['status']);
+post_json($base, $anon, '/backend/forum.php?action=topic_state',
+          ['topic_id' => $t_fr, 'lock' => false], ['X-Admin-Key: test-admin-key']);
+
+// ── Edition ──────────────────────────────────────────────
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_fr", ['jar' => $alice]);
+$mien = (int)$r['json']['posts'][0]['id'];
+check('forum : l\'auteur recoit le texte source de son message', $r['json']['posts'][0]['raw'] !== null);
+
+$r = post_json($base, $bob, '/backend/forum.php?action=post_edit',
+               ['id' => $mien, 'body' => 'Detourne.']);
+eq('forum : on ne modifie pas le message d\'un autre', 403, $r['status']);
+
+$r = post_json($base, $alice, '/backend/forum.php?action=post_edit',
+               ['id' => $mien, 'body' => 'Je cherche le **bon** reglage.']);
+eq('forum : l\'auteur modifie son message', 200, $r['status']);
+
+test_pdo()->exec("UPDATE forum_posts SET created_at = DATE_SUB(NOW(), INTERVAL 2 HOUR) WHERE id = $mien");
+$r = post_json($base, $alice, '/backend/forum.php?action=post_edit',
+               ['id' => $mien, 'body' => 'Trop tard.']);
+eq('forum : passe le delai, le message est fige', 403, $r['status']);
+
+// ── Suppression : une pierre tombale, pas un trou ───────
+$r = post_json($base, $alice, '/backend/forum.php?action=post_delete', ['id' => $mien]);
+eq('forum : retrait par l\'auteur', 200, $r['status']);
+eq('forum : la ligne demeure en base',
+   1, (int)test_pdo()->query("SELECT COUNT(*) FROM forum_posts WHERE id = $mien AND status = 'removed'")->fetchColumn());
+
+$r = http('GET', $base . '/backend/forum.php?action=inconnue', ['jar' => $anon]);
+eq('forum : action inconnue refusee', 404, $r['status']);
+
+// ════════════════════════════════════════════════════════
 section('Acces d\'administration');
 
 $r = http('GET', $base . '/backend/api.php?action=export&admin_key=test-admin-key', ['jar' => $anon]);
@@ -377,6 +593,15 @@ eq('cle d\'administration acceptee par en-tete', 200, $r['status']);
 
 $r = http('GET', $base . '/backend/admin.php?tab=reviews', ['jar' => $anon]);
 check('administration : page de connexion pour un visiteur', str_contains($r['body'], "Clé d'administration"));
+
+// L'onglet Communaute reprend la mecanique des avis : c'est
+// forum_moderer() qui decide, ici comme dans forum.php.
+$r = http('GET', $base . '/backend/admin.php?tab=forum', ['jar' => $admin]);
+eq('administration : onglet Communaute servi', 200, $r['status']);
+check('administration : le sujet du forum y figure',
+      str_contains($r['body'], 'Hygrometrie'));
+check('administration : le message signale y figure aussi',
+      str_contains($r['body'], 'Achetez des cigares'));
 
 // ════════════════════════════════════════════════════════
 section('Emails');

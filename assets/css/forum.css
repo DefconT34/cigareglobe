@@ -1,0 +1,272 @@
+/* ═══════════════════════════════════════════════════════
+   forum.css — Espace communautaire
+   ───────────────────────────────────────────────────────
+   La charte du site, sans invention : Cinzel capitales interlettrées
+   pour les surtitres, Playfair pour les titres, Lato pour le corps —
+   au même corps et au même interligne que « Profondeur de Gamme »
+   (12,5 px / 1,68). Un forum qui ne ressemble pas au site donne
+   l'impression d'un module acheté ailleurs.
+
+   Toutes les couleurs passent par les variables de thème : le calque
+   suit les sept thèmes sans une seule valeur en dur.
+   ═══════════════════════════════════════════════════════ */
+
+#forum {
+  position: fixed; inset: 0; z-index: 3000;
+  display: none; align-items: center; justify-content: center;
+}
+#forum.open { display: flex; }
+.fo-back {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, .55); backdrop-filter: blur(3px);
+}
+.fo-box {
+  position: relative;
+  width: min(860px, 94vw); height: min(88vh, 900px);
+  display: flex; flex-direction: column;
+  background: var(--panel-bg); color: var(--text);
+  border: 1px solid var(--panel-border); border-radius: 4px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+  overflow: hidden;
+}
+
+/* ── En-tête ──────────────────────────────────────────── */
+.fo-hdr {
+  position: relative; padding: 18px 56px 14px 26px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.fo-ey {
+  font-family: Cinzel, serif; font-size: 10px;
+  letter-spacing: .38em; text-transform: uppercase; color: var(--gold);
+}
+.fo-sub {
+  font-family: 'Playfair Display', serif; font-size: 21px;
+  font-weight: 700; margin-top: 4px;
+}
+.fo-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 26px; height: 26px; padding: 0;
+  background: var(--bg3); border: none; border-radius: 50%;
+  color: var(--text); cursor: pointer; font-size: 12px;
+}
+.fo-close:hover { background: var(--gold); color: var(--panel-bg); }
+/* Même zone sensible de 44 px que la pastille de partage : la cible
+   ne se voit pas, mais le doigt la trouve. */
+.fo-close::before { content: ''; position: absolute; inset: -9px; }
+
+.fo-body { flex: 1; overflow-y: auto; padding: 18px 26px 26px; }
+.fo-load, .fo-vide {
+  padding: 40px 10px; text-align: center; color: var(--text2);
+  font-family: Cinzel, serif; font-size: 10px; letter-spacing: .15em;
+}
+
+/* ── Pied : la mention obligatoire ────────────────────── */
+/* Elle n'est pas décorative — le cigare est un produit du tabac, et
+   cet espace n'est ni un lieu de vente ni ouvert aux mineurs. */
+.fo-foot {
+  padding: 9px 26px; border-top: 1px solid var(--panel-border);
+  background: var(--bg2); color: var(--text2);
+  font-size: 10px; line-height: 1.5;
+}
+
+/* ── Rubriques ────────────────────────────────────────── */
+.fo-secs { display: grid; gap: 8px; }
+.fo-sec {
+  display: flex; align-items: center; gap: 14px;
+  width: 100%; padding: 13px 16px; text-align: left;
+  background: var(--bg2); border: 1px solid var(--bg3);
+  border-left: 3px solid var(--gold);
+  border-radius: 3px; color: var(--text); cursor: pointer;
+  transition: background .18s, border-color .18s;
+}
+.fo-sec:hover { background: var(--bg3); border-left-color: var(--gold); }
+.fo-sec-ico  { font-size: 20px; line-height: 1; }
+.fo-sec-txt  { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.fo-sec-name { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; }
+.fo-sec-desc { font-size: 11.5px; color: var(--text2); }
+.fo-sec-n {
+  font-family: Cinzel, serif; font-size: 9px;
+  letter-spacing: .12em; color: var(--gold); white-space: nowrap;
+}
+
+/* ── Barre d'actions ──────────────────────────────────── */
+.fo-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.fo-bar-right { display: flex; align-items: center; gap: 10px; }
+.fo-back-btn {
+  background: none; border: none; cursor: pointer; padding: 4px 0;
+  font-family: Cinzel, serif; font-size: 9px;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--gold);
+}
+.fo-filtre { display: flex; align-items: center; gap: 6px; }
+.fo-filtre span {
+  font-family: Cinzel, serif; font-size: 8px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text2);
+}
+.fo-lang, .fo-f-lang {
+  background: var(--bg2); color: var(--text);
+  border: 1px solid var(--bg3); border-radius: 3px;
+  padding: 5px 8px; font-size: 11.5px; font-family: Lato, sans-serif;
+}
+.fo-new, .fo-envoyer, .fo-connexion {
+  padding: 8px 16px; cursor: pointer; border-radius: 3px;
+  background: var(--gold-p); color: var(--text);
+  border: 1px solid var(--gold);
+  font-family: Cinzel, serif; font-size: 9px;
+  letter-spacing: .16em; text-transform: uppercase;
+}
+.fo-new:hover, .fo-envoyer:hover, .fo-connexion:hover {
+  background: var(--gold); color: var(--panel-bg);
+}
+.fo-annuler {
+  padding: 8px 16px; cursor: pointer; border-radius: 3px;
+  background: none; border: 1px solid var(--panel-border); color: var(--text2);
+  font-family: Cinzel, serif; font-size: 9px;
+  letter-spacing: .16em; text-transform: uppercase;
+}
+.fo-connexion { display: block; width: 100%; margin-top: 16px; }
+
+/* ── Liste de sujets ──────────────────────────────────── */
+.fo-list { display: flex; flex-direction: column; gap: 6px; }
+.fo-topic {
+  display: flex; align-items: center; gap: 14px;
+  width: 100%; padding: 11px 14px; text-align: left;
+  background: var(--bg2); border: 1px solid var(--bg3);
+  border-radius: 3px; color: var(--text); cursor: pointer;
+}
+.fo-topic:hover { background: var(--bg3); }
+.fo-t-main  { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.fo-t-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; }
+.fo-t-meta  { font-size: 11px; color: var(--text2); }
+.fo-t-n {
+  text-align: center; color: var(--gold);
+  font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700;
+}
+.fo-t-n small {
+  display: block; color: var(--text2);
+  font-family: Cinzel, serif; font-size: 7px; letter-spacing: .12em;
+}
+.fo-pin { margin-right: 5px; }
+/* La langue ne s'affiche que si elle n'est pas celle de la lecture :
+   on sait avant de cliquer qu'on va changer de langue. */
+.fo-lang-tag {
+  margin-left: 7px; padding: 1px 5px; border-radius: 2px;
+  background: var(--gold-p); color: var(--gold);
+  font-family: Cinzel, serif; font-size: 8px; letter-spacing: .1em;
+  vertical-align: middle;
+}
+
+/* ── Étiquettes ───────────────────────────────────────── */
+.fo-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.fo-tag {
+  padding: 2px 7px; border-radius: 2px;
+  background: var(--bg3); border: none; color: var(--text2);
+  font-size: 10px; font-family: Lato, sans-serif;
+}
+button.fo-tag { cursor: pointer; }
+button.fo-tag:hover { background: var(--gold-p); color: var(--gold); }
+
+/* ── Le fil ───────────────────────────────────────────── */
+.fo-titre {
+  font-family: 'Playfair Display', serif; font-size: 24px;
+  font-weight: 900; margin: 0 0 4px;
+}
+.fo-posts { display: flex; flex-direction: column; gap: 12px; margin: 18px 0; }
+.fo-post {
+  padding: 13px 16px; border-radius: 3px;
+  background: var(--bg2); border: 1px solid var(--bg3);
+}
+.fo-post-solved { border-left: 3px solid var(--grn); }
+.fo-post-masque { color: var(--text2); font-style: italic; text-align: center; }
+.fo-p-hdr {
+  display: flex; justify-content: space-between; gap: 10px;
+  margin-bottom: 7px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--bg3);
+}
+.fo-p-auteur { font-family: Cinzel, serif; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.fo-p-date   { font-size: 10px; color: var(--text2); }
+.fo-solved-tag {
+  display: inline-block; margin-bottom: 6px; padding: 1px 7px; border-radius: 2px;
+  background: var(--grn); color: #fff;
+  font-family: Cinzel, serif; font-size: 8px; letter-spacing: .12em;
+}
+
+/* Le corps d'un message : même typographie que l'histoire d'une
+   maison, pour que le site n'ait qu'une seule voix. */
+.fo-p-corps { font-size: 12.5px; line-height: 1.68; }
+.fo-p-corps p { margin: 0 0 9px; }
+.fo-p-corps p:last-child { margin-bottom: 0; }
+.fo-p-corps ul { margin: 0 0 9px; padding-left: 18px; }
+.fo-p-corps blockquote {
+  margin: 0 0 9px; padding: 4px 0 4px 12px;
+  border-left: 2px solid var(--gold-p); color: var(--text2);
+}
+.fo-p-corps code {
+  padding: 1px 4px; border-radius: 2px;
+  background: var(--bg3); font-size: 11.5px;
+}
+.fo-p-corps a { color: var(--gold); }
+
+.fo-p-actions { display: flex; gap: 8px; margin-top: 9px; position: relative; }
+.fo-act {
+  background: none; border: none; cursor: pointer; padding: 3px 0;
+  color: var(--text2); font-size: 10.5px; font-family: Lato, sans-serif;
+}
+.fo-act:hover:not(:disabled) { color: var(--gold); }
+.fo-act:disabled { cursor: default; opacity: .7; }
+.fo-motifs {
+  position: absolute; bottom: 100%; left: 0; z-index: 5;
+  display: flex; flex-direction: column; min-width: 150px;
+  background: var(--panel-bg); border: 1px solid var(--panel-border);
+  border-radius: 3px; box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+}
+.fo-motifs button {
+  padding: 7px 12px; text-align: left; cursor: pointer;
+  background: none; border: none; color: var(--text);
+  font-size: 11.5px; font-family: Lato, sans-serif;
+}
+.fo-motifs button:hover { background: var(--bg3); }
+
+/* ── Rédaction ────────────────────────────────────────── */
+.fo-repondre, .fo-form { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.fo-form label {
+  display: flex; flex-direction: column; gap: 4px;
+  font-family: Cinzel, serif; font-size: 8px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text2);
+}
+.fo-txt, .fo-form input, .fo-form textarea {
+  width: 100%; padding: 9px 11px;
+  background: var(--bg2); color: var(--text);
+  border: 1px solid var(--bg3); border-radius: 3px;
+  font-family: Lato, sans-serif; font-size: 12.5px; line-height: 1.68;
+  resize: vertical;
+}
+.fo-txt:focus, .fo-form input:focus, .fo-form textarea:focus {
+  outline: none; border-color: var(--gold);
+}
+.fo-aide { font-size: 10px; color: var(--text2); }
+.fo-err  { padding: 7px 10px; border-radius: 3px; background: var(--red-p, var(--bg3)); color: var(--red, var(--text)); font-size: 11.5px; }
+.fo-form-btns { display: flex; gap: 8px; }
+.fo-envoyer { align-self: flex-start; }
+
+/* ── Téléphone ────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .fo-box { width: 100vw; height: 100vh; border: none; border-radius: 0; }
+  .fo-hdr { padding: 14px 50px 12px 18px; }
+  .fo-body { padding: 14px 18px 22px; }
+  .fo-foot { padding: 8px 18px; }
+  .fo-sec-desc { display: none; }
+  .fo-bar { gap: 8px; }
+  .fo-titre { font-size: 20px; }
+}
+
+/* Le globe continue de tourner derrière un calque plein écran pour
+   rien : on l'arrête le temps de la lecture. */
+body.forum-open #globe-wrap { visibility: hidden; }
+
+[dir="rtl"] .fo-sec, [dir="rtl"] .fo-topic, [dir="rtl"] .fo-motifs button { text-align: right; }
+[dir="rtl"] .fo-close { right: auto; left: 14px; }
+[dir="rtl"] .fo-hdr { padding: 18px 26px 14px 56px; }
+[dir="rtl"] .fo-p-corps blockquote { border-left: none; border-right: 2px solid var(--gold-p); padding: 4px 12px 4px 0; }

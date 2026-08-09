@@ -9,6 +9,7 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/auth_lib.php';
 require_once __DIR__ . '/moderation_lib.php';
+require_once __DIR__ . '/forum_lib.php';
 
 auth_session_start();   // meme session que le reste du site (cookie CGSESS)
 
@@ -96,6 +97,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     } elseif ($id && $action === 'review_remove') {
         set_review_status($db, $id, 'removed');
         $msg = ['type'=>'warn','text'=>"Avis #{$id} retiré et exclu de la note."];
+    } elseif ($id && $action === 'forum_publish') {
+        forum_moderer($db, $id, 'publier', (int)(current_user($db)['id'] ?? 0));
+        $msg = ['type'=>'ok','text'=>"Message #{$id} rétabli."];
+    } elseif ($id && $action === 'forum_remove') {
+        forum_moderer($db, $id, 'retirer', (int)(current_user($db)['id'] ?? 0));
+        $msg = ['type'=>'warn','text'=>"Message #{$id} retiré."];
+    } elseif ($id && ($action === 'forum_lock' || $action === 'forum_unlock')) {
+        $db->prepare("UPDATE forum_topics SET status = ? WHERE id = ? AND status <> 'removed'")
+           ->execute([$action === 'forum_lock' ? 'locked' : 'open', $id]);
+        $msg = ['type'=>'ok','text'=>"Sujet #{$id} " . ($action === 'forum_lock' ? 'fermé' : 'rouvert') . "."];
     } elseif ($id && $action === 'reject') {
         $db->prepare("UPDATE contributions SET status='rejected' WHERE id=?")->execute([$id]);
         $msg = ['type'=>'warn','text'=>"Contribution #{$id} rejetée."];
@@ -145,6 +156,33 @@ if ($tab === 'reviews') {
              LIMIT 200"
         )->fetchAll();
     } catch (Throwable $e) { $reviews_rows = []; }
+}
+
+// Communaute — messages signales en tete. Meme mecanique que les avis :
+// c'est forum_moderer() qui decide, ici comme dans forum.php.
+$forum_rows    = [];
+$forum_flagged = 0;
+try {
+    $forum_flagged = (int)$db->query(
+        "SELECT COUNT(DISTINCT f.post_id) FROM forum_flags f WHERE f.resolved_at IS NULL"
+    )->fetchColumn();
+} catch (Throwable $e) {}
+if ($tab === 'forum') {
+    try {
+        $forum_rows = $db->query(
+            "SELECT p.id, p.body, p.status, p.created_at,
+                    t.id AS topic_id, t.title AS topic_title, t.status AS topic_status,
+                    s.slug AS section, u.display_name,
+                    (SELECT COUNT(*) FROM forum_flags f
+                      WHERE f.post_id = p.id AND f.resolved_at IS NULL) AS flags
+             FROM forum_posts p
+             JOIN forum_topics t ON t.id = p.topic_id
+             JOIN forum_sections s ON s.id = t.section_id
+             LEFT JOIN users u ON u.id = p.user_id
+             ORDER BY flags DESC, (p.status = 'flagged') DESC, p.created_at DESC
+             LIMIT 200"
+        )->fetchAll();
+    } catch (Throwable $e) { $forum_rows = []; }
 }
 
 // Photos
@@ -698,6 +736,15 @@ html{transition:background .25s,color .25s}
     <?php endif; ?>
   </a>
 
+  <a class="nav-item <?= $tab==='forum' ? 'active' : '' ?>"
+     href="?tab=forum">
+    <span class="ni-icon">&#128172;</span>
+    <span class="ni-label">Communaute</span>
+    <?php if ($forum_flagged): ?>
+    <span class="nav-badge nb-red"><?= $forum_flagged ?></span>
+    <?php endif; ?>
+  </a>
+
   <div class="sidebar-footer">
     <div class="sf-key">Session administrateur active · <a href="?logout=1" style="color:inherit">Se déconnecter</a></div>
   </div>
@@ -1121,6 +1168,95 @@ html{transition:background .25s,color .25s}
           <button class="action-btn ab-approve" name="action" value="review_publish">✓ Publier</button>
         </form>
         <?php endif; ?>
+      </div>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+  </tbody>
+</table></div>
+<?php endif; ?>
+
+<?php elseif ($tab === 'forum'): ?>
+<div class="page-header">
+  <div>
+    <div class="page-title">Communaute</div>
+    <div class="page-subtitle">
+      <?= count($forum_rows) ?> message(s) · les plus signales en tete ·
+      trois signalements distincts masquent deja un message sans attendre
+    </div>
+  </div>
+</div>
+
+<?php if (empty($forum_rows)): ?>
+<div class="empty-state">
+  <div class="empty-icon">&#9670;</div>
+  <div class="empty-text">Aucun message pour l'instant</div>
+</div>
+<?php else: ?>
+<div class="table-scroll"><table class="contrib-table">
+  <thead>
+    <tr>
+      <th>Auteur</th>
+      <th>Sujet</th>
+      <th>Message</th>
+      <th>Signalements</th>
+      <th>Statut</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($forum_rows as $fp): ?>
+  <tr>
+    <td style="white-space:nowrap">
+      <div class="ct-name"><?= htmlspecialchars($fp['display_name'] ?? 'Membre supprime') ?></div>
+      <div class="ct-city"><?= date('d/m/y', strtotime($fp['created_at'])) ?></div>
+    </td>
+    <td>
+      <div class="ct-name"><?= htmlspecialchars($fp['topic_title']) ?></div>
+      <div class="ct-city"><?= htmlspecialchars($fp['section']) ?>
+        <?= $fp['topic_status'] === 'locked' ? ' · ferme' : '' ?></div>
+    </td>
+    <td>
+      <div class="ct-city" style="white-space:normal">
+        <?= htmlspecialchars(forum_extrait($fp['body'], 400)) ?>
+      </div>
+    </td>
+    <td style="text-align:center">
+      <?php if ((int)$fp['flags'] > 0): ?>
+      <span class="nav-badge nb-red"><?= (int)$fp['flags'] ?></span>
+      <?php else: ?>
+      <span style="font-size:11px;color:var(--text3)">&mdash;</span>
+      <?php endif; ?>
+    </td>
+    <td>
+      <span class="status-pill stp-<?= $fp['status'] === 'published' ? 'approved' : ($fp['status'] === 'flagged' ? 'pending' : 'rejected') ?>">
+        <?= match($fp['status']){'published'=>'Publie','flagged'=>'Signale','removed'=>'Retire',default=>$fp['status']} ?>
+      </span>
+    </td>
+    <td>
+      <div class="action-row">
+        <?php if ($fp['status'] !== 'removed'): ?>
+        <form method="POST">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
+          <input type="hidden" name="id"  value="<?= (int)$fp['id'] ?>">
+          <button class="action-btn ab-reject" name="action" value="forum_remove">&#10007; Retirer</button>
+        </form>
+        <?php endif; ?>
+        <?php if ($fp['status'] !== 'published'): ?>
+        <form method="POST">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
+          <input type="hidden" name="id"  value="<?= (int)$fp['id'] ?>">
+          <button class="action-btn ab-approve" name="action" value="forum_publish">&#10003; Publier</button>
+        </form>
+        <?php endif; ?>
+        <form method="POST">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
+          <input type="hidden" name="id"  value="<?= (int)$fp['topic_id'] ?>">
+          <button class="action-btn" name="action"
+                  value="<?= $fp['topic_status'] === 'locked' ? 'forum_unlock' : 'forum_lock' ?>">
+            <?= $fp['topic_status'] === 'locked' ? 'Rouvrir le sujet' : 'Fermer le sujet' ?>
+          </button>
+        </form>
       </div>
     </td>
   </tr>

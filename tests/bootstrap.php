@@ -106,6 +106,14 @@ function setup_test_database(): PDO {
         "INSERT INTO lounges (id, country_id, name, city, type, is_verified)
          VALUES (1, 'testland', 'Lounge de test', 'Ville', 'Cave & Lounge', 1)"
     );
+    // Les rubriques du forum sont des donnees de REFERENCE : sans elles,
+    // aucun sujet ne peut exister. Elles sont rejouees depuis la
+    // migration plutot que recopiees ici — une liste recopiee finit
+    // toujours par diverger de celle qui part en production.
+    $mig = @file_get_contents(PROJECT_ROOT . '/sql/migrations/015_forum.sql');
+    if ($mig && preg_match('/INSERT IGNORE INTO forum_sections.*?;/s', $mig, $m)) {
+        $pdo->exec($m[0]);
+    }
     // Une marque, pour que « action=all » ait quelque chose a porter.
     // Sans elle, la reponse restait vide de marques et l'on ne pouvait
     // pas distinguer « le bloc n'est jamais atteint » de « il n'y a rien
@@ -247,10 +255,10 @@ function csrf(string $base, string $jar): string {
 }
 
 /** POST JSON authentifie par la session, avec jeton CSRF. */
-function post_json(string $base, string $jar, string $path, array $body): array {
+function post_json(string $base, string $jar, string $path, array $body, array $headers = []): array {
     return http('POST', $base . $path, [
         'jar' => $jar, 'json' => $body,
-        'headers' => ['X-CSRF-Token: ' . csrf($base, $jar)],
+        'headers' => array_merge(['X-CSRF-Token: ' . csrf($base, $jar)], $headers),
     ]);
 }
 

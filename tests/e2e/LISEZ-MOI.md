@@ -67,6 +67,7 @@ Même discipline que `sql/schema.sql` — voir `sql/README.md`.
 | `a11y.spec.js` | clavier, étiquettes, alternative textuelle du globe |
 | `responsive.spec.js` | mode mobile (projet `chromium-mobile`, Pixel 7), reprise du globe après fermeture, bouton de partage |
 | `partage.spec.js` | la fiche image : format, distinctions, filigrane — **vérifiés en relisant les pixels du PNG** |
+| `forum.spec.js` | espace communautaire : rubriques, fil, rendu Markdown du serveur, filtre de langue, liens directs |
 
 La fiche de partage n'existe nulle part dans le DOM : c'est un canvas
 encodé en PNG. Aucun sélecteur ne peut en dire quoi que ce soit. Un

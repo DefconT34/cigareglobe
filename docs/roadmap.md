@@ -75,10 +75,24 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
-- [ ] **E** — **Espace communautaire** (discussions par rubrique, étiquettes, événements) · G
-  - Cahier des charges : [docs/communaute.md](communaute.md) — cadré, **6 décisions à trancher** (§12)
+- [x] ~~**E1c** — Espace communautaire, **V1 : les discussions**~~ ✅
+  - Cahier des charges : [docs/communaute.md](communaute.md). Décisions retenues : discussions
+    seules (événements en V2), **les six langues avec filtre**
+  - 8 rubriques dont les **libellés vivent dans i18n.js**, pas en base : une rubrique est une
+    liste fixe décidée éditorialement, donc de l'interface. Le serveur ne traduit toujours pas
+  - Markdown restreint **rendu côté serveur** : on échappe tout d'abord, puis on réintroduit
+    une poignée de balises — l'inverse est la façon dont on écrit une faille XSS (leçon d'A3).
+    Le message est stocké **brut** : un texte stocké échappé ne peut plus être ré-analysé
+  - **Filtre de langue** par sujet, réglé sur la langue d'affichage + l'anglais. Sans lui, une
+    rubrique serait un empilement où cinq lecteurs sur six ne comprennent rien
+  - Anti-abus : masquage à **3 signalements distincts** sans attendre un modérateur, 3 sujets
+    et 30 messages/jour, 30 s entre deux messages, **aucun lien externe avant 5 messages**
+  - Un compte supprimé laisse ses messages sous « Membre supprimé » (`ON DELETE SET NULL`) :
+    effacer au milieu d'un échange rend la suite incompréhensible
+  - 55 vérifications d'API et 8 parcours Playwright
+- [ ] **E1d** — Espace communautaire, **V2 : les événements** · M
   - Suppose **B1** faite : une communauté se lance une fois, devant de vrais visiteurs
-  - ⚠ Avis juridique nécessaire avant ouverture (produit du tabac, promotion, âge)
+  - ⚠ Avis juridique nécessaire avant ouverture publique (produit du tabac, promotion, âge)
 - [x] ~~**D1** — Modération des avis (signalement + écran admin)~~ ✅
 - [x] ~~**D2** — Contributeur de confiance (promotion + publication directe)~~ ✅
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅

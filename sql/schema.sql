@@ -184,6 +184,138 @@ CREATE TABLE `favorites` (
   CONSTRAINT `fk_fav_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_flags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_flags` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `post_id` int unsigned NOT NULL,
+  `user_id` int unsigned DEFAULT NULL,
+  `reason` enum('offtopic','ad','abuse','wrong','other') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'other',
+  `note` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `resolved_at` datetime DEFAULT NULL,
+  `resolved_by` int unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_forum_flags_post_user` (`post_id`,`user_id`),
+  KEY `idx_forum_flags_open` (`resolved_at`),
+  KEY `fk_forum_flags_user` (`user_id`),
+  CONSTRAINT `fk_forum_flags_post` FOREIGN KEY (`post_id`) REFERENCES `forum_posts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_forum_flags_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_follows`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_follows` (
+  `topic_id` int unsigned NOT NULL,
+  `user_id` int unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`topic_id`,`user_id`),
+  KEY `fk_forum_follows_user` (`user_id`),
+  CONSTRAINT `fk_forum_follows_topic` FOREIGN KEY (`topic_id`) REFERENCES `forum_topics` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_forum_follows_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_posts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_posts` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `topic_id` int unsigned NOT NULL,
+  `user_id` int unsigned DEFAULT NULL,
+  `body` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Markdown restreint, stocké BRUT ; le rendu échappe',
+  `quote_post_id` int unsigned DEFAULT NULL,
+  `status` enum('published','flagged','removed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'published',
+  `edited_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_forum_posts_topic` (`topic_id`,`created_at`),
+  KEY `idx_forum_posts_user` (`user_id`,`created_at`),
+  CONSTRAINT `fk_forum_posts_topic` FOREIGN KEY (`topic_id`) REFERENCES `forum_topics` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_forum_posts_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_reactions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_reactions` (
+  `post_id` int unsigned NOT NULL,
+  `user_id` int unsigned NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`post_id`,`user_id`),
+  KEY `fk_forum_react_user` (`user_id`),
+  CONSTRAINT `fk_forum_react_post` FOREIGN KEY (`post_id`) REFERENCES `forum_posts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_forum_react_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_sections`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_sections` (
+  `id` tinyint unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Clé i18n : forum_sec_<slug>',
+  `icon` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `position` tinyint unsigned NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_forum_sections_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_tags` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `slug` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `label` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Première graphie rencontrée, pour l''affichage',
+  `uses_count` int unsigned NOT NULL DEFAULT '0' COMMENT 'Sous 3, non proposée en autocomplétion',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_forum_tags_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_topic_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_topic_tags` (
+  `topic_id` int unsigned NOT NULL,
+  `tag_id` int unsigned NOT NULL,
+  PRIMARY KEY (`topic_id`,`tag_id`),
+  KEY `idx_forum_topic_tags_tag` (`tag_id`),
+  CONSTRAINT `fk_ftt_tag` FOREIGN KEY (`tag_id`) REFERENCES `forum_tags` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_ftt_topic` FOREIGN KEY (`topic_id`) REFERENCES `forum_topics` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_topics`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_topics` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `section_id` tinyint unsigned NOT NULL,
+  `user_id` int unsigned DEFAULT NULL,
+  `title` varchar(140) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(160) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'URL lisible ; l''unicité vient de l''id qui la suit',
+  `lang` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'fr' COMMENT 'Langue d''écriture, sert au filtre',
+  `ref_type` enum('lounge','brand','country') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ref_id` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` enum('open','locked','flagged','removed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'open',
+  `is_pinned` tinyint(1) NOT NULL DEFAULT '0',
+  `solved_post_id` int unsigned DEFAULT NULL,
+  `views` int unsigned NOT NULL DEFAULT '0',
+  `posts_count` int unsigned NOT NULL DEFAULT '0',
+  `last_post_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_forum_topics_section` (`section_id`,`is_pinned`,`last_post_at`),
+  KEY `idx_forum_topics_lang` (`lang`),
+  KEY `idx_forum_topics_ref` (`ref_type`,`ref_id`),
+  KEY `idx_forum_topics_user` (`user_id`),
+  CONSTRAINT `fk_forum_topics_section` FOREIGN KEY (`section_id`) REFERENCES `forum_sections` (`id`),
+  CONSTRAINT `fk_forum_topics_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `habanos_presence`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;

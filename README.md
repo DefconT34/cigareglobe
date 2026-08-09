@@ -77,15 +77,18 @@ backend/
   mailer.php          Envoi d'email — pilotes log/mail/brevo/mailgun/resend
   api.php             Contributions, avis, favoris, profil, modération
   data.php            Données de l'atlas (globe, pays, lounges, marques…)
+  forum.php           Espace communautaire (rubriques, sujets, messages)
+  forum_lib.php       Rendu Markdown restreint, étiquettes, plafonds, signalements
   photos.php          Upload & gestion des photos de lounges
   admin.php           Interface de modération
   .htaccess           Protection de config.php
 sql/
   schema.sql          Schéma de référence (structure complète)
-  migrations/         Évolutions incrémentales (001→006)
+  migrations/         Évolutions incrémentales (001→015)
 docs/
   roadmap.md          Feuille de route (chantiers restants + ordre)
   espace-client.md    Cahier des charges de l'espace membre
+  communaute.md       Cahier des charges de l'espace communautaire
 uploads/lounges/      Photos uploadées (hors Git)
 ```
 
@@ -94,6 +97,7 @@ uploads/lounges/      Photos uploadées (hors Git)
 - `auth.php?action=` : `me` · `register` · `verify` · `login` · `logout` · `forgot` · `reset` · `resend`
 - `api.php?action=` : `submit` · `vote` · `rate` · `review` · `reviews` · `my_contributions` · `my_ratings` · `fav_toggle` · `fav_states` · `fav_list` · `profile` · `profile_update` (+ modération admin)
 - `data.php?action=` : `globe` · `country` · `lounges` · `brand` · `market` · `all`
+- `forum.php?action=` : `sections` · `topics` · `topic` · `tags` · `topic_create` · `post_create` · `post_edit` · `post_delete` · `flag` · `react` · `follow` · `topic_solved` (+ `mod_queue` · `moderate` · `topic_state` pour la modération)
 - `photos.php?action=` : upload / gestion (admin)
 
 Les actions qui écrivent au nom de l'utilisateur exigent une session et un

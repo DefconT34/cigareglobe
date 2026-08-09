@@ -46,6 +46,7 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"CigarOdyssey","alternateName":"Cigar Odyssey","description":"Atlas interactif mondial du cigare premium : pays producteurs, marchés et annuaire des caves et lounges.","url":"https://cigarodyssey.com/","applicationCategory":"TravelApplication","inLanguage":["fr","en","es","de","zh","ar"],"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥃</text></svg>">
 <link rel="stylesheet" href="assets/css/account.css">
+<link rel="stylesheet" href="assets/css/forum.css">
 </head>
 <body>
 
@@ -140,6 +141,15 @@
       <span>Lounges</span>
     </button>
 
+    <!-- Espace communautaire. Volontairement dans l'en-tête et non
+         dans #side-fabs : cette colonne est celle des outils du globe
+         (explorer, rechercher, contribuer), et la communauté n'en est
+         pas un. -->
+    <button id="forumBtn" aria-label="Communauté" title="Communauté">
+      <span aria-hidden="true">💬</span>
+      <span data-i18n="forum_titre">Communauté</span>
+    </button>
+
     <!-- Compte / espace membre -->
     <button id="accountBtn" class="account-btn" aria-label="Compte"><span class="ab-icon" aria-hidden="true">👤</span><span class="ab-label">Se connecter</span></button>
 
@@ -152,6 +162,8 @@
 
 <!-- ══ MOBILE MENU ══════════════════════════════════════ -->
 <nav id="mobile-menu" role="navigation" aria-label="Mobile settings">
+  <div class="mmenu-sec" data-i18n="forum_titre">Communaute</div>
+  <button id="mm-forum" class="mm-forum" data-i18n="forum_sous_titre">Les echanges entre aficionados</button>
   <div class="mmenu-sec">Compte</div>
   <div id="mm-account"><!-- rempli par account.js selon l'état de connexion --></div>
   <div class="mmenu-sec" data-i18n="theme">Thème</div>
@@ -290,6 +302,7 @@
 <script src="assets/js/markets.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/i18n.js"></script>
+<script src="assets/js/forum.js"></script>
 <script src="assets/js/photos.js"></script>
 <script src="assets/js/explorer.js"></script>
 <script src="assets/js/contrib.js"></script>
