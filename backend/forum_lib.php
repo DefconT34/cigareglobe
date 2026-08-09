@@ -388,7 +388,7 @@ function forum_sections(PDO $db, ?array $langs = null): array {
         $args = array_merge($langs, $langs);
     }
     $stmt = $db->prepare(
-        "SELECT s.id, s.slug, s.icon,
+        "SELECT s.id, s.slug, s.icon, s.is_events,
                 (SELECT COUNT(*) FROM forum_topics t
                   WHERE t.section_id = s.id AND t.status <> 'removed'$filtre) AS topics,
                 (SELECT MAX(t.last_post_at) FROM forum_topics t
@@ -402,6 +402,435 @@ function forum_sections(PDO $db, ?array $langs = null): array {
         'slug'   => $r['slug'],
         'icon'   => $r['icon'],
         'topics' => (int)$r['topics'],
+        'events' => (bool)$r['is_events'],
         'last_post_at' => $r['last_post_at'],
     ], $rows);
+}
+
+// ════════════════════════════════════════════════════════
+// ÉVÉNEMENTS (V2)
+// ════════════════════════════════════════════════════════
+// Un événement EST un sujet muni de champs structurés : la discussion
+// de préparation est le fil du sujet. Voir §6 de docs/communaute.md.
+
+/** Au-delà, on annonce une intention, pas un rendez-vous. */
+const FORUM_EVT_MOIS_MAX = 12;
+
+/** Les cinq natures de rendez-vous. Toute autre valeur retombe ici. */
+function forum_evt_natures(): array {
+    return ['degustation', 'rencontre', 'artisan', 'salon', 'enligne'];
+}
+
+/**
+ * Convertit « 2026-09-12 19:30 » + fuseau du lieu en instant UTC.
+ *
+ * La saisie est LOCALE au lieu, le stockage est en UTC : c'est ce qui
+ * permet de trier deux rendez-vous sur deux continents et d'envoyer un
+ * rappel à la bonne heure. La conversion passe par DateTimeZone, jamais
+ * par un décalage en dur — un décalage fixe se trompe deux fois par an,
+ * et pas le même jour d'un pays à l'autre.
+ *
+ * @return string|null 'Y-m-d H:i:s' en UTC, ou null si la saisie est inexploitable
+ */
+function forum_evt_utc(string $local, string $tz): ?string {
+    if (trim($local) === '') return null;
+    try {
+        $zone = new DateTimeZone($tz);
+        $d = new DateTime(str_replace('T', ' ', trim($local)), $zone);
+        $d->setTimezone(new DateTimeZone('UTC'));
+        return $d->format('Y-m-d H:i:s');
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+/** Le fuseau existe-t-il vraiment ? Une chaîne inventée fausserait tout. */
+function forum_evt_fuseau_valide(string $tz): bool {
+    try { new DateTimeZone($tz); return true; } catch (Throwable $e) { return false; }
+}
+
+/**
+ * Vérifie une saisie d'événement.
+ * @return array|null [code, message] à rendre en 400, ou null si tout va bien
+ */
+function forum_evt_valider(string $debutUtc, ?string $finUtc, int $mois = FORUM_EVT_MOIS_MAX): ?array {
+    $maintenant = new DateTime('now', new DateTimeZone('UTC'));
+    $debut = new DateTime($debutUtc, new DateTimeZone('UTC'));
+
+    if ($debut <= $maintenant) {
+        return ['evt_passe', 'La date de début doit être à venir.'];
+    }
+    $limite = (clone $maintenant)->modify("+$mois months");
+    if ($debut > $limite) {
+        return ['evt_trop_loin', 'Un rendez-vous s\'annonce au plus douze mois à l\'avance.'];
+    }
+    if ($finUtc !== null && new DateTime($finUtc, new DateTimeZone('UTC')) <= $debut) {
+        return ['evt_fin_avant_debut', 'La fin doit suivre le début.'];
+    }
+    return null;
+}
+
+/**
+ * Le lieu : un établissement de l'atlas, ou une adresse libre.
+ *
+ * Un lounge référencé est préféré — il porte déjà son adresse et ses
+ * coordonnées, et c'est lui qui fait apparaître le rendez-vous sur sa
+ * fiche. L'adresse libre reste possible : tout ne se passe pas dans un
+ * établissement du catalogue.
+ *
+ * @return array [lounge_id, place_label, lat, lon]
+ */
+function forum_evt_lieu(PDO $db, $lounge_id, $label, $lat, $lon): array {
+    $lounge_id = (int)$lounge_id;
+    if ($lounge_id > 0) {
+        $q = $db->prepare('SELECT name, city, lat, lon FROM lounges WHERE id = ? AND is_verified = 1');
+        $q->execute([$lounge_id]);
+        if ($l = $q->fetch()) {
+            return [
+                $lounge_id,
+                trim($l['name'] . ($l['city'] ? ' · ' . $l['city'] : '')),
+                $l['lat'] !== null ? (float)$l['lat'] : null,
+                $l['lon'] !== null ? (float)$l['lon'] : null,
+            ];
+        }
+    }
+    // Coordonnées libres : mêmes garde-fous que les contributions —
+    // hors plage ou (0,0), on ne garde rien plutôt que de poser un
+    // marqueur au large du golfe de Guinée.
+    $lat = is_numeric($lat) ? (float)$lat : null;
+    $lon = is_numeric($lon) ? (float)$lon : null;
+    if ($lat === null || $lon === null || abs($lat) > 90 || abs($lon) > 180
+        || ($lat === 0.0 && $lon === 0.0)) {
+        $lat = $lon = null;
+    }
+    return [null, mb_substr(trim((string)$label), 0, 160) ?: null, $lat, $lon];
+}
+
+/**
+ * Places prises et liste d'attente.
+ *
+ * La liste d'attente se DÉDUIT de l'ordre d'inscription et de la
+ * capacité ; elle n'est pas un état stocké. Un état se
+ * désynchroniserait dès le premier désistement — celui qui se retire au
+ * milieu fait remonter tout le monde, et il faudrait réécrire chaque
+ * ligne pour le refléter.
+ */
+function forum_evt_participation(PDO $db, int $topic_id, ?int $capacity, ?int $user_id = null): array {
+    $q = $db->prepare(
+        "SELECT user_id, rank_no FROM forum_attendance
+         WHERE topic_id = ? AND state = 'going' ORDER BY rank_no, user_id"
+    );
+    $q->execute([$topic_id]);
+    $venants = $q->fetchAll();
+
+    $q = $db->prepare("SELECT COUNT(*) FROM forum_attendance WHERE topic_id = ? AND state = 'interested'");
+    $q->execute([$topic_id]);
+    $curieux = (int)$q->fetchColumn();
+
+    $place = null;      // rang de l'utilisateur courant parmi les « je viens »
+    foreach ($venants as $i => $v) {
+        if ($user_id && (int)$v['user_id'] === $user_id) { $place = $i + 1; break; }
+    }
+
+    $total = count($venants);
+    $attente = ($place !== null && $capacity !== null && $place > $capacity);
+    return [
+        'going'       => $total,
+        'interested'  => $curieux,
+        'capacity'    => $capacity,
+        'full'        => $capacity !== null && $total >= $capacity,
+        // Rang au-delà de la capacité : la personne est sur liste d'attente.
+        'waiting'     => $attente,
+        'waiting_pos' => $attente ? $place - $capacity : null,
+    ];
+}
+
+/** L'état de participation d'un membre, ou null s'il ne s'est pas prononcé. */
+function forum_evt_mon_etat(PDO $db, int $topic_id, int $user_id): ?string {
+    $q = $db->prepare('SELECT state FROM forum_attendance WHERE topic_id = ? AND user_id = ?');
+    $q->execute([$topic_id, $user_id]);
+    $s = $q->fetchColumn();
+    return $s === false ? null : $s;
+}
+
+/**
+ * Bascule la participation d'un membre.
+ * `rank_no` n'est attribué qu'à la PREMIÈRE inscription : se désister
+ * puis revenir fait perdre sa place, ce qui est la règle qu'attendent
+ * ceux qui patientent derrière.
+ */
+function forum_evt_participer(PDO $db, int $topic_id, int $user_id, string $etat): void {
+    $etats = ['interested', 'going', 'cancelled'];
+    if (!in_array($etat, $etats, true)) $etat = 'going';
+
+    $q = $db->prepare('SELECT state, rank_no FROM forum_attendance WHERE topic_id = ? AND user_id = ?');
+    $q->execute([$topic_id, $user_id]);
+    $existant = $q->fetch();
+
+    if ($existant) {
+        $rang = (int)$existant['rank_no'];
+        // Un rang de 0 signale une inscription qui n'était pas « going » :
+        // on lui en donne un au moment où elle le devient.
+        if ($etat === 'going' && $rang === 0) $rang = forum_evt_rang_suivant($db, $topic_id);
+        $db->prepare('UPDATE forum_attendance SET state = ?, rank_no = ? WHERE topic_id = ? AND user_id = ?')
+           ->execute([$etat, $rang, $topic_id, $user_id]);
+        return;
+    }
+    $db->prepare('INSERT INTO forum_attendance (topic_id, user_id, state, rank_no) VALUES (?, ?, ?, ?)')
+       ->execute([$topic_id, $user_id, $etat, $etat === 'going' ? forum_evt_rang_suivant($db, $topic_id) : 0]);
+}
+
+function forum_evt_rang_suivant(PDO $db, int $topic_id): int {
+    $q = $db->prepare('SELECT COALESCE(MAX(rank_no), 0) + 1 FROM forum_attendance WHERE topic_id = ?');
+    $q->execute([$topic_id]);
+    return (int)$q->fetchColumn();
+}
+
+/**
+ * Fait passer en « past » les événements dont la date est dépassée.
+ *
+ * Appelé à la lecture plutôt que par une tâche planifiée : un statut
+ * qui dépend d'une horloge doit se rattraper tout seul, sinon un cron
+ * oublié laisse un agenda plein de rendez-vous d'avant-hier annoncés
+ * comme « à venir ». Quatre heures de battement quand la fin n'est pas
+ * précisée : une dégustation ne se termine pas à la minute annoncée.
+ */
+function forum_evt_perimer(PDO $db): void {
+    $db->exec(
+        "UPDATE forum_events SET status = 'past'
+         WHERE status = 'upcoming'
+           AND COALESCE(ends_at, DATE_ADD(starts_at, INTERVAL 4 HOUR)) < UTC_TIMESTAMP()"
+    );
+}
+
+/**
+ * L'agenda : à venir d'abord, puis les archives.
+ * @param string[]|null $langs filtre de langue, null = toutes
+ */
+function forum_evt_agenda(PDO $db, ?array $langs = null, bool $passes = false, int $limite = 40): array {
+    forum_evt_perimer($db);
+
+    $where = ["t.status <> 'removed'"];
+    $args  = [];
+    $where[] = $passes ? "e.status <> 'upcoming'" : "e.status = 'upcoming'";
+    if ($langs) {
+        $where[] = 't.lang IN (' . implode(',', array_fill(0, count($langs), '?')) . ')';
+        foreach ($langs as $l) $args[] = $l;
+    }
+    $ordre = $passes ? 'e.starts_at DESC' : 'e.starts_at ASC';
+    $limite = max(1, min(100, $limite));
+
+    $stmt = $db->prepare(
+        "SELECT e.*, t.title, t.slug, t.lang, t.posts_count,
+                u.display_name, u.avatar_url, u.role,
+                l.name AS lounge_name, l.country_id
+         FROM forum_events e
+         JOIN forum_topics t ON t.id = e.topic_id
+         LEFT JOIN users u   ON u.id = t.user_id
+         LEFT JOIN lounges l ON l.id = e.lounge_id
+         WHERE " . implode(' AND ', $where) . "
+         ORDER BY $ordre LIMIT $limite"
+    );
+    $stmt->execute($args);
+    return array_map('forum_evt_format', $stmt->fetchAll());
+}
+
+/** Met un enregistrement d'événement en forme pour le front. */
+function forum_evt_format(array $r): array {
+    return [
+        'topic_id'   => (int)$r['topic_id'],
+        'title'      => $r['title'] ?? null,
+        'lang'       => $r['lang'] ?? null,
+        'posts'      => isset($r['posts_count']) ? (int)$r['posts_count'] : null,
+        // L'instant part en UTC, marqué comme tel : c'est au navigateur
+        // de l'afficher dans le fuseau du LIEU, que voici.
+        'starts_at'  => str_replace(' ', 'T', $r['starts_at']) . 'Z',
+        'ends_at'    => $r['ends_at'] ? str_replace(' ', 'T', $r['ends_at']) . 'Z' : null,
+        'timezone'   => $r['timezone'],
+        'kind'       => $r['kind'],
+        'status'     => $r['status'],
+        'cancel_reason' => $r['cancel_reason'],
+        'capacity'   => $r['capacity'] !== null ? (int)$r['capacity'] : null,
+        'lounge_id'  => $r['lounge_id'] !== null ? (int)$r['lounge_id'] : null,
+        'place'      => $r['lounge_name'] ?? $r['place_label'],
+        'country'    => $r['country_id'] ?? null,
+        'lat'        => $r['lat'] !== null ? (float)$r['lat'] : null,
+        'lon'        => $r['lon'] !== null ? (float)$r['lon'] : null,
+        'author'     => isset($r['display_name']) ? forum_auteur($r) : null,
+    ];
+}
+
+/**
+ * Les prochains rendez-vous d'un établissement.
+ * C'est ce qui met « Prochaine rencontre le … » sur sa fiche, et ce qui
+ * relie la communauté à l'atlas plutôt que d'en faire une île.
+ */
+function forum_evt_par_lounge(PDO $db, array $lounge_ids): array {
+    if (!$lounge_ids) return [];
+    forum_evt_perimer($db);
+    $in = implode(',', array_fill(0, count($lounge_ids), '?'));
+    $stmt = $db->prepare(
+        "SELECT e.*, t.title, t.slug, t.lang, l.name AS lounge_name, l.country_id
+         FROM forum_events e
+         JOIN forum_topics t ON t.id = e.topic_id
+         LEFT JOIN lounges l ON l.id = e.lounge_id
+         WHERE e.lounge_id IN ($in) AND e.status = 'upcoming' AND t.status <> 'removed'
+         ORDER BY e.starts_at"
+    );
+    $stmt->execute($lounge_ids);
+    $out = [];
+    foreach ($stmt->fetchAll() as $r) {
+        $out[(int)$r['lounge_id']][] = forum_evt_format($r);
+    }
+    return $out;
+}
+
+// ════════════════════════════════════════════════════════
+// NOTIFICATIONS DES RENDEZ-VOUS
+// ════════════════════════════════════════════════════════
+// Deux emails, et deux seulement : le rappel à J-2 et l'annulation.
+// Aucun des deux ne se coupe depuis le profil — ils portent une
+// information que l'inscrit ne peut pas deviner, alors qu'il a bloqué
+// une soirée.
+//
+// C'est ici l'exception assumée à la règle F2 (« le serveur ne traduit
+// pas ») : un email n'a pas de front pour le faire à sa place. Les
+// textes viennent de mail_i18n(), comme pour l'approbation.
+
+require_once __DIR__ . '/mailer.php';
+
+/** La date d'un rendez-vous, écrite dans la langue et le fuseau du lieu. */
+function forum_evt_date_lisible(string $utc, string $tz, string $lang = 'fr'): string {
+    try {
+        $d = new DateTime($utc, new DateTimeZone('UTC'));
+        $d->setTimezone(new DateTimeZone($tz));
+        if (class_exists('IntlDateFormatter')) {
+            $f = new IntlDateFormatter($lang, IntlDateFormatter::FULL, IntlDateFormatter::SHORT,
+                                       $tz, IntlDateFormatter::GREGORIAN);
+            $s = $f->format($d);
+            if ($s !== false) return $s;
+        }
+        // Sans l'extension intl (fréquent en mutualisé), un format ISO
+        // reste juste et lisible partout — mieux qu'un mois en anglais
+        // dans un email allemand.
+        return $d->format('Y-m-d H:i') . ' (' . $tz . ')';
+    } catch (Throwable $e) {
+        return $utc . ' UTC';
+    }
+}
+
+/** Les inscrits d'un rendez-vous, avec leur langue de correspondance. */
+function forum_evt_inscrits(PDO $db, int $topic_id, bool $seulement_a_prevenir = false): array {
+    $sql = "SELECT a.user_id, u.email, u.display_name, u.lang
+            FROM forum_attendance a JOIN users u ON u.id = a.user_id
+            WHERE a.topic_id = ? AND a.state = 'going' AND u.status = 'active'";
+    if ($seulement_a_prevenir) $sql .= ' AND a.reminded_at IS NULL';
+    $q = $db->prepare($sql . ' ORDER BY a.rank_no');
+    $q->execute([$topic_id]);
+    return $q->fetchAll();
+}
+
+/** Le titre, la date et le lieu d'un rendez-vous, pour un email. */
+function forum_evt_resume(PDO $db, int $topic_id): ?array {
+    $q = $db->prepare(
+        'SELECT e.starts_at, e.timezone, e.place_label, t.title, l.name AS lounge_name
+         FROM forum_events e JOIN forum_topics t ON t.id = e.topic_id
+         LEFT JOIN lounges l ON l.id = e.lounge_id
+         WHERE e.topic_id = ?'
+    );
+    $q->execute([$topic_id]);
+    $r = $q->fetch();
+    return $r ?: null;
+}
+
+/**
+ * Prévient les inscrits qu'un rendez-vous est annulé.
+ * @return int nombre d'emails partis
+ */
+function forum_evt_prevenir_annulation(PDO $db, int $topic_id, string $motif = ''): int {
+    $e = forum_evt_resume($db, $topic_id);
+    if (!$e) return 0;
+    $url = site_url() . '/?sujet=' . $topic_id;
+    $n = 0;
+
+    foreach (forum_evt_inscrits($db, $topic_id) as $p) {
+        $lang = (string)($p['lang'] ?: 'fr');
+        // Le motif est facultatif : sans lui, la phrase doit rester
+        // correcte — d'où l'espace final plutôt qu'une phrase à trous.
+        $corps = mail_t('evt_annul_corps', $lang, [
+            'titre' => $e['title'],
+            'date'  => forum_evt_date_lisible($e['starts_at'], $e['timezone'], $lang),
+            'motif' => $motif !== '' ? '« ' . $motif . ' » ' : '',
+        ]);
+        try {
+            if (send_email($p['email'],
+                    mail_t('evt_annul_sujet', $lang, ['titre' => $e['title']]),
+                    email_template(mail_t('evt_annul_titre', $lang), $corps,
+                                   mail_t('evt_rappel_bouton', $lang), $url,
+                                   mail_t('evt_pied', $lang)))) {
+                $n++;
+            }
+        } catch (Throwable $ex) {
+            // Une annulation ne doit jamais échouer parce qu'un email
+            // n'est pas parti : le rendez-vous EST annulé en base.
+            error_log('[forum] annulation non notifiee (#' . $topic_id . ') : ' . $ex->getMessage());
+        }
+    }
+    return $n;
+}
+
+/**
+ * Rappels à J-2, pour tous les rendez-vous concernés.
+ *
+ * `reminded_at` garantit qu'un rappel ne part qu'UNE fois : sans lui,
+ * un cron lancé toutes les heures enverrait vingt-quatre emails par
+ * inscrit et par jour. C'est le genre de détail qui fait classer un
+ * domaine en spam pour de bon.
+ *
+ * @return array [rendez-vous traités, emails partis]
+ */
+function forum_evt_rappels(PDO $db, int $jours = 2): array {
+    forum_evt_perimer($db);
+    $q = $db->prepare(
+        "SELECT topic_id FROM forum_events
+         WHERE status = 'upcoming'
+           AND starts_at BETWEEN UTC_TIMESTAMP() AND DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY)"
+    );
+    $q->execute([$jours]);
+    $ids = $q->fetchAll(PDO::FETCH_COLUMN);
+
+    $evts = 0; $mails = 0;
+    foreach ($ids as $tid) {
+        $tid = (int)$tid;
+        $e = forum_evt_resume($db, $tid);
+        $inscrits = forum_evt_inscrits($db, $tid, true);
+        if (!$e || !$inscrits) continue;
+        $evts++;
+        $url = site_url() . '/?sujet=' . $tid;
+
+        foreach ($inscrits as $p) {
+            $lang = (string)($p['lang'] ?: 'fr');
+            $corps = mail_t('evt_rappel_corps', $lang, [
+                'titre' => $e['title'],
+                'date'  => forum_evt_date_lisible($e['starts_at'], $e['timezone'], $lang),
+                'lieu'  => $e['lounge_name'] ?: ($e['place_label'] ?: '—'),
+            ]);
+            try {
+                if (send_email($p['email'],
+                        mail_t('evt_rappel_sujet', $lang, ['titre' => $e['title']]),
+                        email_template(mail_t('evt_rappel_titre', $lang), $corps,
+                                       mail_t('evt_rappel_bouton', $lang), $url,
+                                       mail_t('evt_pied', $lang)))) {
+                    $mails++;
+                }
+            } catch (Throwable $ex) {
+                error_log('[forum] rappel non envoye (#' . $tid . ') : ' . $ex->getMessage());
+                continue;   // on ne marque PAS : le prochain passage réessaiera
+            }
+            $db->prepare('UPDATE forum_attendance SET reminded_at = UTC_TIMESTAMP()
+                          WHERE topic_id = ? AND user_id = ?')
+               ->execute([$tid, (int)$p['user_id']]);
+        }
+    }
+    return [$evts, $mails];
 }

@@ -367,6 +367,88 @@ function mail_i18n(): array {
             'zh' => '您收到此邮件，是因为您曾向 CigarOdyssey 提交过一个场所。',
             'ar' => 'وصلتك هذه الرسالة لأنك اقترحت مكاناً على CigarOdyssey.',
         ],
+        // ── Rendez-vous : rappel et annulation ──────────────
+        // Ces deux emails ne se coupent pas depuis le profil : ils
+        // portent une information que l'inscrit ne peut pas deviner —
+        // il a bloqué une soirée.
+        'evt_rappel_sujet' => [
+            'fr' => 'Après-demain : {titre}',
+            'en' => 'The day after tomorrow: {titre}',
+            'es' => 'Pasado mañana: {titre}',
+            'de' => 'Übermorgen: {titre}',
+            'zh' => '后天：{titre}',
+            'ar' => 'بعد غد: {titre}',
+        ],
+        'evt_rappel_titre' => [
+            'fr' => 'C\'est bientôt',
+            'en' => 'It is nearly here',
+            'es' => 'Ya casi está',
+            'de' => 'Es ist bald so weit',
+            'zh' => '就快到了',
+            'ar' => 'اقترب الموعد',
+        ],
+        'evt_rappel_corps' => [
+            'fr' => '« {titre} » a lieu le {date}, à {lieu}. Vous vous êtes inscrit — '
+                  . 'si vous ne pouvez plus venir, retirez-vous depuis la page du rendez-vous : '
+                  . 'cela libère une place pour quelqu\'un qui attend.',
+            'en' => '“{titre}” takes place on {date}, at {lieu}. You signed up — '
+                  . 'if you can no longer make it, withdraw from the event page: '
+                  . 'that frees a seat for someone on the waiting list.',
+            'es' => '«{titre}» se celebra el {date}, en {lieu}. Usted se apuntó — '
+                  . 'si ya no puede asistir, retírese desde la página del encuentro: '
+                  . 'así libera una plaza para quien espera.',
+            'de' => '„{titre}“ findet am {date} statt, bei {lieu}. Sie haben sich angemeldet — '
+                  . 'falls Sie nicht mehr können, tragen Sie sich auf der Seite des Termins aus: '
+                  . 'das gibt einen Platz für jemanden auf der Warteliste frei.',
+            'zh' => '「{titre}」将于 {date} 在 {lieu} 举行。您已报名——'
+                  . '若无法前来，请在活动页面取消，把名额留给正在候补的人。',
+            'ar' => '«{titre}» يقام في {date}، في {lieu}. لقد سجّلت للحضور — '
+                  . 'إن تعذّر عليك الحضور فاسحب تسجيلك من صفحة اللقاء: '
+                  . 'هذا يفسح مقعداً لمن ينتظر.',
+        ],
+        'evt_rappel_bouton' => [
+            'fr' => 'Voir le rendez-vous', 'en' => 'View the event',
+            'es' => 'Ver el encuentro',    'de' => 'Zum Termin',
+            'zh' => '查看活动',             'ar' => 'عرض اللقاء',
+        ],
+        'evt_annul_sujet' => [
+            'fr' => 'Annulé : {titre}',
+            'en' => 'Cancelled: {titre}',
+            'es' => 'Cancelado: {titre}',
+            'de' => 'Abgesagt: {titre}',
+            'zh' => '已取消：{titre}',
+            'ar' => 'أُلغي: {titre}',
+        ],
+        'evt_annul_titre' => [
+            'fr' => 'Le rendez-vous est annulé',
+            'en' => 'The event is cancelled',
+            'es' => 'El encuentro se ha cancelado',
+            'de' => 'Der Termin ist abgesagt',
+            'zh' => '活动已取消',
+            'ar' => 'أُلغي اللقاء',
+        ],
+        'evt_annul_corps' => [
+            'fr' => '« {titre} », prévu le {date}, n\'aura pas lieu. {motif}'
+                  . 'La discussion reste ouverte sur la page du rendez-vous.',
+            'en' => '“{titre}”, planned for {date}, will not take place. {motif}'
+                  . 'The discussion stays open on the event page.',
+            'es' => '«{titre}», previsto para el {date}, no se celebrará. {motif}'
+                  . 'La conversación sigue abierta en la página del encuentro.',
+            'de' => '„{titre}“, geplant für den {date}, findet nicht statt. {motif}'
+                  . 'Die Diskussion bleibt auf der Seite des Termins offen.',
+            'zh' => '原定于 {date} 的「{titre}」不再举行。{motif}'
+                  . '活动页面的讨论仍然开放。',
+            'ar' => '«{titre}» المقرر في {date} لن يُقام. {motif}'
+                  . 'يبقى النقاش مفتوحاً في صفحة اللقاء.',
+        ],
+        'evt_pied' => [
+            'fr' => 'Vous recevez cet email parce que vous vous êtes inscrit à ce rendez-vous sur CigarOdyssey.',
+            'en' => 'You are receiving this email because you signed up for this event on CigarOdyssey.',
+            'es' => 'Recibe este correo porque se apuntó a este encuentro en CigarOdyssey.',
+            'de' => 'Sie erhalten diese E-Mail, weil Sie sich für diesen Termin auf CigarOdyssey angemeldet haben.',
+            'zh' => '您收到此邮件，是因为您在 CigarOdyssey 报名了这场活动。',
+            'ar' => 'وصلتك هذه الرسالة لأنك سجّلت في هذا اللقاء على CigarOdyssey.',
+        ],
     ];
 }
 

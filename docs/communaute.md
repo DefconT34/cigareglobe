@@ -323,8 +323,8 @@ Notes :
 
 | # | Question | Décision |
 |---|---|---|
-| 12.1 | **Périmètre de la V1** | ✅ **Discussions seules** — événements en V2 |
-| 12.2 | Qui peut créer un événement | *Reporté avec la V2* |
+| 12.1 | **Périmètre** | ✅ V1 discussions **livrée** · ✅ V2 événements **livrée** |
+| 12.2 | **Qui peut créer un événement** | ✅ **Contributeurs de confiance** (option a) |
 | 12.3 | **Langues** | ✅ **Les six, avec filtre** (§9) |
 | 12.4 | Réputation | À trancher — les rôles existants (`trusted`) suffisent pour l'instant |
 | 12.5 | Messagerie privée | Hors périmètre |
@@ -339,8 +339,8 @@ Notes :
 | **3** | Signalement, masquage au seuil, onglet Communauté, plafonds anti-abus | M | ✅ |
 | **4** | Notifications email + préférences du profil | P | ⏳ |
 | **5** | Ancrage sur l'atlas (colonnes `ref_type`/`ref_id` posées ; reste l'affichage sur les fiches) | P | ⏳ |
-| **6** | Événements : champs, inscriptions, agenda, rappels | M | ⏳ V2 |
-| **7** | Événements sur le globe | P | ⏳ V2 |
+| **6** | Événements : champs, inscriptions, agenda, rappels | M | ✅ |
+| **7** | Événements sur le globe | P | ✅ |
 | **8** | Référencement : URLs par langue, `sitemap`, `hreflang`, Open Graph par sujet | P | ⏳ |
 
 ### Ce que la V1 livre exactement
@@ -368,6 +368,27 @@ Notes :
   hachage valide). Aucune fausse réponse : un dialogue fabriqué se repère et
   décrédibilise le reste. Deux fils en anglais, parce que le filtre par défaut
   ne montre à un anglophone que l'anglais — sans eux il trouverait le vide
+
+### Ce que la V2 livre exactement
+
+- Un événement **est** un sujet (migration `017`, `topic_id` en clé primaire) :
+  la préparation se discute dans le fil, pas dans un second système de commentaires
+- **UTC pour l'instant, fuseau du lieu à côté.** Vérifié à Paris en janvier *et*
+  en juillet : un décalage en dur donnerait la même réponse aux deux dates
+- Organiser demande le statut de **contributeur de confiance**
+- Capacité facultative ; au-delà, **liste d'attente déduite** du rang
+  d'inscription — et l'on annonce le rang, pas seulement « complet »
+- **Marqueur sur le globe** : losange or battant, distinct des triangles violets
+  des établissements. Un rendez-vous est temporaire, il n'appartient pas à l'atlas
+- « Prochain rendez-vous » sur la fiche de l'établissement hôte, en **une** requête
+  pour tout le panneau
+- Annulation : le rendez-vous reste visible, barré, avec son motif ; les inscrits
+  sont prévenus par email dans leur langue, sans possibilité de couper cet envoi
+- Rappel **J-2** par `tools/forum_rappels.php` (cron quotidien) ; `reminded_at`
+  garantit qu'il ne part qu'une fois
+- La **péremption se rattrape à la lecture** : un cron oublié ne laisse pas un
+  agenda plein de rendez-vous d'avant-hier annoncés comme « à venir »
+- **Aucune billetterie, aucun paiement** — le site n'encaisse rien (§10)
 
 **Chaque étape sort avec ses tests** — vérifications d'API dans `tests/run.php`
 et parcours Playwright — selon la règle du dépôt : *un parcours qui n'exécute

@@ -58,6 +58,38 @@ if ($sec) {
     }
 }
 
+
+// ── Rendez-vous (V2) ─────────────────────────────────────
+// DEUX rendez-vous : un a venir, un passe. C'est ce qui rend la bascule
+// « a venir / archives » verifiable — avec un seul, les deux etats
+// afficheraient la meme chose et le parcours ne dirait rien.
+//
+// Celui a venir est rattache a un ETABLISSEMENT de l'atlas : c'est ce
+// qui met « Prochain rendez-vous » sur sa fiche et pose son marqueur sur
+// le globe.
+$secEvt = (int)$pdo->query("SELECT id FROM forum_sections WHERE is_events = 1 LIMIT 1")->fetchColumn();
+// Un etablissement de l'ATLAS, pas celui du jeu minimal : son pays
+// doit exister sur le globe, sans quoi le parcours qui ouvre sa fiche
+// n'a nulle part ou cliquer.
+$lounge = (int)$pdo->query("SELECT l.id FROM lounges l
+                            JOIN lounge_countries c ON c.id = l.country_id
+                            WHERE l.is_verified = 1 ORDER BY l.id LIMIT 1")->fetchColumn();
+if ($secEvt) {
+    $pdo->exec("INSERT INTO forum_topics (id, section_id, user_id, title, slug, lang, posts_count, last_post_at)
+                VALUES (910, $secEvt, 900, 'Degustation de rentree', 'degustation-de-rentree', 'fr', 1, NOW()),
+                       (911, $secEvt, 900, 'Soiree du printemps dernier', 'soiree-du-printemps-dernier', 'fr', 1, NOW())");
+    $pdo->exec("INSERT INTO forum_posts (topic_id, user_id, body) VALUES
+        (910, 900, 'On ouvre trois **Behike** et une serie de robustos nicaraguayens.'),
+        (911, 900, 'Merci a tous, c etait une belle soiree.')");
+    $pdo->prepare(
+        "INSERT INTO forum_events (topic_id, starts_at, timezone, kind, lounge_id, place_label, lat, lon, capacity, status)
+         VALUES (910, DATE_ADD(UTC_TIMESTAMP(), INTERVAL 20 DAY), 'Europe/Paris', 'degustation', ?, 'Cave du Rhone, Geneve', 46.2044, 6.1432, 12, 'upcoming'),
+                (911, DATE_SUB(UTC_TIMESTAMP(), INTERVAL 40 DAY), 'Europe/Paris', 'rencontre', NULL, 'Bar du Nord, Lille', 50.6292, 3.0573, NULL, 'past')"
+    )->execute([$lounge ?: null]);
+    // L'organisateur vient, par construction.
+    $pdo->exec("INSERT INTO forum_attendance (topic_id, user_id, state, rank_no) VALUES (910, 900, 'going', 1)");
+}
+
 $compte = function (string $t) use ($pdo): int {
     return (int)$pdo->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
 };

@@ -592,6 +592,133 @@ eq('forum : retrait par l\'auteur', 200, $r['status']);
 eq('forum : la ligne demeure en base',
    1, (int)test_pdo()->query("SELECT COUNT(*) FROM forum_posts WHERE id = $mien AND status = 'removed'")->fetchColumn());
 
+
+// ── Rendez-vous (V2) ─────────────────────────────────────
+$r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $anon]);
+eq('forum : l\'agenda est public', 200, $r['status']);
+eq('forum : agenda vide au depart', 0, count($r['json']['events']));
+
+// Organiser demande le statut de confiance : c'est la seule action du
+// forum ainsi reservee, et un rendez-vous physique annonce par un compte
+// de trois minutes est le principal vecteur d'abus d'un tel espace.
+$evt = [
+    'title' => 'Degustation de rentree a Geneve',
+    'body'  => 'On se retrouve pour une serie de robustos nicaraguayens.',
+    'starts_local' => '2027-01-15T19:30',
+    'timezone' => 'Europe/Paris',
+    'kind' => 'degustation',
+    'place_label' => 'Cave du Rhone, Geneve',
+];
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create', $evt);
+eq('forum : un simple membre n\'organise pas', 403, $r['status']);
+eq('forum : le refus porte un code stable', 'evt_confiance_requise', $r['json']['code']);
+
+test_pdo()->exec("UPDATE users SET role = 'trusted' WHERE email = 'alice@test.local'");
+
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create', $evt);
+eq('forum : le contributeur de confiance organise', 201, $r['status']);
+$e_id = (int)$r['json']['id'];
+
+// L'HEURE EST STOCKEE EN UTC. Paris est a UTC+1 en janvier : 19 h 30
+// locales font 18 h 30 UTC. C'est la conversion qui permet de trier
+// deux rendez-vous sur deux continents et d'envoyer un rappel a l'heure.
+$utc = test_pdo()->query("SELECT starts_at FROM forum_events WHERE topic_id = $e_id")->fetchColumn();
+eq('forum : l\'heure est convertie en UTC (Paris, hiver)', '2027-01-15 18:30:00', $utc);
+
+// CONTRE-EPREUVE, dans le meme fuseau : en juillet Paris passe a UTC+2,
+// et 19 h 30 locales font 17 h 30 UTC. Un decalage fixe en dur donnerait
+// la meme reponse aux deux dates — et se tromperait d'une heure la
+// moitie de l'annee.
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create',
+    array_merge($evt, ['title' => 'Soiree d\'ete au bord du lac', 'starts_local' => '2027-07-15T19:30']));
+eq('forum : deuxieme rendez-vous cree', 201, $r['status']);
+$e_ete = (int)$r['json']['id'];
+$utc2 = test_pdo()->query("SELECT starts_at FROM forum_events WHERE topic_id = $e_ete")->fetchColumn();
+eq('forum : le meme fuseau, l\'autre saison (Paris, ete)', '2027-07-15 17:30:00', $utc2);
+
+// Garde-fous de saisie
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create',
+    array_merge($evt, ['starts_local' => '2020-01-01T19:30']));
+eq('forum : une date passee est refusee', 'evt_passe', $r['json']['code']);
+
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create',
+    array_merge($evt, ['starts_local' => '2035-01-01T19:30']));
+eq('forum : au-dela de douze mois, refus', 'evt_trop_loin', $r['json']['code']);
+
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create',
+    array_merge($evt, ['timezone' => 'Mars/Olympus_Mons']));
+eq('forum : fuseau inconnu refuse', 'evt_fuseau', $r['json']['code']);
+
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create',
+    array_merge($evt, ['place_label' => '']));
+eq('forum : un rendez-vous sans lieu n\'en est pas un', 'evt_lieu_requis', $r['json']['code']);
+
+// L'organisateur vient, par construction : un agenda qui annonce
+// « 0 inscrit » a un rendez-vous qui a un hote serait absurde.
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$e_id", ['jar' => $anon]);
+check('forum : le fil porte la fiche du rendez-vous', !empty($r['json']['event']));
+eq('forum : l\'organisateur est compte present', 1, $r['json']['event']['attendance']['going']);
+eq('forum : le fuseau du lieu accompagne l\'instant', 'Europe/Paris', $r['json']['event']['timezone']);
+
+// ── Participation et liste d'attente ─────────────────────
+test_pdo()->exec("UPDATE forum_events SET capacity = 1 WHERE topic_id = $e_id");
+
+$r = post_json($base, $bob, '/backend/forum.php?action=attend', ['topic_id' => $e_id, 'state' => 'going']);
+eq('forum : inscription enregistree', 200, $r['status']);
+eq('forum : deux presents', 2, $r['json']['attendance']['going']);
+// Une place, deux inscrits : le second patiente — et on lui dit son
+// RANG. « Complet » sans plus laisse croire qu'il n'y a rien a esperer.
+eq('forum : le second est sur liste d\'attente', true, $r['json']['attendance']['waiting']);
+eq('forum : et connait son rang', 1, $r['json']['attendance']['waiting_pos']);
+
+$r = post_json($base, $carol, '/backend/forum.php?action=attend', ['topic_id' => $e_id, 'state' => 'interested']);
+eq('forum : « interesse » ne prend pas de place', 2, $r['json']['attendance']['going']);
+eq('forum : mais se compte a part', 1, $r['json']['attendance']['interested']);
+
+$r = post_json($base, $bob, '/backend/forum.php?action=attend', ['topic_id' => $e_id, 'state' => 'cancelled']);
+eq('forum : un desistement libere la place', 1, $r['json']['attendance']['going']);
+
+// ── Annulation ───────────────────────────────────────────
+post_json($base, $bob, '/backend/forum.php?action=attend', ['topic_id' => $e_ete, 'state' => 'going']);
+$avant = is_file(PROJECT_ROOT . '/backend/cache/mail_outbox.log')
+       ? filesize(PROJECT_ROOT . '/backend/cache/mail_outbox.log') : 0;
+
+$r = post_json($base, $carol, '/backend/forum.php?action=event_cancel',
+               ['topic_id' => $e_ete, 'reason' => 'Salle indisponible']);
+eq('forum : on n\'annule pas le rendez-vous d\'un autre', 403, $r['status']);
+
+$r = post_json($base, $alice, '/backend/forum.php?action=event_cancel',
+               ['topic_id' => $e_ete, 'reason' => 'Salle indisponible']);
+eq('forum : l\'organisateur annule', 200, $r['status']);
+// Les inscrits sont prevenus : ils ont bloque une soiree, et cette
+// information-la ne se devine pas.
+check('forum : les inscrits sont prevenus par email', (int)$r['json']['notified'] >= 1);
+
+$journal = (string)@file_get_contents(PROJECT_ROOT . '/backend/cache/mail_outbox.log', false, null, $avant);
+check('forum : l\'email d\'annulation porte le motif', str_contains($journal, 'Salle indisponible'));
+
+$r = post_json($base, $bob, '/backend/forum.php?action=attend', ['topic_id' => $e_ete, 'state' => 'going']);
+eq('forum : on ne s\'inscrit plus a un rendez-vous annule', 403, $r['status']);
+eq('forum : code du rendez-vous fige', 'evt_fige', $r['json']['code']);
+
+$r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $anon]);
+eq('forum : l\'annule quitte l\'agenda a venir', 1, count($r['json']['events']));
+$r = http('GET', $base . '/backend/forum.php?action=agenda&passes=1', ['jar' => $anon]);
+eq('forum : mais reste dans les archives', 1, count($r['json']['events']));
+
+// ── Peremption automatique ───────────────────────────────
+// Un statut qui depend d'une horloge doit se rattraper tout seul :
+// sinon un cron oublie laisse un agenda plein de rendez-vous
+// d'avant-hier annonces comme « a venir ».
+test_pdo()->exec("UPDATE forum_events SET starts_at = DATE_SUB(UTC_TIMESTAMP(), INTERVAL 3 DAY),
+                                          ends_at = NULL, status = 'upcoming' WHERE topic_id = $e_id");
+$r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $anon]);
+eq('forum : un rendez-vous depasse quitte l\'agenda sans tache planifiee', 0, count($r['json']['events']));
+eq('forum : et passe en archive',
+   'past', test_pdo()->query("SELECT status FROM forum_events WHERE topic_id = $e_id")->fetchColumn());
+
+test_pdo()->exec("UPDATE users SET role = 'member' WHERE email = 'alice@test.local'");
+
 $r = http('GET', $base . '/backend/forum.php?action=inconnue', ['jar' => $anon]);
 eq('forum : action inconnue refusee', 404, $r['status']);
 

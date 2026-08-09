@@ -745,6 +745,11 @@ function drawGlobe(){
 
   // Lounge country triangles (on top of everything)
   drawLoungeCountries();
+
+  // Rendez-vous de la communaute, au-dessus de tout. Le dessin vit
+  // dans forum.js : le globe n'a pas a connaitre le forum, il lui
+  // offre seulement une couche. Absent, rien ne se passe.
+  if (typeof dessinerEvenements === 'function') dessinerEvenements(gc, R, proj, ll2xyz, limbFade, animNow());
 }
 
 // ════════════════════════════════════════════════════════

@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→016) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→017, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -95,8 +95,30 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - Le compte de sujets d'une rubrique suit le **même** filtre que la liste : annoncer
     « 2 sujets » puis n'en montrer qu'un est pire que ne rien annoncer
   - 58 vérifications d'API et 8 parcours Playwright
-- [ ] **E1d** — Espace communautaire, **V2 : les événements** · M
-  - Suppose **B1** faite : une communauté se lance une fois, devant de vrais visiteurs
+- [x] ~~**E1d** — Espace communautaire, **V2 : les événements**~~ ✅
+  - **Un événement EST un sujet** muni de champs structurés (`topic_id` en clé primaire) : la
+    préparation se discute dans le fil, et il n'y a pas un second système de commentaires
+  - **L'heure est stockée en UTC, le fuseau du lieu à côté.** Aucun des deux ne remplace
+    l'autre : l'UTC seul ne dit pas à quelle heure locale ça commence, le fuseau seul
+    n'ordonne pas deux rendez-vous sur deux continents, et une heure locale nue se décale
+    deux fois par an. Vérifié à Paris **en janvier et en juillet** — un décalage en dur
+    donnerait la même réponse aux deux
+  - **Organiser demande le statut de confiance** : un rendez-vous physique annoncé par un
+    compte de trois minutes est le principal vecteur d'abus de ce genre d'espace
+  - **La liste d'attente se déduit** du rang d'inscription et de la capacité, elle n'est pas
+    un état stocké — un état se désynchroniserait au premier désistement. Et l'on annonce le
+    RANG : « complet » laisse croire qu'il n'y a rien à espérer
+  - **Les rendez-vous sur le globe** : losange or battant, distinct des triangles violets des
+    établissements. Voir *où* ça se passe est exactement ce que ce site sait faire
+  - « Prochain rendez-vous » sur la fiche de l'établissement hôte — **une** requête pour tout
+    le panneau, le serveur n'en traitant qu'une à la fois
+  - Annulation : le rendez-vous reste visible, barré, avec son motif, et les inscrits sont
+    prévenus par email dans leur langue. Ils avaient bloqué une soirée
+  - Rappel J-2 par `tools/forum_rappels.php` (cron). `reminded_at` garantit qu'il ne part
+    qu'une fois : un cron horaire enverrait sinon vingt-quatre emails par jour et par inscrit
+  - La péremption se rattrape **à la lecture**, pas par une tâche planifiée : un cron oublié
+    laisserait un agenda plein de rendez-vous d'avant-hier annoncés comme « à venir »
+  - 35 vérifications d'API et 6 parcours Playwright
   - ⚠ Avis juridique nécessaire avant ouverture publique (produit du tabac, promotion, âge)
 - [x] ~~**D1** — Modération des avis (signalement + écran admin)~~ ✅
 - [x] ~~**D2** — Contributeur de confiance (promotion + publication directe)~~ ✅

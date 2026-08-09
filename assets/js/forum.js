@@ -101,6 +101,14 @@
 
   // ── Calque ─────────────────────────────────────────────
   function ouvrir(sec, sujet) {
+    if (sec && !(donnees.sections || []).length) {
+      // Même raison que dans aller() : sans la liste des rubriques, on
+      // ne sait pas si celle-ci porte un agenda.
+      return appel('sections&lang=' + encodeURIComponent(paramLangues())).then(function (r) {
+        donnees.sections = (r.data && r.data.sections) || [];
+        ouvrir(sec, sujet);
+      });
+    }
     section = sec || null;
     topicId = sujet || null;
     vue = topicId ? 'topic' : (section ? 'topics' : 'sections');
@@ -258,6 +266,8 @@
         (t0.tags.length ? '<div class="fo-tags">' + t0.tags.map(function (g) {
           return '<button class="fo-tag" data-tag="' + esc(g.slug) + '">#' + esc(g.label) + '</button>';
         }).join('') + '</div>' : '') +
+        (r.data.event ? blocEvt(r.data.event) : '') +
+        '<div class="fo-err" hidden></div>' +
         '<div class="fo-posts">' + posts.map(function (p) { return blocMessage(p, t0); }).join('') + '</div>' +
         (t0.locked ? '<div class="fo-vide">' + t('forum_ferme') + '</div>' : zoneReponse());
 
@@ -266,6 +276,7 @@
         b.onclick = function () { etiquette = b.dataset.tag; aller(null, null, true); };
       });
       brancherMessages(t0);
+      if (r.data.event) brancherEvt(r.data.event);
       if (!t0.locked) brancherReponse(t0);
       pied();
     });
@@ -361,6 +372,380 @@
     };
   }
 
+
+  // ══ RENDEZ-VOUS (V2) ═══════════════════════════════════
+  // La rubrique marquée « events » n'affiche pas une liste de sujets
+  // mais un AGENDA : le tri utile n'y est pas la dernière réponse, mais
+  // la date qui vient.
+
+  var agendaPasses = false;   // à venir (défaut) ou archives
+
+  function estOrganisateur() {
+    var u = window.CGAccount && window.CGAccount.user;
+    return !!u && ['trusted', 'moderator', 'admin'].indexOf(u.role) !== -1;
+  }
+
+  /**
+   * La date d'un rendez-vous, dans le fuseau du LIEU.
+   *
+   * C'est le point délicat : « 19 h » n'a de sens qu'à un endroit
+   * donné. L'instant arrive en UTC et le fuseau du lieu l'accompagne ;
+   * Intl fait le reste, sans table de correspondance à maintenir. Le
+   * fuseau est rappelé à l'écrit quand il diffère de celui du lecteur —
+   * sinon on lui ferait rater son train.
+   */
+  function dateEvt(evt, avecFuseau) {
+    var d = new Date(evt.starts_at);
+    if (isNaN(d)) return '';
+    var opts = { weekday: 'long', day: 'numeric', month: 'long',
+                 hour: '2-digit', minute: '2-digit', timeZone: evt.timezone };
+    var s;
+    try { s = new Intl.DateTimeFormat(window.currentLang || 'fr', opts).format(d); }
+    catch (e) { s = d.toLocaleString(); }
+    if (avecFuseau && evt.timezone && evt.timezone !== fuseauLecteur()) {
+      s += ' (' + evt.timezone + ')';
+    }
+    return s;
+  }
+
+  function fuseauLecteur() {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { return ''; }
+  }
+
+  /** Pastille de date : le jour et le mois, lisibles d'un coup d'œil. */
+  function pastilleDate(evt) {
+    var d = new Date(evt.starts_at);
+    if (isNaN(d)) return '';
+    var opt = { timeZone: evt.timezone };
+    var jour, mois;
+    try {
+      jour = new Intl.DateTimeFormat(window.currentLang || 'fr',
+               Object.assign({ day: 'numeric' }, opt)).format(d);
+      mois = new Intl.DateTimeFormat(window.currentLang || 'fr',
+               Object.assign({ month: 'short' }, opt)).format(d);
+    } catch (e) { jour = d.getDate(); mois = ''; }
+    return '<span class="fo-evt-date"><b>' + esc(jour) + '</b><small>' + esc(mois) + '</small></span>';
+  }
+
+  function rendreAgenda() {
+    chargement();
+    var q = 'agenda&lang=' + encodeURIComponent(paramLangues()) + (agendaPasses ? '&passes=1' : '');
+    appel(q).then(function (r) {
+      var l = (r.data && r.data.events) || [];
+      calque.querySelector('.fo-sub').textContent = t('forum_sec_' + section);
+
+      var tete =
+        '<div class="fo-bar">' +
+          '<button class="fo-back-btn">‹ ' + t('forum_retour') + '</button>' +
+          '<div class="fo-bar-right">' +
+            '<label class="fo-filtre">' +
+              '<span>' + t('forum_agenda_quand') + '</span>' +
+              '<select class="fo-quand">' +
+                '<option value="a-venir"' + (agendaPasses ? '' : ' selected') + '>' + esc(t('forum_agenda_avenir')) + '</option>' +
+                '<option value="passes"' + (agendaPasses ? ' selected' : '') + '>' + esc(t('forum_agenda_passes')) + '</option>' +
+              '</select>' +
+            '</label>' +
+            (estOrganisateur() ? '<button class="fo-new-evt">' + t('forum_evt_nouveau') + '</button>' : '') +
+          '</div>' +
+        '</div>';
+
+      var liste = l.length
+        ? '<div class="fo-list">' + l.map(ligneEvt).join('') + '</div>'
+        : '<div class="fo-vide">' + t(agendaPasses ? 'forum_agenda_vide_passes' : 'forum_agenda_vide') + '</div>';
+
+      // Le droit d'organiser n'est pas ouvert à tous, et le dire vaut
+      // mieux que de laisser un bouton absent sans explication.
+      var note = (!estOrganisateur() && !agendaPasses)
+        ? '<div class="fo-aide fo-evt-note">' + esc(t('forum_evt_confiance')) + '</div>' : '';
+
+      corps().innerHTML = tete + liste + note;
+      corps().querySelector('.fo-back-btn').onclick = function () { aller(null, null); };
+      corps().querySelector('.fo-quand').onchange = function () {
+        agendaPasses = this.value === 'passes';
+        rendre();
+      };
+      var bn = corps().querySelector('.fo-new-evt');
+      if (bn) bn.onclick = formulaireEvt;
+      corps().querySelectorAll('.fo-topic').forEach(function (b) {
+        b.onclick = function () { aller(section, parseInt(b.dataset.id, 10)); };
+      });
+      pied();
+    });
+  }
+
+  function ligneEvt(e) {
+    var a = e.attendance || {};
+    var places = a.capacity
+      ? a.going + '/' + a.capacity
+      : String(a.going || 0);
+    var etat = '';
+    if (e.status === 'cancelled') etat = '<span class="fo-evt-annule">' + t('forum_evt_annule') + '</span>';
+    else if (a.full)              etat = '<span class="fo-evt-complet">' + t('forum_evt_complet') + '</span>';
+
+    var drapeau = (e.lang && e.lang !== (window.currentLang || 'fr'))
+      ? '<span class="fo-lang-tag">' + esc(e.lang.toUpperCase()) + '</span>' : '';
+
+    return '<button class="fo-topic fo-evt" data-id="' + e.topic_id + '">' +
+      pastilleDate(e) +
+      '<span class="fo-t-main">' +
+        '<span class="fo-t-title">' + esc(e.title) + drapeau + etat + '</span>' +
+        '<span class="fo-t-meta">' + esc(dateEvt(e, true)) +
+          (e.place ? ' · ' + esc(e.place) : '') + '</span>' +
+        '<span class="fo-t-meta">' + esc(t('forum_evt_kind_' + e.kind)) +
+          ' · ' + places + ' ' + esc(t('forum_evt_participants')) + '</span>' +
+      '</span>' +
+    '</button>';
+  }
+
+  /** Le bandeau d'un rendez-vous, en tête de son fil. */
+  function blocEvt(e) {
+    var a = e.attendance || {};
+    var moi = e.my_state;
+    var lignes = [
+      '<div class="fo-evt-fiche' + (e.status !== 'upcoming' ? ' fo-evt-fige' : '') + '">',
+      '<div class="fo-evt-quand">' + esc(dateEvt(e, true)) + '</div>',
+    ];
+    if (e.place)  lignes.push('<div class="fo-evt-ou">' + esc(e.place) + '</div>');
+    lignes.push('<div class="fo-evt-meta">' + esc(t('forum_evt_kind_' + e.kind)) +
+      ' · ' + (a.capacity ? a.going + '/' + a.capacity : String(a.going || 0)) +
+      ' ' + esc(t('forum_evt_participants')) +
+      (a.interested ? ' · ' + a.interested + ' ' + esc(t('forum_evt_interesses')) : '') + '</div>');
+
+    if (e.status === 'cancelled') {
+      lignes.push('<div class="fo-evt-annule-bloc">' + t('forum_evt_annule') +
+        (e.cancel_reason ? ' — ' + esc(e.cancel_reason) : '') + '</div>');
+    } else if (e.status === 'past') {
+      lignes.push('<div class="fo-evt-meta">' + t('forum_evt_passe') + '</div>');
+    } else {
+      // Sur liste d'attente, on dit le RANG. « Complet » sans plus
+      // laisse croire qu'il n'y a rien à espérer ; « 2e sur la liste »
+      // se comprend, et se surveille.
+      if (a.waiting) {
+        lignes.push('<div class="fo-evt-attente">' +
+          t('forum_evt_attente').replace('{n}', a.waiting_pos) + '</div>');
+      }
+      lignes.push(
+        '<div class="fo-evt-actions">' +
+          '<button class="fo-evt-btn' + (moi === 'going' ? ' actif' : '') + '" data-etat="going">' +
+            t('forum_evt_je_viens') + '</button>' +
+          '<button class="fo-evt-btn' + (moi === 'interested' ? ' actif' : '') + '" data-etat="interested">' +
+            t('forum_evt_interesse') + '</button>' +
+          (moi && moi !== 'cancelled'
+            ? '<button class="fo-evt-btn" data-etat="cancelled">' + t('forum_evt_retirer') + '</button>' : '') +
+        '</div>'
+      );
+    }
+    lignes.push('</div>');
+    return lignes.join('');
+  }
+
+  function brancherEvt(e) {
+    corps().querySelectorAll('.fo-evt-btn').forEach(function (b) {
+      b.onclick = function () {
+        if (!(window.CGAccount && window.CGAccount.require())) return;
+        appel('attend', 'POST', { topic_id: e.topic_id, state: b.dataset.etat })
+          .then(function (r) {
+            if (!r.ok) { alerteEvt(tErr(r.data)); return; }
+            rendre();
+          });
+      };
+    });
+    var annul = corps().querySelector('.fo-evt-annuler');
+    if (annul) annul.onclick = function () {
+      var motif = window.prompt(t('forum_evt_motif_annul')) ;
+      if (motif === null) return;
+      appel('event_cancel', 'POST', { topic_id: e.topic_id, reason: motif })
+        .then(function (r) { r.ok ? rendre() : alerteEvt(tErr(r.data)); });
+    };
+  }
+
+  function alerteEvt(msg) {
+    var z = corps().querySelector('.fo-err');
+    if (z) { z.textContent = msg; z.hidden = false; }
+  }
+
+  // ── Créer un rendez-vous ───────────────────────────────
+  function formulaireEvt() {
+    if (!(window.CGAccount && window.CGAccount.requireVerified())) return;
+    var natures = ['degustation', 'rencontre', 'artisan', 'salon', 'enligne'];
+
+    corps().innerHTML =
+      '<div class="fo-bar"><button class="fo-back-btn">‹ ' + t('forum_retour') + '</button></div>' +
+      '<div class="fo-form">' +
+        '<label>' + t('forum_titre_champ') + '<input class="fo-f-titre" maxlength="140"></label>' +
+        '<label>' + t('forum_message_champ') + '<textarea class="fo-f-corps" rows="6"></textarea></label>' +
+        '<div class="fo-form-2">' +
+          '<label>' + t('forum_evt_debut') + '<input class="fo-f-debut" type="datetime-local"></label>' +
+          '<label>' + t('forum_evt_fin') + '<input class="fo-f-fin" type="datetime-local"></label>' +
+        '</div>' +
+        '<div class="fo-form-2">' +
+          '<label>' + t('forum_evt_fuseau') + '<input class="fo-f-tz" value="' + esc(fuseauLecteur() || 'Europe/Paris') + '"></label>' +
+          '<label>' + t('forum_evt_nature') +
+            '<select class="fo-f-kind">' + natures.map(function (k) {
+              return '<option value="' + k + '">' + esc(t('forum_evt_kind_' + k)) + '</option>';
+            }).join('') + '</select></label>' +
+        '</div>' +
+        '<label>' + t('forum_evt_lieu') +
+          '<input class="fo-f-lieu" maxlength="160" placeholder="' + esc(t('forum_evt_lieu_aide')) + '"></label>' +
+        '<div class="fo-form-2">' +
+          '<label>' + t('forum_evt_capacite') + '<input class="fo-f-cap" type="number" min="1" max="9999"></label>' +
+          '<label>' + t('forum_langue_champ') +
+            '<select class="fo-f-lang">' + ['fr','en','es','de','zh','ar'].map(function (l) {
+              return '<option value="' + l + '"' +
+                (l === (window.currentLang || 'fr') ? ' selected' : '') + '>' + l.toUpperCase() + '</option>';
+            }).join('') + '</select></label>' +
+        '</div>' +
+        '<div class="fo-aide">' + esc(t('forum_evt_aide')) + '</div>' +
+        '<div class="fo-err" hidden></div>' +
+        '<div class="fo-form-btns">' +
+          '<button class="fo-envoyer">' + t('forum_publier') + '</button>' +
+          '<button class="fo-annuler">' + t('forum_annuler') + '</button>' +
+        '</div>' +
+      '</div>';
+
+    var f = corps().querySelector('.fo-form');
+    var errEl = f.querySelector('.fo-err');
+    corps().querySelector('.fo-back-btn').onclick = function () { rendre(); };
+    f.querySelector('.fo-annuler').onclick = function () { rendre(); };
+    f.querySelector('.fo-envoyer').onclick = function () {
+      errEl.hidden = true;
+      appel('event_create', 'POST', {
+        title:        f.querySelector('.fo-f-titre').value.trim(),
+        body:         f.querySelector('.fo-f-corps').value.trim(),
+        starts_local: f.querySelector('.fo-f-debut').value,
+        ends_local:   f.querySelector('.fo-f-fin').value,
+        timezone:     f.querySelector('.fo-f-tz').value.trim(),
+        kind:         f.querySelector('.fo-f-kind').value,
+        place_label:  f.querySelector('.fo-f-lieu').value.trim(),
+        capacity:     parseInt(f.querySelector('.fo-f-cap').value, 10) || 0,
+        lang:         f.querySelector('.fo-f-lang').value,
+      }).then(function (r) {
+        if (!r.ok) { errEl.textContent = tErr(r.data); errEl.hidden = false; return; }
+        // Le nouveau rendez-vous doit apparaître sur le globe sans
+        // rechargement : sinon il n'y serait qu'à la prochaine visite.
+        if (window.rafraichirEvtsGlobe) rafraichirEvtsGlobe();
+        aller(section, r.data.id);
+      });
+    };
+  }
+
+
+  // ══ LES RENDEZ-VOUS SUR LE GLOBE ═══════════════════════
+  // C'est ce que ce site sait faire et que personne d'autre n'a : VOIR
+  // où ça se passe. Un agenda dit « le 12 septembre à Genève » ; le
+  // globe montre Genève, et le lecteur comprend en un coup d'œil si
+  // c'est pour lui.
+  //
+  // Le marqueur est volontairement DIFFÉRENT de ceux des lounges : un
+  // losange or qui bat lentement, là où les établissements sont des
+  // triangles violets. Un rendez-vous est temporaire, il n'appartient
+  // pas à l'atlas — le confondre avec une adresse permanente
+  // tromperait.
+  //
+  // globe.js ne connaît pas le forum : il appelle cette fonction si
+  // elle existe, en lui passant ses propres projections. Retirer
+  // forum.js ne casse pas le globe.
+
+  var EVTS_GLOBE = [];       // rendez-vous à venir, avec coordonnées
+  var evtsCharges = false;
+
+  function chargerEvtsGlobe() {
+    if (evtsCharges) return;
+    evtsCharges = true;
+    // Toutes langues : sur le globe, un point est un point. Filtrer par
+    // langue masquerait un rendez-vous qui se tient à côté de chez soi.
+    appel('agenda&lang=all').then(function (r) {
+      EVTS_GLOBE = ((r.data && r.data.events) || []).filter(function (e) {
+        return e.lat !== null && e.lon !== null && e.status === 'upcoming';
+      });
+      if (EVTS_GLOBE.length && typeof drawGlobe === 'function') drawGlobe();
+    }).catch(function () { /* le globe se passe très bien des rendez-vous */ });
+  }
+
+  window.dessinerEvenements = function (gc, R, proj, ll2xyz, limbFade, now) {
+    if (!EVTS_GLOBE.length) return;
+    // Un battement lent : assez pour attirer l'œil, assez lent pour ne
+    // pas fatiguer une carte qu'on regarde plusieurs minutes.
+    var battement = 0.5 + 0.5 * Math.sin(now / 900);
+
+    for (var i = 0; i < EVTS_GLOBE.length; i++) {
+      var e = EVTS_GLOBE[i];
+      var p  = ll2xyz(e.lat, e.lon, R);
+      var pj = proj(p.x, p.y, p.z);
+      var fade = limbFade(pj.z, R);
+      if (fade <= 0) continue;
+
+      gc.save();
+      gc.globalAlpha = fade;
+      gc.translate(pj.x, pj.y - 2);
+
+      // Halo
+      gc.globalAlpha = fade * (0.15 + 0.20 * battement);
+      gc.beginPath(); gc.arc(0, 0, 11 + 3 * battement, 0, Math.PI * 2);
+      gc.fillStyle = '#C9A227'; gc.fill();
+
+      // Losange
+      gc.globalAlpha = fade;
+      gc.beginPath();
+      gc.moveTo(0, -7); gc.lineTo(6, 0); gc.lineTo(0, 7); gc.lineTo(-6, 0);
+      gc.closePath();
+      gc.fillStyle = '#C9A227'; gc.fill();
+      gc.strokeStyle = 'rgba(255,255,255,.85)'; gc.lineWidth = 1.2; gc.stroke();
+      gc.restore();
+    }
+  };
+
+  /** Le globe interroge le forum une seule fois, quand les données sont là. */
+  function amorcerEvtsGlobe() {
+    // Après le chargement de l'atlas : inutile de concurrencer les
+    // requêtes qui font apparaître le globe lui-même.
+    if (document.readyState === 'complete') setTimeout(chargerEvtsGlobe, 1200);
+    else window.addEventListener('load', function () { setTimeout(chargerEvtsGlobe, 1200); });
+  }
+
+  window.rafraichirEvtsGlobe = function () { evtsCharges = false; chargerEvtsGlobe(); };
+
+
+  /**
+   * « Prochain rendez-vous » sur les fiches d'établissement.
+   *
+   * C'est le lien qui empêche la communauté d'être une île : quelqu'un
+   * qui consulte une adresse à Genève apprend qu'on s'y retrouve
+   * vendredi, sans avoir jamais ouvert le forum.
+   *
+   * Une seule requête pour tout le panneau — le serveur du site n'en
+   * traite qu'une à la fois, et vingt appels transformeraient
+   * l'ouverture d'une fiche pays en attente visible.
+   */
+  window.ficheEvenementsLounges = function (lounges) {
+    var ids = (lounges || []).map(function (l) { return l.id; }).filter(Boolean);
+    if (!ids.length) return;
+
+    appel('lounge_events&ids=' + ids.join(',')).then(function (r) {
+      var par = (r.data && r.data.by_lounge) || {};
+      // Forme au singulier : un seul établissement demandé.
+      if (ids.length === 1 && r.data && r.data.events && r.data.events.length) {
+        par[ids[0]] = r.data.events;
+      }
+      Object.keys(par).forEach(function (id) {
+        var boite = document.getElementById('lc-evt-' + id);
+        var liste = par[id];
+        if (!boite || !liste || !liste.length) return;
+        var e = liste[0];                   // le plus proche : le seul qui décide
+        boite.innerHTML =
+          '<button class="lc-evt-btn" data-sujet="' + e.topic_id + '">' +
+            '<span class="lc-evt-ey">' + esc(t('lc_prochain_evt')) + '</span>' +
+            '<span class="lc-evt-t">' + esc(e.title) + '</span>' +
+            '<span class="lc-evt-d">' + esc(dateEvt(e, true)) +
+              (liste.length > 1 ? ' · +' + (liste.length - 1) : '') + '</span>' +
+          '</button>';
+        boite.querySelector('.lc-evt-btn').onclick = function () {
+          ouvrir(null, e.topic_id);
+        };
+      });
+    }).catch(function () { /* la fiche se passe très bien des rendez-vous */ });
+  };
+
   // ── Ouvrir un sujet ────────────────────────────────────
   function formulaireSujet() {
     if (!(window.CGAccount && window.CGAccount.requireVerified())) return;
@@ -417,6 +802,14 @@
 
   // ── Navigation ─────────────────────────────────────────
   function aller(sec, sujet, garderEtiquette) {
+    // Les rubriques disent laquelle porte un agenda : si on arrive
+    // directement par une adresse partagée, on ne les a pas encore.
+    if (sec && !(donnees.sections || []).length) {
+      return appel('sections&lang=' + encodeURIComponent(paramLangues())).then(function (r) {
+        donnees.sections = (r.data && r.data.sections) || [];
+        aller(sec, sujet, garderEtiquette);
+      });
+    }
     if (!garderEtiquette && sec !== null) etiquette = null;
     section = sec;
     topicId = sujet || null;
@@ -431,8 +824,17 @@
 
   function rendre() {
     if (vue === 'topic')  return rendreTopic();
-    if (vue === 'topics') return rendreTopics();
+    // La rubrique marquée « events » n'affiche pas une liste de sujets
+    // mais un agenda : le tri utile n'y est pas la dernière réponse,
+    // mais la date qui vient. Le filtre par étiquette, lui, retombe sur
+    // la liste ordinaire — il traverse toutes les rubriques.
+    if (vue === 'topics') return (sectionEstAgenda() && !etiquette) ? rendreAgenda() : rendreTopics();
     rendreSections();
+  }
+
+  function sectionEstAgenda() {
+    var s = (donnees.sections || []).find(function (x) { return x.slug === section; });
+    return !!(s && s.events);
   }
 
   // ── Amorçage ───────────────────────────────────────────
@@ -447,6 +849,8 @@
     if (b) b.onclick = function () { ouvrir(null, null); };
     var m = document.getElementById('mm-forum');
     if (m) m.onclick = function () { ouvrir(null, null); };
+
+    amorcerEvtsGlobe();
 
     // Une adresse partagée ouvre directement la bonne vue.
     var p = new URLSearchParams(location.search);

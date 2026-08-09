@@ -107,12 +107,21 @@ function setup_test_database(): PDO {
          VALUES (1, 'testland', 'Lounge de test', 'Ville', 'Cave & Lounge', 1)"
     );
     // Les rubriques du forum sont des donnees de REFERENCE : sans elles,
-    // aucun sujet ne peut exister. Elles sont rejouees depuis la
-    // migration plutot que recopiees ici — une liste recopiee finit
-    // toujours par diverger de celle qui part en production.
-    $mig = @file_get_contents(PROJECT_ROOT . '/sql/migrations/015_forum.sql');
-    if ($mig && preg_match('/INSERT IGNORE INTO forum_sections.*?;/s', $mig, $m)) {
-        $pdo->exec($m[0]);
+    // aucun sujet ne peut exister, et celle qui porte l'agenda ne se
+    // reconnait qu'a son drapeau `is_events`. On rejoue donc TOUTES les
+    // instructions des migrations qui touchent forum_sections, dans
+    // l'ordre des fichiers, plutot que d'en recopier une liste ici : une
+    // liste recopiee finit toujours par diverger de celle qui part en
+    // production. C'est ce qui manquait quand la migration 017 a pose
+    // `is_events` — la table etait peuplee, le drapeau non, et creer un
+    // rendez-vous repondait 500 sans rien dire de plus.
+    $migrations = glob(PROJECT_ROOT . '/sql/migrations/*.sql') ?: [];
+    sort($migrations);
+    foreach ($migrations as $f) {
+        $sql = (string)@file_get_contents($f);
+        if (preg_match_all('/(?:INSERT IGNORE INTO|UPDATE)\s+forum_sections\b[^;]*;/si', $sql, $m)) {
+            foreach ($m[0] as $stmt) $pdo->exec($stmt);
+        }
     }
     // Une marque, pour que « action=all » ait quelque chose a porter.
     // Sans elle, la reponse restait vide de marques et l'on ne pouvait

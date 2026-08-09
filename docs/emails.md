@@ -152,6 +152,45 @@ sans boîte mail. La suite de tests fonctionne sur ce principe.
 Ce journal s'accumule d'une session à l'autre ; videz-le si vous vous
 perdez dans les jetons.
 
+
+## Les emails que le site envoie
+
+| Quand | Clés `mail_i18n()` | Coupable depuis le profil ? |
+|---|---|---|
+| Vérification d'adresse, mot de passe oublié | (gabarits d'`auth.php`) | non — indispensables |
+| Contribution approuvée | `appr_*` | non |
+| **Rendez-vous dans deux jours** | `evt_rappel_*` | **non** |
+| **Rendez-vous annulé** | `evt_annul_*` | **non** |
+
+Les deux derniers ne se coupent pas, volontairement : ils portent une
+information que l'inscrit **ne peut pas deviner**, alors qu'il a bloqué
+une soirée. Tout le reste des notifications communautaires (réponses,
+mentions) sera, lui, réglable — c'est l'étape 4 de `docs/communaute.md`.
+
+### Le rappel J-2 est une tâche planifiée
+
+```bash
+php tools/forum_rappels.php            # envoie
+php tools/forum_rappels.php --dry-run  # liste qui recevrait quoi, sans envoyer
+```
+
+Sur o2switch (cron du cPanel), une ligne quotidienne :
+
+```
+0 9 * * * /usr/local/bin/php /home/<compte>/<site>/tools/forum_rappels.php
+```
+
+`forum_attendance.reminded_at` garantit qu'un rappel ne part **qu'une
+fois** : sans lui, un cron horaire enverrait vingt-quatre emails par
+jour et par inscrit — de quoi faire classer le domaine en spam pour de
+bon. Un envoi qui échoue n'est pas marqué : le passage suivant
+réessaiera.
+
+Le **passage en « passé »** d'un rendez-vous, lui, n'a pas besoin de
+cron : il se rattrape à la lecture de l'agenda. Un statut qui dépend
+d'une horloge doit se corriger tout seul, sinon un cron oublié laisse un
+agenda plein de rendez-vous d'avant-hier annoncés comme « à venir ».
+
 ## Ce qui est déjà pris en charge côté code
 
 Sans intervention de votre part, `send_email()` :

@@ -388,6 +388,7 @@ function _renderLoungeCards(c, list, body, opts) {
         '<div class="lc-desc">' + desc + '</div>' +
         (links ? '<div class="lc-links">'+links+'</div>' : '') +
         '<div class="lc-rating-section">'+ratingHtml+'</div>' +
+        (l.id ? '<div class="lc-evt" id="lc-evt-'+l.id+'"></div>' : '') +
         (l.id ? '<div class="lc-fav" id="lc-fav-'+l.id+'"></div>' : '') +
         (l.id ? '<div class="lc-photos" id="lc-photos-'+l.id+'"></div>' : '') +
         (l.id ? '<div class="lc-reviews" id="lc-reviews-'+l.id+'"></div>' : '') +
@@ -402,6 +403,10 @@ function _renderLoungeCards(c, list, body, opts) {
       ' · '+t('lounge_section_of')+' ' + c.name +
     '</div>';
   body.innerHTML = intro + '<div class="lc-grid">' + cards + '</div>';
+  // Les rendez-vous a venir dans ces etablissements. Le forum les
+  // pose lui-meme : l'atlas n'a pas a le connaitre, et son absence
+  // ne change rien a la fiche.
+  if (window.ficheEvenementsLounges) ficheEvenementsLounges(list);
 
   // Charger les photos lazily après rendu des cartes
   if (typeof _loadLoungePhotos === 'function') {

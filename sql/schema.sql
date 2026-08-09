@@ -184,6 +184,49 @@ CREATE TABLE `favorites` (
   CONSTRAINT `fk_fav_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_attendance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_attendance` (
+  `topic_id` int unsigned NOT NULL,
+  `user_id` int unsigned NOT NULL,
+  `state` enum('interested','going','cancelled') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'going',
+  `rank_no` int unsigned NOT NULL DEFAULT '0' COMMENT 'Ordre d''inscription : sert la liste d''attente',
+  `reminded_at` datetime DEFAULT NULL COMMENT 'Rappel J-2 envoye : garantit qu''il ne part qu''une fois',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`topic_id`,`user_id`),
+  KEY `idx_forum_attendance_user` (`user_id`),
+  KEY `idx_forum_attendance_rank` (`topic_id`,`state`,`rank_no`),
+  CONSTRAINT `fk_forum_att_topic` FOREIGN KEY (`topic_id`) REFERENCES `forum_events` (`topic_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_forum_att_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_events` (
+  `topic_id` int unsigned NOT NULL,
+  `starts_at` datetime NOT NULL COMMENT 'Instant de debut, en UTC',
+  `ends_at` datetime DEFAULT NULL COMMENT 'Instant de fin, en UTC',
+  `timezone` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Europe/Paris' COMMENT 'Fuseau du LIEU : c''est lui qui donne l''heure affichee',
+  `kind` enum('degustation','rencontre','artisan','salon','enligne') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'rencontre',
+  `lounge_id` int unsigned DEFAULT NULL,
+  `place_label` varchar(160) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lat` decimal(9,6) DEFAULT NULL,
+  `lon` decimal(9,6) DEFAULT NULL,
+  `capacity` smallint unsigned DEFAULT NULL COMMENT 'NULL = sans limite',
+  `status` enum('upcoming','past','cancelled') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'upcoming',
+  `cancel_reason` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`topic_id`),
+  KEY `idx_forum_events_when` (`starts_at`,`status`),
+  KEY `idx_forum_events_lounge` (`lounge_id`,`starts_at`),
+  CONSTRAINT `fk_forum_events_lounge` FOREIGN KEY (`lounge_id`) REFERENCES `lounges` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_forum_events_topic` FOREIGN KEY (`topic_id`) REFERENCES `forum_topics` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `forum_flags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -258,6 +301,7 @@ CREATE TABLE `forum_sections` (
   `icon` varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `position` tinyint unsigned NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_events` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'La rubrique affiche un agenda plutot qu''une liste de sujets',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_forum_sections_slug` (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

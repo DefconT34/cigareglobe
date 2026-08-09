@@ -6,6 +6,8 @@
 //   GET  ?action=topics&section=…&lang=…&tag=…&page=…
 //   GET  ?action=topic&id=42[&page=…]              sujet + messages
 //   GET  ?action=tags[&q=…]                        autocomplétion
+//   GET  ?action=agenda[&passes=1][&lang=…]        rendez-vous à venir / archives
+//   GET  ?action=lounge_events&id=42               rendez-vous d'un établissement
 //   GET  ?action=mod_queue                         file de modération (admin)
 //   POST ?action=topic_create                      { section, title, body, lang, tags[] }
 //   POST ?action=post_create                       { topic_id, body, quote_post_id }
@@ -17,6 +19,10 @@
 //   POST ?action=topic_solved                      { topic_id, post_id }
 //   POST ?action=moderate                          { post_id, decision } (admin)
 //   POST ?action=topic_state                       { topic_id, lock, pin } (admin)
+//   POST ?action=event_create                      { title, body, starts_local, timezone… }
+//   POST ?action=event_update                      { topic_id, … }
+//   POST ?action=event_cancel                      { topic_id, reason }
+//   POST ?action=attend                            { topic_id, state }
 //
 // Le serveur ne traduit pas : les erreurs sortent en CODE stable, que le
 // front traduit par tErr(). Seuls les libellés des rubriques font
@@ -27,6 +33,7 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/auth_lib.php';
 require_once __DIR__ . '/forum_lib.php';
+require_once __DIR__ . '/mailer.php';
 
 auth_session_start();
 
@@ -63,7 +70,8 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 // Toute écriture au nom de l'utilisateur exige le jeton CSRF.
 $ECRITURES = ['topic_create','post_create','post_edit','post_delete','flag',
-              'react','follow','topic_solved','moderate','topic_state'];
+              'react','follow','topic_solved','moderate','topic_state',
+              'event_create','event_update','event_cancel','attend'];
 if (in_array($action, $ECRITURES, true) && $method === 'POST') csrf_verify();
 
 try {
@@ -73,6 +81,8 @@ try {
         $action === 'topics'       && $method === 'GET'  => a_topics($db),
         $action === 'topic'        && $method === 'GET'  => a_topic($db),
         $action === 'tags'         && $method === 'GET'  => a_tags($db),
+        $action === 'agenda'       && $method === 'GET'  => a_agenda($db),
+        $action === 'lounge_events'&& $method === 'GET'  => a_lounge_events($db),
         $action === 'mod_queue'    && $method === 'GET'  => a_mod_queue($db),
         $action === 'topic_create' && $method === 'POST' => a_topic_create($db),
         $action === 'post_create'  && $method === 'POST' => a_post_create($db),
@@ -84,6 +94,10 @@ try {
         $action === 'topic_solved' && $method === 'POST' => a_topic_solved($db),
         $action === 'moderate'     && $method === 'POST' => a_moderate($db),
         $action === 'topic_state'  && $method === 'POST' => a_topic_state($db),
+        $action === 'event_create' && $method === 'POST' => a_event_create($db),
+        $action === 'event_update' && $method === 'POST' => a_event_update($db),
+        $action === 'event_cancel' && $method === 'POST' => a_event_cancel($db),
+        $action === 'attend'       && $method === 'POST' => a_attend($db),
         default => fout(err('unknown_action', 'Action inconnue'), 404),
     };
 } catch (Throwable $e) {
@@ -247,8 +261,24 @@ function a_topic(PDO $db): void {
         ];
     }, $stmt->fetchAll());
 
+    // Un evenement EST un sujet : sa fiche voyage avec le fil, plutot
+    // que dans un second appel que le front devrait synchroniser.
+    $evt = null;
+    $qe = $db->prepare('SELECT e.*, l.name AS lounge_name, l.country_id
+                        FROM forum_events e LEFT JOIN lounges l ON l.id = e.lounge_id
+                        WHERE e.topic_id = ?');
+    $qe->execute([$id]);
+    if ($row = $qe->fetch()) {
+        forum_evt_perimer($db);
+        $evt = forum_evt_format($row);
+        $cap = $row['capacity'] !== null ? (int)$row['capacity'] : null;
+        $evt['attendance'] = forum_evt_participation($db, $id, $cap, $me ? (int)$me['id'] : null);
+        $evt['my_state']   = $me ? forum_evt_mon_etat($db, $id, (int)$me['id']) : null;
+    }
+
     $tags = forum_tags_de($db, [$id]);
     fout([
+        'event' => $evt,
         'topic' => [
             'id'      => (int)$t['id'],
             'title'   => $t['title'],
@@ -584,4 +614,245 @@ function a_topic_state(PDO $db): void {
         $db->prepare("UPDATE forum_topics SET status = 'removed' WHERE id = ?")->execute([$topic_id]);
     }
     fout(['success' => true]);
+}
+
+// ════════════════════════════════════════════════════════
+// ÉVÉNEMENTS (V2)
+// ════════════════════════════════════════════════════════
+
+/**
+ * Créer un rendez-vous demande le statut de CONFIANCE.
+ *
+ * C'est la seule action du forum ainsi réservée, et pour une raison
+ * précise : un rendez-vous physique annoncé par un compte de trois
+ * minutes est le principal vecteur d'abus d'un espace comme celui-ci.
+ * Le seuil existe déjà (N contributions validées), et un modérateur
+ * peut l'accorder à la demande.
+ */
+function forum_organisateur(PDO $db): array {
+    $u = forum_membre($db);
+    if (!forum_de_confiance($u)) {
+        fout(err('evt_confiance_requise',
+                 'Organiser un rendez-vous demande le statut de contributeur de confiance.'), 403);
+    }
+    return $u;
+}
+
+/** GET ?action=agenda[&passes=1][&lang=…] */
+function a_agenda(PDO $db): void {
+    $passes = !empty($_GET['passes']);
+    $evts   = forum_evt_agenda($db, forum_langues_demandees(), $passes);
+
+    // La participation de CHACUN, en une requête par événement plutôt
+    // qu'une par ligne affichée : l'agenda tient en une page.
+    $me = current_user($db);
+    foreach ($evts as &$e) {
+        $e['attendance'] = forum_evt_participation($db, $e['topic_id'], $e['capacity'], $me ? (int)$me['id'] : null);
+        $e['my_state']   = $me ? forum_evt_mon_etat($db, $e['topic_id'], (int)$me['id']) : null;
+    }
+    unset($e);
+    fout(['events' => $evts, 'past' => $passes]);
+}
+
+/**
+ * GET ?action=lounge_events&id=42  ou  &ids=1,2,3
+ *
+ * La forme au pluriel existe pour le panneau d'un pays : il affiche
+ * jusqu'a vingt etablissements, et vingt requetes sur un serveur qui
+ * n'en traite qu'une a la fois transformeraient l'ouverture du panneau
+ * en attente visible.
+ */
+function a_lounge_events(PDO $db): void {
+    $ids = [];
+    foreach (explode(',', (string)($_GET['ids'] ?? $_GET['id'] ?? '')) as $v) {
+        $v = (int)trim($v);
+        if ($v > 0) $ids[] = $v;
+    }
+    $ids = array_slice(array_unique($ids), 0, 60);
+    if (!$ids) fout(err('id_required', 'id requis'), 400);
+
+    $parLounge = forum_evt_par_lounge($db, $ids);
+    // Une seule cle : la forme au singulier reste servie telle quelle,
+    // pour que l'appelant n'ait pas a distinguer les deux cas.
+    fout([
+        'events'    => count($ids) === 1 ? ($parLounge[$ids[0]] ?? []) : [],
+        'by_lounge' => $parLounge,
+    ]);
+}
+
+/**
+ * POST ?action=event_create
+ * { title, body, lang, starts_local, ends_local, timezone, kind,
+ *   lounge_id | place_label + lat/lon, capacity, tags[] }
+ */
+function a_event_create(PDO $db): void {
+    $u = forum_organisateur($db);
+    $b = fbody();
+
+    $title = trim(strip_tags($b['title'] ?? ''));
+    $body  = trim($b['body'] ?? '');
+    if (mb_strlen($title) < 8)  fout(err('title_too_short', 'Un titre d\'au moins 8 caractères est requis.'), 400);
+    if (mb_strlen($body)  < 20) fout(err('body_too_short',  'Le message doit faire au moins 20 caractères.'), 400);
+
+    $tz = (string)($b['timezone'] ?? 'Europe/Paris');
+    if (!forum_evt_fuseau_valide($tz)) fout(err('evt_fuseau', 'Fuseau horaire inconnu.'), 400);
+
+    $debut = forum_evt_utc((string)($b['starts_local'] ?? ''), $tz);
+    if (!$debut) fout(err('evt_date_requise', 'Une date et une heure de début sont requises.'), 400);
+    $fin = isset($b['ends_local']) && trim((string)$b['ends_local']) !== ''
+         ? forum_evt_utc((string)$b['ends_local'], $tz) : null;
+
+    if ($stop = forum_evt_valider($debut, $fin)) fout(err($stop[0], $stop[1]), 400);
+    if ($stop = forum_plafond($db, $u, true, $body)) fout(err($stop[0], $stop[1]), 429);
+
+    $kind = in_array($b['kind'] ?? '', forum_evt_natures(), true) ? $b['kind'] : 'rencontre';
+    $cap  = isset($b['capacity']) && (int)$b['capacity'] > 0 ? min(9999, (int)$b['capacity']) : null;
+    [$loungeId, $label, $lat, $lon] = forum_evt_lieu(
+        $db, $b['lounge_id'] ?? 0, $b['place_label'] ?? '', $b['lat'] ?? null, $b['lon'] ?? null
+    );
+    if (!$loungeId && !$label) fout(err('evt_lieu_requis', 'Indiquez un lieu.'), 400);
+
+    $lang = in_array($b['lang'] ?? '', langues_site(), true) ? $b['lang'] : ($u['lang'] ?: 'fr');
+
+    // Sujet, message et événement forment un tout : à défaut, un sujet
+    // sans date resterait en tête de l'agenda sans jamais s'y afficher.
+    $db->beginTransaction();
+    try {
+        $sid = (int)$db->query("SELECT id FROM forum_sections WHERE is_events = 1 ORDER BY position LIMIT 1")->fetchColumn();
+        if (!$sid) throw new RuntimeException('aucune rubrique d\'evenements');
+
+        $db->prepare('INSERT INTO forum_topics (section_id, user_id, title, slug, lang, ref_type, ref_id)
+                      VALUES (?, ?, ?, ?, ?, ?, ?)')
+           ->execute([$sid, $u['id'], mb_substr($title, 0, 140), forum_slug($title), $lang,
+                      $loungeId ? 'lounge' : null, $loungeId ? (string)$loungeId : null]);
+        $tid = (int)$db->lastInsertId();
+
+        $db->prepare('INSERT INTO forum_posts (topic_id, user_id, body) VALUES (?, ?, ?)')
+           ->execute([$tid, $u['id'], mb_substr($body, 0, 20000)]);
+
+        $db->prepare('INSERT INTO forum_events
+                      (topic_id, starts_at, ends_at, timezone, kind, lounge_id, place_label, lat, lon, capacity)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+           ->execute([$tid, $debut, $fin, $tz, $kind, $loungeId, $label, $lat, $lon, $cap]);
+
+        // L'organisateur vient, par construction. Le dire évite l'agenda
+        // qui annonce « 0 participant » à un rendez-vous qui a un hôte.
+        forum_evt_participer($db, $tid, (int)$u['id'], 'going');
+
+        forum_tags_appliquer($db, $tid, is_array($b['tags'] ?? null) ? $b['tags'] : []);
+        forum_topic_recompte($db, $tid);
+        $db->commit();
+    } catch (Throwable $e) {
+        $db->rollBack();
+        throw $e;
+    }
+    fout(['success' => true, 'id' => $tid], 201);
+}
+
+/** L'organisateur, ou un modérateur. */
+function forum_evt_maitre(PDO $db, int $topic_id): array {
+    $u = forum_membre($db);
+    $q = $db->prepare('SELECT user_id FROM forum_topics WHERE id = ?');
+    $q->execute([$topic_id]);
+    $auteur = $q->fetchColumn();
+    if ($auteur === false) fout(err('topic_not_found', 'Sujet introuvable'), 404);
+    if ((int)$auteur !== (int)$u['id'] && !in_array($u['role'], ['moderator', 'admin'], true)) {
+        fout(err('forbidden', 'Action non autorisée'), 403);
+    }
+    return $u;
+}
+
+/** POST ?action=event_update — modifiable jusqu'au début, pas après. */
+function a_event_update(PDO $db): void {
+    $b   = fbody();
+    $tid = (int)($b['topic_id'] ?? 0);
+    if ($tid <= 0) fout(err('id_required', 'id requis'), 400);
+    forum_evt_maitre($db, $tid);
+
+    $q = $db->prepare('SELECT * FROM forum_events WHERE topic_id = ?');
+    $q->execute([$tid]);
+    $e = $q->fetch();
+    if (!$e) fout(err('evt_not_found', 'Rendez-vous introuvable'), 404);
+    if ($e['status'] !== 'upcoming') {
+        // Une archive ne se réécrit pas : ceux qui sont venus l'ont vue
+        // telle qu'elle était.
+        fout(err('evt_fige', 'Ce rendez-vous est passé ou annulé.'), 403);
+    }
+
+    $tz = (string)($b['timezone'] ?? $e['timezone']);
+    if (!forum_evt_fuseau_valide($tz)) fout(err('evt_fuseau', 'Fuseau horaire inconnu.'), 400);
+
+    $debut = isset($b['starts_local']) && trim((string)$b['starts_local']) !== ''
+           ? forum_evt_utc((string)$b['starts_local'], $tz) : $e['starts_at'];
+    if (!$debut) fout(err('evt_date_requise', 'Date de début invalide.'), 400);
+    $fin = array_key_exists('ends_local', $b)
+         ? (trim((string)$b['ends_local']) !== '' ? forum_evt_utc((string)$b['ends_local'], $tz) : null)
+         : $e['ends_at'];
+
+    if ($stop = forum_evt_valider($debut, $fin)) fout(err($stop[0], $stop[1]), 400);
+
+    $kind = in_array($b['kind'] ?? '', forum_evt_natures(), true) ? $b['kind'] : $e['kind'];
+    $cap  = array_key_exists('capacity', $b)
+          ? ((int)$b['capacity'] > 0 ? min(9999, (int)$b['capacity']) : null)
+          : ($e['capacity'] !== null ? (int)$e['capacity'] : null);
+
+    [$loungeId, $label, $lat, $lon] = array_key_exists('lounge_id', $b) || array_key_exists('place_label', $b)
+        ? forum_evt_lieu($db, $b['lounge_id'] ?? 0, $b['place_label'] ?? '', $b['lat'] ?? null, $b['lon'] ?? null)
+        : [$e['lounge_id'], $e['place_label'], $e['lat'], $e['lon']];
+
+    $db->prepare('UPDATE forum_events SET starts_at = ?, ends_at = ?, timezone = ?, kind = ?,
+                         lounge_id = ?, place_label = ?, lat = ?, lon = ?, capacity = ?
+                  WHERE topic_id = ?')
+       ->execute([$debut, $fin, $tz, $kind, $loungeId, $label, $lat, $lon, $cap, $tid]);
+
+    fout(['success' => true]);
+}
+
+/**
+ * POST ?action=event_cancel — { topic_id, reason }
+ *
+ * Annuler N'EFFACE PAS. Le rendez-vous reste visible, barré, avec son
+ * motif : quelqu'un qui avait bloqué sa soirée doit pouvoir comprendre
+ * ce qui s'est passé, et le fil de discussion reste ouvert.
+ *
+ * Les inscrits sont prévenus par email, sans possibilité de couper
+ * cette notification-là : elle porte une information qu'ils ne peuvent
+ * pas deviner.
+ */
+function a_event_cancel(PDO $db): void {
+    $b   = fbody();
+    $tid = (int)($b['topic_id'] ?? 0);
+    if ($tid <= 0) fout(err('id_required', 'id requis'), 400);
+    forum_evt_maitre($db, $tid);
+
+    $motif = mb_substr(trim((string)($b['reason'] ?? '')), 0, 300);
+    $db->prepare("UPDATE forum_events SET status = 'cancelled', cancel_reason = ? WHERE topic_id = ?")
+       ->execute([$motif ?: null, $tid]);
+
+    $prevenus = forum_evt_prevenir_annulation($db, $tid, $motif);
+    fout(['success' => true, 'notified' => $prevenus]);
+}
+
+/** POST ?action=attend — { topic_id, state } */
+function a_attend(PDO $db): void {
+    $u   = forum_membre($db);
+    $b   = fbody();
+    $tid = (int)($b['topic_id'] ?? 0);
+    if ($tid <= 0) fout(err('id_required', 'id requis'), 400);
+
+    $q = $db->prepare('SELECT status, capacity FROM forum_events WHERE topic_id = ?');
+    $q->execute([$tid]);
+    $e = $q->fetch();
+    if (!$e) fout(err('evt_not_found', 'Rendez-vous introuvable'), 404);
+    if ($e['status'] !== 'upcoming') fout(err('evt_fige', 'Ce rendez-vous est passé ou annulé.'), 403);
+
+    $etat = (string)($b['state'] ?? 'going');
+    forum_evt_participer($db, $tid, (int)$u['id'], $etat);
+
+    $cap = $e['capacity'] !== null ? (int)$e['capacity'] : null;
+    fout([
+        'success'    => true,
+        'my_state'   => forum_evt_mon_etat($db, $tid, (int)$u['id']),
+        'attendance' => forum_evt_participation($db, $tid, $cap, (int)$u['id']),
+    ]);
 }
