@@ -449,6 +449,20 @@ eq('forum : filtre sur deux langues', 2, count($r['json']['topics']));
 $r = http('GET', $base . '/backend/forum.php?action=topics&section=conservation&lang=all', ['jar' => $anon]);
 eq('forum : « all » ne filtre pas', 2, count($r['json']['topics']));
 
+// Le compte affiche en tete de rubrique suit le MEME filtre que la
+// liste. Sans cela, une rubrique annoncait « 2 sujets » a un lecteur
+// anglophone qui, une fois entre, n'en trouvait qu'un.
+$compteur = function (array $sections, string $slug): int {
+    foreach ($sections as $s) if ($s['slug'] === $slug) return (int)$s['topics'];
+    return -1;
+};
+$r = http('GET', $base . '/backend/forum.php?action=sections&lang=fr', ['jar' => $anon]);
+eq('forum : le compte de la rubrique suit le filtre', 1, $compteur($r['json']['sections'], 'conservation'));
+$r = http('GET', $base . '/backend/forum.php?action=sections&lang=fr,en', ['jar' => $anon]);
+eq('forum : deux langues, deux sujets comptes', 2, $compteur($r['json']['sections'], 'conservation'));
+$r = http('GET', $base . '/backend/forum.php?action=sections', ['jar' => $anon]);
+eq('forum : sans filtre, tout est compte', 2, $compteur($r['json']['sections'], 'conservation'));
+
 // Une langue inconnue est ignoree en silence : un parametre bricole ne
 // doit ni faire echouer la page, ni servir de levier d'injection.
 $r = http('GET', $base . '/backend/forum.php?action=topics&section=conservation&lang=klingon', ['jar' => $anon]);

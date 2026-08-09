@@ -84,7 +84,7 @@ backend/
   .htaccess           Protection de config.php
 sql/
   schema.sql          Schéma de référence (structure complète)
-  migrations/         Évolutions incrémentales (001→015)
+  migrations/         Évolutions incrémentales (001→016)
 docs/
   roadmap.md          Feuille de route (chantiers restants + ordre)
   espace-client.md    Cahier des charges de l'espace membre
@@ -167,5 +167,5 @@ php tools/mail_doctor.php --to=vous@exemple.com   # + envoi de test
 ## Déploiement
 
 Non couvert ici pour l'instant — étapes détaillées dans `docs/roadmap.md`
-(chantier B1 : `.env` serveur, rotation des secrets, migrations 001→006,
+(chantier B1 : `.env` serveur, rotation des secrets, migrations 001→016,
 enregistrements DNS des emails).

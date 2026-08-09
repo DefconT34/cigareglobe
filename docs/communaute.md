@@ -363,6 +363,11 @@ Notes :
 - Retrait par l'auteur = **pierre tombale**, pas un trou dans la conversation
 - `user_id` nullable avec `ON DELETE SET NULL` : un compte supprimé laisse
   « Membre supprimé », l'archive reste lisible
+- **Un sujet d'amorce par rubrique** (migration `016`), signé d'un compte dédié
+  « La Régie » qui **ne peut pas se connecter** (empreinte `*`, jamais un
+  hachage valide). Aucune fausse réponse : un dialogue fabriqué se repère et
+  décrédibilise le reste. Deux fils en anglais, parce que le filtre par défaut
+  ne montre à un anglophone que l'anglais — sans eux il trouverait le vide
 
 **Chaque étape sort avec ses tests** — vérifications d'API dans `tests/run.php`
 et parcours Playwright — selon la règle du dépôt : *un parcours qui n'exécute

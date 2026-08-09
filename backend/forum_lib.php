@@ -366,16 +366,37 @@ function forum_auteur(?array $row): array {
     ];
 }
 
-/** Les rubriques, avec le nombre de sujets visibles. */
-function forum_sections(PDO $db): array {
-    $rows = $db->query(
+/**
+ * Les rubriques, avec le nombre de sujets VISIBLES.
+ *
+ * Le compte suit le filtre de langue. Sans cela, une rubrique annonçait
+ * « 2 sujets » à un lecteur anglophone qui, une fois entré, n'en
+ * trouvait qu'un : le compte portait sur toutes les langues, la liste
+ * non. Un chiffre qui ne correspond pas à ce qu'on va voir est pire
+ * qu'une absence de chiffre.
+ *
+ * @param string[]|null $langs null = toutes les langues
+ */
+function forum_sections(PDO $db, ?array $langs = null): array {
+    $filtre = '';
+    $args   = [];
+    if ($langs) {
+        $in = implode(',', array_fill(0, count($langs), '?'));
+        $filtre = " AND t.lang IN ($in)";
+        // La condition apparaît DEUX fois dans la requête : les
+        // paramètres sont donc fournis deux fois, dans l'ordre.
+        $args = array_merge($langs, $langs);
+    }
+    $stmt = $db->prepare(
         "SELECT s.id, s.slug, s.icon,
                 (SELECT COUNT(*) FROM forum_topics t
-                  WHERE t.section_id = s.id AND t.status <> 'removed') AS topics,
+                  WHERE t.section_id = s.id AND t.status <> 'removed'$filtre) AS topics,
                 (SELECT MAX(t.last_post_at) FROM forum_topics t
-                  WHERE t.section_id = s.id AND t.status <> 'removed') AS last_post_at
+                  WHERE t.section_id = s.id AND t.status <> 'removed'$filtre) AS last_post_at
          FROM forum_sections s ORDER BY s.position, s.id"
-    )->fetchAll();
+    );
+    $stmt->execute($args);
+    $rows = $stmt->fetchAll();
     return array_map(fn($r) => [
         'id'     => (int)$r['id'],
         'slug'   => $r['slug'],

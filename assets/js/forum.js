@@ -65,6 +65,25 @@
     return moi === 'en' ? 'en' : moi + ',en';
   }
 
+  /**
+   * Accorde un nom avec un nombre, dans la langue affichée.
+   *
+   * « 1 sujets » se voyait dès la première rubrique. Un simple
+   * « n > 1 ? pluriel : singulier » aurait corrigé le français et cassé
+   * l'anglais, où zéro prend le pluriel — et n'aurait rien dit du
+   * chinois ni de l'arabe. Intl.PluralRules connaît la règle de chaque
+   * langue ; c'est exactement ce pour quoi il existe, et il ne coûte
+   * aucune clé de traduction supplémentaire.
+   */
+  function pluriel(n, cleUn, clePlus) {
+    try {
+      var forme = new Intl.PluralRules(window.currentLang || 'fr').select(n);
+      return t(forme === 'one' ? cleUn : clePlus);
+    } catch (e) {
+      return t(n > 1 ? clePlus : cleUn);
+    }
+  }
+
   function dateCourte(iso) {
     if (!iso) return '';
     var d = new Date(String(iso).replace(' ', 'T'));
@@ -131,7 +150,7 @@
   // ── Vue 1 : les rubriques ──────────────────────────────
   function rendreSections() {
     chargement();
-    appel('sections').then(function (r) {
+    appel('sections&lang=' + encodeURIComponent(paramLangues())).then(function (r) {
       donnees.sections = (r.data && r.data.sections) || [];
       calque.querySelector('.fo-sub').textContent = t('forum_sous_titre');
       corps().innerHTML = '<div class="fo-secs">' + donnees.sections.map(function (s) {
@@ -141,7 +160,7 @@
             '<span class="fo-sec-name">' + esc(t('forum_sec_' + s.slug)) + '</span>' +
             '<span class="fo-sec-desc">' + esc(t('forum_sec_' + s.slug + '_d')) + '</span>' +
           '</span>' +
-          '<span class="fo-sec-n">' + s.topics + ' ' + t('forum_sujets') + '</span>' +
+          '<span class="fo-sec-n">' + s.topics + ' ' + pluriel(s.topics, 'forum_sujet', 'forum_sujets') + '</span>' +
         '</button>';
       }).join('') + '</div>';
 
@@ -215,7 +234,7 @@
           return '<span class="fo-tag">#' + esc(g.label) + '</span>';
         }).join('') + '</span>' : '') +
       '</span>' +
-      '<span class="fo-t-n">' + s.posts + '<small>' + t('forum_messages') + '</small></span>' +
+      '<span class="fo-t-n">' + s.posts + '<small>' + pluriel(s.posts, 'forum_message', 'forum_messages') + '</small></span>' +
     '</button>';
   }
 

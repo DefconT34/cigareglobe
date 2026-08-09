@@ -96,7 +96,9 @@ try {
 // ════════════════════════════════════════════════════════
 
 function a_sections(PDO $db): void {
-    fout(['sections' => forum_sections($db)]);
+    // Le compte de sujets suit le meme filtre que la liste : annoncer
+    // « 2 sujets » puis n'en montrer qu'un est pire que ne rien annoncer.
+    fout(['sections' => forum_sections($db, forum_langues_demandees())]);
 }
 
 /**

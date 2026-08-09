@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→006) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→016) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -89,7 +89,12 @@ Effort : P = Petit · M = Moyen · G = Gros.
     et 30 messages/jour, 30 s entre deux messages, **aucun lien externe avant 5 messages**
   - Un compte supprimé laisse ses messages sous « Membre supprimé » (`ON DELETE SET NULL`) :
     effacer au milieu d'un échange rend la suite incompréhensible
-  - 55 vérifications d'API et 8 parcours Playwright
+  - **Un sujet d'amorce par rubrique** (migration `016`) : aucune rubrique vide au premier
+    jour. Question ouverte, aucune fausse réponse, signée d'un compte « La Régie » qui ne
+    peut pas se connecter. Deux fils en anglais, sans quoi un anglophone trouverait le vide
+  - Le compte de sujets d'une rubrique suit le **même** filtre que la liste : annoncer
+    « 2 sujets » puis n'en montrer qu'un est pire que ne rien annoncer
+  - 58 vérifications d'API et 8 parcours Playwright
 - [ ] **E1d** — Espace communautaire, **V2 : les événements** · M
   - Suppose **B1** faite : une communauté se lance une fois, devant de vrais visiteurs
   - ⚠ Avis juridique nécessaire avant ouverture publique (produit du tabac, promotion, âge)
