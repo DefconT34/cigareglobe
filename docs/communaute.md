@@ -127,6 +127,10 @@ alors « 3 discussions », et l'espace communautaire cesse d'être une île.
   et neutralise les fichiers polyglottes. Une image abaisse le seuil de masquage
   à **2 signalements** : une image choquante fait ses dégâts en cinq secondes, là
   où un paragraphe se lit et s'oublie.
+  La **qualité de compression est choisie image par image** : on encode, on relit,
+  on compare au PSNR, et on garde la plus basse qui reste sous le seuil de perte —
+  jusqu'à −53 % sur une image douce, jamais plus lourd qu'avant sur une image
+  bruitée.
 - ❌ **Pas d'affiche d'événement.** Une affiche est par définition un support
   promotionnel ; portant le logo d'une maison, ce serait de la publicité pour le
   tabac au sens le plus littéral. Une photo de son propre cigare est un

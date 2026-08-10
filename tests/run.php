@@ -838,6 +838,63 @@ eq('images : une image jamais publiee est effacee au bout de 24 h', 0,
 $r = post_json($base, $anon, '/backend/forum.php?action=post_image', []);
 eq('images : televerser exige un compte', 401, $r['status']);
 
+
+// ── Compression : la qualite est CHOISIE, pas fixee ──────
+// Deux proprietes, et la seconde est la garantie autour de laquelle
+// l'algorithme est construit.
+require_once PROJECT_ROOT . '/backend/image_lib.php';
+
+if (extension_loaded('gd')) {
+    // 1. Une image DOUCE (aplats, degrade) : la qualite descend, le
+    //    poids avec, et la perte reste sous le seuil.
+    // 1600 px de large, comme une photo reelle apres bornage : c'est a
+    // cette taille que le choix se joue. A 800 px, la meme image tombe
+    // pile sur le seuil et l'algorithme garde la reference — ce serait
+    // un test au bord de la falaise, qui basculerait au moindre reglage.
+    $douce = imagecreatetruecolor(1600, 1200);
+    for ($y = 0; $y < 1200; $y++) {
+        imageline($douce, 0, $y, 1600, $y,
+                  imagecolorallocate($douce, 30 + (int)(80 * $y / 1200), 20, 15));
+    }
+    imagefilledellipse($douce, 640, 600, 800, 480, imagecolorallocate($douce, 201, 162, 39));
+
+    ob_start(); imagejpeg($douce, null, 86); $ref = ob_get_clean();
+    [$q, $bin, $psnr] = image_qualite_adaptative($douce, IMG_PSNR_IMAGE);
+
+    check('compression : une image douce descend sous la qualite de reference',
+          $q < IMG_QUALITE_REF, "qualite retenue : $q");
+    check('compression : et pese moins lourd',
+          strlen($bin) < strlen($ref),
+          sprintf('%d o contre %d o', strlen($bin), strlen($ref)));
+    check('compression : la perte reste sous le seuil vise',
+          $psnr >= IMG_PSNR_IMAGE, sprintf('PSNR %.1f dB', $psnr));
+    imagedestroy($douce);
+
+    // 2. Une image BRUITEE : le PSNR y plafonne tres bas quelle que soit
+    //    la qualite — l'oeil pardonne le grain, la mesure non. Une
+    //    recherche naive conclurait « il faut monter » et rendrait un
+    //    fichier PLUS LOURD qu'avant. Releve avant correction :
+    //    630 ko a q=86 contre 818 ko a q=92, soit +30 %.
+    mt_srand(11);
+    $bruit = imagecreatetruecolor(500, 400);
+    for ($y = 0; $y < 400; $y++) for ($x = 0; $x < 500; $x++) {
+        $b = max(0, min(255, 120 + mt_rand(-70, 70)));
+        imagesetpixel($bruit, $x, $y, imagecolorallocate($bruit, $b, $b, $b));
+    }
+    ob_start(); imagejpeg($bruit, null, 86); $refB = ob_get_clean();
+    [$qB, $binB, $psnrB] = image_qualite_adaptative($bruit, IMG_PSNR_IMAGE);
+
+    check('compression : sur une image bruitee, la cible est hors d\'atteinte',
+          $psnrB < IMG_PSNR_IMAGE, sprintf('PSNR %.1f dB', $psnrB));
+    eq('compression : on garde alors la qualite de reference', IMG_QUALITE_REF, $qB);
+    check('compression : et le fichier n\'est JAMAIS plus lourd qu\'avant',
+          strlen($binB) <= strlen($refB),
+          sprintf('%d o contre %d o', strlen($binB), strlen($refB)));
+    imagedestroy($bruit);
+} else {
+    check('compression : GD absent, verifications ignorees', true);
+}
+
 $r = http('GET', $base . '/backend/forum.php?action=inconnue', ['jar' => $anon]);
 eq('forum : action inconnue refusee', 404, $r['status']);
 

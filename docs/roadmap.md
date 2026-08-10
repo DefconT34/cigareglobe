@@ -95,7 +95,22 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - `post_id` nullable : on téléverse avant de publier. Les images jamais publiées sont effacées
     au bout de 24 h, **au téléversement suivant du même membre** — un nettoyage qui dépend d'un
     cron oublié laisse un dossier qui enfle en silence
-  - 21 vérifications d'API et 3 parcours Playwright
+  - **La qualité est choisie, pas fixée.** Une qualité JPEG figée traite de la même façon
+    une photo au grain marqué et une macro sur fond sombre. On encode, on relit, on compare
+    au PSNR, et on garde la qualité **la plus basse** dont l'écart reste sous le seuil
+    (44 dB pour l'image, 38 pour la vignette). Plus le JPEG progressif, gratuit
+  - **On commence par la qualité de référence (86)**, et c'est ce qui rend l'algorithme
+    incapable d'empirer les choses. Le PSNR punit le bruit, que l'œil pardonne : sur une
+    photo grenue il plafonne vers 25 dB quelle que soit la qualité. Une recherche naïve
+    concluait « il faut monter » et rendait un fichier **30 % plus lourd** (630 → 818 ko).
+    En testant 86 d'abord, ce cas se reconnaît au premier essai — et devient le plus rapide
+  - Mesuré : **−53 %** sur une image douce (44 ko → 21 ko, PSNR 44,1) · **−10 %** sur une
+    photo texturée, par le seul passage en progressif · coût 0,45 à 0,6 s par image
+  - **Écarté après mesure** : la réduction par paliers successifs. Le conseil vaut pour
+    `imagecopyresized` ; `imagecopyresampled` moyenne déjà la zone source. Écart relevé aux
+    facteurs 2, 4 et 8 : **+0,00 %, +0,09 %, −0,15 %**. Le code a été retiré plutôt que gardé
+    avec une justification que la mesure contredit
+  - 27 vérifications d'API et 3 parcours Playwright
 - [x] ~~**D21** — Bouton de rotation automatique du globe~~ ✅
   - `autoRot` existait depuis toujours — le globe tourne seul au chargement — mais **aucune
     commande ne le pilotait**. Le moindre geste l'arrête (glisser, choisir un pays, ouvrir
