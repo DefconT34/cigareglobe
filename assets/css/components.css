@@ -420,9 +420,24 @@ html, body {
 
 /* Ordre de bas en haut (le conteneur est en column-reverse). */
 #contrib-btn  { order:1; color:var(--text); font-size:16px; }
-#gyro-btn     { order:2; }
-#search-btn   { order:3; }
-#explorer-btn { order:4; font-size:15px; }
+#rotate-btn   { order:2; font-size:17px; }
+#gyro-btn     { order:3; }
+#search-btn   { order:4; }
+#explorer-btn { order:5; font-size:15px; }
+
+/* Rotation automatique en marche : même signalement que le gyroscope —
+   fond doré et pastille en bas à droite. Un bouton bascule doit dire
+   dans quel état il est, sinon on le tape deux fois pour voir. */
+#rotate-btn.rot-on {
+  background: rgba(201, 162, 39, .25);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+#rotate-btn.rot-on::after {
+  content: ''; position: absolute;
+  width: 8px; height: 8px; bottom: 4px; right: 4px;
+  background: var(--gold); border-radius: 50%;
+}
 
 /* Modal backdrop */
 #contrib-modal {

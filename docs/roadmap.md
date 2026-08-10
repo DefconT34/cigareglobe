@@ -75,6 +75,23 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [x] ~~**D21** — Bouton de rotation automatique du globe~~ ✅
+  - `autoRot` existait depuis toujours — le globe tourne seul au chargement — mais **aucune
+    commande ne le pilotait**. Le moindre geste l'arrête (glisser, choisir un pays, ouvrir
+    Explorer) et rien ne permettait de le relancer : sur téléphone, une fois arrêtée, la
+    rotation ne revenait plus de la visite
+  - Le bouton ⟳ ne dépend **d'aucun capteur, d'aucune permission, d'aucun HTTPS** — il marche
+    partout, du premier coup. C'est ce qui le distingue du gyroscope
+  - **Pourquoi le gyroscope (🔄) restait invisible** : il exige un appareil tactile *et*
+    `DeviceOrientationEvent`, que les navigateurs réservent aux **contextes sécurisés**. Servi
+    en `http://192.168.x.x`, le site n'y a pas droit et le bouton n'était jamais créé — sans
+    un mot d'explication. `http://localhost` est traité comme sécurisé, d'où un test qui
+    passait pendant que le téléphone ne voyait rien
+  - **L'état se relit, il ne se mémorise pas.** `autoRot` est modifiée par six fichiers ; un
+    bouton qui garderait son propre état mentirait dès le premier glissement. Il compare la
+    valeur réelle deux fois par seconde et s'éteint tout seul
+  - Respecte `prefers-reduced-motion` : la boucle y gèle déjà la rotation, le bouton n'est
+    donc pas créé — en proposer un qui ne ferait rien serait pire que rien
 - [x] ~~**D19** — Portail d'âge à l'arrivée (18 ans)~~ ✅
   - Le cigare est un **produit du tabac** : l'accès est réservé aux personnes majeures.
     Le portail se dresse au centre, au-dessus de tout — écran de chargement compris —

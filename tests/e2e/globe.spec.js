@@ -49,8 +49,10 @@ test.describe('Globe', () => {
       await ouvrir(page, '/');
       const colonne = page.locator('#side-fabs');
       await expect(colonne).toBeVisible();
-      // Les boutons 🔍 et 🗺 sont injectes par leurs modules.
-      await expect(colonne.locator('.side-fab')).toHaveCount(3);
+      // Les boutons 🔍, 🗺 et ⟳ sont injectes par leurs modules. Le
+      // gyroscope, lui, n'apparait que sur un appareil tactile : quatre
+      // boutons ici, cinq sur le projet mobile.
+      await expect(colonne.locator('.side-fab')).toHaveCount(4);
 
       const boutons = await page.evaluate(() => {
         const els = [...document.querySelectorAll('#side-fabs .side-fab')];
@@ -75,9 +77,9 @@ test.describe('Globe', () => {
       expect(ecarts[0]).toBeGreaterThan(0);
     });
 
-    test('les trois boutons sont cliquables', async ({ page }) => {
+    test('les quatre boutons sont cliquables', async ({ page }) => {
       await ouvrir(page, '/');
-      await expect(page.locator('#side-fabs .side-fab')).toHaveCount(3);
+      await expect(page.locator('#side-fabs .side-fab')).toHaveCount(4);
 
       const masques = await page.evaluate(() => {
         return [...document.querySelectorAll('#side-fabs .side-fab')]
@@ -244,5 +246,59 @@ test.describe('Globe', () => {
       // marqueur suspendu en l'air, ce qui serait pire que l'animation.
       expect(hauteurs).toEqual([0, 0, 0, 0]);
     });
+  });
+
+  // ── La rotation automatique ────────────────────────────
+  // REGRESSION, et elle etait totale : `autoRot` existait depuis le
+  // premier jour, mais la boucle incrementait `rotY` puis, ligne
+  // suivante, ramenait `rotY` vers `targetY` — qui ne bougeait pas. Les
+  // deux se combattaient et l'equilibre se calcule :
+  //
+  //     0.0008 = 0.08 x (rotY - targetY)   ->   ecart = 0.01 rad
+  //
+  // Le globe s'ecartait de 0,57 degre... et s'arretait la. La rotation
+  // automatique n'a jamais tourne ; elle etait un fremissement d'un
+  // demi-degre au chargement, que personne ne remarquait.
+  //
+  // Le parcours mesure donc une VITESSE, pas un deplacement : c'est la
+  // seule facon de distinguer « ca tourne » de « ca a fremi puis s'est
+  // arrete ». Et comme la vitesse est desormais fondee sur le TEMPS et
+  // non sur le nombre d'images, la fourchette vaut quelle que soit la
+  // cadence de la machine de test — un navigateur sans acceleration
+  // materielle descend a 11 images par seconde, et doit tourner a la
+  // meme vitesse qu'a 60.
+  test('le globe tourne vraiment, et le bouton l\'arrete', async ({ page }) => {
+    await ouvrir(page, '/');
+    await expect(page.locator('#rotate-btn')).toBeVisible({ timeout: 20_000 });
+
+    // La position affichee (`rotY`) suit la cible avec un lissage : au
+    // demarrage elle accelere pendant environ une seconde avant
+    // d'atteindre la vitesse de croisiere. Mesurer tout de suite
+    // donnerait donc un chiffre trop bas — releve : 1,2 deg/s au lieu de
+    // 2,7. On laisse le mouvement s'etablir avant de chronometrer.
+    const mesure = async () => page.evaluate(async () => {
+      const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+      await pause(2000);                              // mise en regime
+      const t0 = performance.now(), a = rotY;
+      await pause(2500);
+      const dt = (performance.now() - t0) / 1000;
+      return ((rotY - a) * 180 / Math.PI) / dt;      // degres par seconde
+    });
+
+    // Etat de depart : la rotation est en marche.
+    const enMarche = await mesure();
+    expect(enMarche, 'le globe ne tourne pas').toBeGreaterThan(1.5);
+    // Et a la bonne vitesse : 2,75 deg/s, soit un tour en ~131 s. Au-dela,
+    // c'est que le pas depend a nouveau du nombre d'images.
+    expect(enMarche, 'la rotation depend de la cadence d\'affichage').toBeLessThan(4.5);
+
+    // CONTRE-EPREUVE : le bouton l'arrete pour de bon.
+    await page.locator('#rotate-btn').click();
+    const arrete = await mesure();
+    expect(Math.abs(arrete), 'le bouton n\'arrete pas la rotation').toBeLessThan(0.05);
+
+    // Et la relance.
+    await page.locator('#rotate-btn').click();
+    expect(await mesure(), 'la rotation ne repart pas').toBeGreaterThan(1.5);
   });
 });

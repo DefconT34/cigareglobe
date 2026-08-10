@@ -27,17 +27,35 @@ function flyToCountry(c){
   animStartTime = performance.now(); animating = true; autoRot = false;
 }
 
+// ── Vitesse de la rotation automatique ───────────────────
+// 0,048 rad/s, soit 2,75 degres par seconde : un tour en 131 s. C'est
+// la valeur que l'ancien « +0.0008 par image » visait a 60 images par
+// seconde — mais qui dependait de la cadence, et donc de l'appareil.
+// Mesure faite ici : 14 images/s dans un navigateur integre, soit
+// 0,64 degre/s ; un telephone a 120 Hz aurait tourne deux fois trop
+// vite. Le meme site ne doit pas tourner a quatre vitesses selon
+// l'ecran, d'ou l'avance au TEMPS ecoule.
+var ROT_VITESSE = 0.048;
+var _dernierTic = 0;
+
 var _loopPaused = false;
 // Le globe est-il masqué ? (mobile, onglet ≠ globe) → inutile de dessiner
 function _globeHidden(){
   return document.body.classList.contains('mobile-mode')
       && typeof mobileActiveTab !== 'undefined' && mobileActiveTab !== 'globe';
 }
-function _resumeGlobe(){ if(_loopPaused){ _loopPaused = false; loop(); } }
+function _resumeGlobe(){ if(_loopPaused){ _loopPaused = false; _dernierTic = 0; loop(); } }
 
 function loop(){
   // Pause : ne pas consommer de CPU quand le globe n'est pas visible
-  if(_globeHidden()){ _loopPaused = true; return; }
+  if(_globeHidden()){ _loopPaused = true; _dernierTic = 0; return; }
+
+  // Temps ecoule depuis l'image precedente, borne a 100 ms : au retour
+  // d'un onglet en arriere-plan, requestAnimationFrame reprend apres
+  // plusieurs secondes, et sans cette borne le globe ferait un bond.
+  var _maintenant = performance.now();
+  var _dt = _dernierTic ? Math.min((_maintenant - _dernierTic) / 1000, 0.1) : 0;
+  _dernierTic = _maintenant;
   // Auto-reparation : si les dimensions ont change sans evenement resize
   // (cas d'un conteneur mesure a 0 au demarrage), on se resynchronise.
   if(typeof resize === 'function' && window.innerWidth && window.innerHeight &&
@@ -63,7 +81,24 @@ function loop(){
     targetX = rotX; targetY = rotY;
     if(Math.hypot(velX, velY) < 0.00018) _inertia = false;
   } else {
-    if(autoRot&&!drag)rotY+=.0008;
+    // ── La rotation automatique avance la CIBLE, pas la position ──
+    //
+    // Ce bloc incrementait `rotY` puis, ligne suivante, ramenait `rotY`
+    // vers `targetY` — qui, lui, ne bougeait pas. Les deux se
+    // combattaient, et l'equilibre se calcule :
+    //
+    //     0.0008 = 0.08 x (rotY - targetY)   ->   ecart = 0.01 rad
+    //
+    // Le globe s'ecartait de 0,57 degre de sa cible... et s'arretait la.
+    // Mesure au chronometre : 0,4 degre en 1,6 s, puis plus rien. La
+    // « rotation automatique » n'a donc jamais tourne — elle a toujours
+    // ete un fremissement d'un demi-degre au chargement.
+    //
+    // C'est la CIBLE qu'il faut avancer : le lissage la suit alors avec
+    // un retard constant, et le mouvement devient continu. Le reglage
+    // (.0008 par image, soit ~2,7 degres par seconde, un tour en deux
+    // minutes) etait deja le bon ; il n'etait simplement jamais applique.
+    if(autoRot&&!drag)targetY+=ROT_VITESSE*_dt;
     rotX+=(targetX-rotX)*.08;rotY+=(targetY-rotY)*.08;
     if(!autoRot){targetX=rotX;targetY=rotY;}
   }

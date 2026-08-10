@@ -60,8 +60,10 @@ async function ouvrir(page, url = '/', opts = {}) {
   // le test echouait alors sur un « element introuvable » indechiffrable.
   await expect(page.locator('#side-fabs .side-fab'),
     'les modules du front n\'ont pas tous ete charges')
+    // La colonne compte le bouton de rotation automatique, present
+    // partout, plus le gyroscope sur les seuls appareils tactiles.
     .toHaveCount(await page.evaluate(() =>
-      ('ontouchstart' in window || navigator.maxTouchPoints) ? 4 : 3),
+      ('ontouchstart' in window || navigator.maxTouchPoints) ? 5 : 4),
       { timeout: 20_000 });
 
   return page;

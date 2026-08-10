@@ -4,9 +4,14 @@
 // Ce fichier tourne sur le seul projet « chromium-mobile » (Pixel 7).
 //
 // L'emulation etant tactile, le bouton gyroscope s'ajoute a la colonne :
-// on y compte donc QUATRE boutons la ou le bureau en montre trois. C'est
+// on y compte donc CINQ boutons la ou le bureau en montre quatre. C'est
 // le seul contexte ou ce bouton est testable — sa creation depend de
 // « ontouchstart »/maxTouchPoints, evalue une fois au chargement.
+//
+// Le bouton de rotation automatique, lui, est present PARTOUT : il ne
+// depend d'aucun capteur, d'aucune permission et d'aucun contexte
+// securise. C'est precisement ce qui le distingue du gyroscope, absent
+// des que le site est servi en HTTP simple sur une adresse locale.
 // ════════════════════════════════════════════════════════
 
 const { test, expect } = require('@playwright/test');
@@ -25,12 +30,12 @@ test.describe('Mobile', () => {
   test('le bouton gyroscope s\'ajoute a la colonne sur appareil tactile', async ({ page }) => {
     await ouvrir(page, '/');
     await expect(page.locator('#side-fabs #gyro-btn')).toHaveCount(1, { timeout: 20_000 });
-    // Il se place entre ✏ et 🔍
+    // De haut en bas : Explorer, Recherche, Gyroscope, Rotation, Contribuer.
     const ordre = await page.evaluate(() =>
       [...document.querySelectorAll('#side-fabs .side-fab')]
         .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)
         .map((el) => el.id));
-    expect(ordre).toEqual(['explorer-btn', 'search-btn', 'gyro-btn', 'contrib-btn']);
+    expect(ordre).toEqual(['explorer-btn', 'search-btn', 'gyro-btn', 'rotate-btn', 'contrib-btn']);
   });
 
   test('la colonne de boutons reste alignee et au-dessus de la barre', async ({ page }) => {

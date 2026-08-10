@@ -752,6 +752,79 @@ function drawGlobe(){
   if (typeof dessinerEvenements === 'function') dessinerEvenements(gc, R, proj, ll2xyz, limbFade, animNow());
 }
 
+
+// ════════════════════════════════════════════════════════
+// ROTATION AUTOMATIQUE — le bouton ⟳
+// ════════════════════════════════════════════════════════
+// `autoRot` existait depuis toujours : le globe tourne seul au
+// chargement. Mais AUCUNE commande ne le pilotait. Le moindre geste
+// l'arrête — glisser, choisir un pays, ouvrir Explorer — et rien ne
+// permettait de le relancer. Sur téléphone, une fois arrêtée, la
+// rotation ne revenait plus de la visite.
+//
+// CE BOUTON N'EST PAS LE GYROSCOPE. Le gyroscope (🔄) demande un
+// appareil tactile ET un contexte sécurisé : sur `http://192.168.x.x`,
+// les navigateurs n'exposent même pas DeviceOrientationEvent, et le
+// bouton n'était jamais créé — sans un mot d'explication. Celui-ci ne
+// dépend d'aucun capteur, d'aucune permission et d'aucun HTTPS : il
+// marche partout, du premier coup.
+//
+// L'ÉTAT SE SYNCHRONISE. `autoRot` est une variable globale que six
+// fichiers modifient (interactions, explorer, a11y-globe, app…). Un
+// bouton qui garderait son propre état mentirait dès le premier
+// glissement. Il relit donc la valeur réelle, deux fois par seconde —
+// une comparaison de booléen, rien de plus.
+
+function _rotationSync() {
+  var btn = document.getElementById('rotate-btn');
+  if (!btn) return;
+  var actif = (typeof autoRot !== 'undefined') && autoRot === true;
+  btn.classList.toggle('rot-on', actif);
+  btn.setAttribute('aria-pressed', String(actif));
+  btn.title = t(actif ? 'rot_active' : 'rot_activer');
+  // L'etiquette accessible suit la langue elle aussi : « Rotation
+  // automatique » en dur ne dirait rien a un lecteur d'ecran arabe.
+  btn.setAttribute('aria-label', t('rot_activer'));
+}
+
+function toggleRotation() {
+  if (typeof autoRot === 'undefined') return;
+  autoRot = !autoRot;
+
+  if (autoRot) {
+    // Reprendre là où l'on est, sans à-coup : sans cette remise à plat,
+    // la cible d'animation restée d'un ancien geste ramène brutalement
+    // le globe à sa position d'avant.
+    if (typeof targetX !== 'undefined') { targetX = rotX; targetY = rotY; }
+    if (typeof _inertia !== 'undefined') _inertia = false;
+    if (typeof animating !== 'undefined') animating = false;
+    // Le gyroscope et la rotation automatique se disputeraient le globe.
+    if (typeof _gyroActive !== 'undefined' && _gyroActive) toggleGyro();
+  }
+  _rotationSync();
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  // Mouvement réduit : le système demande l'absence d'animation, et la
+  // boucle gèle déjà la rotation (animation.js). Proposer un bouton qui
+  // ne ferait rien serait pire que ne rien proposer.
+  if (typeof _reduceMotion !== 'undefined' && _reduceMotion) return;
+
+  var btn = document.createElement('button');
+  btn.id        = 'rotate-btn';
+  btn.className = 'side-fab';
+  btn.innerHTML = '⟳';
+  btn.setAttribute('aria-label', t('rot_activer'));
+  btn.setAttribute('aria-pressed', 'false');
+  btn.addEventListener('click', toggleRotation);
+  (document.getElementById('side-fabs') || document.body).appendChild(btn);
+
+  _rotationSync();
+  // Deux fois par seconde : assez pour que le bouton s'éteigne dès
+  // qu'un glissement coupe la rotation, assez peu pour ne rien coûter.
+  setInterval(_rotationSync, 500);
+});
+
 // ════════════════════════════════════════════════════════
 // GYROSCOPE — Device orientation + bouton toggle mobile
 // ════════════════════════════════════════════════════════
