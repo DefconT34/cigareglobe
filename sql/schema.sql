@@ -260,6 +260,24 @@ CREATE TABLE `forum_follows` (
   CONSTRAINT `fk_forum_follows_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `forum_post_images`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `forum_post_images` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `post_id` int unsigned DEFAULT NULL COMMENT 'NULL tant que le message n''est pas publie',
+  `user_id` int unsigned DEFAULT NULL,
+  `file` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Chemin relatif : AAAAMM/nom.jpg',
+  `w` smallint unsigned NOT NULL DEFAULT '0',
+  `h` smallint unsigned NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_fpi_post` (`post_id`),
+  KEY `idx_fpi_orphelines` (`user_id`,`post_id`,`created_at`),
+  CONSTRAINT `fk_fpi_post` FOREIGN KEY (`post_id`) REFERENCES `forum_posts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_fpi_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `forum_posts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;

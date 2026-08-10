@@ -246,6 +246,144 @@
     '</button>';
   }
 
+
+  // ══ IMAGES DES MESSAGES ════════════════════════════════
+  // Trois au plus, choisies avant l'envoi et téléversées tout de suite :
+  // le rédacteur voit ce qu'il joint pendant qu'il écrit, plutôt que de
+  // découvrir après coup qu'une photo est passée de travers.
+  //
+  // Les images voyagent en `multipart`, donc PAS par appel() — qui pose
+  // un en-tête JSON. Le jeton CSRF, lui, reste le même.
+
+  var IMG_MAX = 3;
+  var _enAttente = [];          // images téléversées, pas encore publiées
+
+  function envoyerImage(fichier) {
+    var fd = new FormData();
+    fd.append('image', fichier);
+    return fetch(API + '?action=post_image', {
+      method: 'POST', credentials: 'include',
+      // Surtout PAS de Content-Type : le navigateur doit poser lui-même
+      // la frontière multipart, et l'écraser casse l'envoi en silence.
+      headers: { 'X-CSRF-Token': (window.CGAccount && window.CGAccount.csrf) || '' },
+      body: fd,
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; })
+              .then(function (j) { return { ok: r.ok, data: j }; });
+    });
+  }
+
+  /** La zone de choix d'images, commune au sujet et à la réponse. */
+  function zoneImages() {
+    return '<div class="fo-img-zone">' +
+             '<label class="fo-img-ajout">' +
+               '<input type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>' +
+               '<span>🖼 ' + t('forum_img_ajouter') + '</span>' +
+             '</label>' +
+             '<span class="fo-img-aide">' + esc(t('forum_img_aide')) + '</span>' +
+             '<div class="fo-img-apercus"></div>' +
+           '</div>';
+  }
+
+  function brancherImages(racine) {
+    var zone = racine.querySelector('.fo-img-zone');
+    if (!zone) return;
+    var champ   = zone.querySelector('input[type=file]');
+    var apercus = zone.querySelector('.fo-img-apercus');
+
+    function redessiner() {
+      apercus.innerHTML = _enAttente.map(function (im, i) {
+        return '<span class="fo-img-apercu">' +
+                 '<img src="' + esc(im.thumb) + '" alt="">' +
+                 '<button type="button" class="fo-img-retirer" data-i="' + i + '"' +
+                        ' aria-label="' + esc(t('forum_img_retirer')) + '">✕</button>' +
+               '</span>';
+      }).join('');
+      apercus.querySelectorAll('.fo-img-retirer').forEach(function (b) {
+        b.onclick = function () {
+          // On retire de l'envoi seulement : l'image téléversée sera
+          // effacée du serveur au bout de 24 h si elle n'est jamais
+          // publiée (forum_img_purger).
+          _enAttente.splice(parseInt(b.dataset.i, 10), 1);
+          redessiner();
+        };
+      });
+      var ajout = zone.querySelector('.fo-img-ajout');
+      if (ajout) ajout.style.display = _enAttente.length >= IMG_MAX ? 'none' : '';
+    }
+
+    champ.onchange = function () {
+      var fichiers = [].slice.call(champ.files, 0, IMG_MAX - _enAttente.length);
+      champ.value = '';
+      if (!fichiers.length) return;
+      zone.classList.add('fo-img-occupe');
+
+      Promise.all(fichiers.map(envoyerImage)).then(function (res) {
+        zone.classList.remove('fo-img-occupe');
+        var erreur = null;
+        res.forEach(function (r) {
+          if (r.ok && r.data.image) _enAttente.push(r.data.image);
+          else erreur = tErr(r.data);
+        });
+        redessiner();
+        if (erreur) {
+          var z = racine.querySelector('.fo-err');
+          if (z) { z.textContent = erreur; z.hidden = false; }
+        }
+      });
+    };
+    redessiner();
+  }
+
+  /** Les identifiants à envoyer avec le message, puis remise à zéro. */
+  function imagesAEnvoyer() {
+    var ids = _enAttente.map(function (im) { return im.id; });
+    _enAttente = [];
+    return ids;
+  }
+
+  /** Vignettes sous un message. */
+  function blocImages(images) {
+    if (!images || !images.length) return '';
+    return '<div class="fo-p-images">' + images.map(function (im) {
+      return '<button type="button" class="fo-p-img" data-url="' + esc(im.url) + '">' +
+               '<img src="' + esc(im.thumb) + '" alt="" loading="lazy">' +
+             '</button>';
+    }).join('') + '</div>';
+  }
+
+  /**
+   * Visionneuse : l'image en grand, sur un fond sombre.
+   * Elle se ferme par Échap, par un clic à côté et par sa croix — trois
+   * gestes qu'on essaie naturellement, et il serait pénible qu'un seul
+   * fonctionne.
+   */
+  function ouvrirImage(url) {
+    var vue = document.createElement('div');
+    vue.className = 'fo-visio';
+    vue.innerHTML = '<button class="fo-visio-x" aria-label="' + esc(t('forum_annuler')) + '">✕</button>' +
+                    '<img src="' + esc(url) + '" alt="">';
+    document.body.appendChild(vue);
+
+    function fermer() {
+      vue.remove();
+      document.removeEventListener('keydown', auClavier, true);
+    }
+    function auClavier(e) {
+      if (e.key !== 'Escape') return;
+      e.preventDefault(); e.stopPropagation();   // ne pas fermer le calque du forum
+      fermer();
+    }
+    vue.onclick = function (e) { if (e.target !== vue.querySelector('img')) fermer(); };
+    document.addEventListener('keydown', auClavier, true);
+  }
+
+  function brancherVignettes(racine) {
+    racine.querySelectorAll('.fo-p-img').forEach(function (b) {
+      b.onclick = function () { ouvrirImage(b.dataset.url); };
+    });
+  }
+
   // ── Vue 3 : le fil ─────────────────────────────────────
   function rendreTopic() {
     chargement();
@@ -276,6 +414,7 @@
         b.onclick = function () { etiquette = b.dataset.tag; aller(null, null, true); };
       });
       brancherMessages(t0);
+      brancherVignettes(corps());
       if (r.data.event) brancherEvt(r.data.event);
       if (!t0.locked) brancherReponse(t0);
       pied();
@@ -295,6 +434,7 @@
       '</header>' +
       (resolu ? '<div class="fo-solved-tag">' + t('forum_resolu') + '</div>' : '') +
       '<div class="fo-p-corps">' + p.html + '</div>' +   /* rendu et échappé par le serveur */
+      blocImages(p.images) +
       '<footer class="fo-p-actions">' +
         '<button class="fo-act" data-act="like" data-id="' + p.id + '">👍 ' +
           t('forum_utile') + ' <b>' + p.likes + '</b></button>' +
@@ -310,6 +450,7 @@
     return '<div class="fo-repondre">' +
       '<textarea class="fo-txt" rows="4" placeholder="' + esc(t('forum_message_champ')) + '"></textarea>' +
       '<div class="fo-aide">' + esc(t('forum_aide_format')) + '</div>' +
+      zoneImages() +
       '<div class="fo-err" hidden></div>' +
       '<button class="fo-envoyer">' + t('forum_publier') + '</button>' +
     '</div>';
@@ -360,11 +501,12 @@
     }
     var champ = zone.querySelector('.fo-txt');
     var errEl = zone.querySelector('.fo-err');
+    brancherImages(zone);
     zone.querySelector('.fo-envoyer').onclick = function () {
       var texte = champ.value.trim();
       if (texte.length < 2) return;
       errEl.hidden = true;
-      appel('post_create', 'POST', { topic_id: t0.id, body: texte }).then(function (r) {
+      appel('post_create', 'POST', { topic_id: t0.id, body: texte, images: imagesAEnvoyer() }).then(function (r) {
         if (!r.ok) { errEl.textContent = tErr(r.data); errEl.hidden = false; return; }
         champ.value = '';
         rendre();
@@ -757,6 +899,7 @@
         '<label>' + t('forum_message_champ') +
           '<textarea class="fo-f-corps" rows="8"></textarea></label>' +
         '<div class="fo-aide">' + esc(t('forum_aide_format')) + '</div>' +
+        zoneImages() +
         '<label>' + t('forum_etiquettes') +
           '<input class="fo-f-tags" placeholder="' + esc(t('forum_etiquettes_aide')) + '"></label>' +
         '<label>' + t('forum_langue_champ') +
@@ -775,6 +918,7 @@
 
     var f = corps().querySelector('.fo-form');
     var errEl = f.querySelector('.fo-err');
+    brancherImages(f);
     corps().querySelector('.fo-back-btn').onclick = function () { rendre(); };
     f.querySelector('.fo-annuler').onclick = function () { rendre(); };
     f.querySelector('.fo-envoyer').onclick = function () {
@@ -784,6 +928,7 @@
         title:   f.querySelector('.fo-f-titre').value.trim(),
         body:    f.querySelector('.fo-f-corps').value.trim(),
         lang:    f.querySelector('.fo-f-lang').value,
+        images:  imagesAEnvoyer(),
         tags:    f.querySelector('.fo-f-tags').value.split(',').map(function (s) { return s.trim(); }).filter(Boolean),
       }).then(function (r) {
         if (!r.ok) { errEl.textContent = tErr(r.data); errEl.hidden = false; return; }

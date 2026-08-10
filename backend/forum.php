@@ -23,6 +23,7 @@
 //   POST ?action=event_update                      { topic_id, … }
 //   POST ?action=event_cancel                      { topic_id, reason }
 //   POST ?action=attend                            { topic_id, state }
+//   POST ?action=post_image                        multipart, champ « image »
 //
 // Le serveur ne traduit pas : les erreurs sortent en CODE stable, que le
 // front traduit par tErr(). Seuls les libellés des rubriques font
@@ -71,7 +72,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 // Toute écriture au nom de l'utilisateur exige le jeton CSRF.
 $ECRITURES = ['topic_create','post_create','post_edit','post_delete','flag',
               'react','follow','topic_solved','moderate','topic_state',
-              'event_create','event_update','event_cancel','attend'];
+              'event_create','event_update','event_cancel','attend','post_image'];
 if (in_array($action, $ECRITURES, true) && $method === 'POST') csrf_verify();
 
 try {
@@ -98,6 +99,7 @@ try {
         $action === 'event_update' && $method === 'POST' => a_event_update($db),
         $action === 'event_cancel' && $method === 'POST' => a_event_cancel($db),
         $action === 'attend'       && $method === 'POST' => a_attend($db),
+        $action === 'post_image'   && $method === 'POST' => a_post_image($db),
         default => fout(err('unknown_action', 'Action inconnue'), 404),
     };
 } catch (Throwable $e) {
@@ -243,7 +245,10 @@ function a_topic(PDO $db): void {
     );
     $stmt->execute([$id]);
 
-    $posts = array_map(function ($p) use ($me) {
+    $lignes  = $stmt->fetchAll();
+    $imagesP = forum_img_de($db, array_map(fn($p) => (int)$p['id'], $lignes));
+
+    $posts = array_map(function ($p) use ($me, $imagesP) {
         $masque = $p['status'] === 'flagged';
         return [
             'id'      => (int)$p['id'],
@@ -258,8 +263,11 @@ function a_topic(PDO $db): void {
             'created_at' => $p['created_at'],
             'author'  => forum_auteur($p),
             'mine'    => $me && (int)$p['user_id'] === (int)$me['id'],
+            // Un message masqué ne montre pas ses images non plus : le
+            // signalement porte sur le message ENTIER.
+            'images'  => $masque ? [] : ($imagesP[(int)$p['id']] ?? []),
         ];
-    }, $stmt->fetchAll());
+    }, $lignes);
 
     // Un evenement EST un sujet : sa fiche voyage avec le fil, plutot
     // que dans un second appel que le front devrait synchroniser.
@@ -367,7 +375,13 @@ function a_topic_create(PDO $db): void {
 
         $db->prepare('INSERT INTO forum_posts (topic_id, user_id, body) VALUES (?, ?, ?)')
            ->execute([$topic_id, $u['id'], $body]);
+        // Nomme explicitement : lastInsertId() designe ici le MESSAGE et
+        // non le sujet, et c'est le genre de subtilite qui se casse au
+        // premier deplacement de ligne.
+        $post_id = (int)$db->lastInsertId();
 
+        forum_img_rattacher($db, $post_id, (int)$u['id'],
+                            is_array($b['images'] ?? null) ? $b['images'] : []);
         forum_tags_appliquer($db, $topic_id, is_array($b['tags'] ?? null) ? $b['tags'] : []);
         forum_topic_recompte($db, $topic_id);
         $db->commit();
@@ -416,6 +430,7 @@ function a_post_create(PDO $db): void {
     $db->prepare('INSERT INTO forum_posts (topic_id, user_id, body, quote_post_id) VALUES (?, ?, ?, ?)')
        ->execute([$topic_id, $u['id'], $body, $quote]);
     $id = (int)$db->lastInsertId();
+    forum_img_rattacher($db, $id, (int)$u['id'], is_array($b['images'] ?? null) ? $b['images'] : []);
     forum_topic_recompte($db, $topic_id);
 
     fout(['success' => true, 'id' => $id, 'html' => forum_rendu($body)], 201);
@@ -747,6 +762,20 @@ function a_event_create(PDO $db): void {
         throw $e;
     }
     fout(['success' => true, 'id' => $tid], 201);
+}
+
+/**
+ * POST ?action=post_image — multipart, champ « image ».
+ *
+ * L'image est reçue AVANT que le message existe : on rend son
+ * identifiant, que la publication renverra dans `images[]`. Une image
+ * jamais publiée est effacée au bout de 24 h (forum_img_purger).
+ */
+function a_post_image(PDO $db): void {
+    $u = forum_membre($db);
+    [$img, $code, $msg] = forum_img_recevoir($db, $u, $_FILES['image'] ?? null);
+    if (!$img) fout(err($code, $msg), $code === 'img_plafond_jour' ? 429 : 400);
+    fout(['success' => true, 'image' => $img], 201);
 }
 
 /** L'organisateur, ou un modérateur. */

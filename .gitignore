@@ -19,6 +19,10 @@ backend/cache/*
 # Contenu uploadé par les utilisateurs (à sauvegarder séparément, pas dans Git)
 uploads/*
 !uploads/.gitkeep
+# EXCEPTION : le .htaccess interdit l'exécution dans ce dossier. Ignoré,
+# il ne partirait jamais en ligne — la protection n'existerait que sur
+# le poste de développement, là où elle ne sert à rien.
+!uploads/.htaccess
 
 # OS / éditeurs
 .DS_Store

@@ -719,6 +719,125 @@ eq('forum : et passe en archive',
 
 test_pdo()->exec("UPDATE users SET role = 'member' WHERE email = 'alice@test.local'");
 
+
+// ── Images dans les messages ─────────────────────────────
+// La chaine RECONSTRUIT chaque image au lieu de la copier
+// (backend/image_lib.php). Ces verifications portent sur ce que cette
+// reconstruction garantit, pas sur le fait qu'un fichier soit arrive.
+$tmpimg = function (int $w, int $h, string $fmt = 'png'): string {
+    $f  = sys_get_temp_dir() . '/cg_' . uniqid('', true) . '.' . $fmt;
+    $im = imagecreatetruecolor($w, $h);
+    imagefilledrectangle($im, 0, 0, $w, $h, imagecolorallocate($im, 180, 40, 40));
+    $fmt === 'png' ? imagepng($im, $f) : imagejpeg($im, $f);
+    imagedestroy($im);
+    return $f;
+};
+$envoyer = function (string $jar, string $chemin, string $type = 'image/png') use ($base) {
+    return http('POST', $base . '/backend/forum.php?action=post_image', [
+        'jar' => $jar,
+        'multipart' => ['image' => ['file' => $chemin, 'type' => $type, 'name' => basename($chemin)]],
+        'headers' => ['X-CSRF-Token: ' . csrf($base, $jar)],
+    ]);
+};
+
+$grande = $tmpimg(2400, 1000);
+$r = $envoyer($alice, $grande);
+eq('images : televersement accepte', 201, $r['status']);
+$img1 = (int)($r['json']['image']['id'] ?? 0);
+check('images : un identifiant est rendu', $img1 > 0);
+// Bornee a 1600 px sur le cote le plus long : l'image est REECRITE, pas
+// seulement affichee plus petite.
+eq('images : la dimension est bornee a la reecriture', 1600, (int)$r['json']['image']['w']);
+
+// ── Ce qui ne doit PAS entrer ────────────────────────────
+$faux = sys_get_temp_dir() . '/cg_faux.jpg';
+file_put_contents($faux, '<' . '?php echo "charge utile"; ?' . '>');
+$r = $envoyer($alice, $faux, 'image/jpeg');
+eq('images : un fichier PHP renomme .jpg est refuse', 400, $r['status']);
+check('images : le refus porte un code stable',
+      in_array($r['json']['code'] ?? '', ['file_type', 'image_indechiffrable'], true));
+
+// CONTRE-EPREUVE, et c'est la plus importante : un POLYGLOTTE, vraie
+// image suivie de code. Il passe la detection de type — c'est bien un
+// JPEG — et doit donc etre accepte, mais RECONSTRUIT : la charge utile
+// ne survit pas.
+$poly = $tmpimg(80, 60, 'jpg');
+file_put_contents($poly, '<' . '?php echo "charge utile"; ?' . '>', FILE_APPEND);
+check('images : le polyglotte porte bien sa charge avant envoi',
+      str_contains((string)file_get_contents($poly), 'charge utile'));
+$r = $envoyer($alice, $poly, 'image/jpeg');
+eq('images : le polyglotte est accepte comme image', 201, $r['status']);
+$fichier = PROJECT_ROOT . ($r['json']['image']['url'] ?? '');
+check('images : et la charge utile a disparu du fichier stocke',
+      is_file($fichier) && !str_contains((string)file_get_contents($fichier), 'charge utile'));
+
+// Les EXIF partent avec le reste : un telephone ecrit la position GPS
+// dans chaque photo, et personne ne devrait publier son adresse en
+// montrant sa cave.
+$exif = $tmpimg(200, 150, 'jpg');
+$brut = file_get_contents($exif);
+$charge = "Exif\0\0" . str_repeat('GPS-48.8566,2.3522;', 8);
+file_put_contents($exif, substr($brut, 0, 2)
+    . "\xFF\xE1" . pack('n', strlen($charge) + 2) . $charge . substr($brut, 2));
+check('images : les coordonnees GPS sont bien dans le fichier envoye',
+      str_contains((string)file_get_contents($exif), '48.8566'));
+$r = $envoyer($alice, $exif, 'image/jpeg');
+$fichier = PROJECT_ROOT . ($r['json']['image']['url'] ?? '');
+check('images : elles ne sont plus dans le fichier stocke',
+      is_file($fichier) && !str_contains((string)file_get_contents($fichier), '48.8566'));
+
+// ── Rattachement a un message ────────────────────────────
+$i2 = (int)($envoyer($alice, $tmpimg(300, 300))['json']['image']['id'] ?? 0);
+$i3 = (int)($envoyer($alice, $tmpimg(300, 300))['json']['image']['id'] ?? 0);
+$i4 = (int)($envoyer($alice, $tmpimg(300, 300))['json']['image']['id'] ?? 0);
+
+$recule();
+$r = post_json($base, $alice, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_fr, 'body' => 'Voici trois photos de la cave.',
+                'images' => [$img1, $i2, $i3, $i4]]);
+eq('images : message avec pieces jointes publie', 201, $r['status']);
+$msg_img = (int)$r['json']['id'];
+eq('images : trois au plus par message', 3,
+   (int)test_pdo()->query("SELECT COUNT(*) FROM forum_post_images WHERE post_id = $msg_img")->fetchColumn());
+
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_fr", ['jar' => $anon]);
+$porteur = null;
+foreach ($r['json']['posts'] as $p) if ((int)$p['id'] === $msg_img) $porteur = $p;
+eq('images : servies avec le message', 3, count($porteur['images']));
+check('images : chacune a sa vignette',
+      !empty($porteur['images'][0]['thumb']) && $porteur['images'][0]['thumb'] !== $porteur['images'][0]['url']);
+
+// On ne s'approprie pas la photo d'un autre en devinant son identifiant.
+$i5 = (int)($envoyer($alice, $tmpimg(120, 120))['json']['image']['id'] ?? 0);
+$r = post_json($base, $bob, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_fr, 'body' => 'Je prends la photo du voisin.', 'images' => [$i5]]);
+eq('images : message de Bob publie', 201, $r['status']);
+eq('images : mais l\'image d\'Alice ne le suit pas', 0,
+   (int)test_pdo()->query("SELECT COUNT(*) FROM forum_post_images WHERE post_id = " . (int)$r['json']['id'])->fetchColumn());
+
+// ── Le seuil de signalement tombe a 2 ────────────────────
+// Un paragraphe deplace se lit et s'oublie ; une image choquante fait
+// ses degats en cinq secondes. Deux signalements suffisent donc.
+$r = post_json($base, $carol, '/backend/forum.php?action=flag', ['post_id' => $msg_img]);
+eq('images : premier signalement, pas de masquage', false, $r['json']['hidden']);
+$r = post_json($base, $dave, '/backend/forum.php?action=flag', ['post_id' => $msg_img]);
+eq('images : deux signalements suffisent pour un message illustre', true, $r['json']['hidden']);
+
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_fr", ['jar' => $anon]);
+foreach ($r['json']['posts'] as $p) if ((int)$p['id'] === $msg_img) $porteur = $p;
+eq('images : le message masque ne sert plus ses images', 0, count($porteur['images']));
+
+// ── Purge des orphelines ─────────────────────────────────
+// Televerser sans jamais publier ne doit pas laisser de fichiers.
+$orph = (int)($envoyer($alice, $tmpimg(90, 90))['json']['image']['id'] ?? 0);
+test_pdo()->exec("UPDATE forum_post_images SET created_at = DATE_SUB(NOW(), INTERVAL 30 HOUR) WHERE id = $orph");
+$envoyer($alice, $tmpimg(90, 90));      // le televersement suivant ramasse
+eq('images : une image jamais publiee est effacee au bout de 24 h', 0,
+   (int)test_pdo()->query("SELECT COUNT(*) FROM forum_post_images WHERE id = $orph")->fetchColumn());
+
+$r = post_json($base, $anon, '/backend/forum.php?action=post_image', []);
+eq('images : televerser exige un compte', 401, $r['status']);
+
 $r = http('GET', $base . '/backend/forum.php?action=inconnue', ['jar' => $anon]);
 eq('forum : action inconnue refusee', 404, $r['status']);
 

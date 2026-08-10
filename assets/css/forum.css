@@ -355,3 +355,66 @@ body.forum-open #globe-wrap { visibility: hidden; }
 [dir="rtl"] .lc-evt-btn {
   text-align: right; border-left: none; border-right: 3px solid var(--gold);
 }
+
+/* ══ IMAGES DES MESSAGES ════════════════════════════════
+   Trois au plus, choisies avant l'envoi. Les aperçus se voient pendant
+   qu'on écrit : découvrir après coup qu'une photo est passée de travers
+   est le genre de détail qui décourage de recommencer. */
+.fo-img-zone { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.fo-img-ajout {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; cursor: pointer; border-radius: 3px;
+  background: var(--bg2); border: 1px dashed var(--panel-border); color: var(--text2);
+  font-family: Cinzel, serif; font-size: 8.5px;
+  letter-spacing: .14em; text-transform: uppercase;
+}
+.fo-img-ajout:hover { border-color: var(--gold); color: var(--gold); }
+.fo-img-aide { font-size: 10px; color: var(--text2); }
+.fo-img-zone.fo-img-occupe { opacity: .5; pointer-events: none; }
+.fo-img-apercus { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
+.fo-img-apercu { position: relative; display: inline-block; }
+.fo-img-apercu img {
+  width: 74px; height: 56px; object-fit: cover;
+  border-radius: 3px; border: 1px solid var(--bg3); display: block;
+}
+.fo-img-retirer {
+  position: absolute; top: -6px; right: -6px;
+  width: 20px; height: 20px; padding: 0; cursor: pointer;
+  background: var(--panel-bg); color: var(--text);
+  border: 1px solid var(--panel-border); border-radius: 50%;
+  font-size: 10px; line-height: 1;
+}
+.fo-img-retirer:hover { background: var(--gold); color: var(--panel-bg); }
+
+/* ── Vignettes sous un message ────────────────────────── */
+.fo-p-images { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.fo-p-img {
+  padding: 0; border: 1px solid var(--bg3); border-radius: 3px;
+  background: none; cursor: pointer; line-height: 0; overflow: hidden;
+}
+.fo-p-img:hover { border-color: var(--gold); }
+.fo-p-img img { width: 132px; height: 99px; object-fit: cover; display: block; }
+
+/* ── La visionneuse ───────────────────────────────────── */
+/* Au-dessus du calque du forum (3000), sous le portail d'âge (100000). */
+.fo-visio {
+  position: fixed; inset: 0; z-index: 4000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 28px; background: rgba(0, 0, 0, .88);
+}
+.fo-visio img {
+  max-width: 100%; max-height: 100%;
+  border-radius: 3px; box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+}
+.fo-visio-x {
+  position: absolute; top: 14px; right: 16px;
+  width: 34px; height: 34px; padding: 0; cursor: pointer;
+  background: rgba(255, 255, 255, .12); color: #fff;
+  border: none; border-radius: 50%; font-size: 14px;
+}
+.fo-visio-x:hover { background: rgba(255, 255, 255, .25); }
+
+@media (max-width: 640px) {
+  .fo-p-img img { width: 104px; height: 78px; }
+  .fo-visio { padding: 12px; }
+}

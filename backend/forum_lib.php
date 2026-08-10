@@ -326,8 +326,15 @@ function forum_signaler(PDO $db, int $post_id, int $user_id, string $reason, str
     $q->execute([$post_id]);
     $n = (int)$q->fetchColumn();
 
+    // UNE IMAGE ABAISSE LE SEUIL. Un paragraphe deplace se lit, se juge
+    // et s'oublie ; une image choquante fait ses degats en cinq secondes
+    // et reste dans la tete de qui l'a vue. Deux signalements suffisent
+    // donc a la masquer, contre trois pour du texte — le masquage reste
+    // reversible d'un clic dans l'ecran de moderation.
+    $seuil = forum_img_presentes($db, $post_id) ? FORUM_SEUIL_FLAGS - 1 : FORUM_SEUIL_FLAGS;
+
     $masque = false;
-    if ($n >= FORUM_SEUIL_FLAGS) {
+    if ($n >= $seuil) {
         $db->prepare("UPDATE forum_posts SET status = 'flagged' WHERE id = ? AND status = 'published'")
            ->execute([$post_id]);
         $masque = true;
@@ -405,6 +412,159 @@ function forum_sections(PDO $db, ?array $langs = null): array {
         'events' => (bool)$r['is_events'],
         'last_post_at' => $r['last_post_at'],
     ], $rows);
+}
+
+
+// ════════════════════════════════════════════════════════
+// IMAGES DES MESSAGES
+// ════════════════════════════════════════════════════════
+// Trois images au plus par message. Elles sont téléversées AVANT que le
+// message existe — le rédacteur les choisit, les voit, puis envoie — et
+// se rattachent à la publication.
+
+require_once __DIR__ . '/image_lib.php';
+
+const FORUM_IMG_PAR_MSG   = 3;
+const FORUM_IMG_PAR_JOUR  = 12;     // par membre ; triplé pour les contributeurs de confiance
+const FORUM_IMG_ORPHELINE_H = 24;   // au-delà, une image jamais publiée est effacée
+
+function forum_img_dir(): string  { return dirname(__DIR__) . '/uploads/forum/'; }
+function forum_img_url(): string  { return '/uploads/forum/'; }
+
+/** Adresses publiques d'une image : l'originale et sa vignette. */
+function forum_img_urls(string $fichier): array {
+    $slash = strrpos($fichier, '/');
+    $vign  = $slash === false
+        ? 'thumb_' . $fichier
+        : substr($fichier, 0, $slash + 1) . 'thumb_' . substr($fichier, $slash + 1);
+    return [forum_img_url() . $fichier, forum_img_url() . $vign];
+}
+
+/**
+ * Efface une image du disque ET de la base.
+ * L'ordre compte peu, mais l'oubli du disque, si : une base propre
+ * devant un dossier qui grossit sans fin est le pire des deux mondes.
+ */
+function forum_img_effacer(PDO $db, int $id, string $fichier): void {
+    [$u, $v] = forum_img_urls($fichier);
+    @unlink(dirname(__DIR__) . $u);
+    @unlink(dirname(__DIR__) . $v);
+    $db->prepare('DELETE FROM forum_post_images WHERE id = ?')->execute([$id]);
+}
+
+/**
+ * Purge les images qu'un membre a téléversées sans jamais publier.
+ *
+ * Appelée au téléversement suivant plutôt que par une tâche planifiée :
+ * un nettoyage qui dépend d'un cron oublié laisse un dossier qui enfle
+ * en silence. Ici, celui qui crée les orphelines est aussi celui qui
+ * les ramasse.
+ */
+function forum_img_purger(PDO $db, int $user_id): int {
+    $q = $db->prepare(
+        'SELECT id, file FROM forum_post_images
+         WHERE user_id = ? AND post_id IS NULL
+           AND created_at < DATE_SUB(NOW(), INTERVAL ? HOUR)'
+    );
+    $q->execute([$user_id, FORUM_IMG_ORPHELINE_H]);
+    $n = 0;
+    foreach ($q->fetchAll() as $r) { forum_img_effacer($db, (int)$r['id'], $r['file']); $n++; }
+    return $n;
+}
+
+/**
+ * Reçoit une image et l'enregistre, sans la rattacher encore.
+ * @return array [id, url, vignette] ou [null, code, message]
+ */
+function forum_img_recevoir(PDO $db, array $u, ?array $file): array {
+    if ($stop = image_verifier($file)) return [null, $stop[0], $stop[1]];
+
+    $facteur = forum_de_confiance($u) ? 3 : 1;
+    $q = $db->prepare(
+        'SELECT COUNT(*) FROM forum_post_images
+         WHERE user_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)'
+    );
+    $q->execute([$u['id']]);
+    if ((int)$q->fetchColumn() >= FORUM_IMG_PAR_JOUR * $facteur) {
+        return [null, 'img_plafond_jour', 'Vous avez téléversé assez d\'images pour aujourd\'hui.'];
+    }
+
+    // Un dossier par mois : un repertoire a cent mille entrees se
+    // parcourt mal, et se sauvegarde encore plus mal.
+    $mois = date('Ym');
+    $dir  = forum_img_dir() . $mois . '/';
+    if (!is_dir($dir) && !@mkdir($dir, 0755, true)) {
+        error_log('[forum] dossier d\'images impossible a creer : ' . $dir);
+        return [null, 'upload_failed', 'Stockage indisponible.'];
+    }
+
+    $nom  = uniqid('i', true) . '.jpg';
+    $dest = $dir . $nom;
+    $vign = $dir . 'thumb_' . $nom;
+    if ($stop = image_ecrire($file['tmp_name'], $dest, $vign)) {
+        return [null, $stop[0], $stop[1]];
+    }
+
+    [$w, $h] = image_dimensions($dest);
+    $db->prepare('INSERT INTO forum_post_images (user_id, file, w, h) VALUES (?, ?, ?, ?)')
+       ->execute([$u['id'], $mois . '/' . $nom, $w, $h]);
+    $id = (int)$db->lastInsertId();
+
+    forum_img_purger($db, (int)$u['id']);
+
+    [$url, $vurl] = forum_img_urls($mois . '/' . $nom);
+    return [['id' => $id, 'url' => $url, 'thumb' => $vurl, 'w' => $w, 'h' => $h], null, null];
+}
+
+/**
+ * Rattache des images à un message qui vient d'être publié.
+ *
+ * Deux verifications, et aucune n'est superflue : l'image doit
+ * appartenir a CELUI qui publie — sinon on s'approprie la photo d'un
+ * autre en devinant un identifiant — et ne doit pas etre deja rattachee,
+ * sinon la meme image apparaitrait sous deux messages et sa suppression
+ * en viderait un au hasard.
+ *
+ * @param int[] $ids
+ * @return int nombre d'images rattachees
+ */
+function forum_img_rattacher(PDO $db, int $post_id, int $user_id, array $ids): int {
+    $ids = array_slice(array_values(array_unique(array_map('intval', $ids))), 0, FORUM_IMG_PAR_MSG);
+    if (!$ids) return 0;
+    $in = implode(',', array_fill(0, count($ids), '?'));
+    $st = $db->prepare(
+        "UPDATE forum_post_images SET post_id = ?
+         WHERE id IN ($in) AND user_id = ? AND post_id IS NULL"
+    );
+    $st->execute(array_merge([$post_id], $ids, [$user_id]));
+    return $st->rowCount();
+}
+
+/** Les images d'un lot de messages, en UNE requête. */
+function forum_img_de(PDO $db, array $post_ids): array {
+    if (!$post_ids) return [];
+    $in = implode(',', array_fill(0, count($post_ids), '?'));
+    $q  = $db->prepare(
+        "SELECT id, post_id, file, w, h FROM forum_post_images
+         WHERE post_id IN ($in) ORDER BY id"
+    );
+    $q->execute($post_ids);
+    $out = [];
+    foreach ($q->fetchAll() as $r) {
+        [$url, $vurl] = forum_img_urls($r['file']);
+        $out[(int)$r['post_id']][] = [
+            'id' => (int)$r['id'], 'url' => $url, 'thumb' => $vurl,
+            'w' => (int)$r['w'], 'h' => (int)$r['h'],
+        ];
+    }
+    return $out;
+}
+
+/** Un message porte-t-il au moins une image ? (seuil de signalement) */
+function forum_img_presentes(PDO $db, int $post_id): bool {
+    $q = $db->prepare('SELECT 1 FROM forum_post_images WHERE post_id = ? LIMIT 1');
+    $q->execute([$post_id]);
+    return (bool)$q->fetchColumn();
 }
 
 // ════════════════════════════════════════════════════════

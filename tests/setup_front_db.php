@@ -90,6 +90,31 @@ if ($secEvt) {
     $pdo->exec("INSERT INTO forum_attendance (topic_id, user_id, state, rank_no) VALUES (910, 900, 'going', 1)");
 }
 
+
+// ── Images d'un message ──────────────────────────────────
+// Deux vignettes sous le premier message du sujet francais. Les
+// fichiers sont VRAIMENT ecrits sur le disque : un parcours qui verifie
+// l'affichage d'une image ne dit rien si l'image n'existe pas — le
+// navigateur montrerait une icone cassee et le selecteur passerait
+// quand meme.
+$dirImg = PROJECT_ROOT . '/uploads/forum/e2e/';
+if (!is_dir($dirImg)) @mkdir($dirImg, 0755, true);
+if (extension_loaded('gd')) {
+    $premier = (int)$pdo->query('SELECT id FROM forum_posts WHERE topic_id = 900 ORDER BY id LIMIT 1')->fetchColumn();
+    foreach ([['a', 200, 60, 40], ['b', 60, 140, 200]] as [$n, $r, $v, $b]) {
+        foreach ([['t_' . $n . '.jpg', 900, 600], ['thumb_t_' . $n . '.jpg', 400, 300]] as [$f, $w, $h]) {
+            $im = imagecreatetruecolor($w, $h);
+            imagefilledrectangle($im, 0, 0, $w, $h, imagecolorallocate($im, $r, $v, $b));
+            imagejpeg($im, $dirImg . $f, 85);
+            imagedestroy($im);
+        }
+        if ($premier) {
+            $pdo->prepare('INSERT INTO forum_post_images (post_id, user_id, file, w, h) VALUES (?, 900, ?, 900, 600)')
+                ->execute([$premier, 'e2e/t_' . $n . '.jpg']);
+        }
+    }
+}
+
 $compte = function (string $t) use ($pdo): int {
     return (int)$pdo->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
 };

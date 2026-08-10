@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→017, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→018, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -75,6 +75,27 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [x] ~~**D22** — Photos dans les messages de la communauté~~ ✅
+  - Trois images au plus par message, vignettes sous le texte, agrandissement au clic.
+    **Pas d'affiche d'événement** : une affiche est par définition un support promotionnel, et
+    portant le logo d'une maison ce serait de la publicité pour le tabac au sens le plus
+    littéral. Une photo de son propre cigare est un témoignage ; une affiche n'en est pas un
+  - **Le ré-encodage est obligatoire** (`backend/image_lib.php`) : l'image n'est jamais copiée,
+    elle est décodée puis reconstruite. Cela supprime les **EXIF** — donc la position GPS que
+    le téléphone glisse dans chaque photo — et neutralise les fichiers **polyglottes**. Les
+    deux sont vérifiés : un JPEG portant « GPS-48.8566,2.3522 » et un JPEG suivi de code PHP
+    ressortent l'un et l'autre nettoyés
+  - L'ancien repli `move_uploaded_file()` **a disparu** : il copiait le fichier brut quand GD
+    manquait. Acceptable tant que seule l'administration téléversait, plus du tout depuis que
+    la communauté le peut. On refuse désormais l'image plutôt que de la stocker sans l'avoir
+    reconstruite — et `photos.php` passe par la même chaîne, une seule à auditer
+  - `uploads/.htaccess` interdit toute exécution : seconde barrière, indépendante de la première
+  - **Une image abaisse le seuil de masquage à 2 signalements** (3 pour du texte) : un
+    paragraphe déplacé se lit et s'oublie, une image choquante fait ses dégâts en cinq secondes
+  - `post_id` nullable : on téléverse avant de publier. Les images jamais publiées sont effacées
+    au bout de 24 h, **au téléversement suivant du même membre** — un nettoyage qui dépend d'un
+    cron oublié laisse un dossier qui enfle en silence
+  - 21 vérifications d'API et 3 parcours Playwright
 - [x] ~~**D21** — Bouton de rotation automatique du globe~~ ✅
   - `autoRot` existait depuis toujours — le globe tourne seul au chargement — mais **aucune
     commande ne le pilotait**. Le moindre geste l'arrête (glisser, choisir un pays, ouvrir

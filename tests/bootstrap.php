@@ -230,6 +230,17 @@ function http(string $method, string $url, array $opts = []): array {
     if (isset($opts['json'])) {
         $headers[] = 'Content-Type: application/json';
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($opts['json'], JSON_UNESCAPED_UNICODE));
+    } elseif (isset($opts['multipart'])) {
+        // Televersement de fichier : cURL pose lui-meme la frontiere
+        // multipart. Ne PAS ajouter de Content-Type a la main — une
+        // frontiere ecrite par nous ne correspondrait pas au corps.
+        $champs = [];
+        foreach ($opts['multipart'] as $k => $v) {
+            $champs[$k] = (is_array($v) && isset($v['file']))
+                ? new CURLFile($v['file'], $v['type'] ?? 'application/octet-stream', $v['name'] ?? basename($v['file']))
+                : $v;
+        }
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $champs);
     } elseif (isset($opts['form'])) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($opts['form']));
     }

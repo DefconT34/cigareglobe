@@ -120,8 +120,17 @@ alors « 3 discussions », et l'espace communautaire cesse d'être une île.
   cela couvre le besoin réel sans l'arbre.
 - **Rédaction** : texte simple + un sous-ensemble de Markdown (gras, italique,
   listes, citation, lien). **Pas de HTML**, pas d'insertion d'images externes
-  (voir §10, sécurité). Photos : réemploi de `lounge_photos` (téléversement
-  sur le serveur, dimensions bornées).
+  (voir §10, sécurité).
+- ✅ **Photos : jusqu'à 3 par message**, en vignettes sous le texte, agrandies au
+  clic. Téléversées sur le serveur et **reconstruites** (`backend/image_lib.php`),
+  jamais copiées : cela supprime les EXIF — donc la position GPS du téléphone —
+  et neutralise les fichiers polyglottes. Une image abaisse le seuil de masquage
+  à **2 signalements** : une image choquante fait ses dégâts en cinq secondes, là
+  où un paragraphe se lit et s'oublie.
+- ❌ **Pas d'affiche d'événement.** Une affiche est par définition un support
+  promotionnel ; portant le logo d'une maison, ce serait de la publicité pour le
+  tabac au sens le plus littéral. Une photo de son propre cigare est un
+  témoignage, une affiche n'en est pas un. **En tête de l'avis juridique** (§10).
 - **Édition** de son propre message pendant 30 minutes, puis marquage
   « modifié le … ». La suppression par l'auteur laisse une pierre tombale
   (« message retiré par son auteur ») : effacer un message au milieu d'un

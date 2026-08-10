@@ -1,0 +1,23 @@
+# ════════════════════════════════════════════════════════
+# uploads/ — aucun code ne s'exécute ici
+# ────────────────────────────────────────────────────────
+# Ce dossier reçoit des fichiers venus de l'extérieur. Depuis que les
+# membres de la communauté peuvent y déposer des images, la question
+# n'est plus théorique : un fichier téléversé ne doit JAMAIS pouvoir
+# être exécuté, quel que soit son nom.
+#
+# La chaîne d'upload reconstruit déjà chaque image et force l'extension
+# .jpg (backend/image_lib.php) : c'est la vraie protection. Ceci en est
+# la seconde, indépendante de la première — si l'une cède un jour, il en
+# reste une.
+# ════════════════════════════════════════════════════════
+
+# Aucun gestionnaire, aucun moteur de script.
+php_flag engine off
+AddHandler default-handler .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .cgi .pl .py .sh
+Options -ExecCGI -Indexes
+
+# Et par sécurité, l'accès direct aux fichiers de code est refusé.
+<FilesMatch "\.(php[0-9]?|phtml|phps|cgi|pl|py|sh|htaccess)$">
+  Require all denied
+</FilesMatch>

@@ -70,6 +70,7 @@ Même discipline que `sql/schema.sql` — voir `sql/README.md`.
 | `forum.spec.js` | espace communautaire : rubriques, fil, rendu Markdown du serveur, filtre de langue, liens directs |
 | `evenements.spec.js` | rendez-vous : agenda, archives, fiche, **marqueur du globe vérifié par un contexte espion**, lien avec l'atlas |
 | `age.spec.js` | portail d'âge : blocage réel, mémoire, refus, langue — **seul fichier qui ne le franchit pas d'avance** |
+| `images.spec.js` | photos des messages : vignettes réellement chargées, visionneuse, trois façons de la fermer |
 
 La fiche de partage n'existe nulle part dans le DOM : c'est un canvas
 encodé en PNG. Aucun sélecteur ne peut en dire quoi que ce soit. Un

@@ -23,6 +23,7 @@ set_exception_handler(function($e) {
 });
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/image_lib.php';
 require_once __DIR__ . '/auth_lib.php';
 
 auth_session_start();   // reconnait la session d'administration
@@ -125,47 +126,16 @@ function action_upload(PDO $db): never {
 
     $file = $_FILES['photo'];
 
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        $errors = [
-            UPLOAD_ERR_INI_SIZE   => 'Fichier dépasse upload_max_filesize (php.ini)',
-            UPLOAD_ERR_FORM_SIZE  => 'Fichier dépasse MAX_FILE_SIZE du formulaire',
-            UPLOAD_ERR_PARTIAL    => 'Upload partiel',
-            UPLOAD_ERR_NO_FILE    => 'Aucun fichier envoyé',
-            UPLOAD_ERR_NO_TMP_DIR => 'Dossier temporaire absent',
-            UPLOAD_ERR_CANT_WRITE => 'Impossible d\'écrire sur le disque',
-            UPLOAD_ERR_EXTENSION  => 'Upload bloqué par une extension PHP',
-        ];
-        jout(['error' => $errors[$file['error']] ?? 'Erreur upload #' . $file['error']], 400);
-    }
-
-    if ($file['size'] > MAX_FILE_SIZE) {
-        jout(['error' => 'Fichier trop lourd (max 5 MB, reçu ' . round($file['size']/1024/1024, 1) . ' MB)'], 413);
-    }
+    // Verification et ecriture : une seule chaine pour tout le site
+    // (backend/image_lib.php). Elle RECONSTRUIT l'image au lieu de la
+    // copier — ce qui supprime les EXIF et neutralise les fichiers
+    // polyglottes — et refuse desormais tout ce qu'elle ne sait pas
+    // decoder. L'ancien repli `move_uploaded_file()` copiait le fichier
+    // brut quand GD manquait : acceptable tant que seule l'administration
+    // televersait, plus du tout depuis que la communaute le peut.
+    if ($stop = image_verifier($file)) jout(err($stop[0], $stop[1]), 400);
 
     $tmp = $file['tmp_name'];
-    if (!is_uploaded_file($tmp)) {
-        jout(err('file_invalid', 'Fichier invalide (sécurité)'), 400);
-    }
-
-    // Vérification MIME réelle
-    $mime = '';
-    if (function_exists('finfo_open')) {
-        $fi   = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($fi, $tmp);
-        finfo_close($fi);
-    } else {
-        // Fallback : lire les magic bytes
-        $fp   = fopen($tmp, 'rb');
-        $head = fread($fp, 12);
-        fclose($fp);
-        if (substr($head, 0, 2) === "\xFF\xD8") $mime = 'image/jpeg';
-        elseif (substr($head, 0, 8) === "\x89PNG\r\n\x1A\n") $mime = 'image/png';
-        elseif (substr($head, 0, 4) === 'RIFF' && substr($head, 8, 4) === 'WEBP') $mime = 'image/webp';
-    }
-
-    if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp'])) {
-        jout(['error' => 'Format non supporté (détecté: ' . $mime . '). Utilisez JPG, PNG ou WebP.'], 415);
-    }
 
     // Créer le dossier de destination
     $dir = UPLOAD_DIR . $lounge_id . '/';
@@ -178,71 +148,13 @@ function action_upload(PDO $db): never {
         jout(['error' => 'Dossier uploads/lounges/' . $lounge_id . '/ non accessible en écriture'], 500);
     }
 
-    // Nom de fichier
-    // Toujours .jpg en sortie — imagejpeg() produit du JPEG quelle que soit la source
-    // Safari refuse les images dont l'extension ne correspond pas au contenu réel
+    // Toujours .jpg en sortie — Safari refuse une image dont l'extension
+    // ne correspond pas au contenu reel.
     $filename = uniqid('p', true) . '.jpg';
     $dest     = $dir . $filename;
     $thumb    = $dir . 'thumb_' . $filename;
 
-    // Traitement image avec GD
-    if (extension_loaded('gd')) {
-        $img = match($mime) {
-            'image/png'  => @imagecreatefrompng($tmp),
-            'image/webp' => @imagecreatefromwebp($tmp),
-            default      => @imagecreatefromjpeg($tmp),
-        };
-
-        if (!$img) {
-            // GD ne peut pas lire → copie directe
-            if (!move_uploaded_file($tmp, $dest)) {
-                jout(err('upload_failed', 'Échec de la copie du fichier'), 500);
-            }
-            copy($dest, $thumb);
-        } else {
-            $ow = imagesx($img);
-            $oh = imagesy($img);
-
-            // Image principale — redimensionner si trop grande
-            if ($ow > MAX_DIMENSION || $oh > MAX_DIMENSION) {
-                $ratio   = $ow > $oh ? MAX_DIMENSION / $ow : MAX_DIMENSION / $oh;
-                $nw      = max(1, (int)($ow * $ratio));
-                $nh      = max(1, (int)($oh * $ratio));
-                $resized = imagecreatetruecolor($nw, $nh);
-                imagecopyresampled($resized, $img, 0, 0, 0, 0, $nw, $nh, $ow, $oh);
-                imagejpeg($resized, $dest, 88);
-                imagedestroy($resized);
-            } else {
-                imagejpeg($img, $dest, 88);
-            }
-
-            // Thumbnail crop centré
-            $ratio_t = max(THUMB_W / $ow, THUMB_H / $oh);
-            $tw      = max(1, (int)($ow * $ratio_t));
-            $th      = max(1, (int)($oh * $ratio_t));
-            $scaled  = imagecreatetruecolor($tw, $th);
-            imagecopyresampled($scaled, $img, 0, 0, 0, 0, $tw, $th, $ow, $oh);
-            $cropped = imagecreatetruecolor(THUMB_W, THUMB_H);
-            $cx      = max(0, (int)(($tw - THUMB_W) / 2));
-            $cy      = max(0, (int)(($th - THUMB_H) / 2));
-            imagecopy($cropped, $scaled, 0, 0, $cx, $cy, THUMB_W, THUMB_H);
-            imagejpeg($cropped, $thumb, 82);
-
-            imagedestroy($img);
-            imagedestroy($scaled);
-            imagedestroy($cropped);
-        }
-    } else {
-        // Pas de GD — copie directe (extension .jpg déjà forcée)
-        if (!move_uploaded_file($tmp, $dest)) {
-            jout(err('upload_failed', 'Échec move_uploaded_file — vérifiez les permissions'), 500);
-        }
-        copy($dest, $thumb);
-    }
-
-    if (!file_exists($dest)) {
-        jout(err('upload_failed', 'Fichier introuvable après copie — vérifiez les permissions du dossier'), 500);
-    }
+    if ($stop = image_ecrire($tmp, $dest, $thumb)) jout(err($stop[0], $stop[1]), 415);
 
     // Photo principale ?
     $hp = $db->prepare("SELECT COUNT(*) FROM lounge_photos WHERE lounge_id = ? AND is_primary = 1");

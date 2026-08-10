@@ -79,13 +79,14 @@ backend/
   api.php             Contributions, avis, favoris, profil, modération
   data.php            Données de l'atlas (globe, pays, lounges, marques…)
   forum.php           Espace communautaire (rubriques, sujets, messages)
-  forum_lib.php       Rendu Markdown restreint, étiquettes, plafonds, signalements, rendez-vous
+  forum_lib.php       Rendu Markdown restreint, étiquettes, plafonds, signalements, rendez-vous, images
+  image_lib.php       Réception d'image : type réel, ré-encodage obligatoire, vignette
   photos.php          Upload & gestion des photos de lounges
   admin.php           Interface de modération
   .htaccess           Protection de config.php
 sql/
   schema.sql          Schéma de référence (structure complète)
-  migrations/         Évolutions incrémentales (001→017)
+  migrations/         Évolutions incrémentales (001→018)
 docs/
   roadmap.md          Feuille de route (chantiers restants + ordre)
   espace-client.md    Cahier des charges de l'espace membre
@@ -98,7 +99,7 @@ uploads/lounges/      Photos uploadées (hors Git)
 - `auth.php?action=` : `me` · `register` · `verify` · `login` · `logout` · `forgot` · `reset` · `resend`
 - `api.php?action=` : `submit` · `vote` · `rate` · `review` · `reviews` · `my_contributions` · `my_ratings` · `fav_toggle` · `fav_states` · `fav_list` · `profile` · `profile_update` (+ modération admin)
 - `data.php?action=` : `globe` · `country` · `lounges` · `brand` · `market` · `all`
-- `forum.php?action=` : `sections` · `topics` · `topic` · `tags` · `agenda` · `lounge_events` · `topic_create` · `post_create` · `post_edit` · `post_delete` · `flag` · `react` · `follow` · `topic_solved` · `event_create` · `event_update` · `event_cancel` · `attend` (+ `mod_queue` · `moderate` · `topic_state` pour la modération)
+- `forum.php?action=` : `sections` · `topics` · `topic` · `tags` · `agenda` · `lounge_events` · `topic_create` · `post_create` · `post_edit` · `post_delete` · `flag` · `react` · `follow` · `topic_solved` · `event_create` · `event_update` · `event_cancel` · `attend` · `post_image` (+ `mod_queue` · `moderate` · `topic_state` pour la modération)
 
 Tâche planifiée (cron) : `php tools/forum_rappels.php` envoie les rappels
 de rendez-vous à J-2, une fois par jour. `--dry-run` liste sans envoyer.
@@ -171,5 +172,5 @@ php tools/mail_doctor.php --to=vous@exemple.com   # + envoi de test
 ## Déploiement
 
 Non couvert ici pour l'instant — étapes détaillées dans `docs/roadmap.md`
-(chantier B1 : `.env` serveur, rotation des secrets, migrations 001→017,
+(chantier B1 : `.env` serveur, rotation des secrets, migrations 001→018,
 enregistrements DNS des emails).
