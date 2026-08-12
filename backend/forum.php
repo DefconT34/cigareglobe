@@ -255,6 +255,10 @@ function a_topic(PDO $db): void {
     $db->prepare('UPDATE forum_topics SET views = views + 1 WHERE id = ?')->execute([$id]);
 
     $me = current_user($db);
+    // Ouvrir le sujet vaut « je suis revenu lire » : la notification se
+    // réarme. Sans cela, on ne serait prévenu qu'une seule fois dans la
+    // vie du fil.
+    forum_suivi_vu($db, $id, $me ? (int)$me['id'] : null);
     $offset = ($page - 1) * FORUM_MSG_PAGE;
     $stmt = $db->prepare(
         "SELECT p.id, p.user_id, p.body, p.status, p.quote_post_id, p.edited_at, p.created_at,
@@ -325,6 +329,7 @@ function a_topic(PDO $db): void {
             'author'  => forum_auteur($t),
             'tags'    => $tags[$id] ?? [],
             'mine'    => $me && (int)$t['user_id'] === (int)$me['id'],
+            'following' => forum_suit($db, $id, $me ? (int)$me['id'] : null),
         ],
         'posts' => $posts,
         'page'  => $page,
@@ -406,6 +411,10 @@ function a_topic_create(PDO $db): void {
                             is_array($b['images'] ?? null) ? $b['images'] : []);
         forum_tags_appliquer($db, $topic_id, is_array($b['tags'] ?? null) ? $b['tags'] : []);
         forum_topic_recompte($db, $topic_id);
+        // On suit ce qu'on ouvre : personne ne pense à cocher
+        // « prévenez-moi » avant d'avoir posé sa question, et la réponse
+        // est la raison même d'avoir écrit.
+        forum_suivre_auto($db, $topic_id, (int)$u['id']);
         $db->commit();
     } catch (Throwable $e) {
         $db->rollBack();
@@ -488,7 +497,14 @@ function a_post_create(PDO $db): void {
     forum_img_rattacher($db, $id, (int)$u['id'], is_array($b['images'] ?? null) ? $b['images'] : []);
     forum_topic_recompte($db, $topic_id);
 
-    fout(['success' => true, 'id' => $id, 'html' => forum_rendu($body)], 201);
+    // Répondre, c'est vouloir la suite : on suit d'office, et l'on se
+    // défait d'un clic. Puis on prévient les autres suiveurs — jamais
+    // l'auteur du message qu'on vient d'écrire.
+    forum_suivre_auto($db, $topic_id, (int)$u['id']);
+    $prevenus = forum_notifier_reponse($db, $topic_id, (int)$u['id'], $body);
+
+    fout(['success' => true, 'id' => $id, 'html' => forum_rendu($body),
+          'notified' => $prevenus], 201);
 }
 
 function a_post_edit(PDO $db): void {

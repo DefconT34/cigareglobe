@@ -66,7 +66,8 @@ function csrf_verify(): void {
 function current_user(PDO $db): ?array {
     if (empty($_SESSION['uid'])) return null;
     $stmt = $db->prepare(
-        "SELECT id, email, display_name, role, email_verified, avatar_url, bio, lang, status, created_at, last_login_at
+        "SELECT id, email, display_name, role, email_verified, avatar_url, bio, lang,
+                notify_forum, status, created_at, last_login_at
          FROM users WHERE id = ? AND status = 'active'"
     );
     $stmt->execute([(int)$_SESSION['uid']]);
@@ -125,6 +126,9 @@ function user_public(array $u): array {
         'avatar_url'     => $u['avatar_url'] ?? null,
         'bio'            => $u['bio'] ?? null,
         'lang'           => $u['lang'] ?? null,
+        // Migration 020. Absente d'une base pas encore migree : on
+        // repond « oui », qui est la valeur par defaut de la colonne.
+        'notify_forum'   => !array_key_exists('notify_forum', $u) || (bool)$u['notify_forum'],
     ];
 }
 

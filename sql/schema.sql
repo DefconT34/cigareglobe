@@ -254,6 +254,7 @@ CREATE TABLE `forum_follows` (
   `topic_id` int unsigned NOT NULL,
   `user_id` int unsigned NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `notified_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`topic_id`,`user_id`),
   KEY `fk_forum_follows_user` (`user_id`),
   CONSTRAINT `fk_forum_follows_topic` FOREIGN KEY (`topic_id`) REFERENCES `forum_topics` (`id`) ON DELETE CASCADE,
@@ -743,6 +744,7 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_login_at` datetime DEFAULT NULL,
   `lang` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Langue de correspondance : fr, en, es, de, zh, ar',
+  `notify_forum` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_users_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

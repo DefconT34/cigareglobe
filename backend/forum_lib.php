@@ -462,6 +462,132 @@ function forum_recents(PDO $db, ?array $langs = null, int $limite = 5): array {
 
 
 // ════════════════════════════════════════════════════════
+// SUIVRE UN SUJET
+// ════════════════════════════════════════════════════════
+// La table `forum_follows` et le point d'API `follow` existaient depuis
+// le premier jour, sans qu'aucun bouton ne les appelle : la table ne
+// s'est jamais remplie, et rien n'a jamais été envoyé.
+
+/** Ce membre suit-il ce sujet ? */
+function forum_suit(PDO $db, int $topicId, ?int $userId): bool {
+    if (!$userId) return false;
+    $q = $db->prepare('SELECT 1 FROM forum_follows WHERE topic_id = ? AND user_id = ?');
+    $q->execute([$topicId, $userId]);
+    return (bool)$q->fetchColumn();
+}
+
+/**
+ * Suivre d'office ce qu'on vient d'écrire.
+ *
+ * Personne ne pense à cocher « prévenez-moi » avant d'avoir posé sa
+ * question ; on veut la réponse, c'est même la raison d'avoir écrit.
+ * Le suivi est donc automatique pour l'auteur d'un sujet et pour qui y
+ * répond — et se défait d'un clic, ce qui est l'inverse d'un
+ * abonnement forcé.
+ */
+function forum_suivre_auto(PDO $db, int $topicId, int $userId): void {
+    $db->prepare('INSERT IGNORE INTO forum_follows (topic_id, user_id) VALUES (?, ?)')
+       ->execute([$topicId, $userId]);
+}
+
+/**
+ * Marque le sujet comme relu par ce membre.
+ *
+ * C'est ce qui rearme la notification : on prévient UNE fois, puis plus
+ * rien tant que la personne n'est pas revenue. « Revenue lire » se
+ * constate — inutile de l'estimer au temps écoulé.
+ */
+function forum_suivi_vu(PDO $db, int $topicId, ?int $userId): void {
+    if (!$userId) return;
+    $db->prepare('UPDATE forum_follows SET notified_at = NULL
+                  WHERE topic_id = ? AND user_id = ? AND notified_at IS NOT NULL')
+       ->execute([$topicId, $userId]);
+}
+
+/**
+ * Prévient les suiveurs d'un sujet qu'une réponse est arrivée.
+ *
+ * Trois filtres, chacun pour une raison :
+ *
+ *   - `f.user_id <> ?` — on n'annonce pas à quelqu'un son propre
+ *     message ;
+ *   - `u.notify_forum = 1` — le réglage du profil ;
+ *   - `f.notified_at IS NULL` — le garde-fou contre l'avalanche. Un fil
+ *     animé enverrait sinon vingt courriels dans l'après-midi, et le
+ *     premier réflexe serait de tout couper — donc de ne plus revenir.
+ *
+ * `email_verified` en plus : écrire à une adresse jamais confirmée,
+ * c'est écrire à quelqu'un qui ne l'a pas demandé.
+ *
+ * Un envoi qui échoue ne marque PAS `notified_at` : la prochaine
+ * réponse réessaiera, ce qui vaut mieux qu'un silence définitif.
+ *
+ * Retourne le nombre de courriels partis.
+ */
+function forum_notifier_reponse(PDO $db, int $topicId, int $auteurId, string $corpsBrut): int {
+    $q = $db->prepare(
+        "SELECT t.title, s.slug AS section FROM forum_topics t
+         JOIN forum_sections s ON s.id = t.section_id
+         WHERE t.id = ? LIMIT 1"
+    );
+    $q->execute([$topicId]);
+    $sujet = $q->fetch();
+    if (!$sujet) return 0;
+
+    $auteur = '';
+    $qa = $db->prepare('SELECT display_name FROM users WHERE id = ? LIMIT 1');
+    $qa->execute([$auteurId]);
+    $auteur = (string)($qa->fetchColumn() ?: '');
+
+    $q = $db->prepare(
+        "SELECT u.id, u.email, u.lang, u.display_name
+         FROM forum_follows f
+         JOIN users u ON u.id = f.user_id
+         WHERE f.topic_id = ? AND f.user_id <> ?
+           AND f.notified_at IS NULL
+           AND u.email_verified = 1 AND u.notify_forum = 1"
+    );
+    $q->execute([$topicId, $auteurId]);
+    $suiveurs = $q->fetchAll();
+    if (!$suiveurs) return 0;
+
+    $url     = site_url() . '/?sujet=' . $topicId;
+    $extrait = forum_extrait($corpsBrut, 220);
+    $partis  = 0;
+
+    foreach ($suiveurs as $p) {
+        $lang = (string)($p['lang'] ?: 'fr');
+        $corps = mail_t('rep_corps', $lang, [
+            'auteur'  => $auteur !== '' ? $auteur : mail_t('forum_membre_supprime', $lang),
+            'titre'   => $sujet['title'],
+            // Le retrait à la ligne appartient au gabarit HTML, pas à la
+            // traduction : l'extrait est du texte d'un tiers.
+            'extrait' => '<blockquote style="margin:14px 0;padding:8px 14px;border-left:2px solid #C9A227;color:#5b5348">'
+                       . htmlspecialchars($extrait, ENT_QUOTES, 'UTF-8') . '</blockquote>',
+        ]);
+        try {
+            $ok = send_email(
+                $p['email'],
+                mail_t('rep_sujet', $lang, ['titre' => $sujet['title']]),
+                email_template(mail_t('rep_titre', $lang), $corps,
+                               mail_t('rep_bouton', $lang), $url,
+                               mail_t('rep_pied', $lang))
+            );
+        } catch (Throwable $e) {
+            error_log('[forum] notification non envoyee (#' . $topicId . ') : ' . $e->getMessage());
+            continue;
+        }
+        if (!$ok) continue;
+        $db->prepare('UPDATE forum_follows SET notified_at = UTC_TIMESTAMP()
+                      WHERE topic_id = ? AND user_id = ?')
+           ->execute([$topicId, (int)$p['id']]);
+        $partis++;
+    }
+    return $partis;
+}
+
+
+// ════════════════════════════════════════════════════════
 // IMAGES DES MESSAGES
 // ════════════════════════════════════════════════════════
 // Trois images au plus par message. Elles sont téléversées AVANT que le

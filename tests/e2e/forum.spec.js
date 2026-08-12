@@ -104,6 +104,12 @@ test.describe('Communaute', () => {
     await expect(page.locator('.fo-post').first()).toBeVisible();
     await expect(page.locator('.fo-connexion')).toBeVisible();
     await expect(page.locator('.fo-repondre')).toHaveCount(0);
+
+    // Suivre suppose une adresse ou ecrire : rien a proposer a un
+    // visiteur. Le comportement du bouton une fois connecte est
+    // verifie cote API (19 assertions dans tests/run.php), ou l'on
+    // peut inscrire un compte et lire la base.
+    await expect(page.locator('.fo-suivre')).toHaveCount(0);
   });
 
   // ── Une adresse partagee ouvre la bonne vue ────────────

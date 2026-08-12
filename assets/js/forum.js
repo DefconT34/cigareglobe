@@ -510,7 +510,7 @@
         (t0.tags.length ? '<div class="fo-tags">' + t0.tags.map(function (g) {
           return '<button class="fo-tag" data-tag="' + esc(g.slug) + '">#' + esc(g.label) + '</button>';
         }).join('') + '</div>' : '') +
-        lienAtlas(t0.ref) +
+        lienAtlas(t0.ref) + boutonSuivre(t0) +
         (r.data.event ? blocEvt(r.data.event) : '') +
         '<div class="fo-err" hidden></div>' +
         '<div class="fo-posts">' + posts.map(function (p) { return blocMessage(p, t0); }).join('') + '</div>' +
@@ -521,12 +521,51 @@
         b.onclick = function () { etiquette = b.dataset.tag; aller(null, null, true); };
       });
       brancherLienAtlas(t0.ref);
+      brancherSuivre(t0);
       brancherMessages(t0);
       brancherVignettes(corps());
       if (r.data.event) brancherEvt(r.data.event);
       if (!t0.locked) brancherReponse(t0);
       pied();
     });
+  }
+
+  /**
+   * « Suivre ce sujet ».
+   *
+   * La table et le point d'API existaient depuis le premier jour, sans
+   * qu'aucun bouton ne les appelle : rien ne s'est jamais rempli, rien
+   * n'est jamais parti. On écrivait, et on n'apprenait qu'on avait reçu
+   * une réponse qu'en revenant vérifier.
+   *
+   * Rien pour un visiteur non connecté : suivre suppose une adresse où
+   * écrire. Le bouton « se connecter » est déjà en bas du fil.
+   */
+  function boutonSuivre(t0) {
+    if (!(window.CGAccount && window.CGAccount.user)) return '';
+    var actif = !!t0.following;
+    return '<button class="fo-suivre' + (actif ? ' on' : '') + '" aria-pressed="' + actif + '">' +
+             '<span aria-hidden="true">' + (actif ? '✓' : '☆') + '</span> ' +
+             esc(t(actif ? 'forum_suivi' : 'forum_suivre')) +
+           '</button>';
+  }
+
+  function brancherSuivre(t0) {
+    var b = corps().querySelector('.fo-suivre');
+    if (!b) return;
+    b.onclick = function () {
+      b.disabled = true;
+      appel('follow', 'POST', { topic_id: t0.id }).then(function (r) {
+        b.disabled = false;
+        if (!r.ok) return;
+        var on = !!(r.data && r.data.following);
+        t0.following = on;
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-pressed', String(on));
+        b.innerHTML = '<span aria-hidden="true">' + (on ? '✓' : '☆') + '</span> ' +
+                      esc(t(on ? 'forum_suivi' : 'forum_suivre'));
+      });
+    };
   }
 
   /**

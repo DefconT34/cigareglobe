@@ -1115,6 +1115,114 @@ $r = http('GET', $base . '/backend/forum.php?action=topic&id=' . (int)$r['json']
 eq('ancrage : mais la reference inconnue est rejetee', null, $r['json']['topic']['ref']);
 
 // ════════════════════════════════════════════════════════
+section('Suivre un sujet');
+
+// La table `forum_follows` et le point d'API existaient depuis le
+// premier jour sans qu'aucun bouton ne les appelle : la table ne s\'est
+// jamais remplie, et rien n'est jamais parti. On ecrivait, et on
+// n'apprenait qu\'on avait recu une reponse qu\'en revenant verifier.
+
+/** Le drapeau de notification d'un suiveur, ou \'absent'. */
+$suiviEtat = function (int $tid, string $email) {
+    $q = test_pdo()->prepare(
+        'SELECT f.notified_at FROM forum_follows f
+         JOIN users u ON u.id = f.user_id
+         WHERE f.topic_id = ? AND u.email = ?'
+    );
+    $q->execute([$tid, $email]);
+    $r = $q->fetch(PDO::FETCH_NUM);
+    return $r === false ? 'absent' : ($r[0] === null ? 'arme' : 'prevenu');
+};
+
+$vieillirF();
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
+    'section' => 'debutants',
+    'title'   => 'Par quel module commencer ?',
+    'body'    => 'Je debute et je ne sais pas quel format essayer en premier.',
+    'lang'    => 'fr',
+]);
+eq('suivi : sujet ouvert', 201, $r['status']);
+$t_suivi = (int)$r['json']['id'];
+
+// On suit ce qu'on ouvre : personne ne pense a cocher « prevenez-moi »
+// avant d'avoir pose sa question, et la reponse est la raison meme
+// d'avoir ecrit.
+eq('suivi : l\'auteur suit son sujet d\'office', 'arme', $suiviEtat($t_suivi, 'alice@test.local'));
+
+// ── Une reponse previent le suiveur ──────────────────────
+$vieillirF();
+$r = post_json($base, $bob, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_suivi, 'body' => 'Commence par un robusto, c\'est le format le plus indulgent.']);
+eq('suivi : reponse publiee', 201, $r['status']);
+eq('suivi : le suiveur est prevenu', 1, (int)($r['json']['notified'] ?? -1));
+eq('suivi : et le drapeau est pose', 'prevenu', $suiviEtat($t_suivi, 'alice@test.local'));
+// Repondre, c'est vouloir la suite.
+eq('suivi : celui qui repond suit a son tour', 'arme', $suiviEtat($t_suivi, 'bob@test.local'));
+
+$journal = (string)@file_get_contents($MAIL_LOG);
+check('suivi : l\'email annonce une reponse',
+      str_contains($journal, 'Nouvelle réponse : Par quel module commencer ?'));
+check('suivi : il porte un extrait du message',
+      str_contains($journal, 'robusto'));
+
+// ── Le garde-fou contre l'avalanche ──────────────────────
+// Un fil anime enverrait vingt courriels dans l'apres-midi, et le
+// premier reflexe serait de tout couper — donc de ne plus revenir.
+$vieillirF();
+$r = post_json($base, $bob, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_suivi, 'body' => 'Et evite les formats fins pour commencer.']);
+eq('suivi : pas de second email avant d\'etre revenu lire', 0, (int)($r['json']['notified'] ?? -1));
+
+// Ouvrir le sujet vaut « je suis revenu lire » : la notification se
+// rearme. « Revenue lire » se constate, il n'y a pas a l\'estimer au
+// temps ecoule.
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_suivi", ['jar' => $alice]);
+eq('suivi : le sujet annonce que je le suis', true, $r['json']['topic']['following']);
+eq('suivi : la lecture rearme la notification', 'arme', $suiviEtat($t_suivi, 'alice@test.local'));
+
+$vieillirF();
+$r = post_json($base, $bob, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_suivi, 'body' => 'Un dernier mot sur la conservation avant de te lancer.']);
+eq('suivi : revenue lire, elle est de nouveau prevenue', 1, (int)($r['json']['notified'] ?? -1));
+
+// ── Le reglage du profil ─────────────────────────────────
+$r = post_json($base, $alice, '/backend/api.php?action=profile_update',
+               ['display_name' => 'Alice', 'notify_forum' => false]);
+eq('suivi : le reglage est enregistre', false, $r['json']['user']['notify_forum']);
+http('GET', $base . "/backend/forum.php?action=topic&id=$t_suivi", ['jar' => $alice]);   // relu
+
+$vieillirF();
+$r = post_json($base, $bob, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_suivi, 'body' => 'Message qui ne doit declencher aucun envoi.']);
+eq('suivi : reglage coupe, aucun email', 0, (int)($r['json']['notified'] ?? -1));
+
+// CONTRE-EPREUVE : rallume, et l'email repart.
+post_json($base, $alice, '/backend/api.php?action=profile_update',
+          ['display_name' => 'Alice', 'notify_forum' => true]);
+$vieillirF();
+$r = post_json($base, $bob, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_suivi, 'body' => 'Message qui doit de nouveau declencher un envoi.']);
+eq('suivi : rallume, l\'email repart', 1, (int)($r['json']['notified'] ?? -1));
+
+// ── On n'annonce a personne son propre message ───────────
+// Bob suit le sujet depuis sa premiere reponse : s'il etait compte, le
+// chiffre serait 2.
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_suivi", ['jar' => $alice]);
+$vieillirF();
+$r = post_json($base, $alice, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_suivi, 'body' => 'Merci, je vais essayer le robusto en premier.']);
+eq('suivi : l\'auteur du message n\'est jamais prevenu', 1, (int)($r['json']['notified'] ?? -1));
+
+// ── Se retirer ───────────────────────────────────────────
+$r = post_json($base, $alice, '/backend/forum.php?action=follow', ['topic_id' => $t_suivi]);
+eq('suivi : on se retire d\'un clic', false, $r['json']['following']);
+eq('suivi : la ligne disparait', 'absent', $suiviEtat($t_suivi, 'alice@test.local'));
+$vieillirF();
+$r = post_json($base, $bob, '/backend/forum.php?action=post_create',
+               ['topic_id' => $t_suivi, 'body' => 'Plus personne ne suit ce fil du cote d\'Alice.']);
+eq('suivi : retiree, elle ne recoit plus rien', 0, (int)($r['json']['notified'] ?? -1));
+
+// ════════════════════════════════════════════════════════
 section('Langues servies');
 
 // Le reglage (migration 019) decide de ce que le site PROPOSE. Il ne

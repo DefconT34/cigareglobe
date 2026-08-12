@@ -780,8 +780,16 @@ function action_profile_update(): void {
     }
     if ($name === '') json_out(err('name_required', 'Nom d\'affichage requis.'), 400);
 
-    $db->prepare("UPDATE users SET display_name = ?, bio = ?, avatar_url = ?, lang = COALESCE(?, lang) WHERE id = ?")
-       ->execute([$name, $bio ?: null, $avatar ?: null, $lang, $u['id']]);
+    // Notifications de reponse (migration 020). Meme regle que la
+    // langue : absente du corps, on ne touche pas au reglage. Un
+    // formulaire qui n'envoie pas la case ne doit pas la decocher.
+    $notif = array_key_exists('notify_forum', $body) ? (int)(bool)$body['notify_forum'] : null;
+
+    $db->prepare("UPDATE users SET display_name = ?, bio = ?, avatar_url = ?,
+                                   lang = COALESCE(?, lang),
+                                   notify_forum = COALESCE(?, notify_forum)
+                  WHERE id = ?")
+       ->execute([$name, $bio ?: null, $avatar ?: null, $lang, $notif, $u['id']]);
 
     json_out(['success' => true, 'user' => user_public(current_user($db))]);
 }

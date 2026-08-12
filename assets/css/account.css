@@ -308,3 +308,14 @@ body.mobile-mode .account-btn { padding: 6px; }
   margin-top: 5px; font-size: 10.5px; line-height: 1.45;
   color: var(--text2, #6B5030);
 }
+/* Case à cocher du profil : le libellé fait partie de la cible, sans
+   quoi il faut viser un carré de 13 px — au doigt, c'est raté une fois
+   sur trois. */
+.cg-check {
+  display: flex; align-items: center; gap: 9px;
+  cursor: pointer; font-size: 12.5px; line-height: 1.4;
+}
+.cg-check input {
+  width: 16px; height: 16px; flex-shrink: 0;
+  accent-color: var(--gold, #C9A227); cursor: pointer;
+}

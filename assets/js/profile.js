@@ -119,6 +119,16 @@
         '</select>' +
         '<div class="cg-hint">' + t('prof_lang_hint') + '</div>' +
       '</div>' +
+      // Notifications de reponse (migration 020). Une case, pas un
+      // ecran de reglages : il n'y a qu'une notification, et elle ne
+      // part qu'aux sujets qu'on a choisi de suivre.
+      '<div class="cg-field">' +
+        '<label class="cg-check">' +
+          '<input type="checkbox" id="pf-notif"' + (p.notify_forum === false ? '' : ' checked') + '> ' +
+          esc(t('prof_notif_forum')) +
+        '</label>' +
+        '<div class="cg-hint">' + esc(t('prof_notif_forum_hint')) + '</div>' +
+      '</div>' +
       '<div class="cg-prof-edit-actions">' +
         '<button type="button" class="cg-prof-cancel">' + t('ui_cancel') + '</button>' +
         '<button type="button" class="cg-prof-save">Enregistrer</button>' +
@@ -137,7 +147,10 @@
       fetch(apiBase() + '?action=profile_update', {
         method: 'POST', credentials: 'include',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (A ? A.csrf : '') },
-        body: JSON.stringify({ display_name: name, bio: bio, avatar: av, lang: lg })
+        body: JSON.stringify({
+          display_name: name, bio: bio, avatar: av, lang: lg,
+          notify_forum: document.getElementById('pf-notif').checked
+        })
       })
         .then(function (r) { return r.json(); })
         .then(function (d) {

@@ -441,6 +441,63 @@ function mail_i18n(): array {
             'ar' => '«{titre}» المقرر في {date} لن يُقام. {motif}'
                   . 'يبقى النقاش مفتوحاً في صفحة اللقاء.',
         ],
+        // ── Réponse à un sujet suivi ──────────────────────
+        // Le nom de l'auteur voyage dans le texte, l'extrait aussi :
+        // savoir QUI a répondu et un aperçu de QUOI est ce qui décide
+        // d'ouvrir le message ou de le laisser. Un « nouvelle réponse »
+        // nu se lit comme du bruit et finit en filtre.
+        'rep_sujet' => [
+            'fr' => 'Nouvelle réponse : {titre}',
+            'en' => 'New reply: {titre}',
+            'es' => 'Nueva respuesta: {titre}',
+            'de' => 'Neue Antwort: {titre}',
+            'zh' => '新回复：{titre}',
+            'ar' => 'رد جديد: {titre}',
+        ],
+        'rep_titre' => [
+            'fr' => 'On vous a répondu',
+            'en' => 'Someone replied to you',
+            'es' => 'Le han respondido',
+            'de' => 'Sie haben eine Antwort',
+            'zh' => '有人回复了您',
+            'ar' => 'وصلك رد',
+        ],
+        'rep_corps' => [
+            'fr' => '{auteur} a écrit dans « {titre} » :{extrait}',
+            'en' => '{auteur} wrote in “{titre}”:{extrait}',
+            'es' => '{auteur} escribió en «{titre}»:{extrait}',
+            'de' => '{auteur} schrieb in „{titre}“:{extrait}',
+            'zh' => '{auteur} 在「{titre}」中写道：{extrait}',
+            'ar' => 'كتب {auteur} في «{titre}»:{extrait}',
+        ],
+        'forum_membre_supprime' => [
+            'fr' => 'Un membre',   'en' => 'A member',
+            'es' => 'Un miembro',  'de' => 'Ein Mitglied',
+            'zh' => '一位会员',     'ar' => 'أحد الأعضاء',
+        ],
+        'rep_bouton' => [
+            'fr' => 'Lire la réponse', 'en' => 'Read the reply',
+            'es' => 'Leer la respuesta', 'de' => 'Antwort lesen',
+            'zh' => '阅读回复',          'ar' => 'قراءة الرد',
+        ],
+        'rep_pied' => [
+            'fr' => 'Vous recevez cet email parce que vous suivez ce sujet sur CigarOdyssey. '
+                  . 'Vous pouvez cesser de le suivre depuis la page du sujet, ou couper toutes '
+                  . 'ces notifications depuis votre profil.',
+            'en' => 'You are receiving this email because you follow this topic on CigarOdyssey. '
+                  . 'You can unfollow it from the topic page, or turn off all these notifications '
+                  . 'in your profile.',
+            'es' => 'Recibe este correo porque sigue este tema en CigarOdyssey. '
+                  . 'Puede dejar de seguirlo desde la página del tema, o desactivar todos estos '
+                  . 'avisos en su perfil.',
+            'de' => 'Sie erhalten diese E-Mail, weil Sie diesem Thema auf CigarOdyssey folgen. '
+                  . 'Sie können ihm auf der Themenseite entfolgen oder alle diese '
+                  . 'Benachrichtigungen in Ihrem Profil abschalten.',
+            'zh' => '您收到此邮件，是因为您关注了 CigarOdyssey 上的这个主题。'
+                  . '您可以在主题页面取消关注，或在个人资料中关闭全部此类通知。',
+            'ar' => 'وصلتك هذه الرسالة لأنك تتابع هذا الموضوع على CigarOdyssey. '
+                  . 'يمكنك إيقاف المتابعة من صفحة الموضوع، أو تعطيل كل هذه الإشعارات من ملفك الشخصي.',
+        ],
         'evt_pied' => [
             'fr' => 'Vous recevez cet email parce que vous vous êtes inscrit à ce rendez-vous sur CigarOdyssey.',
             'en' => 'You are receiving this email because you signed up for this event on CigarOdyssey.',
