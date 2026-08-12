@@ -115,14 +115,25 @@ function setup_test_database(): PDO {
     // production. C'est ce qui manquait quand la migration 017 a pose
     // `is_events` — la table etait peuplee, le drapeau non, et creer un
     // rendez-vous repondait 500 sans rien dire de plus.
+    //
+    // Meme raison pour site_languages (migration 019) : sans ses six
+    // lignes, langues_actives() retombe sur les six langues connues et
+    // le test « fermer une langue » ne verrait aucune difference.
+    $reference = 'forum_sections|site_languages';
     $migrations = glob(PROJECT_ROOT . '/sql/migrations/*.sql') ?: [];
     sort($migrations);
     foreach ($migrations as $f) {
         $sql = (string)@file_get_contents($f);
-        if (preg_match_all('/(?:INSERT IGNORE INTO|UPDATE)\s+forum_sections\b[^;]*;/si', $sql, $m)) {
+        if (preg_match_all('/(?:INSERT IGNORE INTO|UPDATE)\s+`?(?:' . $reference . ')`?\b[^;]*;/si', $sql, $m)) {
             foreach ($m[0] as $stmt) $pdo->exec($stmt);
         }
     }
+    // Le cache de langues.php est un FICHIER : une base de test refaite
+    // ne l'efface pas. Un reglage laisse par un test precedent (ou par
+    // l'administration de developpement, si la base porte le meme nom)
+    // decrirait alors une liste que la base ne dit plus.
+    @unlink(PROJECT_ROOT . '/backend/cache/langues_'
+            . preg_replace('/[^A-Za-z0-9_]/', '_', $name) . '.json');
     // Une marque, pour que « action=all » ait quelque chose a porter.
     // Sans elle, la reponse restait vide de marques et l'on ne pouvait
     // pas distinguer « le bloc n'est jamais atteint » de « il n'y a rien

@@ -29,6 +29,10 @@ uploads/*
 Thumbs.db
 .vscode/
 .idea/
+# Réglages locaux de l'outil d'assistance (adresse du serveur de
+# développement, arbres de travail). Même statut que .vscode/ : c'est
+# le poste, pas le projet.
+.claude/
 
 # Archives
 *.rar

@@ -18,6 +18,16 @@ espace client (users, email_tokens, auth_attempts, reviews, favorites).
   - `005_drop_country_polygons.sql` — retrait des polygones saisis à la main
   - `006_fix_coordinates.sql` — 2 points hors de leur pays (Israël, Semi Vuelta)
     (les contours viennent désormais de la carte du monde du front)
+  - `007` → `014` — traductions de l'atlas, fraîcheur, coordonnées,
+    approbation des contributions, langue des comptes
+  - `015` → `018` — espace communautaire : rubriques et discussions,
+    sujets d'amorçage, événements, images de message
+  - `019_site_langues.sql` — table `site_languages` : quelles langues le
+    site sert, réglées depuis l'administration. La liste des langues
+    *connues* reste dans le code (`backend/langues.php`) — la base ne
+    fait que cocher dedans.
+
+  Le dossier fait foi ; cette liste résume.
 
 ## Installer / recréer la base
 
@@ -28,7 +38,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (001 → 002 → 003 → 004 → 005 → 006).
+dans l'ordre (`001` → `019`).
 
 ## Régénérer `schema.sql`
 

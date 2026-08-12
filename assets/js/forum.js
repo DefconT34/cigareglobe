@@ -59,6 +59,30 @@
    * comprennent rien. L'anglais s'y ajoute parce que c'est la langue où
    * les aficionados se rejoignent le plus souvent.
    */
+  /**
+   * Les langues que le site sert, dans l'ordre.
+   *
+   * Réglées depuis l'administration (migration 019) et posées par
+   * index.php sur <html data-langs>. Sans l'attribut — ouverture
+   * directe du fichier, gabarit servi tel quel — on retombe sur les
+   * six : mieux vaut proposer une langue de trop que priver d'écriture.
+   */
+  function languesServies() {
+    var brut = document.documentElement.getAttribute('data-langs') || '';
+    var liste = brut.split(',').map(function (l) { return l.trim(); })
+                    .filter(function (l) { return /^[a-z]{2}$/.test(l); });
+    return liste.length ? liste : ['fr', 'en', 'es', 'de', 'zh', 'ar'];
+  }
+
+  /** Les <option> du choix de langue d'un message que l'on écrit. */
+  function optionsLangues() {
+    var moi = window.currentLang || 'fr';
+    return languesServies().map(function (l) {
+      return '<option value="' + l + '"' +
+        (l === moi ? ' selected' : '') + '>' + l.toUpperCase() + '</option>';
+    }).join('');
+  }
+
   function paramLangues() {
     if (langues === 'all') return 'all';
     var moi = window.currentLang || 'fr';
@@ -92,6 +116,38 @@
       return new Intl.DateTimeFormat(window.currentLang || 'fr',
         { day: 'numeric', month: 'short', year: 'numeric' }).format(d);
     } catch (e) { return d.toLocaleDateString(); }
+  }
+
+  /**
+   * Pictogramme d'une rubrique.
+   *
+   * IL N'EXISTE PAS D'ÉMOJI DE CIGARE. Unicode a « 🚬 », qui est une
+   * cigarette — l'objet que ce site ne traite pas, et dont l'image
+   * dessert exactement ce qu'il défend. Celui de la rubrique « Les
+   * cigares » est donc DESSINÉ : un module à l'oblique, sa bague, et la
+   * braise. Les sept autres restent en émoji, qui leur va.
+   *
+   * Le tracé vit ici et non en base : c'est de la présentation, comme
+   * le libellé de la rubrique — que l'on avait déjà sorti de la base
+   * pour la même raison. La valeur servie par l'API n'est jamais
+   * injectée en HTML.
+   */
+  function iconeRubrique(slug, emoji) {
+    if (slug !== 'cigares') return '<span class="fo-sec-ico" aria-hidden="true">' + esc(emoji) + '</span>';
+    return '<span class="fo-sec-ico" aria-hidden="true">' +
+      '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" aria-hidden="true">' +
+        // Le module, incliné comme on le tient
+        '<path d="M3.6 17.9 L15.8 5.7 a2.6 2.6 0 0 1 3.7 0 l0.8 0.8 a2.6 2.6 0 0 1 0 3.7 L8.1 22.4 Z"' +
+             ' fill="#8B5A2B" stroke="#5C3A1A" stroke-width="1.1" stroke-linejoin="round"/>' +
+        // La bague : une bande PERPENDICULAIRE à l'axe et large comme le
+        // module. Posée en losange, elle se lisait comme un motif ; c'est
+        // pourtant elle qui dit « cigare » plutôt que « bâton ».
+        '<path d="M9.29 12.47 L10.99 10.77 L15.23 15.01 L13.53 16.71 Z"' +
+             ' fill="#C9A227" stroke="#8A6A12" stroke-width=".8"/>' +
+        // La braise, sur toute la face du bout
+        '<path d="M3.6 17.9 L8.1 22.4 L9.23 21.27 L4.73 16.77 Z" fill="#E06030"/>' +
+      '</svg>' +
+    '</span>';
   }
 
   function auteurNom(a) {
@@ -163,7 +219,7 @@
       calque.querySelector('.fo-sub').textContent = t('forum_sous_titre');
       corps().innerHTML = '<div class="fo-secs">' + donnees.sections.map(function (s) {
         return '<button class="fo-sec" data-sec="' + esc(s.slug) + '">' +
-          '<span class="fo-sec-ico" aria-hidden="true">' + esc(s.icon) + '</span>' +
+          iconeRubrique(s.slug, s.icon) +
           '<span class="fo-sec-txt">' +
             '<span class="fo-sec-name">' + esc(t('forum_sec_' + s.slug)) + '</span>' +
             '<span class="fo-sec-desc">' + esc(t('forum_sec_' + s.slug + '_d')) + '</span>' +
@@ -195,7 +251,7 @@
 
       var tete =
         '<div class="fo-bar">' +
-          '<button class="fo-back-btn">‹ ' + t('forum_retour') + '</button>' +
+          '<button class="fo-back-btn">' + t('forum_retour') + '</button>' +
           '<div class="fo-bar-right">' +
             '<label class="fo-filtre">' +
               '<span>' + t('forum_filtre_langue') + '</span>' +
@@ -396,7 +452,7 @@
       } catch (e) {}
 
       corps().innerHTML =
-        '<div class="fo-bar"><button class="fo-back-btn">‹ ' + esc(t('forum_sec_' + t0.section)) + '</button></div>' +
+        '<div class="fo-bar"><button class="fo-back-btn">' + esc(t('forum_sec_' + t0.section)) + '</button></div>' +
         '<h2 class="fo-titre">' + esc(t0.title) + '</h2>' +
         '<div class="fo-t-meta">' + t('forum_par') + ' ' + auteurNom(t0.author) +
           ' · ' + dateCourte(t0.created_at) +
@@ -578,7 +634,7 @@
 
       var tete =
         '<div class="fo-bar">' +
-          '<button class="fo-back-btn">‹ ' + t('forum_retour') + '</button>' +
+          '<button class="fo-back-btn">' + t('forum_retour') + '</button>' +
           '<div class="fo-bar-right">' +
             '<label class="fo-filtre">' +
               '<span>' + t('forum_agenda_quand') + '</span>' +
@@ -712,7 +768,7 @@
     var natures = ['degustation', 'rencontre', 'artisan', 'salon', 'enligne'];
 
     corps().innerHTML =
-      '<div class="fo-bar"><button class="fo-back-btn">‹ ' + t('forum_retour') + '</button></div>' +
+      '<div class="fo-bar"><button class="fo-back-btn">' + t('forum_retour') + '</button></div>' +
       '<div class="fo-form">' +
         '<label>' + t('forum_titre_champ') + '<input class="fo-f-titre" maxlength="140"></label>' +
         '<label>' + t('forum_message_champ') + '<textarea class="fo-f-corps" rows="6"></textarea></label>' +
@@ -732,10 +788,7 @@
         '<div class="fo-form-2">' +
           '<label>' + t('forum_evt_capacite') + '<input class="fo-f-cap" type="number" min="1" max="9999"></label>' +
           '<label>' + t('forum_langue_champ') +
-            '<select class="fo-f-lang">' + ['fr','en','es','de','zh','ar'].map(function (l) {
-              return '<option value="' + l + '"' +
-                (l === (window.currentLang || 'fr') ? ' selected' : '') + '>' + l.toUpperCase() + '</option>';
-            }).join('') + '</select></label>' +
+            '<select class="fo-f-lang">' + optionsLangues() + '</select></label>' +
         '</div>' +
         '<div class="fo-aide">' + esc(t('forum_evt_aide')) + '</div>' +
         '<div class="fo-err" hidden></div>' +
@@ -892,7 +945,7 @@
   function formulaireSujet() {
     if (!(window.CGAccount && window.CGAccount.requireVerified())) return;
     corps().innerHTML =
-      '<div class="fo-bar"><button class="fo-back-btn">‹ ' + t('forum_retour') + '</button></div>' +
+      '<div class="fo-bar"><button class="fo-back-btn">' + t('forum_retour') + '</button></div>' +
       '<div class="fo-form">' +
         '<label>' + t('forum_titre_champ') +
           '<input class="fo-f-titre" maxlength="140"></label>' +
@@ -903,12 +956,7 @@
         '<label>' + t('forum_etiquettes') +
           '<input class="fo-f-tags" placeholder="' + esc(t('forum_etiquettes_aide')) + '"></label>' +
         '<label>' + t('forum_langue_champ') +
-          '<select class="fo-f-lang">' +
-            ['fr','en','es','de','zh','ar'].map(function (l) {
-              return '<option value="' + l + '"' +
-                (l === (window.currentLang || 'fr') ? ' selected' : '') + '>' + l.toUpperCase() + '</option>';
-            }).join('') +
-          '</select></label>' +
+          '<select class="fo-f-lang">' + optionsLangues() + '</select></label>' +
         '<div class="fo-err" hidden></div>' +
         '<div class="fo-form-btns">' +
           '<button class="fo-envoyer">' + t('forum_publier') + '</button>' +

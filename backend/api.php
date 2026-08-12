@@ -776,7 +776,7 @@ function action_profile_update(): void {
     $lang = null;
     if (isset($body['lang'])) {
         $l = strtolower(trim((string)$body['lang']));
-        if (in_array($l, langues_site(), true)) $lang = $l;
+        if (in_array($l, langues_actives(), true)) $lang = $l;
     }
     if ($name === '') json_out(err('name_required', 'Nom d\'affichage requis.'), 400);
 

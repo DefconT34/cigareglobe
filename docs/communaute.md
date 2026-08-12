@@ -255,6 +255,19 @@ groupes ne comprennent rien.
 Plus simple, mais cela contredit un site dont le référencement multilingue est
 un chantier abouti (**F6**).
 
+**Depuis D23** (migration `019`), l'alternative écartée reste *réglable* : les
+langues servies se cochent dans `admin.php?tab=langues`. Ouvrir la communauté
+en deux langues seulement ne demande plus une mise en ligne, et le choix se
+défait aussi vite qu'il se fait. Deux règles tiennent la cohérence :
+
+- **On valide la lecture et l'écriture sur deux listes différentes.** Un sujet
+  écrit en allemand reste lisible si l'allemand ferme — il garde son code, son
+  étiquette de langue, et le filtre « toutes les langues » le montre toujours.
+  Simplement, on n'en écrit plus de nouveau dedans.
+- **Le français ne se ferme pas** : il est le repli de toute traduction
+  manquante. Le fermer laisserait indéfini ce qu'on sert à qui n'a aucune des
+  autres.
+
 ## 10. Contraintes juridiques et de sécurité
 
 Ces points ne sont pas des détails d'implémentation : ils conditionnent ce que

@@ -348,7 +348,7 @@ function a_topic_create(PDO $db): void {
     $section = trim($b['section'] ?? '');
     $title   = trim(strip_tags($b['title'] ?? ''));
     $body    = trim($b['body'] ?? '');
-    $lang    = in_array($b['lang'] ?? '', langues_site(), true) ? $b['lang'] : ($u['lang'] ?: 'fr');
+    $lang    = langue_ecriture($b['lang'] ?? '', $u['lang'] ?? '');
 
     if (mb_strlen($title) < 8)   fout(err('title_too_short', 'Un titre d\'au moins 8 caractères est requis.'), 400);
     if (mb_strlen($body)  < 20)  fout(err('body_too_short',  'Le message doit faire au moins 20 caractères.'), 400);
@@ -727,7 +727,7 @@ function a_event_create(PDO $db): void {
     );
     if (!$loungeId && !$label) fout(err('evt_lieu_requis', 'Indiquez un lieu.'), 400);
 
-    $lang = in_array($b['lang'] ?? '', langues_site(), true) ? $b['lang'] : ($u['lang'] ?: 'fr');
+    $lang = langue_ecriture($b['lang'] ?? '', $u['lang'] ?? '');
 
     // Sujet, message et événement forment un tout : à défaut, un sujet
     // sans date resterait en tête de l'agenda sans jamais s'y afficher.

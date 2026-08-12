@@ -18,17 +18,24 @@
 // ════════════════════════════════════════════════════════
 
 require_once __DIR__ . '/backend/config.php';
+require_once __DIR__ . '/backend/langues.php';
 
 define('I18N_CHECK_INCLUDE', true);
 require_once __DIR__ . '/tools/i18n_check.php';   // i18n_parse()
 
-const LANGUES = ['fr', 'en', 'es', 'de', 'zh', 'ar'];
+// Les langues SERVIES, cochées depuis l'administration (migration 019).
+// RTL et LOCALES restent sur les langues connues : ce sont des
+// propriétés de la langue, pas du réglage.
+$LANGUES = langues_actives();
 const RTL     = ['ar'];
 const LOCALES = ['fr' => 'fr_FR', 'en' => 'en_US', 'es' => 'es_ES',
                  'de' => 'de_DE', 'zh' => 'zh_CN', 'ar' => 'ar_SA'];
 
+// Une langue désactivée retombe sur le français, exactement comme une
+// langue inconnue : /de/ continue de répondre, en français, plutôt que
+// de renvoyer une 404 sur une URL qu'un moteur a pu indexer.
 $lang = strtolower(trim((string)($_GET['lang'] ?? 'fr')));
-if (!in_array($lang, LANGUES, true)) $lang = 'fr';
+if (!in_array($lang, $LANGUES, true)) $lang = 'fr';
 $dir = in_array($lang, RTL, true) ? 'rtl' : 'ltr';
 
 // La reecriture d'URL fonctionne-t-elle ? .htaccess pose PRETTY=1 sur
@@ -107,7 +114,7 @@ if ($marque !== '' && mb_strlen($marque) <= 100) {
         require_once __DIR__ . '/backend/config.php';
         $db  = getDB();
         $col = $lang === 'fr' ? 'history' : 'history_' . $lang;
-        // Nom de colonne construit depuis une liste fermée (LANGUES),
+        // Nom de colonne construit depuis une liste fermée (langues_connues()),
         // jamais depuis l'entrée : aucune injection possible.
         $q = $db->prepare("SELECT name, founded, COALESCE(NULLIF(`$col`, ''), history) AS histoire
                            FROM brands WHERE name = ? LIMIT 1");
@@ -143,11 +150,11 @@ if ($marqueOk) {
 // x-default désigne la version servie à un visiteur dont la langue
 // n'est couverte par aucune des six : ici la racine française.
 $alternates = '';
-foreach (LANGUES as $l) {
+foreach ($LANGUES as $l) {
     $alternates .= '  <link rel="alternate" hreflang="' . $l . '" href="' . url_langue($l) . "\">\n";
 }
 $alternates .= '  <link rel="alternate" hreflang="x-default" href="' . url_langue('fr') . "\">\n";
-foreach (LANGUES as $l) {
+foreach ($LANGUES as $l) {
     if ($l === $lang) continue;
     $alternates .= '  <meta property="og:locale:alternate" content="' . LOCALES[$l] . "\">\n";
 }
@@ -170,6 +177,11 @@ foreach (array_merge(glob(__DIR__ . '/assets/js/*.js') ?: [],
                      glob(__DIR__ . '/assets/css/*.css') ?: []) as $f) {
     $empreinte = max($empreinte, filemtime($f));
 }
+// Le réglage des langues entre dans l'empreinte par la date du fichier
+// qui le porte : cocher une langue dans l'administration périme les
+// pages en cache au même titre qu'une feuille de style modifiée. Sans
+// cela, le réglage n'aurait d'effet qu'au bout de la durée du cache.
+if (is_file(langues_fichier())) $empreinte = max($empreinte, filemtime(langues_fichier()));
 // L'hote entre dans la cle : les URL canoniques et hreflang en
 // dependent, un site joignable par plusieurs noms servirait sinon
 // des canoniques errones depuis le cache.
@@ -222,11 +234,32 @@ $html = preg_replace_callback(
 // de chaîne de requête, et il ne change presque jamais.
 $html = str_replace('href="manifest.json"', 'href="/manifest.json"', $html);
 
+// ── Sélecteur de langue : ne montrer que ce qui est servi ─
+// Les six drapeaux sont écrits dans index.html, qui reste la source
+// unique du balisage. Plutôt que d'y ajouter une boucle PHP — et donc
+// une seconde version du gabarit à maintenir —, on retire ici les
+// boutons des langues décochées, en-tête et menu mobile compris.
+//
+// Le retrait est indispensable, pas cosmétique : un bouton laissé
+// visible mènerait à /de/, que le serveur rendrait en français.
+$inactives = array_diff(langues_connues(), $LANGUES);
+if ($inactives) {
+    $html = preg_replace(
+        '#<button class="m?lang-btn[^"]*"\s+data-lang="(?:' . implode('|', $inactives) . ')"[^>]*>.*?</button>\s*#u',
+        '',
+        $html
+    );
+}
 $e = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 
 $remplacements = [
+    // data-langs : la liste servie, pour le front. forum.js propose une
+    // langue à chaque message écrit et n'a aucun autre moyen de savoir
+    // laquelle est fermée — un attribut lu au démarrage, pas une requête
+    // de plus au chargement.
     '<html lang="fr" data-theme="light" dir="ltr">'
         => '<html lang="' . $lang . '" data-theme="light" dir="' . $dir . '"'
+         . ' data-langs="' . $e(implode(',', $LANGUES)) . '"'
          . ($pretty ? ' data-pretty-urls="1"' : '') . '>',
     '<title>CigarOdyssey — The World\'s Premium Cigar Atlas</title>'
         => '<title>' . $e($titre) . '</title>',

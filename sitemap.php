@@ -9,8 +9,13 @@
 // ════════════════════════════════════════════════════════
 
 require_once __DIR__ . '/backend/config.php';
+require_once __DIR__ . '/backend/langues.php';
 
-const LANGUES_PLAN = ['fr', 'en', 'es', 'de', 'zh', 'ar'];
+// Seules les langues SERVIES entrent au plan. Déclarer une version
+// qu'index.php rend en français ferait annoncer six traductions dont
+// certaines sont le même texte : c'est du contenu dupliqué, et le
+// hreflang qui l'accompagne ment.
+$LANGUES_PLAN = langues_actives();
 
 $base = defined('SITE_URL') && SITE_URL
       ? rtrim(SITE_URL, '/')
@@ -24,10 +29,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n";
 echo '        xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
 
-foreach (LANGUES_PLAN as $l) {
+foreach ($LANGUES_PLAN as $l) {
     echo "  <url>\n";
     echo '    <loc>' . htmlspecialchars($url($l), ENT_XML1) . "</loc>\n";
-    foreach (LANGUES_PLAN as $alt) {
+    foreach ($LANGUES_PLAN as $alt) {
         printf("    <xhtml:link rel=\"alternate\" hreflang=\"%s\" href=\"%s\"/>\n",
                $alt, htmlspecialchars($url($alt), ENT_XML1));
     }

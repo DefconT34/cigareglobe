@@ -6,6 +6,7 @@
 // ════════════════════════════════════════════════════════
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/langues.php';
 
 // ── Session sécurisée ─────────────────────────────────────
 function auth_session_start(): void {
@@ -158,9 +159,18 @@ function password_error(string $p): string {
 }
 
 // ── Langue de correspondance ──────────────────────────────
-/** Les six langues du site. Une valeur hors liste est ignorée. */
+/**
+ * Les langues que le site SAIT parler — celles dont i18n.js contient un
+ * dictionnaire. Une valeur hors liste est ignorée.
+ *
+ * À ne pas confondre avec langues_actives() (backend/langues.php) : la
+ * liste de celles effectivement proposées, réglée depuis
+ * l'administration. On valide ce qu'on LIT sur la liste ci-dessous — un
+ * message écrit dans une langue depuis fermée doit rester lisible — et
+ * ce qu'on ÉCRIT sur langues_actives().
+ */
 function langues_site(): array {
-    return ['fr', 'en', 'es', 'de', 'zh', 'ar'];
+    return langues_connues();
 }
 
 /**
@@ -181,7 +191,8 @@ function langues_site(): array {
  * voulait éviter. Voir migration 014.
  */
 function langue_demandee(?string $souhaitee = null): string {
-    $ok = langues_site();
+    // Un compte qui se crée écrit : on n'y inscrit qu'une langue servie.
+    $ok = langues_actives();
     $l  = strtolower(trim((string)$souhaitee));
     if (in_array($l, $ok, true)) return $l;
 

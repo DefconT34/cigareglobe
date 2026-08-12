@@ -1036,6 +1036,111 @@ eq('production : photos.php respecte aussi la liste',
    '', entete($r['headers'], 'Access-Control-Allow-Origin'));
 
 // ════════════════════════════════════════════════════════
+section('Langues servies');
+
+// Le reglage (migration 019) decide de ce que le site PROPOSE. Il ne
+// decide de rien de ce qui est deja ecrit : c'est la moitie du test.
+
+// Alice a deja ouvert ses trois sujets du jour dans les sections
+// precedentes : $recule() ne deplace que les MESSAGES, et le plafond
+// de sujets compte les sujets. On vieillit les deux d'un jour plein,
+// sans quoi ce qui suit mesurerait le plafond au lieu des langues.
+$vieillir = function (): void {
+    test_pdo()->exec("UPDATE forum_posts  SET created_at = DATE_SUB(created_at, INTERVAL 2 DAY)");
+    test_pdo()->exec("UPDATE forum_topics SET created_at = DATE_SUB(created_at, INTERVAL 2 DAY)");
+};
+
+// Un sujet en allemand, ecrit pendant que la langue est ouverte.
+$vieillir();
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
+    'section' => 'conservation',
+    'title'   => 'Lagerung im Humidor',
+    'body'    => 'Wie lange sollte ein neuer Humidor vorbereitet werden?',
+    'lang'    => 'de',
+]);
+eq('langues : sujet allemand cree pendant que la langue est ouverte', 201, $r['status']);
+
+$page = http('GET', $base . '/', ['jar' => $anon]);
+check('langues : la page annonce les six langues au front',
+      str_contains($page['body'], 'data-langs="fr,en,es,de,zh,ar"'));
+$page = http('GET', $base . '/?lang=de', ['jar' => $anon]);
+check('langues : l\'allemand est servi en allemand',
+      str_contains($page['body'], '<html lang="de"'));
+check('langues : son drapeau est dans l\'en-tete',
+      str_contains($page['body'], 'data-lang="de"'));
+
+// ── Fermeture de l'allemand ──────────────────────────────
+$page  = http('GET', $base . '/backend/admin.php?tab=langues', ['jar' => $admin]);
+preg_match('/name="csrf" value="([a-f0-9]{64})"/', $page['body'], $m);
+$lcsrf = $m[1] ?? '';
+check('langues : l\'onglet d\'administration s\'affiche', $lcsrf !== '');
+
+$r = http('POST', $base . '/backend/admin.php', ['jar' => $admin, 'form' => [
+    'action'  => 'langues_save',
+    'csrf'    => $lcsrf,
+    'langues' => ['fr', 'en', 'es', 'zh', 'ar'],
+]]);
+eq('langues : enregistrement accepte', 200, $r['status']);
+
+$page = http('GET', $base . '/?lang=de', ['jar' => $anon]);
+check('langues : une langue fermee retombe sur le francais',
+      str_contains($page['body'], '<html lang="fr"'));
+check('langues : son drapeau disparait de l\'en-tete',
+      !str_contains($page['body'], 'data-lang="de"'));
+check('langues : elle n\'est plus annoncee au front',
+      str_contains($page['body'], 'data-langs="fr,en,es,zh,ar"'));
+check('langues : plus de lien hreflang vers elle',
+      !str_contains($page['body'], 'hreflang="de"'));
+check('langues : les autres langues restent declarees',
+      str_contains($page['body'], 'hreflang="es"'));
+
+$plan = http('GET', $base . '/sitemap.php', ['jar' => $anon]);
+check('langues : le plan de site ne l\'annonce plus', !str_contains($plan['body'], '/de/'));
+check('langues : le plan garde les autres', str_contains($plan['body'], '/es/'));
+
+// Ce qui etait ecrit reste ecrit.
+$r = http('GET', $base . '/backend/forum.php?action=topics&section=conservation&lang=all',
+          ['jar' => $anon]);
+$de = null;
+foreach ($r['json']['topics'] as $t) if ($t['lang'] === 'de') $de = $t;
+check('langues : le sujet allemand reste lisible apres la fermeture', $de !== null);
+
+// Mais on n'ecrit plus dedans : la langue demandee n'est plus servie,
+// on retombe sur celle du compte.
+$vieillir();
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
+    'section' => 'conservation',
+    'title'   => 'Noch ein Versuch auf Deutsch',
+    'body'    => 'Dieser Beitrag darf nicht mehr auf Deutsch gespeichert werden.',
+    'lang'    => 'de',
+]);
+eq('langues : sujet cree malgre la langue fermee', 201, $r['status']);
+$apres = (int)$r['json']['id'];
+$stocke = test_pdo()->query("SELECT lang FROM forum_topics WHERE id = $apres")->fetchColumn();
+eq('langues : il n\'est plus enregistre dans la langue fermee', 'fr', $stocke);
+
+// ── Le francais n'est pas fermable ───────────────────────
+// C'est le repli de toute traduction manquante : le decocher laisserait
+// indefini ce qu'on sert a qui n'a aucune des autres.
+$r = http('POST', $base . '/backend/admin.php', ['jar' => $admin, 'form' => [
+    'action' => 'langues_save', 'csrf' => $lcsrf, 'langues' => ['en'],
+]]);
+$page = http('GET', $base . '/', ['jar' => $anon]);
+check('langues : le francais survit a une tentative de fermeture',
+      str_contains($page['body'], 'data-langs="fr,en"'));
+
+// ── Contre-epreuve : rouvrir rend tout ───────────────────
+$r = http('POST', $base . '/backend/admin.php', ['jar' => $admin, 'form' => [
+    'action' => 'langues_save', 'csrf' => $lcsrf,
+    'langues' => ['fr', 'en', 'es', 'de', 'zh', 'ar'],
+]]);
+$page = http('GET', $base . '/?lang=de', ['jar' => $anon]);
+check('langues : rouverte, la langue est de nouveau servie',
+      str_contains($page['body'], '<html lang="de"'));
+check('langues : et son drapeau revient',
+      str_contains($page['body'], 'data-lang="de"'));
+
+// ════════════════════════════════════════════════════════
 section('Traductions');
 
 // Le controle vit dans tools/i18n_check.php pour rester lancable seul ;

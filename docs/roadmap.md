@@ -75,6 +75,43 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [x] ~~**D24** — Deux détails de l'espace communautaire~~ ✅
+  - **Il n'existe pas d'émoji de cigare.** Unicode a `🚬`, une cigarette : l'objet que ce
+    site ne traite pas, et dont l'image dessert exactement ce qu'il défend. La rubrique
+    « Les cigares » porte donc un module **dessiné** — bague et braise comprises —, les
+    sept autres gardant leur émoji. Le tracé vit dans le front, avec les libellés de
+    rubrique, pour la même raison qu'eux : c'est de la présentation
+  - **« Retour aux rubriques » ne ressemblait pas à un bouton** : texte doré nu, en Cinzel
+    9 px — la fonte et le corps des intitulés décoratifs qui l'entourent. Il prend le
+    gabarit des autres commandes de la barre, et son chevron recule au survol pour dire le
+    sens. En RTL, le chevron se retourne
+- [x] ~~**D23** — Les langues s'ouvrent et se ferment depuis l'administration~~ ✅ · migration `019`
+  - La liste des six langues était **recopiée à cinq endroits** (`index.php`, `sitemap.php`,
+    `auth_lib.php`, deux fois dans `forum.js`). En fermer une le temps d'en relire les
+    traductions demandait une mise en ligne — et cinq fichiers à ne pas oublier
+  - Deux listes, qu'il ne faut pas confondre : celles que le site **sait dire**
+    (les dictionnaires d'`i18n.js`, donc du code) et celles qu'il **propose** (la table).
+    L'administration ne fait que cocher dans la première ; une septième langue ne se règle
+    pas ici, elle s'écrit
+  - **Le français n'est pas fermable** : il est le repli de toute traduction manquante,
+    du serveur au front. La case est verrouillée *et* la règle est portée par le code —
+    un formulaire est ce qu'on lui envoie, pas ce qu'il affiche
+  - **Fermer ne supprime rien.** Les messages gardent leur langue et redeviennent visibles
+    tels quels si on la rouvre ; les comptes gardent leur préférence. Ce qui change : le
+    drapeau disparaît, `/de/` répond en français, le plan de site et les `hreflang` ne
+    l'annoncent plus, et on n'écrit plus de nouveau message dedans. **Lire et écrire ne se
+    valident pas sur la même liste** — c'est toute la subtilité
+  - **Pas une requête SQL de plus par visite** : `index.php` répond sans toucher à la base,
+    et c'est délibéré. La liste est recopiée dans un fichier de cache dont la **date de
+    modification** entre dans l'empreinte des pages — cocher une langue les périme comme le
+    ferait une feuille de style modifiée. Le nom de la base entre dans le nom du fichier,
+    sans quoi le serveur de test et celui de développement, qui partagent le même dossier,
+    se seraient dicté leurs réglages
+  - `filemtime()` a la **seconde** pour unité : enregistrer et recharger dans la même
+    seconde laissait passer la page précédente. Les pages en cache sont donc **effacées**
+    à l'enregistrement — six fichiers, deux fois par an
+  - 19 vérifications d'API, dont la contre-épreuve : rouvrir rend le drapeau, l'adresse et
+    le `hreflang`
 - [x] ~~**D22** — Photos dans les messages de la communauté~~ ✅
   - Trois images au plus par message, vignettes sous le texte, agrandissement au clic.
     **Pas d'affiche d'événement** : une affiche est par définition un support promotionnel, et

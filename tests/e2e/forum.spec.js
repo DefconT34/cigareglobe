@@ -123,6 +123,52 @@ test.describe('Communaute', () => {
     await expect(page.locator('.fo-titre')).toContainText('Hygrometrie', { timeout: 15_000 });
   });
 
+  // ── Le pictogramme de la rubrique « Les cigares » ──────
+  // Il n'existe pas d'emoji de cigare : Unicode n'a que la cigarette,
+  // qui est precisement l'objet que ce site ne traite pas. Celui-ci est
+  // donc dessine. Le test regarde les deux cotes — le trace present, et
+  // l'emoji absent — parce que verifier seulement le premier passerait
+  // aussi si les deux cohabitaient.
+  test('la rubrique des cigares porte un cigare, pas une cigarette', async ({ page }) => {
+    await ouvrir(page, '/');
+    await ouvrirForum(page);
+
+    const ico = page.locator('.fo-sec[data-sec="cigares"] .fo-sec-ico');
+    await expect(ico.locator('svg')).toHaveCount(1);
+    expect(await ico.textContent(), 'l\'emoji cigarette ne doit plus paraitre')
+      .not.toContain('\u{1F6AC}');
+
+    // Les autres gardent le leur : le remplacement vise une rubrique,
+    // pas la colonne entiere.
+    const autre = page.locator('.fo-sec[data-sec="conservation"] .fo-sec-ico');
+    await expect(autre.locator('svg')).toHaveCount(0);
+    expect((await autre.textContent()).trim().length).toBeGreaterThan(0);
+  });
+
+  // ── Le retour doit RESSEMBLER a un bouton ──────────────
+  // Il etait un texte dore nu, dans la fonte et le corps des intitules
+  // decoratifs qui l'entourent. On mesure ce qui le distingue d'un
+  // texte : une bordure et une hauteur de cible tactile.
+  test('« Retour aux rubriques » se voit et ramene aux rubriques', async ({ page }) => {
+    await ouvrir(page, '/');
+    await ouvrirForum(page);
+    await page.locator('.fo-sec[data-sec="conservation"]').click();
+
+    const retour = page.locator('.fo-back-btn').first();
+    await expect(retour).toBeVisible({ timeout: 15_000 });
+
+    const style = await retour.evaluate((el) => {
+      const c = getComputedStyle(el);
+      return { bordure: parseFloat(c.borderTopWidth), hauteur: el.getBoundingClientRect().height };
+    });
+    expect(style.bordure, 'le bouton doit porter une bordure').toBeGreaterThan(0);
+    expect(style.hauteur, 'hauteur de cible trop faible').toBeGreaterThanOrEqual(28);
+
+    // Et il fait ce qu'il annonce.
+    await retour.click();
+    await expect(page.locator('.fo-sec')).toHaveCount(8);
+  });
+
   test('la croix referme et rend la main au globe', async ({ page }) => {
     await ouvrir(page, '/');
     await ouvrirForum(page);

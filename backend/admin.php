@@ -86,7 +86,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $id     = (int)($_POST['id'] ?? 0);
     $action = $_POST['action'];
 
-    if ($id && $action === 'approve') {
+    if ($action === 'langues_save') {
+        // Pas de $id : le réglage porte sur le site, pas sur une ligne.
+        // Les cases décochées n'arrivent pas dans $_POST — c'est bien la
+        // liste des COCHÉES qu'on enregistre, et langues_definir() écrit
+        // les six lignes.
+        $choix = array_map('strval', (array)($_POST['langues'] ?? []));
+        $act = langues_definir($db, $choix);
+        $off = array_diff(langues_connues(), $act);
+        $msg = ['type' => $off ? 'warn' : 'ok',
+                'text' => 'Langues servies : ' . strtoupper(implode(', ', $act))
+                        . ($off ? ' — fermées : ' . strtoupper(implode(', ', $off)) : '')
+                        . '.'];
+    } elseif ($id && $action === 'approve') {
         // Traitement partagé (moderation_lib) : publication + promotion
         // eventuelle de l'auteur en contributeur de confiance.
         approve_contribution($db, $id);
@@ -183,6 +195,24 @@ if ($tab === 'forum') {
              LIMIT 200"
         )->fetchAll();
     } catch (Throwable $e) { $forum_rows = []; }
+}
+
+// Langues — l'état du réglage, et de quoi le décider : ce que
+// fermer une langue rendrait invisible. Les comptes gardent leur
+// préférence, les messages leur code ; rien n'est perdu, mais un
+// lecteur peut l'être.
+$lang_actives = langues_actives();
+$lang_stats   = ['users' => [], 'topics' => []];
+if ($tab === 'langues') {
+    try {
+        foreach ($db->query("SELECT lang, COUNT(*) n FROM users GROUP BY lang")->fetchAll() as $r) {
+            $lang_stats['users'][(string)$r['lang']] = (int)$r['n'];
+        }
+        foreach ($db->query("SELECT lang, COUNT(*) n FROM forum_topics
+                             WHERE status <> 'removed' GROUP BY lang")->fetchAll() as $r) {
+            $lang_stats['topics'][(string)$r['lang']] = (int)$r['n'];
+        }
+    } catch (Throwable $e) {}
 }
 
 // Photos
@@ -745,6 +775,13 @@ html{transition:background .25s,color .25s}
     <?php endif; ?>
   </a>
 
+  <a class="nav-item <?= $tab==='langues' ? 'active' : '' ?>"
+     href="?tab=langues">
+    <span class="ni-icon">&#127760;</span>
+    <span class="ni-label">Langues</span>
+    <span class="nav-badge"><?= count($lang_actives) ?>/<?= count(langues_connues()) ?></span>
+  </a>
+
   <div class="sidebar-footer">
     <div class="sf-key">Session administrateur active · <a href="?logout=1" style="color:inherit">Se déconnecter</a></div>
   </div>
@@ -1264,6 +1301,92 @@ html{transition:background .25s,color .25s}
   </tbody>
 </table></div>
 <?php endif; ?>
+
+<!-- ── LANGUES ──────────────────────────────────────── -->
+<?php elseif ($tab === 'langues'): ?>
+<?php
+  $LANG_NOMS = ['fr' => 'Français', 'en' => 'English', 'es' => 'Español',
+                'de' => 'Deutsch',  'zh' => '中文',    'ar' => 'العربية'];
+  $LANG_URLS = ['fr' => '/', 'en' => '/en/', 'es' => '/es/',
+                'de' => '/de/', 'zh' => '/zh/', 'ar' => '/ar/'];
+?>
+<div class="page-header">
+  <div>
+    <div class="page-title">Langues</div>
+    <div class="page-subtitle">
+      Ce que le site propose. Décocher une langue retire son drapeau de l'en-tête et du menu,
+      la sort du plan de site et des liens hreflang, et cesse de l'offrir à l'écriture d'un message.
+      <strong>Aucun contenu n'est supprimé</strong> : les messages gardent leur langue et
+      réapparaissent tels quels si on la rouvre.
+    </div>
+  </div>
+</div>
+
+<form method="POST" style="overflow-y:auto;flex:1;padding-right:4px">
+  <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
+  <div class="table-scroll"><table class="contrib-table">
+    <thead>
+      <tr>
+        <th style="width:70px">Servie</th>
+        <th>Langue</th>
+        <th>Adresse</th>
+        <th style="text-align:center">Comptes</th>
+        <th style="text-align:center">Sujets</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach (langues_connues() as $l): $on = in_array($l, $lang_actives, true); ?>
+    <tr>
+      <td style="text-align:center">
+        <?php if ($l === 'fr'): ?>
+          <!-- Le français est le repli de toute traduction manquante :
+               le fermer laisserait indéfini ce qu'on sert à qui n'a
+               aucune des autres. La case est verrouillée et le champ
+               caché la renvoie quand même — langues_normaliser() le
+               réimposerait de toute façon, mais un formulaire qui
+               ment sur ce qu'il envoie est un piège. -->
+          <input type="checkbox" checked disabled
+                 title="Le français est la langue de repli : il ne peut pas être fermé">
+          <input type="hidden" name="langues[]" value="fr">
+        <?php else: ?>
+          <input type="checkbox" name="langues[]" value="<?= $l ?>" <?= $on ? 'checked' : '' ?>
+                 style="width:16px;height:16px;accent-color:#C9A227;cursor:pointer">
+        <?php endif; ?>
+      </td>
+      <td>
+        <div class="ct-name"><?= htmlspecialchars($LANG_NOMS[$l]) ?></div>
+        <div class="ct-city"><?= strtoupper($l) ?><?= $l === 'fr' ? ' · repli, toujours servi' : '' ?></div>
+      </td>
+      <td>
+        <span class="ct-city"><?= $on ? htmlspecialchars($LANG_URLS[$l]) : '— rendue en français' ?></span>
+      </td>
+      <td style="text-align:center">
+        <span class="ct-city"><?= (int)($lang_stats['users'][$l] ?? 0) ?></span>
+      </td>
+      <td style="text-align:center">
+        <span class="ct-city"><?= (int)($lang_stats['topics'][$l] ?? 0) ?></span>
+      </td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table></div>
+
+  <div class="action-row" style="margin-top:18px">
+    <button class="action-btn ab-approve" name="action" value="langues_save">&#10003; Enregistrer</button>
+  </div>
+
+  <div class="ct-city" style="margin-top:18px;line-height:1.7;max-width:62em">
+    <strong>Ce qu'il faut savoir avant de fermer une langue.</strong><br>
+    · Une adresse déjà indexée (<code>/de/</code>) continue de répondre — en français.
+      Elle ne renvoie pas d'erreur, mais sa traduction disparaît des moteurs.<br>
+    · Les comptes ayant choisi cette langue la gardent en base ; leurs courriels
+      repassent au français tant qu'elle est fermée.<br>
+    · Les sujets déjà écrits restent lisibles, avec leur étiquette de langue, et le
+      filtre « toutes les langues » les affiche toujours.<br>
+    · Ajouter une <em>septième</em> langue ne se règle pas ici : il y faut son dictionnaire
+      dans <code>assets/js/i18n.js</code>. Cette page ne coche que ce que le site sait déjà dire.
+  </div>
+</form>
 <?php endif; ?>
 
 </main>
