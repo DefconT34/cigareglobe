@@ -114,7 +114,15 @@ try {
 function a_sections(PDO $db): void {
     // Le compte de sujets suit le meme filtre que la liste : annoncer
     // « 2 sujets » puis n'en montrer qu'un est pire que ne rien annoncer.
-    fout(['sections' => forum_sections($db, forum_langues_demandees())]);
+    //
+    // L'activite recente voyage dans la MEME reponse : c'est le premier
+    // ecran de l'espace, et deux requetes pour un ecran se paient chez
+    // un hebergeur mutualise qui n'en traite qu'une a la fois.
+    $langs = forum_langues_demandees();
+    fout([
+        'sections' => forum_sections($db, $langs),
+        'recent'   => forum_recents($db, $langs, 5),
+    ]);
 }
 
 /**
@@ -144,6 +152,20 @@ function a_topics(PDO $db): void {
     if ($langs !== null) {
         $where[] = 't.lang IN (' . implode(',', array_fill(0, count($langs), '?')) . ')';
         foreach ($langs as $l) $args[] = $l;
+    }
+
+    // ── L'ancrage sur l'atlas ────────────────────────────
+    // « Les discussions sur Cohiba », depuis la fiche de la maison. La
+    // reference n'est PAS revalidee ici : on lit, et une reference
+    // inconnue rend simplement une liste vide. Elle l'est en revanche a
+    // l'ecriture (forum_ref_valide), qui est le moment ou l'on grave
+    // quelque chose.
+    $refType = trim($_GET['ref_type'] ?? '');
+    $refId   = trim($_GET['ref_id'] ?? '');
+    if ($refType !== '' && $refId !== '' && in_array($refType, ['lounge', 'brand', 'country'], true)) {
+        $where[] = 't.ref_type = ? AND t.ref_id = ?';
+        $args[]  = $refType;
+        $args[]  = mb_substr($refId, 0, 80);
     }
 
     $join = '';
@@ -298,7 +320,7 @@ function a_topic(PDO $db): void {
             'pinned'  => (bool)$t['is_pinned'],
             'solved_post_id' => $t['solved_post_id'] ? (int)$t['solved_post_id'] : null,
             'views'   => (int)$t['views'],
-            'ref'     => $t['ref_type'] ? ['type' => $t['ref_type'], 'id' => $t['ref_id']] : null,
+            'ref'     => forum_ref_fiche($db, $t['ref_type'], $t['ref_id']),
             'created_at' => $t['created_at'],
             'author'  => forum_auteur($t),
             'tags'    => $tags[$id] ?? [],
@@ -407,6 +429,39 @@ function forum_ref_valide(PDO $db, ?string $type, ?string $id): array {
     $q = $db->prepare("SELECT 1 FROM `$table` WHERE `$col` = ? LIMIT 1");
     $q->execute([$id]);
     return $q->fetchColumn() ? [$type, mb_substr($id, 0, 80)] : [null, null];
+}
+
+/**
+ * De quoi RENVOYER vers la fiche d'où le sujet est parti.
+ *
+ * L'identifiant seul n'y suffit pas : l'atlas ouvre un établissement
+ * par le PAYS qui le contient, et le front n'a aucun moyen de le
+ * deviner. Une requête ici, servie avec le sujet, plutôt qu'un
+ * aller-retour de plus au moment du clic.
+ *
+ * Le libellé accompagne pour la même raison : le sujet peut être lu par
+ * un lien partagé, sans être passé par la fiche.
+ */
+function forum_ref_fiche(PDO $db, ?string $type, ?string $id): ?array {
+    if (!$type || !$id) return null;
+    $out = ['type' => $type, 'id' => $id, 'label' => $id, 'country' => null];
+    try {
+        if ($type === 'lounge') {
+            $q = $db->prepare('SELECT name, country_id FROM lounges WHERE id = ? LIMIT 1');
+        } elseif ($type === 'brand') {
+            $q = $db->prepare('SELECT name, country_id FROM brands WHERE name = ? LIMIT 1');
+        } else {
+            $q = $db->prepare('SELECT name, id AS country_id FROM producer_countries WHERE id = ? LIMIT 1');
+        }
+        $q->execute([$id]);
+        if ($r = $q->fetch()) {
+            $out['label']   = $r['name'];
+            $out['country'] = $r['country_id'];
+        }
+    } catch (Throwable $e) {
+        // La fiche a pu disparaitre : le sujet reste lisible, sans renvoi.
+    }
+    return $out;
 }
 
 function a_post_create(PDO $db): void {

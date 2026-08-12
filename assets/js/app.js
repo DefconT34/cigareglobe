@@ -175,6 +175,16 @@ function _loadMyRatings(callback) {
  * alors que des etablissements sont deja a l'ecran. Sans cela, il
  * faudrait rouvrir chaque fiche pour voir la distance apparaitre.
  */
+// « En discuter » : les sujets accroches a cet etablissement. Delegue
+// au document comme la distance — les cartes sont reconstruites a
+// chaque ouverture de fiche, et un ecouteur pose sur chacune mourrait
+// avec elle.
+document.addEventListener('click', function (e) {
+  var d = e.target.closest ? e.target.closest('.lc-discuter') : null;
+  if (!d || typeof window.ouvrirForumRef !== 'function') return;
+  window.ouvrirForumRef('lounge', d.getAttribute('data-lid'), d.getAttribute('data-nom'));
+});
+
 document.addEventListener('click', function (e) {
   var b = e.target.closest ? e.target.closest('.lc-dist-btn') : null;
   if (!b || !navigator.geolocation) return;
@@ -376,9 +386,17 @@ function _renderLoungeCards(c, list, body, opts) {
           '<span style="font-size:9px;color:var(--text2);margin-left:3px">'+r.toFixed(1)+'</span></span>'
         : '';
     }
+    // « En discuter » ferme la serie : on a vu ou c'est, comment y
+    // aller et ce qu'il vaut ; reste a en parler. Le lien n'existe que
+    // pour un etablissement issu de la BASE — un identifiant est
+    // necessaire pour y accrocher un sujet.
+    var parler = loungeId
+      ? '<button type="button" class="lc-link lc-discuter" data-lid="' + E(loungeId) +
+        '" data-nom="' + E(l.name) + '">\u{1F4AC} ' + _escHtml(t('forum_discuter')) + '</button>'
+      : '';
     // L'itineraire suit la carte, la distance ferme la ligne : on va du
     // « ou est-ce » au « comment j'y vais » puis au « c'est loin ? ».
-    var links = [phone,maps,itin,web,insta,dist].filter(Boolean).join('');
+    var links = [phone,maps,itin,web,insta,dist,parler].filter(Boolean).join('');
     return (
       '<div class="lc-card">' +
         '<div class="lc-top">' +

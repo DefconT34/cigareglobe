@@ -414,6 +414,52 @@ function forum_sections(PDO $db, ?array $langs = null): array {
     ], $rows);
 }
 
+/**
+ * Les derniers sujets actifs, toutes rubriques confondues.
+ *
+ * Il fallait ouvrir les huit rubriques une à une pour savoir s'il
+ * s'était passé quelque chose. Sur un espace jeune, où il se dit une
+ * chose par jour, c'est huit clics pour apprendre qu'il ne s'est rien
+ * passé — et la raison pour laquelle on ne revient pas.
+ *
+ * Même filtre de langue que le reste : une activité qu'on ne peut pas
+ * lire n'est pas une activité. Les sujets épinglés n'ont AUCUN
+ * privilège ici, contrairement aux listes de rubrique : c'est un ordre
+ * chronologique, et un sujet d'amorce en tête pendant des mois
+ * donnerait l'impression d'un espace mort.
+ */
+function forum_recents(PDO $db, ?array $langs = null, int $limite = 5): array {
+    $limite = max(1, min(20, $limite));
+    $where  = ["t.status <> 'removed'"];
+    $args   = [];
+    if ($langs) {
+        $where[] = 't.lang IN (' . implode(',', array_fill(0, count($langs), '?')) . ')';
+        foreach ($langs as $l) $args[] = $l;
+    }
+    $stmt = $db->prepare(
+        "SELECT t.id, t.title, t.slug, t.lang, t.posts_count, t.last_post_at, t.created_at,
+                s.slug AS section, u.display_name, u.avatar_url, u.role
+         FROM forum_topics t
+         JOIN forum_sections s ON s.id = t.section_id
+         LEFT JOIN users u ON u.id = t.user_id
+         WHERE " . implode(' AND ', $where) . "
+         ORDER BY COALESCE(t.last_post_at, t.created_at) DESC
+         LIMIT $limite"
+    );
+    $stmt->execute($args);
+    return array_map(fn($r) => [
+        'id'      => (int)$r['id'],
+        'title'   => $r['title'],
+        'slug'    => $r['slug'],
+        'lang'    => $r['lang'],
+        'section' => $r['section'],
+        'posts'   => (int)$r['posts_count'],
+        'last_post_at' => $r['last_post_at'],
+        'created_at'   => $r['created_at'],
+        'author'  => forum_auteur($r),
+    ], $stmt->fetchAll());
+}
+
 
 // ════════════════════════════════════════════════════════
 // IMAGES DES MESSAGES

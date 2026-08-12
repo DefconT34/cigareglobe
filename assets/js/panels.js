@@ -480,6 +480,19 @@ function _renderBrand(name, cid) {
     limitEl.style.display = '';
   } else if (limitEl) { limitEl.style.display = 'none'; }
 
+  // ── En discuter ────────────────────────────────────────
+  // L'ancrage sur l'atlas : les discussions consacrees a cette maison,
+  // depuis sa fiche. C'est ce qu'aucun forum generique ne peut faire —
+  // ce site a l'atlas.
+  var disc = document.getElementById('bmDiscuter');
+  if (disc) {
+    disc.innerHTML = '<button type="button" class="bm-discuter">\u{1F4AC} ' +
+      _escHtml(t('forum_discuter')) + '</button>';
+    disc.querySelector('.bm-discuter').onclick = function () {
+      if (typeof window.ouvrirForumRef === 'function') window.ouvrirForumRef('brand', name, name);
+    };
+  }
+
   // ── La fiche de partage, dessinee pendant la lecture ───
   // navigator.share() exige que l'appel parte du geste de
   // l'utilisateur. Dessiner la fiche (cinq polices + un PNG de 230 Ko)

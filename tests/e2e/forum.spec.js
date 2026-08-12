@@ -123,6 +123,55 @@ test.describe('Communaute', () => {
     await expect(page.locator('.fo-titre')).toContainText('Hygrometrie', { timeout: 15_000 });
   });
 
+  // ── L'activite recente ────────────────────────────────
+  // Il fallait ouvrir les huit rubriques une a une pour savoir s'il
+  // s'etait passe quelque chose. Le raccourci mene au FIL, pas a la
+  // rubrique : c'est le message qu'on vient lire.
+  test('l\'activite recente ouvre directement le fil', async ({ page }) => {
+    await ouvrir(page, '/');
+    await ouvrirForum(page);
+
+    const recent = page.locator('.fo-recent');
+    await expect(recent).toBeVisible();
+    await expect(recent.locator('.fo-recent-l').first()).toContainText('Hygrometrie');
+
+    await recent.locator('.fo-recent-l').first().click();
+    await expect(page.locator('.fo-titre')).toContainText('Hygrometrie', { timeout: 15_000 });
+    await expect(page.locator('.fo-post')).toHaveCount(2);
+  });
+
+  // ── L'ancrage sur l'atlas ─────────────────────────────
+  // C'est ce qu'aucun forum generique ne peut faire : ce site a
+  // l'atlas. Le bouton part de la fiche de la maison et ouvre les
+  // discussions qui la concernent — pas la rubrique entiere.
+  test('« En discuter » ouvre les sujets de la maison', async ({ page }) => {
+    await ouvrir(page, '/?brand=Cohiba');
+    const bouton = page.locator('.bm-discuter');
+    await expect(bouton).toBeVisible({ timeout: 20_000 });
+
+    await bouton.click();
+    await expect(page.locator('#forum.open')).toBeVisible();
+    // Le sous-titre annonce ce dont on parle, pas une rubrique.
+    await expect(page.locator('.fo-sub')).toHaveText('Cohiba');
+    // Aucune discussion pour l'instant : c'est le message d'attente
+    // qu'on doit voir, pas la liste de toute la rubrique.
+    await expect(page.locator('.fo-topic')).toHaveCount(0);
+  });
+
+  test('un etablissement mene a ses discussions', async ({ page }) => {
+    // L'Argentine est le pays le plus garni du jeu de donnees
+    // (tests/fixtures/atlas.sql) : une fiche vide n'aurait aucune carte.
+    await ouvrir(page, '/?lounge=argentina');
+    await expect(page.locator('#lounge-panel')).toHaveClass(/open/, { timeout: 20_000 });
+    const bouton = page.locator('.lc-discuter').first();
+    await expect(bouton).toBeVisible({ timeout: 15_000 });
+
+    const nom = await page.locator('.lc-card').first().locator('.lc-name').textContent();
+    await bouton.click();
+    await expect(page.locator('#forum.open')).toBeVisible();
+    await expect(page.locator('.fo-sub')).toHaveText(nom.trim());
+  });
+
   // ── Le pictogramme de la rubrique « Les cigares » ──────
   // Il n'existe pas d'emoji de cigare : Unicode n'a que la cigarette,
   // qui est precisement l'objet que ce site ne traite pas. Celui-ci est

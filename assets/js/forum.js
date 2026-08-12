@@ -24,6 +24,7 @@
   var section  = null;         // slug de rubrique
   var topicId  = null;
   var etiquette = null;        // filtre par étiquette
+  var ancre    = null;         // { type, id, label } — ancrage sur l'atlas
   var langues  = null;         // null = « la mienne + anglais »
   var calque   = null;
   var donnees  = { sections: [] };
@@ -52,14 +53,6 @@
   }
 
   /**
-   * Langues demandées au serveur.
-   * Par défaut : celle de l'affichage PLUS l'anglais. Le site parle six
-   * langues et personne ne traduit les messages ; sans ce réglage, une
-   * rubrique serait un empilement où cinq lecteurs sur six ne
-   * comprennent rien. L'anglais s'y ajoute parce que c'est la langue où
-   * les aficionados se rejoignent le plus souvent.
-   */
-  /**
    * Les langues que le site sert, dans l'ordre.
    *
    * Réglées depuis l'administration (migration 019) et posées par
@@ -83,6 +76,14 @@
     }).join('');
   }
 
+  /**
+   * Langues demandées au serveur.
+   * Par défaut : celle de l'affichage PLUS l'anglais. Le site parle six
+   * langues et personne ne traduit les messages ; sans ce réglage, une
+   * rubrique serait un empilement où cinq lecteurs sur six ne
+   * comprennent rien. L'anglais s'y ajoute parce que c'est la langue où
+   * les aficionados se rejoignent le plus souvent.
+   */
   function paramLangues() {
     if (langues === 'all') return 'all';
     var moi = window.currentLang || 'fr';
@@ -150,6 +151,21 @@
     '</span>';
   }
 
+  /**
+   * La rubrique d'un sujet ouvert depuis l'atlas.
+   *
+   * Le formulaire de création prend sa rubrique de la vue ; ouvert
+   * depuis une fiche, il n'en a pas. Plutôt qu'ajouter un choix de
+   * rubrique à un formulaire qui n'en avait pas besoin — et le faire
+   * porter à quelqu'un qui vient juste de cliquer « En discuter » —, on
+   * la déduit de ce dont on parle. Le sujet reste déplaçable ensuite,
+   * c'est le rôle de la modération.
+   */
+  function rubriqueDeLAncre(type) {
+    if (type === 'brand') return 'maisons';
+    return 'etablissements';        // lounge et country
+  }
+
   function auteurNom(a) {
     // Un compte supprimé laisse ses messages : le fil reste lisible.
     return (a && a.name) ? esc(a.name) : t('forum_supprime');
@@ -211,13 +227,40 @@
     corps().innerHTML = '<div class="fo-load">' + t('loading_spinner') + '</div>';
   }
 
+  /**
+   * L'activité récente, en tête des rubriques.
+   *
+   * Il fallait ouvrir les huit rubriques une à une pour savoir s'il
+   * s'était passé quelque chose. Sur un espace jeune, c'est huit clics
+   * pour apprendre qu'il ne s'est rien passé.
+   *
+   * Rien du tout quand la liste est vide : un bloc « Activité récente »
+   * suivi du vide annonce un espace mort mieux que son absence.
+   */
+  function blocRecent(l) {
+    if (!l || !l.length) return '';
+    return '<div class="fo-recent">' +
+      '<div class="fo-recent-t">' + esc(t('forum_recent')) + '</div>' +
+      l.map(function (x) {
+        var drapeau = (x.lang && x.lang !== (window.currentLang || 'fr'))
+          ? '<span class="fo-lang-tag">' + esc(x.lang.toUpperCase()) + '</span>' : '';
+        return '<button class="fo-recent-l" data-sujet="' + x.id + '">' +
+          '<span class="fo-recent-ti">' + esc(x.title) + drapeau + '</span>' +
+          '<span class="fo-recent-m">' + esc(t('forum_sec_' + x.section)) +
+            ' · ' + esc(dateCourte(x.last_post_at || x.created_at)) + '</span>' +
+        '</button>';
+      }).join('') +
+    '</div>';
+  }
+
   // ── Vue 1 : les rubriques ──────────────────────────────
   function rendreSections() {
     chargement();
     appel('sections&lang=' + encodeURIComponent(paramLangues())).then(function (r) {
       donnees.sections = (r.data && r.data.sections) || [];
       calque.querySelector('.fo-sub').textContent = t('forum_sous_titre');
-      corps().innerHTML = '<div class="fo-secs">' + donnees.sections.map(function (s) {
+      corps().innerHTML = blocRecent(r.data && r.data.recent) +
+        '<div class="fo-secs">' + donnees.sections.map(function (s) {
         return '<button class="fo-sec" data-sec="' + esc(s.slug) + '">' +
           iconeRubrique(s.slug, s.icon) +
           '<span class="fo-sec-txt">' +
@@ -231,6 +274,9 @@
       corps().querySelectorAll('.fo-sec').forEach(function (b) {
         b.onclick = function () { aller(b.dataset.sec, null); };
       });
+      corps().querySelectorAll('.fo-recent-l').forEach(function (b) {
+        b.onclick = function () { aller(null, parseInt(b.dataset.sujet, 10)); };
+      });
       pied();
     });
   }
@@ -242,12 +288,16 @@
     var q = 'topics&lang=' + encodeURIComponent(paramLangues());
     if (section)   q += '&section=' + encodeURIComponent(section);
     if (etiquette) q += '&tag=' + encodeURIComponent(etiquette);
+    if (ancre) {
+      q += '&ref_type=' + encodeURIComponent(ancre.type) +
+           '&ref_id='   + encodeURIComponent(ancre.id);
+    }
 
     appel(q).then(function (r) {
       var l = (r.data && r.data.topics) || [];
-      calque.querySelector('.fo-sub').textContent = etiquette
-        ? '#' + etiquette
-        : t('forum_sec_' + section);
+      calque.querySelector('.fo-sub').textContent = ancre
+        ? ancre.label
+        : (etiquette ? '#' + etiquette : t('forum_sec_' + section));
 
       var tete =
         '<div class="fo-bar">' +
@@ -460,6 +510,7 @@
         (t0.tags.length ? '<div class="fo-tags">' + t0.tags.map(function (g) {
           return '<button class="fo-tag" data-tag="' + esc(g.slug) + '">#' + esc(g.label) + '</button>';
         }).join('') + '</div>' : '') +
+        lienAtlas(t0.ref) +
         (r.data.event ? blocEvt(r.data.event) : '') +
         '<div class="fo-err" hidden></div>' +
         '<div class="fo-posts">' + posts.map(function (p) { return blocMessage(p, t0); }).join('') + '</div>' +
@@ -469,12 +520,44 @@
       corps().querySelectorAll('.fo-tag[data-tag]').forEach(function (b) {
         b.onclick = function () { etiquette = b.dataset.tag; aller(null, null, true); };
       });
+      brancherLienAtlas(t0.ref);
       brancherMessages(t0);
       brancherVignettes(corps());
       if (r.data.event) brancherEvt(r.data.event);
       if (!t0.locked) brancherReponse(t0);
       pied();
     });
+  }
+
+  /**
+   * Le renvoi vers la fiche de l'atlas, quand le sujet y est ancré.
+   *
+   * Le lien va dans les DEUX sens : la fiche mène à la discussion,
+   * la discussion ramène à la fiche. Un ancrage à sens unique laisse
+   * une moitié des lecteurs — ceux qui arrivent par un lien partagé —
+   * sans le contexte dont on parle.
+   */
+  function lienAtlas(ref) {
+    if (!ref || !ref.type || !ref.id) return '';
+    return '<button class="fo-atlas" data-t="' + esc(ref.type) + '" data-i="' + esc(ref.id) + '">' +
+             '<span aria-hidden="true">↗</span> ' + esc(t('forum_voir_atlas')) +
+           '</button>';
+  }
+
+  function brancherLienAtlas(ref) {
+    var b = corps().querySelector('.fo-atlas');
+    if (!b || !ref) return;
+    b.onclick = function () {
+      // Fermer d'abord : le calque couvre le globe, et la fiche
+      // s'ouvrirait derrière lui.
+      fermer();
+      if (typeof window.ouvrirCibleAtlas !== 'function') return;
+      // Un établissement s'ouvre par le PAYS qui le contient — c'est
+      // ainsi que l'atlas est bâti. Le serveur sert donc le pays avec
+      // la référence.
+      if (ref.type === 'lounge') window.ouvrirCibleAtlas('lounge', ref.country, 0);
+      else                       window.ouvrirCibleAtlas(ref.type, ref.id, 0);
+    };
   }
 
   function blocMessage(p, t0) {
@@ -972,7 +1055,9 @@
     f.querySelector('.fo-envoyer').onclick = function () {
       errEl.hidden = true;
       appel('topic_create', 'POST', {
-        section: section,
+        section:  section || (ancre ? rubriqueDeLAncre(ancre.type) : ''),
+        ref_type: ancre ? ancre.type : null,
+        ref_id:   ancre ? ancre.id   : null,
         title:   f.querySelector('.fo-f-titre').value.trim(),
         body:    f.querySelector('.fo-f-corps').value.trim(),
         lang:    f.querySelector('.fo-f-lang').value,
@@ -1004,9 +1089,12 @@
       });
     }
     if (!garderEtiquette && sec !== null) etiquette = null;
+    // Revenir aux rubriques quitte l'ancrage : « les discussions sur
+    // Cohiba » n'a de sens que tant qu'on regarde Cohiba.
+    if (sec === null && !sujet) ancre = null;
     section = sec;
     topicId = sujet || null;
-    vue = topicId ? 'topic' : (section || etiquette ? 'topics' : 'sections');
+    vue = topicId ? 'topic' : (section || etiquette || ancre ? 'topics' : 'sections');
     if (!topicId) {
       try {
         history.replaceState({}, '', location.pathname + (section ? '?forum=' + section : '?forum=1'));
@@ -1021,7 +1109,7 @@
     // mais un agenda : le tri utile n'y est pas la dernière réponse,
     // mais la date qui vient. Le filtre par étiquette, lui, retombe sur
     // la liste ordinaire — il traverse toutes les rubriques.
-    if (vue === 'topics') return (sectionEstAgenda() && !etiquette) ? rendreAgenda() : rendreTopics();
+    if (vue === 'topics') return (sectionEstAgenda() && !etiquette && !ancre) ? rendreAgenda() : rendreTopics();
     rendreSections();
   }
 
@@ -1052,6 +1140,30 @@
   }
 
   window.ouvrirForum = ouvrir;
+
+  /**
+   * « En discuter » depuis une fiche de l'atlas.
+   *
+   * C'est ce qu'aucun forum générique ne peut faire : ce site a l'atlas,
+   * et une discussion sur un établissement a sa place à côté de sa
+   * fiche plutôt que perdue dans une rubrique de deux cents sujets.
+   *
+   * Le libellé vient de la fiche : le serveur rend l'identifiant, pas le
+   * nom d'affichage, et aller le rechercher demanderait une requête de
+   * plus pour une information déjà à l'écran.
+   */
+  window.ouvrirForumRef = function (type, id, label) {
+    if (!type || !id) return;
+    ancre     = { type: type, id: String(id), label: label || String(id) };
+    etiquette = null;
+    section   = null;
+    topicId   = null;
+    vue       = 'topics';
+    if (!calque) construire();
+    calque.classList.add('open');
+    document.body.classList.add('forum-open');
+    rendre();
+  };
   // Exposée pour le bouton Retour du navigateur (deeplinks.js) : le
   // calque se superpose à tout, c'est donc lui qui se ferme en premier.
   window.fermerForum = fermer;

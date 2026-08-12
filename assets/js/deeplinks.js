@@ -171,6 +171,12 @@ window.addEventListener('DOMContentLoaded', function() {
   suivrePanneau('panel',        'market',  function(){ return selMarket       ? selMarket.id       : null; });
 });
 
+// Ouvrir une fiche de l'atlas depuis ailleurs — le calque communauté
+// s'en sert pour le renvoi « Voir dans l'atlas ». C'est la même
+// mécanique que les liens profonds, et il n'y a aucune raison d'en
+// écrire une seconde.
+window.ouvrirCibleAtlas = ouvrirCible;
+
 // ── Retour arrière navigateur ─────────────────────────────
 // Il rechargeait la page entière — 31 fichiers, le globe qui se
 // reconstruit, la position perdue — pour revenir à un état déjà présent

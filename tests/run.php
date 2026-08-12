@@ -463,6 +463,30 @@ eq('forum : deux langues, deux sujets comptes', 2, $compteur($r['json']['section
 $r = http('GET', $base . '/backend/forum.php?action=sections', ['jar' => $anon]);
 eq('forum : sans filtre, tout est compte', 2, $compteur($r['json']['sections'], 'conservation'));
 
+// ── Activite recente ─────────────────────────────────────
+// Elle voyage dans la MEME reponse que les rubriques : c'est le premier
+// ecran de l'espace, et deux requetes pour un ecran se paient chez un
+// hebergeur mutualise qui n'en traite qu'une a la fois.
+check('forum : l\'activite recente accompagne les rubriques',
+      isset($r['json']['recent']) && is_array($r['json']['recent']));
+check('forum : elle est bornee', count($r['json']['recent']) <= 5);
+
+// Le sujet le plus recemment actif vient en tete. Le sujet francais a
+// recu la derniere reponse : c'est lui qu'on doit lire en premier.
+$dernier = $r['json']['recent'][0] ?? [];
+eq('forum : le plus recent est en tete', $t_fr, (int)($dernier['id'] ?? 0));
+
+// MEME filtre de langue que le reste : une activite qu'on ne peut pas
+// lire n'est pas une activite.
+$r = http('GET', $base . '/backend/forum.php?action=sections&lang=en', ['jar' => $anon]);
+$langs = array_column($r['json']['recent'], 'lang');
+eq('forum : l\'activite recente suit le filtre de langue', ['en'], array_values(array_unique($langs)));
+
+// CONTRE-EPREUVE : sans filtre, le sujet francais y est de nouveau.
+$r = http('GET', $base . '/backend/forum.php?action=sections&lang=all', ['jar' => $anon]);
+check('forum : « toutes les langues » les ramene',
+      in_array('fr', array_column($r['json']['recent'], 'lang'), true));
+
 // Une langue inconnue est ignoree en silence : un parametre bricole ne
 // doit ni faire echouer la page, ni servir de levier d'injection.
 $r = http('GET', $base . '/backend/forum.php?action=topics&section=conservation&lang=klingon', ['jar' => $anon]);
@@ -1036,22 +1060,68 @@ eq('production : photos.php respecte aussi la liste',
    '', entete($r['headers'], 'Access-Control-Allow-Origin'));
 
 // ════════════════════════════════════════════════════════
+section('Ancrage sur l\'atlas');
+
+// Un sujet peut etre attache a un etablissement, une maison ou un pays.
+// C'est ce qu'aucun forum generique ne peut faire : ce site a l'atlas.
+//
+// Ce bloc vient APRES les plafonds du forum, et non au milieu : il
+// ouvre deux sujets de plus au nom d'Alice, ce qui la faisait passer le
+// seuil des cinq messages — et le test « pas de lien externe pour un
+// compte neuf » ne mesurait plus rien.
+$vieillirF = function (): void {
+    test_pdo()->exec("UPDATE forum_posts  SET created_at = DATE_SUB(created_at, INTERVAL 2 DAY)");
+    test_pdo()->exec("UPDATE forum_topics SET created_at = DATE_SUB(created_at, INTERVAL 2 DAY)");
+};
+$vieillirF();
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
+    'section'  => 'etablissements',
+    'title'    => 'Une soiree au Lounge de test',
+    'body'     => 'Quelqu\'un connait leur cave a cigares ? J\'y passe le mois prochain.',
+    'lang'     => 'fr',
+    'ref_type' => 'lounge',
+    'ref_id'   => '1',
+]);
+eq('ancrage : sujet attache a un etablissement', 201, $r['status']);
+$t_ancre = (int)$r['json']['id'];
+
+$r = http('GET', $base . "/backend/forum.php?action=topic&id=$t_ancre", ['jar' => $anon]);
+eq('ancrage : le sujet renvoie vers sa fiche', 'lounge', $r['json']['topic']['ref']['type'] ?? '');
+// L'identifiant seul ne suffit pas : l'atlas ouvre un etablissement par
+// le PAYS qui le contient, et le front n'a aucun moyen de le deviner.
+eq('ancrage : le pays accompagne la reference', 'testland', $r['json']['topic']['ref']['country'] ?? '');
+eq('ancrage : le libelle aussi', 'Lounge de test', $r['json']['topic']['ref']['label'] ?? '');
+
+$r = http('GET', $base . '/backend/forum.php?action=topics&ref_type=lounge&ref_id=1&lang=all', ['jar' => $anon]);
+eq('ancrage : la fiche retrouve ses discussions', 1, count($r['json']['topics']));
+eq('ancrage : et c\'est le bon sujet', $t_ancre, (int)$r['json']['topics'][0]['id']);
+
+// CONTRE-EPREUVE : une autre reference ne rend pas ce sujet.
+$r = http('GET', $base . '/backend/forum.php?action=topics&ref_type=lounge&ref_id=999&lang=all', ['jar' => $anon]);
+eq('ancrage : une fiche sans discussion en rend zero', 0, count($r['json']['topics']));
+
+// Une reference INVENTEE n'est pas gravee : on lit sur ce qui existe.
+$vieillirF();
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
+    'section'  => 'etablissements',
+    'title'    => 'Un sujet a la reference fantaisiste',
+    'body'     => 'La reference envoyee ne designe aucun etablissement connu.',
+    'lang'     => 'fr',
+    'ref_type' => 'lounge',
+    'ref_id'   => '424242',
+]);
+eq('ancrage : le sujet passe quand meme', 201, $r['status']);
+$r = http('GET', $base . '/backend/forum.php?action=topic&id=' . (int)$r['json']['id'], ['jar' => $anon]);
+eq('ancrage : mais la reference inconnue est rejetee', null, $r['json']['topic']['ref']);
+
+// ════════════════════════════════════════════════════════
 section('Langues servies');
 
 // Le reglage (migration 019) decide de ce que le site PROPOSE. Il ne
 // decide de rien de ce qui est deja ecrit : c'est la moitie du test.
 
-// Alice a deja ouvert ses trois sujets du jour dans les sections
-// precedentes : $recule() ne deplace que les MESSAGES, et le plafond
-// de sujets compte les sujets. On vieillit les deux d'un jour plein,
-// sans quoi ce qui suit mesurerait le plafond au lieu des langues.
-$vieillir = function (): void {
-    test_pdo()->exec("UPDATE forum_posts  SET created_at = DATE_SUB(created_at, INTERVAL 2 DAY)");
-    test_pdo()->exec("UPDATE forum_topics SET created_at = DATE_SUB(created_at, INTERVAL 2 DAY)");
-};
-
 // Un sujet en allemand, ecrit pendant que la langue est ouverte.
-$vieillir();
+$vieillirF();
 $r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
     'section' => 'conservation',
     'title'   => 'Lagerung im Humidor',
@@ -1107,7 +1177,7 @@ check('langues : le sujet allemand reste lisible apres la fermeture', $de !== nu
 
 // Mais on n'ecrit plus dedans : la langue demandee n'est plus servie,
 // on retombe sur celle du compte.
-$vieillir();
+$vieillirF();
 $r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
     'section' => 'conservation',
     'title'   => 'Noch ein Versuch auf Deutsch',
