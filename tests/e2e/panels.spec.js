@@ -26,6 +26,99 @@ test.describe('Panneaux', () => {
     await expect(page.locator('#panel')).not.toHaveClass(/open/);
   });
 
+
+  // ── Le bouton Retour du navigateur ────────────────────
+  // Il rechargeait la page ENTIERE pour revenir a un etat deja present
+  // en memoire, et ne faisait rien du tout a la derniere etape : l'URL
+  // redevenait « / » pendant que le panneau restait ouvert. Or fermer
+  // un panneau par le bouton Retour est le premier reflexe sur
+  // telephone.
+  //
+  // La preuve du non-rechargement est un TEMOIN pose sur window : il ne
+  // survit pas a un chargement de document. Verifier seulement l'URL ne
+  // dirait rien — elle est correcte dans les deux cas.
+  test('le bouton Retour rouvre le panneau precedent sans recharger', async ({ page }) => {
+    await ouvrir(page, '/');
+    await page.evaluate(() => { window.__temoin = 'vivant'; });
+
+    // Deux pays a la suite : l'adresse doit suivre le panneau ouvert.
+    await page.evaluate(() => {
+      const c = COUNTRIES.find((x) => x.id === 'cuba');
+      selCountry = c; openPanel(c);
+    });
+    await expect.poll(() => page.url(), { timeout: 10_000 }).toContain('country=cuba');
+    await page.evaluate(() => {
+      const c = COUNTRIES.find((x) => x.id !== 'cuba');
+      selCountry = c; openPanel(c);
+    });
+    await expect.poll(() => page.url(), { timeout: 10_000 }).not.toContain('country=cuba');
+
+    await page.goBack();
+    await expect.poll(() => page.url(), { timeout: 10_000 }).toContain('country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/);
+    await expect(page.locator('#panel')).toContainText('Cuba');
+    expect(await page.evaluate(() => window.__temoin),
+           'la page a ete rechargee').toBe('vivant');
+
+    // Derniere etape : plus d'etat, donc plus de panneau.
+    await page.goBack();
+    await expect(page.locator('#panel')).not.toHaveClass(/open/, { timeout: 10_000 });
+    expect(await page.evaluate(() => window.__temoin)).toBe('vivant');
+  });
+
+  // L'entree par laquelle on ARRIVE n'a pas d'etat : le navigateur ne
+  // pose que ce qu'on lui donne. Sans marquage au demarrage, revenir
+  // sur un lien partage se lisait comme « aucun panneau ».
+  test('revenir sur un lien partage retrouve sa cible', async ({ page }) => {
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+    await page.evaluate(() => {
+      const c = COUNTRIES.find((x) => x.id !== 'cuba');
+      selCountry = c; openPanel(c);
+    });
+    await expect.poll(() => page.url(), { timeout: 10_000 }).not.toContain('country=cuba');
+
+    await page.goBack();
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 10_000 });
+    await expect(page.locator('#panel')).toContainText('Cuba');
+  });
+
+  // La pastille de partage n'a JAMAIS ete posee : son ancrage visait
+  // « .panel-head », qui n'existe pas dans ce balisage. Elle etait
+  // creee puis jetee, et la regle CSS qui la stylait a coups de
+  // !important ne s'appliquait a rien.
+  test('la pastille de partage existe et vient de la feuille de style', async ({ page }) => {
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+    const pastille = page.locator('#panel .share-btn');
+    await expect(pastille).toBeVisible();
+
+    const style = await pastille.evaluate((el) => ({
+      enLigne: el.getAttribute('style') || '',
+      rond: getComputedStyle(el).borderRadius,
+      largeur: el.getBoundingClientRect().width,
+    }));
+    expect(style.enLigne, 'le style doit venir de la feuille, pas du JS').toBe('');
+    expect(style.rond).toBe('50%');
+    expect(style.largeur).toBeGreaterThanOrEqual(24);
+  });
+
+  // La langue vit dans « ?lang=xx » quand la reecriture d'URL n'est pas
+  // active — c'est le cas du serveur de test. Ecraser la requete par
+  // « ?country=… » la ramenait au francais au premier panneau ouvert.
+  test('ouvrir un panneau ne perd pas la langue', async ({ page }) => {
+    await ouvrir(page, '/?lang=es');
+    await page.evaluate(() => {
+      const c = COUNTRIES.find((x) => x.id === 'cuba');
+      selCountry = c; openPanel(c);
+    });
+    await expect.poll(() => page.url(), { timeout: 10_000 }).toContain('country=cuba');
+    expect(page.url()).toContain('lang=es');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+  });
+
+
   // ── Regression ───────────────────────────────────────
   // Les pays producteurs disposaient de deux panneaux distincts qui
   // s'ouvraient l'un par-dessus l'autre, cote a cote a droite.

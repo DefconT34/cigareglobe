@@ -22,6 +22,39 @@ html, body {
 
 /* ── GLOBE ── */
 #globe-wrap { position:fixed; top:0;right:0;bottom:0;left:0; display:flex; align-items:center; justify-content:center; z-index:2; }
+
+/* ── Indice du premier écran (indice.js) ──────────────────
+   pointer-events:none n'est pas un détail de style : l'indice se pose
+   au-dessus du globe, et il conseille précisément de cliquer dessus. */
+#globe-indice {
+  position:absolute; left:50%; bottom:34px; transform:translate(-50%, 8px);
+  pointer-events:none; z-index:6;
+  display:flex; align-items:center; gap:8px;
+  padding:8px 16px; border-radius:24px;
+  background:var(--panel-bg); border:1px solid var(--gold-p);
+  box-shadow:0 6px 22px rgba(0,0,0,.22);
+  opacity:0; transition:opacity .45s ease, transform .45s ease;
+}
+#globe-indice.vu { opacity:1; transform:translate(-50%, 0); }
+#globe-indice .gi-main {
+  font-family:'Cinzel',serif; font-size:9px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--gold); white-space:nowrap;
+}
+#globe-indice::before {
+  content:'○'; font-size:11px; color:var(--gold); line-height:1;
+  animation:gi-pulse 2.4s ease-in-out infinite;
+}
+@keyframes gi-pulse { 0%,100% { opacity:.35; } 50% { opacity:1; } }
+/* Le battement est un agrément, pas l'information : qui demande moins
+   d'animation garde l'indice, immobile. */
+@media (prefers-reduced-motion: reduce) {
+  #globe-indice { transition:none; }
+  #globe-indice::before { animation:none; opacity:.8; }
+}
+@media (max-width:520px) {
+  #globe-indice { bottom:16px; padding:7px 13px; }
+  #globe-indice .gi-main { font-size:8px; letter-spacing:.14em; }
+}
 #globe { cursor:grab; display:block; touch-action:none; }
 #globe:active { cursor:grabbing; }
 
@@ -615,9 +648,20 @@ body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 1
 .lc-link:hover { border-color:var(--gold); color:var(--gold); }
 .lc-stars { display:inline-flex; align-items:center; }
 
-/* ── Bouton partage ───────────────────────────────────── */
-.share-btn { transition:color .15s !important; }
-.share-btn:hover { color:var(--gold) !important; }
+/* ── Bouton partage ───────────────────────────────────────
+   Il était habillé en ligne dans deeplinks.js, et ces deux règles
+   devaient lui répondre à coups de !important. Le style vit ici, avec
+   celui de la croix dont il est le voisin immédiat : même taille, même
+   forme, décalé d'une largeur de bouton. */
+.share-btn {
+  position:absolute; top:8px; right:44px; width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.85); border:none; color:#333;
+  font-size:14px; border-radius:50%; cursor:pointer; z-index:10;
+  transition:background .2s, color .2s;
+}
+.share-btn:hover { background:#333; color:#fff; }
+.share-btn.copie { background:var(--grn); color:#fff; }
 
 /* ── Système de notation ─────────────────────────────── */
 .lc-rating-section {

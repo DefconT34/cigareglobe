@@ -1052,6 +1052,9 @@
   }
 
   window.ouvrirForum = ouvrir;
+  // Exposée pour le bouton Retour du navigateur (deeplinks.js) : le
+  // calque se superpose à tout, c'est donc lui qui se ferme en premier.
+  window.fermerForum = fermer;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', demarrer);

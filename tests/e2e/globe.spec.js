@@ -301,4 +301,45 @@ test.describe('Globe', () => {
     await page.locator('#rotate-btn').click();
     expect(await mesure(), 'la rotation ne repart pas').toBeGreaterThan(1.5);
   });
+
+  // ── L'indice du premier ecran ─────────────────────────
+  // Il ne s'affiche qu'une fois, s'efface au premier geste, et
+  // n'intercepte aucun clic — un indice qui empeche de faire ce qu'il
+  // conseille serait une farce. Les trois sont verifiees, la derniere
+  // en interrogeant le point : c'est le seul moyen de distinguer
+  // « transparent aux clics » de « pose ailleurs ».
+  test('l\'indice dit quoi faire, une seule fois, sans gener', async ({ page }) => {
+    await ouvrir(page, '/');
+    const indice = page.locator('#globe-indice');
+    await expect(indice).toBeVisible({ timeout: 15_000 });
+    await expect(indice).toHaveText(/globe/i);
+
+    const dessous = await indice.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      const sous = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return sous ? (sous.id || sous.tagName) : null;
+    });
+    expect(dessous, 'l\'indice avale les clics').not.toBe('globe-indice');
+
+    // Le premier geste l'efface, et le poste s'en souvient. Le point
+    // vise le bas du canvas : l'en-tete couvre son coin superieur.
+    await page.locator('#globe').click({ position: { x: 40, y: 600 } });
+    await expect(indice).toHaveCount(0, { timeout: 5_000 });
+    expect(await page.evaluate(() => localStorage.getItem('cg_indice_globe'))).toBe('vu');
+
+    // CONTRE-EPREUVE : au retour, il ne revient pas.
+    await page.reload();
+    await expect(page.locator('#globe')).toBeVisible();
+    await page.waitForTimeout(1500);
+    await expect(page.locator('#globe-indice')).toHaveCount(0);
+  });
+
+  // Arriver par un lien partage ouvre deja une fiche : expliquer le
+  // globe a ce moment-la, c'est expliquer une porte a quelqu'un qui est
+  // deja entre.
+  test('l\'indice se tait sur un lien partage', async ({ page }) => {
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+    await expect(page.locator('#globe-indice')).toHaveCount(0);
+  });
 });
