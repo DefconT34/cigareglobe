@@ -42,4 +42,47 @@ foreach ($LANGUES_PLAN as $l) {
     echo '    <priority>' . ($l === 'fr' ? '1.0' : '0.9') . "</priority>\n";
     echo "  </url>\n";
 }
+// ── Les discussions ──────────────────────────────────────
+// Elles sont le seul contenu qui grandit sans qu'on l'écrive, et elles
+// vivaient dans un calque JavaScript : le plan de site n'annonçait que
+// six pages d'accueil pour un atlas et un espace communautaire entiers.
+// index.php sert désormais leurs balises (?sujet=…) ; restait à dire
+// aux moteurs qu'elles existent.
+//
+// AUCUN xhtml:link ici : un sujet est écrit dans une langue, par une
+// personne, et le serveur ne traduit pas. Lui déclarer six alternatives
+// annoncerait cinq traductions qui n'existent pas.
+//
+// `lastmod` vient de la dernière réponse : un fil qui vit se réindexe,
+// un fil clos ne coûte rien.
+try {
+    $db = getDB();
+    $q = $db->query(
+        "SELECT t.id, t.lang, COALESCE(t.last_post_at, t.created_at) AS maj
+         FROM forum_topics t
+         WHERE t.status <> 'removed'
+         ORDER BY maj DESC
+         LIMIT 5000"
+    );
+    foreach ($q->fetchAll(PDO::FETCH_ASSOC) as $t) {
+        // Un sujet écrit dans une langue fermée n'est plus servi dans
+        // cette langue : il sort du plan plutôt que d'y figurer sous une
+        // adresse qui répondrait en français.
+        if (!in_array($t['lang'], $LANGUES_PLAN, true)) continue;
+        $loc = $url($t['lang']) . '?sujet=' . (int)$t['id'];
+        echo "  <url>\n";
+        echo '    <loc>' . htmlspecialchars($loc, ENT_XML1) . "</loc>\n";
+        if ($t['maj']) {
+            echo '    <lastmod>' . htmlspecialchars(
+                date('Y-m-d', strtotime((string)$t['maj'])), ENT_XML1) . "</lastmod>\n";
+        }
+        echo "    <changefreq>weekly</changefreq>\n";
+        echo "    <priority>0.5</priority>\n";
+        echo "  </url>\n";
+    }
+} catch (Throwable $e) {
+    // Base injoignable : le plan garde ses pages d'accueil. Un plan
+    // amputé vaut mieux qu'un XML tronqué au milieu d'une balise.
+}
+
 echo "</urlset>\n";

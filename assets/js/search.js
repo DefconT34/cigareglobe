@@ -186,6 +186,72 @@ function renderResults(results, container) {
   });
 }
 
+// -- Les discussions ---------------------------------------
+// Le reste de l'index vit dans le navigateur : pays, marches,
+// etablissements et marques sont deja charges. Les discussions, non —
+// elles changent toutes les heures et se comptent en milliers. Elles
+// arrivent donc du serveur, APRES les resultats locaux, et se posent en
+// dessous : la recherche ne doit pas attendre le reseau pour repondre
+// ce qu'elle sait deja.
+var _forumJeton = 0;
+
+function chercherDiscussions(q, container) {
+  var jeton = ++_forumJeton;
+  var moi   = window.currentLang || 'fr';
+  var lang  = moi === 'en' ? 'en' : moi + ',en';
+  var base  = (window.CG_BACKEND_BASE || '/backend') + '/forum.php';
+
+  fetch(base + '?action=search&q=' + encodeURIComponent(q) + '&lang=' + encodeURIComponent(lang),
+        { credentials: 'include' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      // Une reponse en retard ne doit pas ecraser une frappe plus
+      // recente : le reseau ne rend pas les reponses dans l'ordre.
+      if (jeton !== _forumJeton || q !== _currentQuery) return;
+      afficherDiscussions((d && d.topics) || [], container);
+    })
+    .catch(function () { /* la recherche vaut sans le reseau */ });
+}
+
+function afficherDiscussions(topics, container) {
+  var vieux = container.querySelector('.sr-forum');
+  if (vieux) vieux.remove();
+  if (!topics.length) return;
+
+  var bloc = document.createElement('div');
+  bloc.className = 'sr-forum';
+  bloc.innerHTML = '<div class="sr-groupe">' + _esc(t('forum_titre')) + '</div>' +
+    topics.map(function (x) {
+      return '<div class="sr-item" data-sujet="' + x.id + '" role="option" tabindex="0">' +
+        '<span class="sr-flag">\u{1F4AC}</span>' +
+        '<div class="sr-info">' +
+          '<div class="sr-name">' + _highlight(_esc(x.title)) + '</div>' +
+          '<div class="sr-sub">' + _esc(t('forum_sec_' + x.section)) + '</div>' +
+        '</div>' +
+        '<span class="sr-type">' + _esc(t('forum_titre')) + '</span>' +
+      '</div>';
+    }).join('');
+  container.appendChild(bloc);
+
+  bloc.querySelectorAll('.sr-item').forEach(function (el) {
+    function ouvrirLe() {
+      closeSearch();
+      if (typeof window.ouvrirForum === 'function') {
+        window.ouvrirForum(null, parseInt(el.dataset.sujet, 10));
+      }
+    }
+    el.addEventListener('click', ouvrirLe);
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter') ouvrirLe(); });
+  });
+}
+
+/** Les titres viennent de la base : ils passent par l'echappement. */
+function _esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
 // ── Surlignage du terme cherché ───────────────────────────
 var _currentQuery = '';
 function _highlight(text) {
@@ -300,6 +366,15 @@ window.addEventListener('DOMContentLoaded', function() {
       transition:background .12s;
     }
     .sr-item:hover, .sr-item:focus { background:var(--bg3); outline:none; }
+    /* Les discussions arrivent du serveur : elles se posent sous les
+       resultats locaux, derriere un intitule qui dit d'ou elles
+       viennent — un resultat qui apparait apres coup sans etiquette
+       donne l'impression que la liste bouge toute seule. */
+    .sr-groupe {
+      padding:10px 16px 5px; font-family:'Cinzel',serif; font-size:8px;
+      letter-spacing:.24em; text-transform:uppercase; color:var(--gold);
+      border-top:1px solid var(--panel-border);
+    }
     .sr-flag { font-size:20px; flex-shrink:0; width:28px; text-align:center; }
     .sr-info { flex:1; min-width:0; }
     .sr-name { font-family:'Playfair Display',serif; font-size:13px; color:var(--text);
@@ -369,6 +444,9 @@ window.addEventListener('DOMContentLoaded', function() {
     _debounceTimer = setTimeout(function() {
       var res = search(_currentQuery);
       renderResults(res, results);
+      // Les discussions s'ajoutent quand le serveur repond ; la
+      // recherche locale a deja rendu la main.
+      if (_currentQuery.length >= 2) chercherDiscussions(_currentQuery, results);
     }, 120);
   });
 

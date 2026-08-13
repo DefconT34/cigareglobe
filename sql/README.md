@@ -1,8 +1,9 @@
 # Base de données CigarOdyssey
 
-Base MySQL (`utf8mb4` / `utf8mb4_unicode_ci`). 19 tables : atlas
+Base MySQL (`utf8mb4` / `utf8mb4_unicode_ci`). **33 tables** : atlas
 (pays producteurs, marchés, lounges, marques, photos, Habanos…) +
-espace client (users, email_tokens, auth_attempts, reviews, favorites).
+espace client (users, email_tokens, auth_attempts, reviews, favorites) +
+espace communautaire (`forum_*`) + réglages du site (`site_languages`).
 
 ## Fichiers
 
@@ -26,6 +27,9 @@ espace client (users, email_tokens, auth_attempts, reviews, favorites).
     site sert, réglées depuis l'administration. La liste des langues
     *connues* reste dans le code (`backend/langues.php`) — la base ne
     fait que cocher dedans.
+  - `020_forum_suivi.sql` — suivre un sujet et en être prévenu :
+    `forum_follows.notified_at` (le garde-fou contre l'avalanche) et
+    `users.notify_forum` (le réglage du profil)
 
   Le dossier fait foi ; cette liste résume.
 
@@ -38,7 +42,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `019`).
+dans l'ordre (`001` → `020`).
 
 ## Régénérer `schema.sql`
 
@@ -58,6 +62,13 @@ fins de ligne CRLF. `tests/bootstrap.php` découpe le dump instruction
 par instruction et normalise désormais les fins de ligne, mais un
 fichier CRLF reste une anomalie dans le dépôt. Passer par Git Bash, ou
 reconvertir en LF après coup.
+
+Symptôme d'un `schema.sql` oublié après une migration : la moitié de la
+campagne d'API échoue sur des **419 (jeton CSRF invalide)**, ce qui
+n'a aucun rapport apparent. `current_user()` liste ses colonnes
+explicitement ; si l'une manque dans la base de test, la requête lève,
+la session ne se résout plus, et toute écriture est refusée. Chercher
+du côté du CSRF ne mène nulle part — la cause est une colonne absente.
 
 Symptôme du temps où la normalisation manquait : le fichier entier
 formait une seule « instruction », commençant par une directive

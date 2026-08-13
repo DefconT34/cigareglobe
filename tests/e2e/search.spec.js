@@ -69,4 +69,41 @@ test.describe('Recherche', () => {
     await page.locator('#search-input').fill('zzzzqqqxxx');
     await expect(page.locator('#search-results')).not.toContainText('Cuba');
   });
+
+  // ── Une seule recherche ────────────────────────────────
+  // Il y avait trois entrees : la loupe, l'Explorer, et la communaute
+  // avec sa propre navigation. Les discussions arrivent du SERVEUR,
+  // apres les resultats locaux : la recherche ne doit pas attendre le
+  // reseau pour repondre ce qu'elle sait deja.
+  test('la recherche trouve aussi les discussions', async ({ page }) => {
+    await ouvrir(page, '/');
+    await page.locator('#search-btn').click();
+    await page.locator('#search-input').fill('Hygrometrie');
+
+    const bloc = page.locator('#search-results .sr-forum');
+    await expect(bloc).toBeVisible({ timeout: 15_000 });
+    await expect(bloc).toContainText('Hygrometrie');
+
+    // Le resultat mene au FIL, pas a la rubrique.
+    await bloc.locator('.sr-item').first().click();
+    await expect(page.locator('#search-overlay')).toBeHidden();
+    await expect(page.locator('.fo-titre')).toContainText('Hygrometrie', { timeout: 15_000 });
+  });
+
+  // Les resultats locaux ne doivent pas attendre le serveur : ils sont
+  // deja en memoire. Le bloc des discussions se pose EN DESSOUS.
+  test('les resultats locaux passent avant les discussions', async ({ page }) => {
+    await ouvrir(page, '/');
+    await page.locator('#search-btn').click();
+    await page.locator('#search-input').fill('Cuba');
+    await expect(page.locator('#search-results .sr-item').first()).toBeVisible();
+
+    const ordre = await page.evaluate(() => {
+      const items = [...document.querySelectorAll('#search-results .sr-item')];
+      const forum = document.querySelector('#search-results .sr-forum');
+      if (!forum) return { premierLocal: true };
+      return { premierLocal: !forum.contains(items[0]) };
+    });
+    expect(ordre.premierLocal, 'une discussion est passee devant l\'atlas').toBe(true);
+  });
 });

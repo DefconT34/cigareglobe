@@ -113,7 +113,16 @@ test.describe('Globe', () => {
       await ouvrir(page, '/');
       // On vise le centre du globe en balayant jusqu'a toucher une cible :
       // la rotation initiale n'est pas garantie.
+      //
+      // LA ROTATION EST FIGEE D'ABORD. Le point est trouve dans le
+      // navigateur, puis la souris s'y rend depuis le pilote : entre les
+      // deux, le globe continuait de tourner. A 2,75 °/s ce n'est rien
+      // quand la machine est libre, et assez pour manquer un marqueur
+      // quand elle porte les 91 parcours de la campagne — d'ou un echec
+      // qui ne se reproduisait jamais en isolant le test. Ce parcours
+      // mesure l'infobulle au survol, pas l'adresse d'une cible mobile.
       const touche = await page.evaluate(async () => {
+        autoRot = false;
         const c = document.getElementById('globe');
         const r = c.getBoundingClientRect();
         for (let i = 0; i < 400; i++) {
@@ -146,12 +155,44 @@ test.describe('Globe', () => {
       // Un point qui est A LA FOIS dans le panneau et sur une cible du
       // globe : sans cette double condition, le test passerait meme si
       // le defaut etait intact.
+      //
+      // ON FAIT TOURNER LE GLOBE jusqu'a ce qu'une cible passe sous le
+      // panneau, au lieu d'esperer qu'il y en ait une. Selon l'angle du
+      // moment, la face visible pouvait n'avoir aucun marqueur de ce
+      // cote : le parcours se declarait alors « saute », c'est-a-dire
+      // qu'il ne disait plus rien du defaut qu'il surveille — et il le
+      // faisait sans bruit, une fois sur deux.
       const point = await page.evaluate(() => {
+        autoRot = false;
         const p = document.getElementById('panel').getBoundingClientRect();
-        for (let x = Math.ceil(p.left) + 4; x < p.right - 4; x += 3) {
-          for (let y = Math.ceil(p.top) + 4; y < p.bottom - 4; y += 3) {
-            if (hitTest(x, y)) return { x, y };
+
+        // On projette les MARQUEURS pour voir lesquels tombent sous le
+        // panneau, au lieu de balayer les pixels du panneau en espérant
+        // en toucher un. Le recouvrement entre le globe et le panneau
+        // n'est qu'une bande de quelques dizaines de pixels : le balayage
+        // pouvait la parcourir entière sans rien rencontrer, et il
+        // coûtait un million de projections par essai.
+        const cherche = () => {
+          const R = getR();
+          const listes = [COUNTRIES || [],
+                          typeof LOUNGE_COUNTRIES !== 'undefined' ? LOUNGE_COUNTRIES : []];
+          for (const liste of listes) {
+            for (const c of liste) {
+              const q  = ll2xyz(c.lat, c.lon, R);
+              const pj = proj(q.x, q.y, q.z);
+              if (pj.z < -10) continue;                  // face cachée
+              if (pj.x < p.left + 6 || pj.x > p.right - 6) continue;
+              if (pj.y < p.top + 6  || pj.y > p.bottom - 6) continue;
+              if (hitTest(pj.x, pj.y)) return { x: pj.x, y: pj.y };
+            }
           }
+          return null;
+        };
+
+        for (let tour = 0; tour < 36; tour++) {
+          const trouve = cherche();
+          if (trouve) return trouve;
+          rotY += Math.PI / 18;        // 10° et on recommence
         }
         return null;
       });

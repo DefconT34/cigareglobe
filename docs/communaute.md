@@ -370,11 +370,15 @@ Notes :
 | **1** | Migration 015, rubriques, sujets et réponses, rendu Markdown, échappement | M | ✅ |
 | **2** | Étiquettes, filtre par étiquette, autocomplétion au seuil de 3 usages | P | ✅ |
 | **3** | Signalement, masquage au seuil, onglet Communauté, plafonds anti-abus | M | ✅ |
-| **4** | Notifications email + préférences du profil | P | ⏳ |
-| **5** | Ancrage sur l'atlas (colonnes `ref_type`/`ref_id` posées ; reste l'affichage sur les fiches) | P | ⏳ |
+| **4** | Notifications email + préférences du profil | P | ✅ |
+| **5** | Ancrage sur l'atlas (`ref_type`/`ref_id`, « En discuter » sur les fiches) | P | ✅ |
 | **6** | Événements : champs, inscriptions, agenda, rappels | M | ✅ |
 | **7** | Événements sur le globe | P | ✅ |
-| **8** | Référencement : URLs par langue, `sitemap`, `hreflang`, Open Graph par sujet | P | ⏳ |
+| **8** | Référencement : URLs par langue, `sitemap`, `hreflang`, Open Graph par sujet | P | ✅ |
+| **9** | Activité récente, et les discussions dans la recherche du site | P | ✅ |
+
+**Les neuf étapes sont livrées.** Restent hors code : trancher **qui modère**
+(§12.6) et l'avis juridique avant ouverture publique (§10).
 
 ### Ce que la V1 livre exactement
 

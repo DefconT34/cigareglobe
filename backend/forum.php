@@ -6,6 +6,7 @@
 //   GET  ?action=topics&section=…&lang=…&tag=…&page=…
 //   GET  ?action=topic&id=42[&page=…]              sujet + messages
 //   GET  ?action=tags[&q=…]                        autocomplétion
+//   GET  ?action=search&q=…[&lang=…]               discussions trouvées
 //   GET  ?action=agenda[&passes=1][&lang=…]        rendez-vous à venir / archives
 //   GET  ?action=lounge_events&id=42               rendez-vous d'un établissement
 //   GET  ?action=mod_queue                         file de modération (admin)
@@ -82,6 +83,7 @@ try {
         $action === 'topics'       && $method === 'GET'  => a_topics($db),
         $action === 'topic'        && $method === 'GET'  => a_topic($db),
         $action === 'tags'         && $method === 'GET'  => a_tags($db),
+        $action === 'search'       && $method === 'GET'  => a_search($db),
         $action === 'agenda'       && $method === 'GET'  => a_agenda($db),
         $action === 'lounge_events'&& $method === 'GET'  => a_lounge_events($db),
         $action === 'mod_queue'    && $method === 'GET'  => a_mod_queue($db),
@@ -216,6 +218,56 @@ function a_topics(PDO $db): void {
         'page'  => $page,
         'pages' => (int)ceil($total / FORUM_PAR_PAGE),
     ]);
+}
+
+/**
+ * Recherche de discussions, pour la recherche GLOBALE du site.
+ *
+ * Il y avait trois entrées : la loupe de l'en-tête, l'Explorer, et la
+ * communauté avec sa propre navigation. Chercher « Cohiba » devait
+ * rendre la maison, les établissements qui la servent ET les
+ * discussions — le reste étant déjà indexé côté navigateur, seul ce
+ * point manquait.
+ *
+ * Sur les TITRES et les étiquettes, pas sur le corps des messages : un
+ * LIKE '%…%' sur vingt mille messages balaierait la table à chaque
+ * frappe. Le jour où cela vaudra la peine, ce sera un index FULLTEXT,
+ * pas un LIKE plus large.
+ *
+ * Les caractères jokers de LIKE sont neutralisés : « % » saisi dans la
+ * barre de recherche est un caractère, pas un opérateur.
+ */
+function a_search(PDO $db): void {
+    $q = trim($_GET['q'] ?? '');
+    if (mb_strlen($q) < 2) fout(['topics' => []]);
+    $like = '%' . addcslashes(mb_substr($q, 0, 60), '\\%_') . '%';
+
+    $where = ["t.status <> 'removed'", '(t.title LIKE ? OR g.label LIKE ?)'];
+    $args  = [$like, $like];
+    $langs = forum_langues_demandees();
+    if ($langs !== null) {
+        $where[] = 't.lang IN (' . implode(',', array_fill(0, count($langs), '?')) . ')';
+        foreach ($langs as $l) $args[] = $l;
+    }
+
+    $stmt = $db->prepare(
+        "SELECT DISTINCT t.id, t.title, t.lang, t.posts_count,
+                COALESCE(t.last_post_at, t.created_at) AS maj, s.slug AS section
+         FROM forum_topics t
+         JOIN forum_sections s ON s.id = t.section_id
+         LEFT JOIN forum_topic_tags tt ON tt.topic_id = t.id
+         LEFT JOIN forum_tags g ON g.id = tt.tag_id
+         WHERE " . implode(' AND ', $where) . "
+         ORDER BY maj DESC LIMIT 5"
+    );
+    $stmt->execute($args);
+    fout(['topics' => array_map(fn($r) => [
+        'id'      => (int)$r['id'],
+        'title'   => $r['title'],
+        'lang'    => $r['lang'],
+        'section' => $r['section'],
+        'posts'   => (int)$r['posts_count'],
+    ], $stmt->fetchAll())]);
 }
 
 /**

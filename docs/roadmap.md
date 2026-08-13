@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→018, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→020, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -75,6 +75,65 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [x] ~~**D29** — Deux parcours qui ne mesuraient plus rien~~ ✅
+  - `infobulle › apparait au survol` échouait **une fois sur dix**, uniquement en
+    campagne complète. Le point de survol est trouvé dans le navigateur, puis la souris
+    s'y rend depuis le pilote : entre les deux, le globe continuait de tourner. À
+    2,75 °/s ce n'est rien sur une machine libre, et assez pour manquer un marqueur
+    quand elle porte 91 parcours. La rotation est **figée** avant l'échantillonnage :
+    ce parcours mesure l'infobulle, pas l'adresse d'une cible mobile
+  - `infobulle › reste masquee sous un panneau` se déclarait **« sauté »** dès qu'aucun
+    marqueur ne passait sous le panneau — c'est-à-dire au hasard de l'angle du globe, et
+    sans bruit. Il fait désormais tourner le globe par pas de 15° jusqu'à en trouver un.
+    *Un parcours qui n'exécute pas le geste ne dit rien sur ce geste* — et celui-là ne
+    le disait plus une fois sur deux
+- [x] ~~**D28** — Une seule recherche~~ ✅
+  - Trois entrées jusqu'ici : la loupe de l'en-tête, l'Explorer, et la communauté avec
+    sa propre navigation. Chercher « Cohiba » doit rendre la maison, les établissements
+    qui la servent **et** les discussions
+  - Le reste de l'index vit déjà dans le navigateur ; seules les discussions manquaient.
+    Elles arrivent du serveur **après** les résultats locaux et se posent en dessous :
+    la recherche ne doit pas attendre le réseau pour répondre ce qu'elle sait déjà
+  - Un **jeton** écarte les réponses en retard : le réseau ne rend pas les réponses dans
+    l'ordre où on les demande, et une frappe ancienne écrasait une frappe récente
+  - Sur les **titres et les étiquettes**, pas sur le corps des messages : un `LIKE '%…%'`
+    sur vingt mille messages balaierait la table à chaque frappe. Le jour où cela vaudra
+    la peine, ce sera un index FULLTEXT, pas un LIKE plus large
+  - Les jokers de `LIKE` sont neutralisés : « % » saisi dans la barre est un caractère,
+    pas un opérateur — sans quoi il aurait rendu tous les sujets du site
+- [x] ~~**D27** — Référencement des discussions~~ ✅
+  - L'espace communautaire vivait dans un calque JavaScript : les moteurs n'en voyaient
+    **rien**, et le plan de site n'annonçait que six pages d'accueil. Or les discussions
+    sont le seul contenu qui grandit sans qu'on l'écrive
+  - `index.php` sert désormais les balises d'un sujet (`?sujet=42`) — titre, description
+    tirée du premier message, canonique, `og:type=article`. Même mécanique que `?brand=`,
+    et pour la même raison : les robots lisent le HTML brut sans l'exécuter
+  - **Un sujet n'a pas d'alternatives de langue.** Il est écrit dans une langue, par une
+    personne, et le serveur ne traduit pas : lui déclarer six `hreflang` annoncerait cinq
+    traductions qui n'existent pas. La page est servie dans la langue du sujet, quelle
+    que soit celle demandée
+  - `sitemap.php` annonce les sujets avec leur `lastmod` : un fil qui vit se réindexe,
+    un fil clos ne coûte rien
+- [x] ~~**D26** — Suivre un sujet, et apprendre qu'on a reçu une réponse~~ ✅ · migration `020`
+  - `forum_follows` et le point d'API existaient depuis la migration 015, **sans qu'aucun
+    bouton ne les appelle** : la table ne s'est jamais remplie, rien n'est jamais parti
+  - **On suit ce qu'on écrit**, d'office : personne ne pense à cocher « prévenez-moi »
+    avant d'avoir posé sa question, et la réponse est la raison même d'avoir écrit
+  - **Le garde-fou contre l'avalanche** : on prévient une fois, puis plus rien tant que
+    la personne n'est pas revenue lire. `notified_at` est remis à NULL quand le suiveur
+    ouvre le sujet — « revenue lire » se constate, il n'y a pas à l'estimer au temps écoulé
+  - L'email porte le **nom** de l'auteur et un **extrait** : un « nouvelle réponse » nu se
+    lit comme du bruit et finit en filtre
+  - Un envoi qui échoue ne marque pas `notified_at` : la prochaine réponse réessaiera
+- [x] ~~**D25** — Activité récente et ancrage sur l'atlas~~ ✅
+  - Il fallait ouvrir les **huit rubriques une à une** pour savoir s'il s'était passé
+    quelque chose. La liste voyage dans la même réponse que les rubriques : deux requêtes
+    pour un écran se paient chez un hébergeur mutualisé qui n'en traite qu'une à la fois
+  - « En discuter » sur la fiche d'une maison et la carte d'un établissement. Le lien va
+    dans les **deux sens** — un ancrage à sens unique laisse sans contexte ceux qui
+    arrivent par un lien partagé
+  - L'identifiant seul ne suffit pas au retour : l'atlas ouvre un établissement par le
+    **pays** qui le contient. Le serveur sert donc le pays et le libellé avec la référence
 - [x] ~~**D24** — Deux détails de l'espace communautaire~~ ✅
   - **Il n'existe pas d'émoji de cigare.** Unicode a `🚬`, une cigarette : l'objet que ce
     site ne traite pas, et dont l'image dessert exactement ce qu'il défend. La rubrique

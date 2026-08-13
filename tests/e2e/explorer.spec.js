@@ -9,8 +9,15 @@ test.describe('Explorer', () => {
 
   test.beforeEach(async ({ page }) => {
     await ouvrir(page, '/');
-        await page.locator('#explorer-btn').click();
+    await page.locator('#explorer-btn').click();
     await expect(page.locator('#exp-overlay')).toBeVisible();
+    // Le calque paraît AVANT ses cartes : elles arrivent avec les
+    // données. Les parcours qui comptent la liste comptaient parfois
+    // zéro — jamais sur une machine libre, une fois de temps en temps
+    // sous la campagne complète. On attend donc la première carte ici,
+    // une fois pour tous.
+    await expect(page.locator('.exp-card, .exp-item').first())
+      .toBeVisible({ timeout: 15_000 });
   });
 
   test('liste les etablissements et se ferme', async ({ page }) => {

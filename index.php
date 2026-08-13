@@ -52,6 +52,24 @@ function racine(): string {
     return $s . '://' . ($_SERVER['HTTP_HOST'] ?? 'cigarodyssey.com');
 }
 
+/**
+ * Résumé d'un texte, coupé sur une fin de phrase quand il y en a une.
+ *
+ * Le Markdown restreint des messages est retiré : « **65 %** » dans une
+ * carte d'aperçu se lit comme une coquille. Le rendu HTML n'est pas
+ * réutilisé ici — une description est du texte nu.
+ */
+function extrait_texte(string $brut, int $max = 300): string {
+    $t = preg_replace('/[`*>\[\]()#]/u', ' ', $brut);
+    $t = trim(preg_replace('/\s+/u', ' ', $t));
+    if (mb_strlen($t) <= $max) return $t;
+    $court = mb_substr($t, 0, $max);
+    $coupe = mb_strrpos($court, '. ');
+    return ($coupe !== false && $coupe > $max / 2.5)
+        ? mb_substr($court, 0, $coupe + 1)
+        : rtrim($court, " \t\n\r\0\x0B,;:—-") . '…';
+}
+
 /** URL publique d'une langue : la racine pour le français, /xx/ sinon. */
 function url_langue(string $l): string {
     return racine() . ($l === 'fr' ? '/' : '/' . $l . '/');
@@ -146,17 +164,67 @@ if ($marqueOk) {
     $urlIci = url_langue($lang) . '?brand=' . rawurlencode($marqueOk['name']);
 }
 
+// ── Aperçu d'une discussion (?sujet=42) ───────────────────
+// L'espace communautaire vit dans un calque JavaScript : les moteurs
+// n'en voyaient RIEN, et le plan de site n'annonçait que six pages
+// d'accueil. Or les discussions sont le seul contenu qui grandit sans
+// qu'on l'écrive — les laisser invisibles, c'est écrire dans le vide.
+//
+// Même mécanique que pour une marque, et pour la même raison : les
+// robots de WhatsApp, LinkedIn ou Google lisent le HTML brut sans
+// l'exécuter. Le front, lui, ouvre déjà le fil sur « ?sujet= ».
+//
+// Un sujet n'existe QUE dans sa langue : on sert donc la page dans
+// cette langue, quelle que soit celle demandée. Servir un fil espagnol
+// dans une coquille allemande n'aurait trompé que le robot.
+$sujetId = (int)($_GET['sujet'] ?? 0);
+$sujetOk = null;
+if ($sujetId > 0) {
+    try {
+        $db = $db ?? getDB();
+        $q = $db->prepare(
+            "SELECT t.id, t.title, t.lang, t.created_at,
+                    (SELECT p.body FROM forum_posts p
+                      WHERE p.topic_id = t.id AND p.status = 'published'
+                      ORDER BY p.id ASC LIMIT 1) AS premier
+             FROM forum_topics t
+             WHERE t.id = ? AND t.status <> 'removed' LIMIT 1"
+        );
+        $q->execute([$sujetId]);
+        $sujetOk = $q->fetch(PDO::FETCH_ASSOC) ?: null;
+    } catch (Throwable $e) {
+        $sujetOk = null;      // base injoignable : aperçu générique
+    }
+}
+if ($sujetOk) {
+    if (in_array($sujetOk['lang'], $LANGUES, true)) {
+        $lang = $sujetOk['lang'];
+        $dir  = in_array($lang, RTL, true) ? 'rtl' : 'ltr';
+    }
+    $titre  = $sujetOk['title'] . ' — ' . tr('seo_title');
+    $desc   = extrait_texte((string)$sujetOk['premier'], 300);
+    $altImg = $sujetOk['title'];
+    $urlIci = url_langue($lang) . '?sujet=' . $sujetOk['id'];
+}
+
 // ── Liens alternatifs ─────────────────────────────────────
 // x-default désigne la version servie à un visiteur dont la langue
 // n'est couverte par aucune des six : ici la racine française.
+//
+// UN SUJET N'A PAS D'ALTERNATIVES : il est écrit dans une langue, par
+// une personne, et le serveur ne traduit pas. Lui déclarer six hreflang
+// reviendrait à annoncer six traductions dont cinq n'existent pas —
+// exactement le contenu dupliqué que hreflang sert à éviter.
 $alternates = '';
-foreach ($LANGUES as $l) {
-    $alternates .= '  <link rel="alternate" hreflang="' . $l . '" href="' . url_langue($l) . "\">\n";
-}
-$alternates .= '  <link rel="alternate" hreflang="x-default" href="' . url_langue('fr') . "\">\n";
-foreach ($LANGUES as $l) {
-    if ($l === $lang) continue;
-    $alternates .= '  <meta property="og:locale:alternate" content="' . LOCALES[$l] . "\">\n";
+if (!$sujetOk) {
+    foreach ($LANGUES as $l) {
+        $alternates .= '  <link rel="alternate" hreflang="' . $l . '" href="' . url_langue($l) . "\">\n";
+    }
+    $alternates .= '  <link rel="alternate" hreflang="x-default" href="' . url_langue('fr') . "\">\n";
+    foreach ($LANGUES as $l) {
+        if ($l === $lang) continue;
+        $alternates .= '  <meta property="og:locale:alternate" content="' . LOCALES[$l] . "\">\n";
+    }
 }
 
 // ── Assemblage ────────────────────────────────────────────
@@ -192,7 +260,8 @@ if (is_file(langues_fichier())) $empreinte = max($empreinte, filemtime(langues_f
 // interdit à un tiers de créer des fichiers de cache à volonté.
 $pageCache = __DIR__ . '/backend/cache/page_' . $lang . '_'
            . substr(sha1(racine() . '|' . (int)$pretty
-                    . '|' . ($marqueOk['name'] ?? '')), 0, 12) . '.html';
+                    . '|' . ($marqueOk['name'] ?? '')
+                    . '|' . (int)($sujetOk['id'] ?? 0)), 0, 12) . '.html';
 
 if (is_file($pageCache) && filemtime($pageCache) >= $empreinte) {
     header('Content-Type: text/html; charset=utf-8');
@@ -271,6 +340,12 @@ $remplacements = [
         => '<meta property="og:locale" content="' . LOCALES[$lang] . '">',
     '<meta property="og:url" content="https://cigarodyssey.com/">'
         => '<meta property="og:url" content="' . $e($urlIci) . '">',
+    // Une discussion est un ÉCRIT daté, signé, qui ne change plus :
+    // « article » le dit, « website » désigne le site entier. Les
+    // agrégateurs et les cartes d'aperçu s'en servent pour choisir leur
+    // mise en page.
+    '<meta property="og:type" content="website">'
+        => '<meta property="og:type" content="' . ($sujetOk ? 'article' : 'website') . '">',
 ];
 foreach ([['og:title', $titre], ['twitter:title', $titre],
           ['og:description', $desc], ['twitter:description', $desc],

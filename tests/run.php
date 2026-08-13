@@ -1223,6 +1223,84 @@ $r = post_json($base, $bob, '/backend/forum.php?action=post_create',
 eq('suivi : retiree, elle ne recoit plus rien', 0, (int)($r['json']['notified'] ?? -1));
 
 // ════════════════════════════════════════════════════════
+section('Referencement des discussions');
+
+// L'espace communautaire vit dans un calque JavaScript : les moteurs
+// n'en voyaient RIEN, et le plan de site n'annoncait que six pages
+// d'accueil. Or les discussions sont le seul contenu qui grandit sans
+// qu'on l'ecrive.
+$page = http('GET', $base . "/?sujet=$t_suivi", ['jar' => $anon]);
+eq('seo : la page du sujet repond', 200, $page['status']);
+check('seo : le titre du sujet est dans la balise title',
+      str_contains($page['body'], '<title>Par quel module commencer ?'));
+check('seo : la description reprend le premier message',
+      str_contains($page['body'], 'quel format essayer en premier'));
+check('seo : la canonique designe le sujet',
+      (bool)preg_match('#<link rel="canonical" href="[^"]*\?sujet=' . $t_suivi . '"#', $page['body']));
+// Une discussion est un ECRIT date, signe, qui ne change plus.
+check('seo : le type Open Graph est « article »',
+      str_contains($page['body'], '<meta property="og:type" content="article">'));
+// Un sujet est ecrit dans UNE langue : lui declarer six hreflang
+// annoncerait cinq traductions qui n'existent pas.
+check('seo : aucun lien alternatif pour un sujet',
+      !str_contains($page['body'], 'hreflang='));
+
+// CONTRE-EPREUVE : la page d'accueil, elle, les porte tous.
+$page = http('GET', $base . '/', ['jar' => $anon]);
+check('seo : la page d\'accueil garde ses hreflang',
+      str_contains($page['body'], 'hreflang="es"'));
+
+// Un sujet retire ne doit pas laisser une page indexable derriere lui.
+$page = http('GET', $base . '/?sujet=999999', ['jar' => $anon]);
+check('seo : un sujet inconnu retombe sur la page generique',
+      !str_contains($page['body'], '<meta property="og:type" content="article">'));
+
+$plan = http('GET', $base . '/sitemap.php', ['jar' => $anon]);
+check('seo : le plan de site annonce le sujet',
+      str_contains($plan['body'], '?sujet=' . $t_suivi . '</loc>'));
+check('seo : avec sa date de derniere reponse',
+      (bool)preg_match('#<lastmod>\d{4}-\d{2}-\d{2}</lastmod>#', $plan['body']));
+
+// ════════════════════════════════════════════════════════
+section('Une seule recherche');
+
+// Il y avait trois entrees : la loupe de l'en-tete, l'Explorer, et la
+// communaute avec sa propre navigation. Le reste de l'index vit deja
+// dans le navigateur ; seules les discussions manquaient.
+$r = http('GET', $base . '/backend/forum.php?action=search&q=module&lang=all', ['jar' => $anon]);
+eq('recherche : la requete aboutit', 200, $r['status']);
+$titres = array_column($r['json']['topics'], 'title');
+check('recherche : le sujet est trouve par son titre',
+      in_array('Par quel module commencer ?', $titres, true));
+
+// Une saisie d'un seul caractere ne balaie pas la table.
+$r = http('GET', $base . '/backend/forum.php?action=search&q=a&lang=all', ['jar' => $anon]);
+eq('recherche : une lettre seule ne cherche rien', 0, count($r['json']['topics']));
+
+// Le filtre de langue vaut ici comme ailleurs : le sujet anglais
+// « Humidor seasoning for beginners » n'a pas sa place dans une
+// recherche limitee au francais.
+$r = http('GET', $base . '/backend/forum.php?action=search&q=seasoning&lang=fr', ['jar' => $anon]);
+eq('recherche : le filtre de langue ecarte le sujet anglais', 0, count($r['json']['topics']));
+$r = http('GET', $base . '/backend/forum.php?action=search&q=seasoning&lang=all', ['jar' => $anon]);
+eq('recherche : sans filtre, il revient', 1, count($r['json']['topics']));
+
+// Les jokers de LIKE sont des CARACTERES, pas des operateurs : sans
+// neutralisation, « % » seul aurait rendu tous les sujets du site.
+$r = http('GET', $base . '/backend/forum.php?action=search&q=%25%25&lang=all', ['jar' => $anon]);
+eq('recherche : un joker saisi ne rend pas tout', 0, count($r['json']['topics']));
+
+// Un sujet retire ne se retrouve pas par la recherche. Le terme est
+// choisi pour ne designer QUE ce sujet : « soiree » se retrouve dans
+// les titres de rendez-vous des sections precedentes.
+test_pdo()->exec("UPDATE forum_topics SET status = 'removed' WHERE id = $t_ancre");
+$r = http('GET', $base . '/backend/forum.php?action=search&q=Lounge+de+test&lang=all', ['jar' => $anon]);
+eq('recherche : un sujet retire disparait', 0, count($r['json']['topics']));
+test_pdo()->exec("UPDATE forum_topics SET status = 'open' WHERE id = $t_ancre");
+$r = http('GET', $base . '/backend/forum.php?action=search&q=Lounge+de+test&lang=all', ['jar' => $anon]);
+eq('recherche : retabli, il revient', 1, count($r['json']['topics']));
+
+// ════════════════════════════════════════════════════════
 section('Langues servies');
 
 // Le reglage (migration 019) decide de ce que le site PROPOSE. Il ne

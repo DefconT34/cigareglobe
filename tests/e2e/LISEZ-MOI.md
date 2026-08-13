@@ -99,6 +99,31 @@ d'origine : ils gardent un défaut déjà corrigé de revenir. Quand vous
 corrigez un bug visible dans l'interface, ajoutez-y le test
 correspondant plutôt que de créer un fichier.
 
+### Un parcours « sauté » est un parcours muet
+
+`test.skip(!cible, …)` sert à ne pas échouer quand la condition du test
+n'est pas réunie. C'est utile — et c'est aussi la façon la plus discrète
+de perdre un test : il ne s'affiche plus en rouge, il ne s'affiche plus
+du tout.
+
+`infobulle › reste masquee sous un panneau` se déclarait sauté dès
+qu'aucun marqueur ne passait sous le panneau, c'est-à-dire au hasard de
+l'angle du globe au chargement — une fois sur deux. Il fait désormais
+**tourner le globe** jusqu'à en trouver un, au lieu d'espérer qu'il y en
+ait. La règle : si la condition d'un `skip` dépend d'un état que le test
+peut PROVOQUER, il doit le provoquer.
+
+### Figer ce qui bouge avant de viser
+
+Un point trouvé dans le navigateur, puis visé par le pilote, désigne une
+cible qui a eu le temps de se déplacer : le globe tourne à 2,75 °/s, et
+entre les deux appels il s'écoule d'autant plus de temps que la machine
+est chargée. D'où des échecs qui n'apparaissent qu'en campagne complète
+et ne se reproduisent jamais en isolant le test.
+
+Les parcours qui échantillonnent une cible sur le globe posent donc
+`autoRot = false` avant de chercher.
+
 ## Pourquoi un seul travailleur
 
 Le serveur intégré de PHP traite une requête à la fois, et
