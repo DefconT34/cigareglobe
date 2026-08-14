@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→021, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→022, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -75,6 +75,27 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [x] ~~**D31** — Les marques qui manquaient à l'atlas~~ ✅ · migration `022`
+  - **Cuba passe de 11 à 27 marques**, soit le portefeuille complet de Habanos S.A. Il en
+    manquait seize, dont plusieurs des plus anciennes encore produites : Por Larrañaga
+    (1834), Ramón Allones (1837), El Rey del Mundo et Sancho Panza (1848)
+  - **La Aurora** (1903), la plus ancienne manufacture dominicaine — déjà là depuis soixante
+    ans quand l'exode cubain a fait du pays la capitale du cigare premium. Son absence était
+    la plus criante de la fiche dominicaine
+  - **J.C. Newman** (1895), la plus ancienne entreprise familiale américaine encore en
+    activité, et la dernière grande fabrique en fonctionnement de Ybor City. La fiche des
+    États-Unis ne listait qu'une *entreprise* — General Cigar — et une extension de marque
+  - **Ni notes chiffrées, ni célébrités, ni éditions limitées.** Ce sont les champs les plus
+    faciles à inventer et les plus difficiles à vérifier : une note « Cigar Aficionado
+    94/2021 » fausse serait indiscernable d'une vraie. Les colonnes restent vides, et le
+    front ne les affiche pas
+  - Les **descriptions courtes sont traduites** dans les cinq autres langues (le dictionnaire
+    `content_translations`, versionné dans `sql/traductions.sql`) ; les articles longs
+    restent en français et retombent dessus, ce que la couverture affiche honnêtement à 75 %
+  - Défaut réparé au passage : sur un lien direct `?brand=…`, le surtitre affichait
+    « MAISON · » suivi de rien. La marque connaît son pays — on le lui demande
+  - ⚠ Le texte vient des connaissances du rédacteur, comme les 92 fiches pays et les 90 dates
+    de fête nationale déjà en attente de relecture
 - [x] ~~**D30** — Onze marques que rien ne reliait au site~~ ✅ · migration `021`
   - Une fiche pays n'affiche que les marques inscrites dans **sa** liste. Onze articles
     n'y figuraient nulle part : rédigés, dotés de leur gamme, de leurs notes et de leurs

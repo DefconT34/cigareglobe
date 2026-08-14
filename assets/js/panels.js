@@ -393,9 +393,15 @@ function openBrand(name, cid) {
 function _renderBrand(name, cid) {
   var b = BRANDS_DB[name];
   if (!b) return;
-  var c = COUNTRIES.find(function(x){ return x.id === cid; }) || {flag:'', name:cid};
+  // Le pays vient de l'appelant quand on ouvre depuis une fiche ; sur un
+  // lien direct « ?brand=… » il est vide, et le surtitre affichait
+  // « MAISON · » suivi de rien. La marque connait son pays : on le lui
+  // demande plutot que de laisser un tiret orphelin.
+  var pid = cid || b.country || '';
+  var c = COUNTRIES.find(function(x){ return x.id === pid; }) || {flag:'', name:''};
 
-  document.getElementById('bmEy').textContent      = (c.flag ? c.flag + ' ' : '') + t('bm_maison') + ' · ' + c.name;
+  document.getElementById('bmEy').textContent      =
+    (c.flag ? c.flag + ' ' : '') + t('bm_maison') + (c.name ? ' · ' + c.name : '');
   document.getElementById('bmName').textContent    = name;
   document.getElementById('bmFounded').textContent = b.founded || '—';
   document.getElementById('bmHist').textContent    = b.history || '';

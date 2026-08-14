@@ -35,6 +35,12 @@ espace communautaire (`forum_*`) + réglages du site (`site_languages`).
     `brands.country_id` qui ne désignaient aucun pays. Vérifiable à tout
     moment par `php tools/marques_check.php`.
 
+  - `022_marques_manquantes.sql` — **données** : Cuba passe de 11 à 27
+    marques (le portefeuille Habanos complet), plus La Aurora (1903) et
+    J.C. Newman (1895). Sans notes chiffrées ni célébrités : ce sont les
+    champs les plus faciles à inventer et les plus difficiles à
+    vérifier.
+
   Le dossier fait foi ; cette liste résume.
 
 ## Installer / recréer la base
@@ -46,7 +52,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `021`).
+dans l'ordre (`001` → `022`).
 
 ## Régénérer `schema.sql`
 
