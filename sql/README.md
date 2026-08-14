@@ -30,6 +30,10 @@ espace communautaire (`forum_*`) + réglages du site (`site_languages`).
   - `020_forum_suivi.sql` — suivre un sujet et en être prévenu :
     `forum_follows.notified_at` (le garde-fou contre l'avalanche) et
     `users.notify_forum` (le réglage du profil)
+  - `021_marques_orphelines.sql` — **données**, pas structure : onze
+    articles de marque qu'aucune fiche pays n'affichait, et 34
+    `brands.country_id` qui ne désignaient aucun pays. Vérifiable à tout
+    moment par `php tools/marques_check.php`.
 
   Le dossier fait foi ; cette liste résume.
 
@@ -42,7 +46,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `020`).
+dans l'ordre (`001` → `021`).
 
 ## Régénérer `schema.sql`
 

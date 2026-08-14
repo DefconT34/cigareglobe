@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→020, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→021, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -75,6 +75,26 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [x] ~~**D30** — Onze marques que rien ne reliait au site~~ ✅ · migration `021`
+  - Une fiche pays n'affiche que les marques inscrites dans **sa** liste. Onze articles
+    n'y figuraient nulle part : rédigés, dotés de leur gamme, de leurs notes et de leurs
+    accords, **traduits dans les six langues** — et introuvables autrement qu'en devinant
+    l'adresse `?brand=…`. Parmi eux **Hoyo de Monterrey**, l'une des cinq grandes cubaines
+  - `brands.country_id` ne désignait aucun pays connu dans **34 lignes sur 53** : un import
+    qui avait gardé le drapeau et le nom (« 🇨🇺 Cuba »), un identifiant dominicain écrit de
+    deux façons, et la Suisse qui n'est pas un pays producteur. C'est le champ dont la
+    recherche se sert pour rejoindre le pays d'une marque
+  - Le pays d'accueil est celui de l'**usine**, tel que l'article le déclare lui-même — pas
+    une déduction. Les deux cas qui se discutent (Villiger, suisse mais roulée à Estelí ;
+    Romeo y Julieta USA, qui portait un identifiant dominicain quand ses deux sœurs
+    portaient « usa ») sont écrits dans l'en-tête de la migration
+  - **Défaut révélé par la correction** : trente-deux vitoles sur cent quarante-neuf n'ont
+    ni force ni cape en base, et le front écrivait « Force: undefined ». Toutes
+    appartenaient à ces onze articles — le défaut existait depuis toujours, il a fallu les
+    rendre visibles pour le voir
+  - `tools/marques_check.php` garde l'état : aucun article sans fiche, aucun `country_id`
+    orphelin, aucun nom listé sans article. Le contenu de l'atlas ne vivant pas dans Git,
+    c'est un outil à lancer sur la base réelle, pas un test de la campagne
 - [x] ~~**D29** — Deux parcours qui ne mesuraient plus rien~~ ✅
   - `infobulle › apparait au survol` échouait **une fois sur dix**, uniquement en
     campagne complète. Le point de survol est trouvé dans le navigateur, puis la souris

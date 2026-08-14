@@ -220,6 +220,41 @@ test.describe('Panneaux', () => {
     await expect(modale).not.toContainText(/erreur de chargement/i);
   });
 
+  // ── Une etiquette absente ne s'ecrit pas « undefined » ─
+  // Trente-deux vitoles sur cent quarante-neuf n'ont ni force ni cape
+  // en base. Toutes appartenaient aux onze articles que personne ne
+  // pouvait ouvrir (migration 021) : le defaut existait depuis
+  // toujours, et il a fallu rendre ces articles visibles pour le voir.
+  test('une gamme sans force ni cape n\'ecrit pas « undefined »', async ({ page }) => {
+    // On fabrique le cas plutot que de dependre du contenu de l'atlas :
+    // le jeu de test ne porte qu'une marque, et elle est complete.
+    await page.route('**/data.php?action=brand*', async (route) => {
+      const rep = await route.fetch();
+      const d = await rep.json();
+      if (d.brand) {
+        d.brand.gamme = [
+          { name: 'Sans etiquettes', color: '#8B5A2B', story: 'Ni force ni cape en base.' },
+          { name: 'Avec etiquettes', color: '#C9A227', story: 'Les deux sont la.',
+            force: 'Medium', wrapper: 'Habano Ecuador' },
+        ];
+      }
+      await route.fulfill({ response: rep, json: d });
+    });
+
+    await ouvrir(page, '/?brand=Marque de test');
+    const modale = page.locator('#bmodal');
+    await expect(modale).toHaveClass(/open/, { timeout: 15_000 });
+    await expect(page.locator('#bmGam .gam-item')).toHaveCount(2, { timeout: 15_000 });
+
+    const vide = page.locator('#bmGam .gam-item').first();
+    await expect(vide).not.toContainText('undefined');
+    await expect(vide.locator('.gam-mt')).toHaveCount(0);
+
+    // CONTRE-EPREUVE : quand les etiquettes existent, elles s'affichent.
+    const plein = page.locator('#bmGam .gam-item').nth(1);
+    await expect(plein).toContainText('Force: Medium');
+    await expect(plein).toContainText('Wrapper: Habano Ecuador');
+  });
   test('aucun identifiant HTML n\'est duplique', async ({ page }) => {
     // Les etablissements etaient rendus dans deux conteneurs a la fois,
     // ce qui dupliquait les identifiants et cassait les interactions.

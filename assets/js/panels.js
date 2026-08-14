@@ -412,9 +412,15 @@ function _renderBrand(name, cid) {
       '<div class="gam-info">' +
         '<div class="gam-name" style="color:' + g.color + '">' + g.name + '</div>' +
         '<div class="gam-story">' + g.story + '</div>' +
+        // Une etiquette ABSENTE ne s'affiche pas — elle ne s'affiche
+        // pas « undefined ». Trente-deux vitoles sur cent quarante-neuf
+        // n'ont ni force ni cape en base ; toutes appartiennent aux onze
+        // articles que personne ne pouvait ouvrir (migration 021), et le
+        // defaut n'a donc jamais ete vu. Il aurait suffi d'une fiche
+        // incomplete pour qu'il le soit.
         '<div class="gam-metas">' +
-          '<span class="gam-mt">Force: ' + g.force + '</span>' +
-          '<span class="gam-mt">Wrapper: ' + g.wrapper + '</span>' +
+          (g.force   ? '<span class="gam-mt">Force: '   + g.force   + '</span>' : '') +
+          (g.wrapper ? '<span class="gam-mt">Wrapper: ' + g.wrapper + '</span>' : '') +
           (g.vitolas||[]).map(function(v){ return '<span class="gam-mt">'+v+'</span>'; }).join('') +
         '</div>' + scoreHtml +
       '</div></div>';
