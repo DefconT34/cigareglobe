@@ -162,6 +162,14 @@ test.describe('Communaute', () => {
     // Aucune discussion pour l'instant : c'est le message d'attente
     // qu'on doit voir, pas la liste de toute la rubrique.
     await expect(page.locator('.fo-topic')).toHaveCount(0);
+
+    // Et le vide doit dire LA BONNE raison. « Aucun sujet dans les
+    // langues affichees » laissait croire qu'il en existait ailleurs,
+    // et personne n'ouvrait le premier.
+    const vide = page.locator('.fo-vide');
+    await expect(vide).toBeVisible();
+    await expect(vide).toContainText('Ouvrez la première');
+    await expect(vide).not.toContainText('langues affichées');
   });
 
   test('un etablissement mene a ses discussions', async ({ page }) => {

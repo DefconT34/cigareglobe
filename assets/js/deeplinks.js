@@ -106,6 +106,76 @@ function majUrl(type, id) {
 }
 
 // ── Pastille de partage ───────────────────────────────────
+// UN BOUTON NE DOIT JAMAIS NE RIEN FAIRE. Les trois voies de partage
+// dépendent du contexte, et deux d'entre elles n'existent pas partout :
+//
+//   navigator.share      — téléphone, et CONTEXTE SÉCURISÉ seulement ;
+//   navigator.clipboard  — idem, et peut refuser sans prévenir ;
+//   execCommand('copy')  — déprécié, mais disponible en http nu.
+//
+// Servi en « http://192.168.x.x » — c'est-à-dire au téléphone qui teste
+// sur le réseau local —, le navigateur ne fournit NI l'un NI l'autre des
+// deux premiers. L'ancienne cascade s'arrêtait là : le doigt appuyait,
+// et il ne se passait rien. Le même piège que le gyroscope, qui n'était
+// jamais créé faute de contexte sécurisé et sans un mot d'explication.
+//
+// La cascade descend donc jusqu'à un dernier recours qui, lui, ne peut
+// pas échouer : montrer l'adresse, sélectionnée, à copier à la main.
+
+function confirmerCopie(btn) {
+  btn.innerHTML = '✓';
+  btn.classList.add('copie');
+  setTimeout(function () { btn.innerHTML = '🔗'; btn.classList.remove('copie'); }, 1500);
+}
+
+/**
+ * Dernier recours : l'adresse à l'écran, déjà sélectionnée.
+ * Ce n'est pas élégant, c'est utilisable — et c'est tout ce qu'on
+ * demande à un dernier recours.
+ */
+function montrerAdresse(btn, url) {
+  var vieux = document.getElementById('share-url');
+  if (vieux) vieux.remove();
+  var champ = document.createElement('input');
+  champ.id = 'share-url';
+  champ.readOnly = true;
+  champ.value = url;
+  champ.setAttribute('aria-label', t('ui_copy_link'));
+  (btn.parentNode || document.body).appendChild(champ);
+  champ.focus();
+  champ.select();
+  champ.addEventListener('blur', function () { champ.remove(); });
+}
+
+/** Copie hors contexte sécurisé. Rend true si le navigateur a suivi. */
+function copierAncienneMethode(url) {
+  var z = document.createElement('textarea');
+  z.value = url;
+  z.setAttribute('readonly', '');
+  z.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+  document.body.appendChild(z);
+  z.select();
+  try { z.setSelectionRange(0, url.length); } catch (e) {}
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+  z.remove();
+  return ok;
+}
+
+function copierAdresse(btn, url) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    // Le presse-papiers peut REFUSER — permission absente, page sans
+    // le focus. Sans ce second bras, la promesse partait en silence.
+    navigator.clipboard.writeText(url).then(
+      function () { confirmerCopie(btn); },
+      function () { if (copierAncienneMethode(url)) confirmerCopie(btn); else montrerAdresse(btn, url); }
+    );
+    return;
+  }
+  if (copierAncienneMethode(url)) confirmerCopie(btn);
+  else montrerAdresse(btn, url);
+}
+
 function poserPastille(panel, type, getId) {
   var bandeau = panel.querySelector('.panel-banner');
   if (!bandeau || bandeau.querySelector('.share-btn')) return;
@@ -124,15 +194,18 @@ function poserPastille(panel, type, getId) {
     if (actuel.get('lang')) p.set('lang', actuel.get('lang'));
     p.set(type, id);
     var url = window.location.origin + window.location.pathname + '?' + p.toString();
+
     if (navigator.share) {
-      navigator.share({ title: 'CigarOdyssey', url: url }).catch(function(){});
-    } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(url).then(function() {
-        btn.innerHTML = '✓';
-        btn.classList.add('copie');
-        setTimeout(function(){ btn.innerHTML = '🔗'; btn.classList.remove('copie'); }, 1500);
+      navigator.share({ title: 'CigarOdyssey', url: url }).catch(function (e) {
+        // Annuler le panneau de partage n'est pas un échec : on ne
+        // remplace pas le geste de l'utilisateur par une copie qu'il
+        // n'a pas demandée.
+        if (e && (e.name === 'AbortError' || e.name === 'NotAllowedError')) return;
+        copierAdresse(btn, url);
       });
+      return;
     }
+    copierAdresse(btn, url);
   });
   bandeau.appendChild(btn);
 }

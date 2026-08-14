@@ -219,6 +219,46 @@ test.describe('Mobile', () => {
       .toEqual({ l: 26, h: 26, touche: true });
   });
 
+  // ── La pastille du PANNEAU, sur telephone ─────────────
+  // Celle de la fiche de marque est verifiee juste au-dessus ; celle du
+  // panneau pays est une autre, posee par deeplinks.js. Elle n'existait
+  // pas du tout jusqu'a hier — son ancrage visait une classe absente du
+  // balisage.
+  //
+  // Sur telephone, le partage natif et le presse-papiers n'existent
+  // qu'en contexte SECURISE. Le site de developpement est servi en
+  // « http://192.168.x.x » : ni l'un ni l'autre. Le doigt appuyait, et
+  // il ne se passait rien. On simule ce contexte, puisque le serveur de
+  // test, lui, tourne sur localhost — traite comme securise.
+  test('la pastille du panneau repond au doigt, meme en http nu', async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'clipboard', { get: () => undefined });
+      Object.defineProperty(navigator, 'share', { get: () => undefined });
+    });
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('body')).toHaveClass(/mobile-mode/, { timeout: 20_000 });
+    const pastille = page.locator('#panel .share-btn');
+    await expect(pastille).toBeVisible({ timeout: 15_000 });
+
+    // Le point vise est HORS du dessin : sans zone sensible, il ne
+    // touche pas le bouton.
+    const mesurer = () => page.evaluate(() => {
+      const el = document.querySelector('#panel .share-btn');
+      const r = el.getBoundingClientRect();
+      return {
+        l: Math.round(r.width), h: Math.round(r.height),
+        touche: document.elementFromPoint(r.left - 6, r.top - 6) === el,
+      };
+    });
+    await expect
+      .poll(mesurer, { timeout: 10_000, message: 'la zone sensible de 44 px a disparu' })
+      .toEqual({ l: 28, h: 28, touche: true });
+
+    // Et le geste aboutit : sans le dernier recours, rien ne changeait.
+    await pastille.tap();
+    await expect(pastille).toHaveText('✓');
+  });
+
   // ── Le geste doit survivre au dessin ───────────────────
   // navigator.share() exige une « activation transitoire » : l'appel
   // doit partir du geste. Dessiner la fiche demande de charger cinq

@@ -104,6 +104,71 @@ test.describe('Panneaux', () => {
     expect(style.largeur).toBeGreaterThanOrEqual(24);
   });
 
+  // ── La pastille doit FAIRE quelque chose ──────────────
+  // Trois voies, et deux d'entre elles n'existent qu'en contexte
+  // securise : navigator.share et navigator.clipboard. Servi en
+  // « http://192.168.x.x » — le telephone qui teste sur le reseau
+  // local —, le navigateur ne fournit ni l'un ni l'autre : le doigt
+  // appuyait, et il ne se passait rien.
+  test('la pastille copie l\'adresse, avec la langue', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await ouvrir(page, '/?lang=es&country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+    await page.locator('#panel .share-btn').click();
+    await expect(page.locator('#panel .share-btn')).toHaveText('✓');
+
+    const copie = await page.evaluate(() => navigator.clipboard.readText());
+    expect(copie).toContain('country=cuba');
+    expect(copie, 'le lien partage perd la langue').toContain('lang=es');
+  });
+
+  test('la pastille marche sans partage natif ni presse-papiers', async ({ page }) => {
+    // Exactement ce que voit un telephone sur « http://192.168.x.x ».
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'clipboard', { get: () => undefined });
+      Object.defineProperty(navigator, 'share', { get: () => undefined });
+    });
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+    await page.locator('#panel .share-btn').click();
+    await expect(page.locator('#panel .share-btn')).toHaveText('✓');
+  });
+
+  // Et si meme la vieille methode echoue, on montre l'adresse : un
+  // bouton ne doit JAMAIS ne rien faire.
+  test('quand tout echoue, l\'adresse s\'affiche, selectionnee', async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'clipboard', { get: () => undefined });
+      Object.defineProperty(navigator, 'share', { get: () => undefined });
+      document.execCommand = function () { return false; };
+    });
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+    await page.locator('#panel .share-btn').click();
+    const champ = page.locator('#share-url');
+    await expect(champ).toBeVisible();
+    await expect(champ).toHaveValue(/country=cuba/);
+    expect(await champ.evaluate((el) => document.activeElement === el)).toBe(true);
+  });
+
+  // La cible tactile ne se voit pas : 44 px autour d'une pastille de
+  // 28 px. On mesure la ZONE SENSIBLE, pas le dessin.
+  test('la pastille se vise au doigt', async ({ page }) => {
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+    const taille = await page.locator('#panel .share-btn').evaluate((el) => {
+      const q = el.getBoundingClientRect();
+      const d = Math.abs(parseFloat(getComputedStyle(el, '::before').top || '0'));
+      return { dessin: q.width, sensible: q.width + 2 * d };
+    });
+    expect(taille.dessin).toBeGreaterThanOrEqual(24);
+    expect(taille.sensible, 'cible tactile trop petite').toBeGreaterThanOrEqual(44);
+  });
+
   // La langue vit dans « ?lang=xx » quand la reecriture d'URL n'est pas
   // active — c'est le cas du serveur de test. Ecraser la requete par
   // « ?country=… » la ramenait au francais au premier panneau ouvert.

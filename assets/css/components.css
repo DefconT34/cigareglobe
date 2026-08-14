@@ -662,6 +662,19 @@ body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 1
 }
 .share-btn:hover { background:#333; color:#fff; }
 .share-btn.copie { background:var(--grn); color:#fff; }
+/* La cible tactile ne se voit pas : 44 px autour d'une pastille qui
+   garde ses 28 px a l'oeil. Du remplissage l'aurait deplacee ; un
+   pseudo-element en debord negatif elargit la zone sensible sans
+   toucher au dessin. Meme procede que .fo-close et .bm-share. */
+.share-btn::before { content:''; position:absolute; inset:-8px; }
+/* Dernier recours quand ni le partage natif ni le presse-papiers ne
+   sont disponibles (http nu) : l'adresse, deja selectionnee. */
+#share-url {
+  position:absolute; top:42px; right:10px; width:min(280px, 70vw);
+  padding:6px 8px; font-size:11px; z-index:11;
+  background:#fff; color:#222; border:1px solid var(--gold);
+  border-radius:4px; box-shadow:0 6px 18px rgba(0,0,0,.25);
+}
 
 /* ── Système de notation ─────────────────────────────── */
 .lc-rating-section {

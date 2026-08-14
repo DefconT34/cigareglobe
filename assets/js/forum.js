@@ -315,7 +315,13 @@
         '</div>';
 
       var liste = l.length ? '<div class="fo-list">' + l.map(ligneSujet).join('') + '</div>'
-        : '<div class="fo-vide">' + t(langues === 'all' ? 'forum_vide' : 'forum_vide_filtre') + '</div>';
+        // Le message du vide doit dire LA BONNE raison. Une fiche de
+        // l'atlas sans discussion affichait « aucun sujet dans les
+        // langues affichées » : le lecteur en concluait qu'il en
+        // existait ailleurs, et n'ouvrait pas le premier.
+        : '<div class="fo-vide">' +
+            t(ancre ? 'forum_vide_ancre' : (langues === 'all' ? 'forum_vide' : 'forum_vide_filtre')) +
+          '</div>';
 
       corps().innerHTML = tete + liste;
       corps().querySelector('.fo-back-btn').onclick = function () { aller(null, null); };
