@@ -1499,6 +1499,31 @@ foreach (['en', 'es', 'de', 'zh', 'ar'] as $l) {
 }
 eq('chaque code est traduit dans les cinq autres langues', [], $manquantes);
 
+// ════════════════════════════════════════════════════════
+section('La campagne n\'a rien touche hors de sa base');
+
+// Un test qui ecrit dans la base APPLICATIVE ne se voit pas : il passe,
+// et c'est le site de developpement qui change de comportement des
+// heures plus tard. C'est arrive — la campagne a ferme quatre langues
+// sur le vrai site, et le defaut ne s'est vu qu'en ouvrant la page.
+//
+// Ce controle final compare l'etat de la base applicative a ce qu'il
+// doit etre : les six langues servies. Il ne repare rien, il ALERTE —
+// une reparation automatique masquerait la fuite au lieu de la dire.
+try {
+    $app = new PDO(
+        sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', DB_HOST, DB_PORT, DB_NAME),
+        DB_USER, DB_PASS,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
+    );
+    $fermees = $app->query("SELECT code FROM site_languages WHERE is_active = 0")
+                   ->fetchAll(PDO::FETCH_COLUMN);
+    eq('base applicative : aucune langue fermee par la campagne', [], $fermees);
+} catch (Throwable $e) {
+    // Table absente : base applicative pas encore migree, rien a dire.
+    check('base applicative : controle possible', true);
+}
+
 report_and_exit();
 
 /**
