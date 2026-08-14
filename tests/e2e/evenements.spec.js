@@ -186,4 +186,85 @@ test.describe('Rendez-vous', () => {
     expect(trouve.err, trouve.err || '').toBeUndefined();
     expect(trouve.texte).toContain('Degustation de rentree');
   });
+
+  // ── La charte, jusqu'aux commandes de l'agenda ────────
+  // Les regles de forum.css nommaient les classes une a une : chaque
+  // commande ajoutee ensuite sortait dans le gris « outset » du
+  // navigateur. « Organiser » et le choix de periode etaient dans ce
+  // cas. On mesure ce qui distingue un controle de la charte d'un
+  // controle par defaut : la fonte et le fond.
+  test('les commandes de l\'agenda suivent la charte', async ({ page }) => {
+    await ouvrir(page, '/');
+    await page.evaluate(() => {
+      // Le bouton « Organiser » n'est propose qu'aux contributeurs de
+      // confiance. Le DROIT est verifie cote serveur (403,
+      // « evt_confiance_requise ») ; ici on regarde le style, et il
+      // faut donc que le bouton existe.
+      window.CGAccount = Object.assign({}, window.CGAccount, {
+        user: { id: 1, role: 'trusted', email_verified: true },
+        requireVerified: () => true,
+      });
+    });
+    await page.locator('#forumBtn').click();
+    await page.locator('.fo-sec[data-sec="rencontres"]').click();
+
+    const bouton = page.locator('.fo-new-evt');
+    await expect(bouton).toBeVisible({ timeout: 15_000 });
+    const style = await page.evaluate(() => {
+      const lire = (sel) => {
+        const s = getComputedStyle(document.querySelector(sel));
+        return { police: s.fontFamily.split(',')[0].replace(/["']/g, ''),
+                 fond: s.backgroundColor, maj: s.textTransform };
+      };
+      return { organiser: lire('.fo-new-evt'), periode: lire('.fo-quand') };
+    });
+    // Cinzel capitales interlettrees : la signature des commandes du site.
+    expect(style.organiser.police).toBe('Cinzel');
+    expect(style.organiser.maj).toBe('uppercase');
+    // Le gris « outset » du navigateur n'a pas de fond declare.
+    expect(style.organiser.fond).not.toBe('rgba(0, 0, 0, 0)');
+    expect(style.periode.police).toBe('Lato');
+    expect(style.periode.fond).not.toBe('rgba(0, 0, 0, 0)');
+  });
+
+  // ── Le lieu : pays, puis etablissement de la base ─────
+  // Le serveur acceptait « lounge_id » depuis le premier jour, mais le
+  // formulaire n'offrait qu'un champ libre : personne ne pouvait
+  // designer un etablissement, donc aucun rendez-vous n'heritait de ses
+  // coordonnees — ni du losange sur le globe.
+  test('le lieu se choisit dans l\'atlas', async ({ page }) => {
+    await ouvrir(page, '/');
+    await page.evaluate(() => {
+      window.CGAccount = Object.assign({}, window.CGAccount, {
+        user: { id: 1, role: 'trusted', email_verified: true },
+        requireVerified: () => true,
+      });
+    });
+    await page.locator('#forumBtn').click();
+    await page.locator('.fo-sec[data-sec="rencontres"]').click();
+    await page.locator('.fo-new-evt').click();
+
+    const pays = page.locator('.fo-f-pays');
+    const etab = page.locator('.fo-f-etab');
+    const libre = page.locator('.fo-f-lieu');
+    await expect(pays).toBeVisible({ timeout: 15_000 });
+    // Tant qu'aucun pays n'est choisi, il n'y a rien a choisir.
+    await expect(etab).toBeDisabled();
+    await expect(libre).toBeEnabled();
+
+    await pays.selectOption('belgium');
+    // Les etablissements arrivent du serveur, pays par pays.
+    await expect(etab).toBeEnabled({ timeout: 15_000 });
+    expect(await etab.locator('option').count()).toBeGreaterThan(1);
+
+    // Choisir un etablissement DESACTIVE le champ libre : on voit ce
+    // que le formulaire va envoyer.
+    const valeur = await etab.locator('option').nth(1).getAttribute('value');
+    await etab.selectOption(valeur);
+    await expect(libre).toBeDisabled();
+
+    // CONTRE-EPREUVE : revenir a « autre lieu » le rend.
+    await etab.selectOption('');
+    await expect(libre).toBeEnabled();
+  });
 });

@@ -1500,6 +1500,53 @@ foreach (['en', 'es', 'de', 'zh', 'ar'] as $l) {
 eq('chaque code est traduit dans les cinq autres langues', [], $manquantes);
 
 // ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+section('Le lieu d\'un rendez-vous');
+
+// Ce bloc vient EN DERNIER : creer un rendez-vous sur un
+// etablissement ancre aussi son sujet dessus (ref_type = lounge). Pose
+// plus haut, il faussait le compte de discussions de la fiche et le
+// nombre de rendez-vous a venir — trois sections plus loin, sans que
+// rien ne relie l'echec a sa cause.
+// Organiser demande le statut de confiance, et Alice l'a perdu depuis :
+// la section des plafonds la remet en simple membre pour verifier le
+// blocage des liens externes.
+test_pdo()->exec("UPDATE users SET role = 'trusted' WHERE email = 'alice@test.local'");
+
+// -- Le lieu pris dans l'atlas ---------------------------
+// Choisir un etablissement de la base donne son nom, sa ville ET ses
+// coordonnees — donc le losange sur le globe, que personne ne
+// saisirait a la main. Le texte libre envoye a cote est IGNORE : deux
+// sources pour un meme lieu finiraient par se contredire.
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create',
+    array_merge($evt, ['title' => 'Rendez-vous au Lounge de test',
+                       'starts_local' => '2027-03-10T19:00',
+                       'lounge_id' => 1, 'place_label' => 'Une saisie qui doit etre ignoree']));
+eq('forum : rendez-vous ancre sur un etablissement', 201, $r['status']);
+$e_lieu = (int)$r['json']['id'];
+$lieu = test_pdo()->query(
+    "SELECT lounge_id, place_label FROM forum_events WHERE topic_id = $e_lieu"
+)->fetch(PDO::FETCH_ASSOC);
+eq('forum : l\'etablissement est enregistre', 1, (int)$lieu['lounge_id']);
+eq('forum : le libelle vient de la base, pas de la saisie',
+   'Lounge de test · Ville', $lieu['place_label']);
+
+// Un etablissement inconnu ne fabrique pas un lieu : on retombe sur le
+// texte libre, qui reste la seule chose que l'on sache.
+$r = post_json($base, $alice, '/backend/forum.php?action=event_create',
+    array_merge($evt, ['title' => 'Rendez-vous a un etablissement inconnu',
+                       'starts_local' => '2027-03-11T19:00',
+                       'lounge_id' => 999999, 'place_label' => 'Chez Marcel, Lyon']));
+eq('forum : rendez-vous cree malgre l\'etablissement inconnu', 201, $r['status']);
+$lieu = test_pdo()->query(
+    "SELECT lounge_id, place_label FROM forum_events WHERE topic_id = " . (int)$r['json']['id']
+)->fetch(PDO::FETCH_ASSOC);
+eq('forum : aucun etablissement retenu', null, $lieu['lounge_id']);
+eq('forum : le texte libre prend le relais', 'Chez Marcel, Lyon', $lieu['place_label']);
+
+test_pdo()->exec("UPDATE users SET role = 'member' WHERE email = 'alice@test.local'");
+
+// ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 
 // Un test qui ecrit dans la base APPLICATIVE ne se voit pas : il passe,

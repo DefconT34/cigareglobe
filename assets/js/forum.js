@@ -891,6 +891,61 @@
   }
 
   // ── Créer un rendez-vous ───────────────────────────────
+  /**
+   * Le choix du lieu : pays, puis établissement.
+   *
+   * Les pays sont déjà en mémoire (LOUNGE_COUNTRIES) ; les
+   * établissements ne le sont pas, et se chargent pays par pays —
+   * loadLounges() met en cache, donc rouvrir le même pays ne coûte
+   * rien. On ne charge que ce qu'on demande : la liste complète pèse
+   * quarante fois plus que celle d'un pays.
+   *
+   * Choisir un établissement DÉSACTIVE le champ libre plutôt que de le
+   * masquer : on voit ce que le formulaire va envoyer, et le texte
+   * saisi avant n'est pas perdu si l'on change d'avis.
+   */
+  function brancherLieu(f) {
+    var pays = f.querySelector('.fo-f-pays');
+    var etab = f.querySelector('.fo-f-etab');
+    var libre = f.querySelector('.fo-f-lieu');
+    if (!pays || !etab || !libre) return;
+
+    function majLibre() {
+      var pris = !!etab.value;
+      libre.disabled = pris;
+      libre.placeholder = pris ? t('forum_evt_lieu_pris') : t('forum_evt_lieu_aide');
+    }
+
+    pays.onchange = function () {
+      etab.innerHTML = '<option value="">' + esc(t('forum_evt_etab_libre')) + '</option>';
+      etab.disabled = true;
+      majLibre();
+      if (!pays.value || typeof window.loadLounges !== 'function') return;
+      etab.innerHTML = '<option value="">' + esc(t('loading_spinner')) + '</option>';
+      loadLounges(pays.value).then(function (liste) {
+        // Seuls les établissements de la BASE ont un identifiant : une
+        // contribution non encore approuvée n'en a pas, et n'a donc
+        // rien à faire ici.
+        var avecId = (liste || []).filter(function (l) { return l.id; });
+        etab.innerHTML = '<option value="">' + esc(t('forum_evt_etab_libre')) + '</option>' +
+          avecId.map(function (l) {
+            return '<option value="' + esc(l.id) + '">' +
+                   esc(l.name + (l.city ? ' · ' + l.city : '')) + '</option>';
+          }).join('');
+        etab.disabled = !avecId.length;
+        if (!avecId.length) {
+          etab.innerHTML = '<option value="">' + esc(t('forum_evt_etab_vide')) + '</option>';
+        }
+        majLibre();
+      }).catch(function () {
+        etab.innerHTML = '<option value="">' + esc(t('forum_evt_etab_libre')) + '</option>';
+        etab.disabled = true;
+        majLibre();
+      });
+    };
+    etab.onchange = majLibre;
+  }
+
   function formulaireEvt() {
     if (!(window.CGAccount && window.CGAccount.requireVerified())) return;
     var natures = ['degustation', 'rencontre', 'artisan', 'salon', 'enligne'];
@@ -911,6 +966,29 @@
               return '<option value="' + k + '">' + esc(t('forum_evt_kind_' + k)) + '</option>';
             }).join('') + '</select></label>' +
         '</div>' +
+        // ── Le lieu ───────────────────────────────────────
+        // Pays, puis établissement de la base, puis texte libre. Le
+        // rendez-vous se tient le plus souvent dans un lieu que l'atlas
+        // connaît déjà : le choisir donne son nom, sa ville ET ses
+        // coordonnées — donc le losange sur le globe, que personne ne
+        // saisirait à la main. Le champ libre reste pour tout le reste,
+        // et c'est lui qu'on voit tant qu'aucun pays n'est choisi.
+        '<div class="fo-form-2">' +
+          '<label>' + t('forum_evt_pays') +
+            '<select class="fo-f-pays">' +
+              '<option value="">' + esc(t('forum_evt_pays_aucun')) + '</option>' +
+              (window.LOUNGE_COUNTRIES || []).slice().sort(function (a, b) {
+                return String(a.name).localeCompare(String(b.name), window.currentLang || 'fr');
+              }).map(function (c) {
+                return '<option value="' + esc(c.id) + '">' +
+                       esc((c.flag ? c.flag + ' ' : '') + c.name) + '</option>';
+              }).join('') +
+            '</select></label>' +
+          '<label>' + t('forum_evt_etab') +
+            '<select class="fo-f-etab" disabled>' +
+              '<option value="">' + esc(t('forum_evt_etab_libre')) + '</option>' +
+            '</select></label>' +
+        '</div>' +
         '<label>' + t('forum_evt_lieu') +
           '<input class="fo-f-lieu" maxlength="160" placeholder="' + esc(t('forum_evt_lieu_aide')) + '"></label>' +
         '<div class="fo-form-2">' +
@@ -928,11 +1006,13 @@
 
     var f = corps().querySelector('.fo-form');
     var errEl = f.querySelector('.fo-err');
+    brancherLieu(f);
     corps().querySelector('.fo-back-btn').onclick = function () { rendre(); };
     f.querySelector('.fo-annuler').onclick = function () { rendre(); };
     f.querySelector('.fo-envoyer').onclick = function () {
       errEl.hidden = true;
       appel('event_create', 'POST', {
+        lounge_id:    parseInt(f.querySelector('.fo-f-etab').value, 10) || 0,
         title:        f.querySelector('.fo-f-titre').value.trim(),
         body:         f.querySelector('.fo-f-corps').value.trim(),
         starts_local: f.querySelector('.fo-f-debut').value,
