@@ -1118,6 +1118,12 @@ button, a, input, select, textarea, label,
   transition: background .18s, color .18s;
 }
 .bm-discuter:hover { background: var(--gold); color: var(--panel-bg); }
+/* Une fiche qui porte déjà des discussions le dit : le compte s'écrit
+   dans le libellé, et le bouton passe du contour au fond doré pâle.
+   La classe n'est posée que s'il y a quelque chose derrière — un
+   « · 0 » sur quarante cartes annoncerait un désert. */
+.bm-discuter.a-des-sujets { background: var(--gold-p); }
+.lc-discuter.a-des-sujets { border-color: var(--gold); color: var(--gold); }
 
 /* Le partage est LE MÊME bouton partout : même pastille, même place.
    Un bouton qui change de forme et de position d'un écran à l'autre se

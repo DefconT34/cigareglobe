@@ -486,11 +486,17 @@ function _renderBrand(name, cid) {
   // ce site a l'atlas.
   var disc = document.getElementById('bmDiscuter');
   if (disc) {
-    disc.innerHTML = '<button type="button" class="bm-discuter">\u{1F4AC} ' +
-      _escHtml(t('forum_discuter')) + '</button>';
+    disc.innerHTML = '<button type="button" class="bm-discuter" data-ref="' +
+      _escAttr(name) + '">\u{1F4AC} <span class="disc-txt">' +
+      _escHtml(t('forum_discuter')) + '</span></button>';
     disc.querySelector('.bm-discuter').onclick = function () {
       if (typeof window.ouvrirForumRef === 'function') window.ouvrirForumRef('brand', name, name);
     };
+    // Le compte de discussions, s'il y en a. Une seule maison a la
+    // fois : l'appel groupe ne porte qu'un identifiant.
+    if (window.ficheComptesDiscussions) {
+      ficheComptesDiscussions('brand', [name], '.bm-discuter');
+    }
   }
 
   // ── La fiche de partage, dessinee pendant la lecture ───

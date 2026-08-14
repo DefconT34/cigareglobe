@@ -7,6 +7,7 @@
 //   GET  ?action=topic&id=42[&page=…]              sujet + messages
 //   GET  ?action=tags[&q=…]                        autocomplétion
 //   GET  ?action=search&q=…[&lang=…]               discussions trouvées
+//   GET  ?action=ref_counts&type=…&ids=…[&lang=…]  discussions par fiche
 //   GET  ?action=agenda[&passes=1][&lang=…]        rendez-vous à venir / archives
 //   GET  ?action=lounge_events&id=42               rendez-vous d'un établissement
 //   GET  ?action=mod_queue                         file de modération (admin)
@@ -84,6 +85,7 @@ try {
         $action === 'topic'        && $method === 'GET'  => a_topic($db),
         $action === 'tags'         && $method === 'GET'  => a_tags($db),
         $action === 'search'       && $method === 'GET'  => a_search($db),
+        $action === 'ref_counts'   && $method === 'GET'  => a_ref_counts($db),
         $action === 'agenda'       && $method === 'GET'  => a_agenda($db),
         $action === 'lounge_events'&& $method === 'GET'  => a_lounge_events($db),
         $action === 'mod_queue'    && $method === 'GET'  => a_mod_queue($db),
@@ -218,6 +220,64 @@ function a_topics(PDO $db): void {
         'page'  => $page,
         'pages' => (int)ceil($total / FORUM_PAR_PAGE),
     ]);
+}
+
+/**
+ * Combien de discussions par fiche de l'atlas.
+ *
+ * Le bouton « En discuter » ne disait pas ce qu'il y avait derrière : on
+ * cliquait pour découvrir le vide, ou pour rater une conversation en
+ * cours. Le compte se lit avant le clic.
+ *
+ * UN SEUL APPEL pour toute une fiche pays et ses quarante
+ * établissements — même raison que « lounge_events » : l'hébergeur
+ * mutualisé ne traite qu'une requête à la fois, et quarante appels
+ * feraient quarante attentes.
+ *
+ * MÊME FILTRE DE LANGUE que la liste qui s'ouvrira. Annoncer « 2 » puis
+ * n'en montrer qu'une est pire que ne rien annoncer — c'est la règle
+ * déjà appliquée au compte de sujets d'une rubrique.
+ *
+ * Les fiches sans discussion sont ABSENTES de la réponse plutôt que
+ * portées à zéro : le front n'affiche rien dans ce cas, et une réponse
+ * qui ne transporte que ce qui existe se lit sans compter les zéros.
+ */
+function a_ref_counts(PDO $db): void {
+    $type = trim($_GET['type'] ?? '');
+    if (!in_array($type, ['lounge', 'brand', 'country'], true)) {
+        fout(err('bad_ref_type', 'Type de référence inconnu'), 400);
+    }
+    // Les identifiants d'établissement sont des entiers ; ceux des
+    // marques et des pays, du texte. Le découpage sur la virgule
+    // interdit donc une marque dont le nom en contiendrait une — aucune
+    // n'en porte, et l'appel se fait fiche par fiche pour les marques.
+    $ids = array_values(array_filter(array_map(
+        fn($v) => mb_substr(trim($v), 0, 80),
+        explode(',', (string)($_GET['ids'] ?? ''))
+    ), fn($v) => $v !== ''));
+    $ids = array_slice($ids, 0, 60);
+    if (!$ids) fout(['counts' => (object)[]]);
+
+    $where = ["t.status <> 'removed'", 't.ref_type = ?'];
+    $args  = [$type];
+    $where[] = 't.ref_id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+    foreach ($ids as $i) $args[] = $i;
+
+    $langs = forum_langues_demandees();
+    if ($langs !== null) {
+        $where[] = 't.lang IN (' . implode(',', array_fill(0, count($langs), '?')) . ')';
+        foreach ($langs as $l) $args[] = $l;
+    }
+
+    $stmt = $db->prepare(
+        "SELECT t.ref_id, COUNT(*) AS n FROM forum_topics t
+         WHERE " . implode(' AND ', $where) . "
+         GROUP BY t.ref_id"
+    );
+    $stmt->execute($args);
+    $out = [];
+    foreach ($stmt->fetchAll() as $r) $out[(string)$r['ref_id']] = (int)$r['n'];
+    fout(['counts' => $out ?: (object)[]]);
 }
 
 /**

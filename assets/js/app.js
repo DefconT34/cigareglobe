@@ -390,9 +390,14 @@ function _renderLoungeCards(c, list, body, opts) {
     // aller et ce qu'il vaut ; reste a en parler. Le lien n'existe que
     // pour un etablissement issu de la BASE — un identifiant est
     // necessaire pour y accrocher un sujet.
+    // data-ref : l'identifiant que le compte de discussions vient
+    // retrouver (ficheComptesDiscussions). Le libelle est dans un
+    // <span> a part pour qu'on puisse y ajouter « · 3 » sans toucher
+    // au pictogramme.
     var parler = loungeId
       ? '<button type="button" class="lc-link lc-discuter" data-lid="' + E(loungeId) +
-        '" data-nom="' + E(l.name) + '">\u{1F4AC} ' + _escHtml(t('forum_discuter')) + '</button>'
+        '" data-ref="' + E(loungeId) + '" data-nom="' + E(l.name) + '">\u{1F4AC} ' +
+        '<span class="disc-txt">' + _escHtml(t('forum_discuter')) + '</span></button>'
       : '';
     // L'itineraire suit la carte, la distance ferme la ligne : on va du
     // « ou est-ce » au « comment j'y vais » puis au « c'est loin ? ».
@@ -433,6 +438,10 @@ function _renderLoungeCards(c, list, body, opts) {
   // pose lui-meme : l'atlas n'a pas a le connaitre, et son absence
   // ne change rien a la fiche.
   if (window.ficheEvenementsLounges) ficheEvenementsLounges(list);
+  if (window.ficheComptesDiscussions) {
+    ficheComptesDiscussions('lounge', list.map(function (l) { return l.id; }).filter(Boolean),
+                            '.lc-discuter');
+  }
 
   // Charger les photos lazily après rendu des cartes
   if (typeof _loadLoungePhotos === 'function') {

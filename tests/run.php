@@ -1096,6 +1096,35 @@ $r = http('GET', $base . '/backend/forum.php?action=topics&ref_type=lounge&ref_i
 eq('ancrage : la fiche retrouve ses discussions', 1, count($r['json']['topics']));
 eq('ancrage : et c\'est le bon sujet', $t_ancre, (int)$r['json']['topics'][0]['id']);
 
+// ── Le compte sur le bouton « En discuter » ──────────────
+// Le bouton ne disait pas ce qu'il y avait derriere : on cliquait pour
+// decouvrir le vide, ou pour rater une conversation en cours.
+$r = http('GET', $base . '/backend/forum.php?action=ref_counts&type=lounge&ids=1,999&lang=all',
+          ['jar' => $anon]);
+eq('compte : la fiche annonce sa discussion', 1, (int)($r['json']['counts']['1'] ?? 0));
+// Les fiches sans discussion sont ABSENTES plutot que portees a zero :
+// le front n'affiche rien dans ce cas.
+check('compte : une fiche sans discussion n\'est pas listee',
+      !array_key_exists('999', $r['json']['counts']));
+
+// MEME filtre de langue que la liste qui s'ouvrira : annoncer « 2 »
+// puis n'en montrer qu'une est pire que ne rien annoncer.
+$r = http('GET', $base . '/backend/forum.php?action=ref_counts&type=lounge&ids=1&lang=en',
+          ['jar' => $anon]);
+check('compte : il suit le filtre de langue',
+      !array_key_exists('1', $r['json']['counts']));
+
+// Un type inconnu est refuse : la table lue depend de ce parametre.
+$r = http('GET', $base . '/backend/forum.php?action=ref_counts&type=fantaisie&ids=1', ['jar' => $anon]);
+eq('compte : un type de reference inconnu est refuse', 400, $r['status']);
+
+// Un sujet retire ne se compte plus.
+test_pdo()->exec("UPDATE forum_topics SET status = 'removed' WHERE id = $t_ancre");
+$r = http('GET', $base . '/backend/forum.php?action=ref_counts&type=lounge&ids=1&lang=all', ['jar' => $anon]);
+check('compte : un sujet retire ne se compte plus',
+      !array_key_exists('1', $r['json']['counts']));
+test_pdo()->exec("UPDATE forum_topics SET status = 'open' WHERE id = $t_ancre");
+
 // CONTRE-EPREUVE : une autre reference ne rend pas ce sujet.
 $r = http('GET', $base . '/backend/forum.php?action=topics&ref_type=lounge&ref_id=999&lang=all', ['jar' => $anon]);
 eq('ancrage : une fiche sans discussion en rend zero', 0, count($r['json']['topics']));

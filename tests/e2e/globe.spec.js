@@ -111,32 +111,41 @@ test.describe('Globe', () => {
 
     test('apparait au survol d\'un pays puis disparait', async ({ page }) => {
       await ouvrir(page, '/');
-      // On vise le centre du globe en balayant jusqu'a toucher une cible :
-      // la rotation initiale n'est pas garantie.
+      // On vise le centre du globe en balayant jusqu'a toucher une
+      // cible : la rotation initiale n'est pas garantie.
       //
-      // LA ROTATION EST FIGEE D'ABORD. Le point est trouve dans le
-      // navigateur, puis la souris s'y rend depuis le pilote : entre les
-      // deux, le globe continuait de tourner. A 2,75 °/s ce n'est rien
-      // quand la machine est libre, et assez pour manquer un marqueur
-      // quand elle porte les 91 parcours de la campagne — d'ou un echec
-      // qui ne se reproduisait jamais en isolant le test. Ce parcours
-      // mesure l'infobulle au survol, pas l'adresse d'une cible mobile.
-      const touche = await page.evaluate(async () => {
-        autoRot = false;
-        const c = document.getElementById('globe');
-        const r = c.getBoundingClientRect();
-        for (let i = 0; i < 400; i++) {
-          const x = r.left + r.width * (0.3 + 0.4 * Math.random());
-          const y = r.top + r.height * (0.3 + 0.4 * Math.random());
-          if (typeof hitTest === 'function' && hitTest(x, y)) return { x, y };
-        }
-        return null;
-      });
-      test.skip(!touche, 'aucune cible trouvee sur la face visible du globe');
-
-      await page.mouse.move(touche.x, touche.y);
-      await expect(page.locator('#tip')).toBeVisible();
-      await expect(page.locator('#tip')).not.toBeEmpty();
+      // C'est le GESTE ENTIER qu'on rejoue, pas seulement la mesure :
+      // viser puis pointer sont deux instants, et le globe peut avoir
+      // tourne entre les deux. Figer `autoRot` ne suffit pas — plusieurs
+      // modules la remettent a vrai par un minuteur differe
+      // (closePanels, l'Explorer, la tape mobile), et un de ces
+      // minuteurs peut atterrir juste apres notre gel. Sous la charge de
+      // la campagne complete, cela arrive ; en isolant le test, jamais.
+      //
+      // Un vrai defaut, lui, ne se stabilise pas : le delai expire.
+      const viserEtPointer = async () => {
+        const cible = await page.evaluate(() => {
+          autoRot = false;
+          const c = document.getElementById('globe');
+          const r = c.getBoundingClientRect();
+          for (let i = 0; i < 400; i++) {
+            const x = r.left + r.width * (0.3 + 0.4 * Math.random());
+            const y = r.top + r.height * (0.3 + 0.4 * Math.random());
+            if (typeof hitTest === 'function' && hitTest(x, y)) return { x, y };
+          }
+          return null;
+        });
+        if (!cible) return 'aucune cible';
+        await page.mouse.move(cible.x, cible.y);
+        return page.evaluate(() => {
+          const el = document.getElementById('tip');
+          return el.classList.contains('tip-on') && el.textContent.trim() !== ''
+            ? 'infobulle garnie' : 'rien';
+        });
+      };
+      await expect
+        .poll(viserEtPointer, { timeout: 20_000, message: 'l\'infobulle ne parait pas au survol' })
+        .toBe('infobulle garnie');
 
       // Hors du globe : l'infobulle se retire
       await page.mouse.move(5, 700);

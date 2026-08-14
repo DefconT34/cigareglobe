@@ -1040,6 +1040,37 @@
    * traite qu'une à la fois, et vingt appels transformeraient
    * l'ouverture d'une fiche pays en attente visible.
    */
+  /**
+   * Le compte de discussions sur les boutons « En discuter ».
+   *
+   * Le bouton ne disait pas ce qu'il y avait derrière : on cliquait pour
+   * découvrir le vide, ou pour rater une conversation en cours.
+   *
+   * UN SEUL appel pour toute la fiche pays et ses établissements, comme
+   * pour les rendez-vous : le serveur n'en traite qu'un à la fois.
+   * Rien n'est affiché quand il n'y a rien — « · 0 » sur quarante
+   * cartes annoncerait un désert, ce que le silence dit mieux.
+   *
+   * Le compte suit le MÊME filtre de langue que la liste qui s'ouvrira :
+   * annoncer « 2 » puis n'en montrer qu'une est pire que ne rien dire.
+   */
+  window.ficheComptesDiscussions = function (type, ids, selecteur) {
+    var liste = (ids || []).map(String).filter(Boolean);
+    if (!liste.length) return;
+    appel('ref_counts&type=' + encodeURIComponent(type) +
+          '&ids=' + encodeURIComponent(liste.join(',')) +
+          '&lang=' + encodeURIComponent(paramLangues())).then(function (r) {
+      var n = (r.data && r.data.counts) || {};
+      document.querySelectorAll(selecteur).forEach(function (b) {
+        var c = n[b.getAttribute('data-ref')];
+        if (!c) return;
+        var etiquette = b.querySelector('.disc-txt');
+        if (etiquette) etiquette.textContent = t('forum_discuter') + ' · ' + c;
+        b.classList.add('a-des-sujets');
+      });
+    }).catch(function () { /* la fiche se passe très bien du compte */ });
+  };
+
   window.ficheEvenementsLounges = function (lounges) {
     var ids = (lounges || []).map(function (l) { return l.id; }).filter(Boolean);
     if (!ids.length) return;

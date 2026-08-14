@@ -91,6 +91,31 @@ if ($secEvt) {
 }
 
 
+// ── Un sujet ANCRE sur une fiche de l'atlas ──────────────
+// Sans lui, le bouton « En discuter » n'aurait jamais de compte a
+// afficher, et le parcours qui le verifie ne dirait rien : il passerait
+// aussi bien si le compte ne s'affichait jamais.
+$secEtab = (int)$pdo->query("SELECT id FROM forum_sections WHERE slug = 'etablissements' LIMIT 1")->fetchColumn();
+if ($secEtab && $lounge) {
+    $pdo->exec("INSERT INTO forum_topics
+                  (id, section_id, user_id, title, slug, lang, ref_type, ref_id, posts_count, last_post_at)
+                VALUES (920, $secEtab, 900, 'Le fumoir est-il ventile ?', 'le-fumoir-est-il-ventile',
+                        'fr', 'lounge', '$lounge', 1, NOW())");
+    $pdo->exec("INSERT INTO forum_posts (topic_id, user_id, body) VALUES
+        (920, 900, 'Quelqu un y est passe recemment ? Je cherche un endroit ou l on peut rester deux heures.')");
+}
+// Et une maison, pour la fiche de marque.
+$secMaisons = (int)$pdo->query("SELECT id FROM forum_sections WHERE slug = 'maisons' LIMIT 1")->fetchColumn();
+if ($secMaisons) {
+    $pdo->exec("INSERT INTO forum_topics
+                  (id, section_id, user_id, title, slug, lang, ref_type, ref_id, posts_count, last_post_at)
+                VALUES (921, $secMaisons, 900, 'Le Siglo VI vaut-il son prix ?', 'le-siglo-vi-vaut-il-son-prix',
+                        'fr', 'brand', 'Cohiba', 1, NOW())");
+    $pdo->exec("INSERT INTO forum_posts (topic_id, user_id, body) VALUES
+        (921, 900, 'La question se pose depuis la derniere hausse.')");
+}
+
+
 // ── Images d'un message ──────────────────────────────────
 // Deux vignettes sous le premier message du sujet francais. Les
 // fichiers sont VRAIMENT ecrits sur le disque : un parcours qui verifie

@@ -159,13 +159,23 @@ test.describe('Communaute', () => {
     await expect(page.locator('#forum.open')).toBeVisible();
     // Le sous-titre annonce ce dont on parle, pas une rubrique.
     await expect(page.locator('.fo-sub')).toHaveText('Cohiba');
-    // Aucune discussion pour l'instant : c'est le message d'attente
-    // qu'on doit voir, pas la liste de toute la rubrique.
+    // Les discussions de CETTE maison, pas la rubrique entiere : le jeu
+    // de donnees en pose une seule (tests/setup_front_db.php), et la
+    // rubrique « Maisons » n'en contient pas d'autre.
+    await expect(page.locator('.fo-topic')).toHaveCount(1, { timeout: 15_000 });
+    await expect(page.locator('.fo-t-title')).toContainText('Siglo VI');
+  });
+
+  // Une maison SANS discussion : c'est le message d'attente qu'on doit
+  // voir, pas la liste de toute la rubrique. Et le vide doit dire LA
+  // BONNE raison — « Aucun sujet dans les langues affichees » laissait
+  // croire qu'il en existait ailleurs, et personne n'ouvrait le premier.
+  test('une maison sans discussion invite a ouvrir la premiere', async ({ page }) => {
+    await ouvrir(page, '/?brand=Montecristo');
+    await page.locator('.bm-discuter').click();
+    await expect(page.locator('#forum.open')).toBeVisible();
     await expect(page.locator('.fo-topic')).toHaveCount(0);
 
-    // Et le vide doit dire LA BONNE raison. « Aucun sujet dans les
-    // langues affichees » laissait croire qu'il en existait ailleurs,
-    // et personne n'ouvrait le premier.
     const vide = page.locator('.fo-vide');
     await expect(vide).toBeVisible();
     await expect(vide).toContainText('Ouvrez la première');
@@ -184,6 +194,34 @@ test.describe('Communaute', () => {
     await bouton.click();
     await expect(page.locator('#forum.open')).toBeVisible();
     await expect(page.locator('.fo-sub')).toHaveText(nom.trim());
+  });
+
+  // ── Le compte, AVANT le clic ──────────────────────────
+  // Le bouton ne disait pas ce qu'il y avait derriere : on cliquait
+  // pour decouvrir le vide, ou pour rater une conversation en cours.
+  test('le bouton annonce le nombre de discussions', async ({ page }) => {
+    await ouvrir(page, '/?brand=Cohiba');
+    const bouton = page.locator('.bm-discuter');
+    await expect(bouton).toBeVisible({ timeout: 20_000 });
+
+    // Le compte arrive du serveur, apres le rendu de la fiche.
+    await expect(bouton).toHaveText(/·\s*1/, { timeout: 15_000 });
+    await expect(bouton).toHaveClass(/a-des-sujets/);
+
+    // Et il mene bien la ou il annonce.
+    await bouton.click();
+    await expect(page.locator('.fo-topic')).toHaveCount(1, { timeout: 15_000 });
+  });
+
+  // CONTRE-EPREUVE : sans discussion, pas de compte — « · 0 » sur
+  // quarante cartes annoncerait un desert, ce que le silence dit mieux.
+  test('sans discussion, le bouton reste muet', async ({ page }) => {
+    await ouvrir(page, '/?brand=Montecristo');
+    const bouton = page.locator('.bm-discuter');
+    await expect(bouton).toBeVisible({ timeout: 20_000 });
+    await page.waitForTimeout(1500);          // le temps que le compte arrive
+    await expect(bouton).not.toHaveText(/·/);
+    await expect(bouton).not.toHaveClass(/a-des-sujets/);
   });
 
   // ── Le pictogramme de la rubrique « Les cigares » ──────
