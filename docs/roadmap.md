@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→025, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→026, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -96,6 +96,34 @@ Effort : P = Petit · M = Moyen · G = Gros.
     disparaissent, et la troisième dit ce qu'il en est
   - ~~**Défaut repéré, non corrigé** : « Punch » figure sur la fiche de Cuba *et* sur celle du
     Honduras, mais un seul article existe — le cubain.~~ ✅ **réparé par `024`**
+- [x] ~~**D35** — Relecture sur sources : quatre erreurs, six précisions~~ ✅ · migration `026`
+  - Les dix maisons que `024` et `025` signalaient « moins documentées, à vérifier » l'ont
+    été, une par une, sur sources extérieures. **Quatre affirmations étaient fausses** — dont
+    deux que rien, dans le texte, ne présentait comme incertain
+  - **Suerdieck n'existe plus.** L'article la décrivait au présent. Elle a fermé sa dernière
+    usine de Cruz das Almas **en 2000**, après cent huit ans. L'atlas disait vivante une
+    maison morte
+  - **Meerapfel ne roule pas au Cameroun** mais en République dominicaine. Ma formule
+    « la première maison que le Cameroun peut dire sienne » était donc fausse : le pays n'y
+    fabrique rien. Par le critère posé en `023`, l'entrée passe en **`cape`** — et le
+    Cameroun redevient ce qu'il est, un pays de feuille sans manufacture premium
+  - **Matilde ne porte pas le prénom de la femme du fondateur** (elle s'appelle Carmen). Le
+    nom vient de la Tabacalera La Matilde, fabrique dominicaine de 1876 à 1910. La vraie
+    histoire était meilleure que celle que j'avais inventée
+  - **Alhambra n'était pas espagnole.** L'article déduisait du nom — le palais de Grenade —
+    que le capital venait d'Espagne. La société fondée à Manille en 1898 était **suisse**.
+    L'inférence était jolie et fausse
+  - Six précisions : Taru Martani (1918, rebaptisée par le sultan Hamengkubuwono IX — « la
+    feuille qui fait vivre ») · Juan Clemente (la bague au pied **protège** l'extrémité
+    fragile) · Bering (Tampa 1905 → Swisher → Danlí 1990 → **Plasencia** 2002) · Matacan
+    (même usine que Te Amo, donc **quatre entrées Turrent** sur la fiche mexicaine) ·
+    The Griffin's (Davidoff est arrivé **après**, pour l'export) · Warped (TABSA + El Titan
+    de Bronze, bouquet *entubado*)
+  - **Un piège que l'outillage ne voit pas** : corriger le français laisse les colonnes
+    traduites remplies de l'ANCIEN texte. `--reste` les compte comme complètes. Il a fallu
+    vider les colonnes à la main pour forcer la reprise. Rien ne relie une traduction à la
+    version du français dont elle est issue — à traiter (voir **E6**)
+
 - [x] ~~**D34** — Douze maisons de plus, et une erreur d'inventaire réparée~~ ✅ · migration `025`
   - **La migration `022` mentait sans le savoir.** Elle annonçait que Cuba tenait « le
     portefeuille Habanos COMPLET » avec 27 marques. **La Flor de Cano manquait** : fondée en
@@ -126,10 +154,10 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - **71 → 96 articles.** Nicaragua +6 · Rép. dominicaine +5 · Honduras +6 (dont l'article
     « Punch Honduras » qui manquait) · Mexique +2 · Brésil +2 · Philippines, États-Unis,
     Cameroun, Indonésie +1
-  - **Le Cameroun et l'Indonésie gagnent leur première maison en propre.** Jusqu'ici l'un
-    n'affichait que des cigares habillés de sa cape, l'autre que des marques néerlandaises.
-    Meerapfel (négociants de la cape camerounaise depuis des générations) et Taru Martani
-    (Yogyakarta) sont les premières entrées que ces deux pays peuvent dire leurs
+  - ~~**Le Cameroun et l'Indonésie gagnent leur première maison en propre.**~~ ⚠ **à moitié
+    faux, corrigé par `026`** : Meerapfel fait rouler ses cigares en République dominicaine.
+    Le Cameroun n'a donc toujours aucune maison en propre, et l'entrée est passée en `cape`.
+    Seule Taru Martani (Yogyakarta, 1918) tient : elle, elle roule bien chez elle
   - **Le même nom, deux maisons** : Punch, Hoyo de Monterrey, Montecristo et Romeo y Julieta
     existent en version cubaine et non cubaine, séparées par la nationalisation de 1960.
     L'atlas les distingue désormais au lieu de renvoyer tout le monde vers l'article cubain
@@ -621,6 +649,17 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     d'erreur si la base ne répond pas. Jamais un état figé présenté comme actuel
   - Effet de bord non prévu : le dictionnaire `_TRANSLATE` / `_tr()` vivait au sommet de
     `data.countries.js` et est bien vivant, lui. Déplacé dans `traduire.js`
+
+- [ ] **E6** — Rien ne relie une traduction à la version du français dont elle est issue · P
+  - Corriger un texte français laisse les colonnes `*_en`, `*_es`… remplies de la traduction
+    de l'ANCIENNE version. `i18n_lot.php --reste` les voit non vides, donc complètes : le
+    compteur affiche 100 % et la fiche traduite dit autre chose que la fiche française
+  - C'est arrivé en vrai avec la migration `026` : dix articles corrigés, dix traductions
+    devenues fausses et invisibles. Il a fallu vider les colonnes à la main
+  - Remède : stocker l'empreinte du français à côté de chaque traduction — une colonne, ou
+    une table `brands_i18n_src` — et faire échouer un contrôle quand elles divergent. Le
+    dictionnaire `content_translations` le fait déjà (`source_hash`) ; les colonnes de
+    traduction, non
 
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → **B1** → F3/F4/F6 → D6/C1b (optionnels)

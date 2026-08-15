@@ -46,7 +46,8 @@ espace communautaire (`forum_*`) + réglages du site (`site_languages`).
   - `024_marques_manquantes_2.sql` — **données** : 25 maisons, dont six
     au Nicaragua (A.J. Fernandez en tête, qui manquait à la fiche de son
     propre pays), cinq en Rép. dominicaine, six au Honduras. Le Cameroun
-    et l'Indonésie y gagnent leur **première** maison en propre. Répare
+    et l'Indonésie y gagnent une entrée en propre — affirmation ensuite
+    corrigée pour le Cameroun par `026`. Répare
     aussi l'entrée « Punch » du Honduras, qui pointait sur l'article
     cubain. **71 → 96 articles.**
 
@@ -57,6 +58,16 @@ espace communautaire (`forum_*`) + réglages du site (`site_languages`).
     et Warped (Nicaragua), VegaFina, Don Diego, The Griffin's, Matilde et
     Juan Clemente (Rép. dom.), Nat Sherman (États-Unis), Bering
     (Honduras) et Matacan (Mexique). **96 → 108 articles.**
+
+  - `026_relecture_sources.sql` — **données** : relecture sur sources
+    extérieures des dix maisons signalées « moins documentées » par
+    `024` et `025`. **Quatre faits étaient faux** : Suerdieck a fermé en
+    2000 (l'article la disait vivante) ; Meerapfel fait rouler ses
+    cigares en **Rép. dominicaine**, donc le Cameroun n'a toujours pas
+    de maison en propre et l'entrée passe en `cape` ; Matilde ne porte
+    pas le prénom de la femme du fondateur mais celui d'une fabrique de
+    1876 ; Alhambra était une société **suisse**, pas espagnole. Six
+    autres articles sont précisés.
 
   Le dossier fait foi ; cette liste résume.
 
@@ -69,7 +80,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `025`).
+dans l'ordre (`001` → `026`).
 
 ## Régénérer `schema.sql`
 
