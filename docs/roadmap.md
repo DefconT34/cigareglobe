@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→023, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→024, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -94,10 +94,25 @@ Effort : P = Petit · M = Moyen · G = Gros.
     **Cuba** n'est pas concernée
   - Un pays sans marque à lui n'affiche plus deux sections sous un titre faux : elles
     disparaissent, et la troisième dit ce qu'il en est
-  - **Défaut repéré, non corrigé** : « Punch » figure sur la fiche de Cuba *et* sur celle du
-    Honduras, mais un seul article existe — le cubain. La carte hondurienne ouvre donc
-    l'histoire de la marque cubaine. Le remède est un article « Punch Honduras », comme il
-    en existe pour les trois homonymes américaines
+  - ~~**Défaut repéré, non corrigé** : « Punch » figure sur la fiche de Cuba *et* sur celle du
+    Honduras, mais un seul article existe — le cubain.~~ ✅ **réparé par `024`**
+- [x] ~~**D33** — Vingt-cinq maisons que l'atlas ignorait~~ ✅ · migration `024`
+  - Point de départ : **A.J. Fernandez ne figurait pas sur la fiche du Nicaragua**. L'un des
+    assembleurs les plus demandés de sa génération, absent du pays où il roule — et le
+    Nicaragua, premier producteur premium du monde en volume, n'affichait que dix noms
+  - **71 → 96 articles.** Nicaragua +6 · Rép. dominicaine +5 · Honduras +6 (dont l'article
+    « Punch Honduras » qui manquait) · Mexique +2 · Brésil +2 · Philippines, États-Unis,
+    Cameroun, Indonésie +1
+  - **Le Cameroun et l'Indonésie gagnent leur première maison en propre.** Jusqu'ici l'un
+    n'affichait que des cigares habillés de sa cape, l'autre que des marques néerlandaises.
+    Meerapfel (négociants de la cape camerounaise depuis des générations) et Taru Martani
+    (Yogyakarta) sont les premières entrées que ces deux pays peuvent dire leurs
+  - **Le même nom, deux maisons** : Punch, Hoyo de Monterrey, Montecristo et Romeo y Julieta
+    existent en version cubaine et non cubaine, séparées par la nationalisation de 1960.
+    L'atlas les distingue désormais au lieu de renvoyer tout le monde vers l'article cubain
+  - **À relire en priorité** : Suerdieck, Alhambra, Taru Martani et Meerapfel sont beaucoup
+    moins documentées que les autres. Leurs dates de fondation sont écrites au conditionnel
+    dans le texte plutôt que données pour acquises
 - [x] ~~**D31** — Les marques qui manquaient à l'atlas~~ ✅ · migration `022`
   - **Cuba passe de 11 à 27 marques**, soit le portefeuille complet de Habanos S.A. Il en
     manquait seize, dont plusieurs des plus anciennes encore produites : Por Larrañaga

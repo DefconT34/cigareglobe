@@ -43,6 +43,12 @@ espace communautaire (`forum_*`) + réglages du site (`site_languages`).
     huit entrées dont l'article dit que la contribution du pays est la
     cape, pas la marque (Cameroun, Équateur, une du Brésil, une du
     Mexique). Le front leur donne leur propre section.
+  - `024_marques_manquantes_2.sql` — **données** : 25 maisons, dont six
+    au Nicaragua (A.J. Fernandez en tête, qui manquait à la fiche de son
+    propre pays), cinq en Rép. dominicaine, six au Honduras. Le Cameroun
+    et l'Indonésie y gagnent leur **première** maison en propre. Répare
+    aussi l'entrée « Punch » du Honduras, qui pointait sur l'article
+    cubain. **71 → 96 articles.**
 
   Le dossier fait foi ; cette liste résume.
 
@@ -55,7 +61,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `023`).
+dans l'ordre (`001` → `024`).
 
 ## Régénérer `schema.sql`
 
