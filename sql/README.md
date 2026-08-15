@@ -94,6 +94,26 @@ formait une seule « instruction », commençant par une directive
 `/*!40101 … */` donc ignorée — **zéro table créée**, et l'échec ne se
 manifestait qu'au premier `INSERT` sur `lounges`.
 
+## Régénérer l'amorçage du front
+
+Le front embarque **un seul** fichier de données : `assets/js/data.amorce.js`,
+de quoi dessiner le globe et rien de plus (identifiants, noms, drapeaux,
+coordonnées). Il est produit depuis la base :
+
+```bash
+php tools/amorce_generer.php              # réécrit le fichier
+php tools/amorce_generer.php --verifier   # sort en 1 s'il a dérivé
+```
+
+**À rejouer après toute migration qui ajoute, retire ou déplace un pays
+producteur, un marché ou un pays à lounges.** Inutile après un ajout de
+marque : les marques ne sont plus embarquées — c'est tout l'intérêt.
+
+Avant E5, sept fichiers statiques portaient une copie complète du
+contenu, chacun avec un `var X = [...]` non gardé qui écrasait le
+précédent. Ils dataient d'avant les migrations `021`→`024` et rien à
+l'écran ne permettait de savoir laquelle des deux versions on lisait.
+
 ## Traductions — `traductions.sql`
 
 Exception assumée à la règle « pas de données dans Git » : les

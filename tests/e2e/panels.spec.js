@@ -381,4 +381,61 @@ test.describe('Panneaux', () => {
       await expect(page.locator('.fete-carte')).toHaveCount(0);
     });
   });
+
+  // ── L'amorcage ne remplace pas la base ──────────────────
+  //
+  // Le front embarquait SIX copies statiques du contenu, chacune
+  // faisant un `var X = [...]` non garde : la derniere chargee ecrasait
+  // les autres. Elles dataient d'avant les migrations 021 a 024 — huit
+  // marques cubaines au lieu de vingt-sept — et rien a l'ecran ne
+  // permettait de savoir laquelle des deux versions on lisait (E5).
+  //
+  // `data.amorce.js` ne porte plus que de quoi dessiner le globe. Ce
+  // parcours le prouve par la negative : on retarde la base et on ne
+  // lui fait servir qu'UNE marque temoin. Si un jour le panneau
+  // retrouvait une source statique, il afficherait autre chose que
+  // cette marque-la — et le test tomberait.
+  test('le panneau attend la base au lieu d\'un etat fige', async ({ page }) => {
+    await page.route('**/data.php?action=globe*', async (route) => {
+      const rep  = await route.fetch();
+      const data = await rep.json();
+      (data.countries || []).forEach((c) => {
+        if (c.id === 'cuba') {
+          c.brands = [{ name: 'Marque-Temoin', desc: 'servie par la base', iconic: true }];
+        }
+      });
+      await new Promise((r) => setTimeout(r, 1200));   // la base tarde
+      await route.fulfill({ json: data });
+    });
+
+    await ouvrir(page, '/?country=cuba');
+
+    // Ce que le panneau finit par montrer vient de la base servie.
+    await expect(page.locator('#panelBody')).toContainText('Marque-Temoin', { timeout: 20_000 });
+
+    // Et RIEN d'autre : une seule carte, celle que la base a servie. Une
+    // copie statique en ajouterait forcement d'autres.
+    await expect(page.locator('#panelBody .brand-grid > *')).toHaveCount(1);
+  });
+
+  // Le corollaire, verifie sur le fichier lui-meme : ce qui n'est pas
+  // embarque ne peut pas devenir perime.
+  // On lit le fichier servi, pas celui du disque : c'est ce que le
+  // navigateur recoit qui compte.
+  test('le fichier d\'amorcage n\'embarque aucun contenu de panneau', async ({ request }) => {
+    const rep = await request.get('/assets/js/data.amorce.js');
+    expect(rep.ok(), 'data.amorce.js n\'est pas servi').toBeTruthy();
+    const src = await rep.text();
+
+    // Les champs de panneau, un par un. `history` et `gamme` ne sont
+    // meme pas dans la charge du globe ; les autres y etaient.
+    for (const champ of ['brands', 'revenue', 'production', 'history', 'gamme',
+                         'tabacaleras', 'varieties', 'notes', 'consumption']) {
+      expect(src, 'le fichier d\'amorcage porte « ' + champ + ' »').not.toContain('"' + champ + '"');
+    }
+
+    // Ce qu'il DOIT porter : de quoi placer un marqueur.
+    expect(src).toContain('"lat"');
+    expect(src).toContain('"amorce"');
+  });
 });

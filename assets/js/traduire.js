@@ -1,4 +1,11 @@
-/* data.countries.js */
+/* traduire.js */
+// _tr() — traduit les VALEURS de contenu (region, climat, sol, type
+// d'etablissement...) que la base sert en francais.
+//
+// Ce dictionnaire vivait au sommet de data.countries.js, qui portait
+// surtout une copie figee des douze pays — copie perimee et ecrasante,
+// retiree par E5. La fonction, elle, est bien vivante : panels.js et
+// markets.js l'appellent a chaque rendu.
 // ── Dictionnaire de traduction des valeurs inline ────────
 // Utilisé par _renderPanel et renderLexBody pour traduire
 // les valeurs issues des données inline (climate, soil, harvest, region...)
@@ -202,44 +209,3 @@ function _tr(val) {
   if (map && map[lang]) return map[lang];
   return val; // fallback : valeur originale
 }
-
-
-// data.countries.js — Cigar producing countries
-var COUNTRIES=[
-  {id:'cuba',name:'Cuba',flag:'🇨🇺',lat:21.5218,lon:-77.7812,region:'Caraïbes',tier:'major',color:'#C0401A',production:'~90M cigares/an',revenue:'$500M',revDetail:'exportations annuelles',harvest:'Jan – Fév',climate:'Tropical humide',soil:'Sol volcanique rouge',tabacaleras:['Habanos S.A.'],regions:['Vuelta Abajo','Semi Vuelta','Partido','Remedios'],varieties:['Criollo','Corojo','Habano 2000'],notes:'Berceau du cigare premium mondial.',
-  brands:[{name:'Cohiba',desc:'La marque la plus prestigieuse au monde',iconic:true},{name:'Montecristo',desc:'Référence mondiale du cigare cubain',iconic:true},{name:'Partagás',desc:'Fondée en 1845, full body légendaire',iconic:true},{name:'Romeo y Julieta',desc:'Favori de Winston Churchill',iconic:true},{name:'H. Upmann',desc:'Créée par un banquier hambourgeois en 1844',iconic:false},{name:'Bolivar',desc:'Puissant, terreux, pour connaisseurs',iconic:false},{name:'Trinidad',desc:'Jadis réservée aux cadeaux diplomatiques',iconic:false},{name:'Punch',desc:'Marque historique cubaine depuis 1840',iconic:false}]},
-  {id:'nicaragua',name:'Nicaragua',flag:'🇳🇮',lat:12.8,lon:-85.2,region:'Amérique Centrale',tier:'major',color:'#C0401A',production:'~350M cigares/an',revenue:'$850M',revDetail:'exportations annuelles',harvest:'Déc – Fév',climate:'Tropical volcanique',soil:'Cendres volcaniques riches',tabacaleras:['Plasencia','My Father','Drew Estate','Oliva'],regions:['Estelí','Jalapa','Condega','Ometepe'],varieties:['Corojo 99','Criollo 98','Habano'],notes:'Premier producteur mondial en volume.',
-  brands:[{name:'Padrón',desc:'Référence absolue du Nicaragua premium',iconic:true},{name:'My Father',desc:'Pepin Garcia, maître torcedor légendaire',iconic:true},{name:'Oliva',desc:'Serie V mondialement reconnue',iconic:true},{name:'Drew Estate',desc:'Liga Privada, révolution moderne',iconic:true},{name:'Plasencia',desc:'Plus grand producteur familial',iconic:false},{name:'Rocky Patel',desc:'Élégance et puissance fusionnées',iconic:false},{name:'Perdomo',desc:'Maître du Connecticut nicaraguayen',iconic:false},{name:'Joya de Nicaragua',desc:'Plus ancienne manufacture du pays',iconic:false}]},
-  {id:'dominican',name:'Rép. Dominicaine',flag:'🇩🇴',lat:18.7,lon:-70.2,region:'Caraïbes',tier:'major',color:'#C0401A',production:'~400M cigares/an',revenue:'$1.2B',revDetail:'exportations (1er mondial)',harvest:'Jan – Mars',climate:'Tropical tempéré altitude',soil:'Alluvions riches Cibao',tabacaleras:['A. Fuente','General Cigar','Davidoff'],regions:['Valle del Cibao','Santiago','La Romana','Tamboril'],varieties:['Olor Dominicano','San Vicente','Piloto Cubano'],notes:'Premier exportateur mondial en valeur.',
-  brands:[{name:'Arturo Fuente',desc:'Opus X — les plus convoités au monde',iconic:true},{name:'Davidoff',desc:'Luxe suisse, manufacture dominicaine',iconic:true},{name:'La Flor Dominicana',desc:"Artisanat d'exception depuis 1996",iconic:true},{name:'Macanudo',desc:'Standard mondial du Connecticut',iconic:false},{name:'Ashton',desc:'ESG et VSG, intemporels',iconic:false},{name:'Avo',desc:'Créée par le pianiste Avo Uvezian',iconic:false}]},
-  {id:'honduras',name:'Honduras',flag:'🇭🇳',lat:15.2,lon:-86.2,region:'Amérique Centrale',tier:'major',color:'#B8860B',production:'~80M cigares/an',revenue:'$220M',revDetail:'exportations annuelles',harvest:'Déc – Fév',climate:'Tropical montagnard',soil:'Argilo-calcaire altitude 900-1200m',tabacaleras:['HATSA','Raices Cubanas','Altadis'],regions:['Jamastran Valley','Talanga','Danlí'],varieties:['Corojo','Connecticut Shade'],notes:'Jamastran — Corojo les plus puissants hors Cuba.',
-  brands:[{name:'Alec Bradley',desc:"Prensado — Cigare de l'Année 2011",iconic:true},{name:'CAO',desc:'Honduras Cameroon, blend iconique',iconic:true},{name:'Camacho',desc:'Corojo authentique de Jamastran',iconic:false},{name:'Punch',desc:'Marque historique hondurienne',iconic:false}]},
-  {id:'ecuador',name:'Équateur',flag:'🇪🇨',lat:-1.5,lon:-78.5,region:'Amérique du Sud',tier:'major',color:'#B8860B',production:'1er fournisseur mondial wrapper',revenue:'$180M',revDetail:'exportations feuilles',harvest:'Continu',climate:'Nuages filtrent le soleil',soil:'Volcanique riche en minéraux',tabacaleras:['Plasencia Ecuador','CETABACO'],regions:['Los Ríos','El Oro','Guayas'],varieties:['Ecuador Connecticut','Ecuador Habano'],notes:'Premier producteur de wrapper Connecticut.',
-  brands:[{name:'Perdomo Ecuador',desc:'Connecticut équatorien de référence',iconic:true},{name:'Oliva Connecticut Reserve',desc:"Wrapper équatorien d'exception",iconic:false},{name:'Ashton Cabinet',desc:'Wrapper équatorien iconique',iconic:false}]},
-  {id:'cameroon',name:'Cameroun',flag:'🇨🇲',lat:3.848,lon:11.5021,region:'Afrique Centrale',tier:'notable',color:'#B8860B',production:'Wrapper niche très recherché',revenue:'$45M',revDetail:'exportations wrapper',harvest:'Fév – Mai',climate:'Équatorial humide',soil:'Volcanique du Mont Cameroun',tabacaleras:['SCTC','BAT Cameroun'],regions:['Mont Cameroun','Mungo','Wouri'],varieties:['Cameroon Shade','Sun-grown'],notes:'Wrapper le plus recherché — café, cacao, épices.',
-  brands:[{name:'CAO Cameroon',desc:'Blend légendaire avec ce wrapper rare',iconic:true},{name:'Arturo Fuente Hemingway',desc:'Wrapper Cameroon emblématique',iconic:false},{name:'Oliva Serie G',desc:'Relance la mode du wrapper Cameroon',iconic:false}]},
-  {id:'brazil',name:'Brésil',flag:'🇧🇷',lat:-14.235,lon:-51.9253,region:'Amérique du Sud',tier:'notable',color:'#B8860B',production:'~10M cigares premium/an',revenue:'$120M',revDetail:'exportations Mata Fina',harvest:'Juil – Sep',climate:'Tropical semi-aride Bahia',soil:'Argilo-sableux organique',tabacaleras:['Dannemann','Suerdieck'],regions:['São Gonçalo','Arapiraca','Cruz das Almas'],varieties:['Mata Fina','Arapiraca','Bahia'],notes:'Mata Fina — meilleur wrapper Maduro du monde.',
-  brands:[{name:'Dannemann',desc:'Marque brésilienne iconique depuis 1873',iconic:true},{name:'Arturo Fuente Maduro',desc:'Utilise le wrapper Mata Fina',iconic:false}]},
-  {id:'usa',name:'États-Unis',flag:'🇺🇸',lat:37.0902,lon:-95.7129,region:'Amérique du Nord',tier:'notable',color:'#B8860B',production:'Wrapper Connecticut référence',revenue:'$380M',revDetail:'production premium locale',harvest:'Juil – Août',climate:'Continental tempéré',soil:'Alluvial Vallée Connecticut',tabacaleras:['General Cigar','Altadis USA'],regions:['Connecticut Valley','Lancaster County','Pennsylvania'],varieties:['Connecticut Shade','Broadleaf'],notes:'Connecticut Shade — wrapper le plus doux au monde.',
-  brands:[{name:'General Cigar',desc:'Macanudo, Punch, Partagás HN',iconic:true},{name:'CAO America',desc:'100% US tobacco',iconic:false}]},
-  {id:'indonesia',name:'Indonésie',flag:'🇮🇩',lat:-0.7893,lon:113.9213,region:'Asie du Sud-Est',tier:'notable',color:'#B8860B',production:'Wrapper Sumatra très répandu',revenue:'$220M',revDetail:'exportations Sumatra',harvest:'Continu',climate:'Équatorial chaud humide',soil:'Volcanique Sumatra Java',tabacaleras:['PT Djarum','PT Gudang Garam'],regions:['Deli (Sumatra Nord)','Besuki (Java Est)','Lombok'],varieties:['Deli Sumatra','Besuki','Lombok'],notes:'Deli Sumatra — wrapper le plus utilisé en Europe.',
-  brands:[{name:'Café Crème',desc:'Wrapper Sumatra populaire en Europe',iconic:true},{name:'Henri Wintermans',desc:'Lié historiquement au Sumatra',iconic:false}]},
-  {id:'mexico',name:'Mexique',flag:'🇲🇽',lat:23.6345,lon:-102.5528,region:'Amérique du Nord',tier:'emerging',color:'#3D6B4A',production:'Wrapper San Andrés niche',revenue:'$85M',revDetail:'exportations wrapper',harvest:'Nov – Jan',climate:'Tropical humide altitude',soil:'"Terres noires" de San Andrés',tabacaleras:['Tabacos San Andrés'],regions:['San Andrés Tuxtla','Los Tuxtlas'],varieties:['San Andrés Maduro Negro','Claro'],notes:'San Andrés — wrapper le plus noir et naturellement doux.',
-  brands:[{name:'Te Amo',desc:'Marque mexicaine iconique depuis 1963',iconic:true},{name:'CAO Black',desc:'Wrapper San Andrés par excellence',iconic:false}]},
-  {id:'panama',name:'Panama',flag:'🇵🇦',lat:8.5,lon:-80.8,region:'Amérique Centrale',tier:'emerging',color:'#3D6B4A',production:'Production artisanale croissance',revenue:'$12M',revDetail:'marché en développement',harvest:'Déc – Fév',climate:'Tropical humide altitude',soil:'Volcanique Chiriquí 1400m',tabacaleras:['Toraño Panama','El Hatillo'],regions:['Chiriquí','Boquete','Volcán Barú'],varieties:['Habano Panamá','Corojo Panamá'],notes:'Terroir volcanique de Chiriquí à surveiller.',
-  brands:[{name:'Carlos Toraño Panama',desc:'Pionnier du cigare panaméen premium',iconic:true}]},
-  {id:'philippines',name:'Philippines',flag:'🇵🇭',lat:12.8797,lon:121.774,region:'Asie du Sud-Est',tier:'emerging',color:'#3D6B4A',production:'Production nationale historique',revenue:'$35M',revDetail:'marché domestic + export',harvest:'Nov – Fév',climate:'Tropical humide mousson',soil:'Argilo-limoneux Cagayan',tabacaleras:['Tabacalera','La Flor de la Isabela'],regions:['Cagayan Valley','Ilocos Norte','Isabela'],varieties:['Burley','Virginia','Native Tabaco'],notes:"Production depuis l'époque espagnole.",
-  brands:[{name:'Tabacalera',desc:'Marque nationale historique depuis 1782',iconic:true},{name:'La Flor de la Isabela',desc:'Production artisanale traditionnelle',iconic:false}]},
-];
-
-
-// ════════════════════════════════════════════════════════
-// PRINCIPAUX MARCHÉS DE CONSOMMATION
-// ════════════════════════════════════════════════════════
-
-
-
-
-
-
-

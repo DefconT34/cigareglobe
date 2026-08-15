@@ -238,33 +238,59 @@ function openPanel(c) {
     if (lp) { lp.classList.remove('open'); lp.setAttribute('aria-hidden', 'true'); }
   }
 
-  // Render immediately with inline data (COUNTRIES already has full detail)
-  _renderPanel(c);
+  // Ce qui suit le rendu du corps, quel que soit le chemin qui y mène.
+  function _apresRendu(pays) {
+    // Etablissements du pays : la donnee arrive apres le rendu du panneau.
+    // Sans ce chargement, la section restait silencieusement vide.
+    if (typeof window.loadLounges === 'function') {
+      window.loadLounges(pays.id)
+        .then(function(list) { _fillPanelLounges(pays, list || []); })
+        .catch(function(err) { console.error('[panneau] lounges de ' + pays.id + ' :', err); });
+    }
 
-  // Etablissements du pays : la donnee arrive apres le rendu du panneau.
-  // Sans ce chargement, la section restait silencieusement vide.
-  if (typeof window.loadLounges === 'function') {
-    window.loadLounges(c.id)
-      .then(function(list) { _fillPanelLounges(c, list || []); })
-      .catch(function(err) { console.error('[panneau] lounges de ' + c.id + ' :', err); });
-  }
-
-  // Enrichissement depuis la base. On interroge TOUJOURS, sans tester la
-  // presence en memoire : data.habanos.js pre-remplit HABANOS_DATA avec
-  // un instantane francais, si bien que la condition n'etait jamais
-  // vraie et que la section restait en francais dans les six langues.
-  // Le chargeur met en cache par pays ET par langue : une seule requete.
-  {
-    window.loadCountryDetails(c.id).then(function() {
+    // Enrichissement depuis la base. On interroge TOUJOURS, sans tester la
+    // presence en memoire : le chargeur met en cache par pays ET par
+    // langue, donc une seule requete par couple.
+    window.loadCountryDetails(pays.id).then(function() {
       // Re-render habanos section only — DOM surgery
       var panelBody = document.getElementById('panelBody');
       // Conteneur stable : l'ancien marqueur disparaissait des le premier
       // rendu, si bien que la version traduite n'etait jamais reinjectee
       // et le bloc restait dans la langue de l'instantane statique.
       var habBlock = panelBody.querySelector('.habanos-zone');
-      if (habBlock) habBlock.innerHTML = renderHabanos(c.id);
+      if (habBlock) habBlock.innerHTML = renderHabanos(pays.id);
     }).catch(function() {});
   }
+
+  // `data.amorce.js` ne porte que de quoi dessiner le globe. Recevoir une
+  // de ses ébauches signifie que la base n'a pas encore répondu : on
+  // attend, plutôt que d'afficher une copie figée — ce que faisait
+  // l'ancien lot de six fichiers statiques, sans que rien à l'écran ne
+  // permette de s'en apercevoir (E5).
+  if (!c.amorce || typeof window.versionFraiche !== 'function') {
+    _renderPanel(c);        // chemin normal : synchrone, comme avant
+    _apresRendu(c);
+    return;
+  }
+
+  document.getElementById('panelBody').innerHTML =
+    '<div style="padding:30px;text-align:center;color:var(--text2);font-family:Cinzel,serif;font-size:10px;letter-spacing:.15em">'+t('loading_spinner')+'</div>';
+
+  window.versionFraiche(c, 'countries').then(function (frais) {
+    // Panneau refermé, ou autre pays choisi entre-temps : ne rien écraser.
+    if (!document.getElementById('panel').classList.contains('open')) return;
+    if (document.getElementById('bName').textContent !== c.name) return;
+
+    // Toujours une ébauche : la base n'a pas répondu. Le dire, plutôt que
+    // de laisser un panneau vide qu'on prendrait pour un pays sans marques.
+    if (frais.amorce) {
+      document.getElementById('panelBody').innerHTML =
+        '<div style="padding:20px;color:#e55">' + t('error_loading') + '</div>';
+      return;
+    }
+    _renderPanel(frais);
+    _apresRendu(frais);
+  });
 }
 
 function _renderPanel(c) {

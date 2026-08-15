@@ -575,15 +575,29 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - [x] ~~**E2** — topojson + carte monde auto-hébergés, GA retiré~~ ✅
 - [x] ~~**E3** — Frontières réelles des pays producteurs (table `country_polygons` supprimée)~~ ✅
 - [x] ~~**E4** — Audit des coordonnées (152 points testés, 2 corrigées : Israël, Semi Vuelta)~~ ✅
-- [ ] **E5** — `assets/js/data.inline.js` est une copie **figée** des 12 pays, périmée · P
-  - Elle date d'avant les migrations `021`→`023` : 8 marques cubaines au lieu de 27, aucun
-    drapeau `cape`. `data.loader.js` la remplace en arrière-plan depuis `action=globe`, mais
-    c'est une **course** : sur une base lente ou hors ligne, le visiteur lit la version
-    périmée — et il n'a aucun moyen de savoir laquelle il a sous les yeux.
-  - Deux remèdes possibles : la régénérer à chaque migration de contenu (un outil, donc une
-    étape de plus qu'on oubliera), ou la réduire au strict minimum d'amorçage — coordonnées
-    et noms — en laissant les marques venir de l'API seule. La seconde est la plus sûre :
-    on ne peut pas afficher une donnée périmée qu'on n'embarque pas.
+- [x] ~~**E5** — Les copies figées du contenu, embarquées dans le front~~ ✅
+  - **Ce n'était pas une copie, c'en était six.** `data.inline.js`, `data.countries.js`,
+    `data.markets.js`, `data.geo.js`, `data.zones.js`, `data.habanos.js` et
+    `data.lounges.js` faisaient chacune un `var X = [...]` **non gardé** : la dernière
+    chargée écrasait toutes les précédentes. `data.inline.js` — celle que j'avais consignée
+    — était donc morte depuis le début, écrasée quelques lignes plus bas par
+    `data.countries.js`, qui portait le même contenu périmé
+  - Toutes dataient d'avant `021`→`024` : **8 marques cubaines au lieu de 27**, aucun drapeau
+    `cape`, ni Meerapfel ni A.J. Fernandez. Rien à l'écran ne disait laquelle des deux
+    versions on lisait
+  - **La requête ne partait qu'au `DOMContentLoaded`**, soit après l'exécution de tous les
+    scripts : le globe était dessiné, cliquable, et la requête pas même partie. Mesuré sur
+    le poste : 390 ms de fenêtre en local, serveur chaud — bien davantage sur une vraie
+    liaison
+  - **Remède retenu** : n'embarquer que de quoi *dessiner le globe* — identifiants, noms,
+    drapeaux, coordonnées. `data.amorce.js` (13 Ko) remplace les sept fichiers (~109 Ko),
+    et il est **généré depuis la base** par `tools/amorce_generer.php`, qui sait aussi se
+    vérifier (`--verifier`). On ne peut pas afficher une donnée périmée qu'on n'embarque pas
+  - Chaque entrée porte `amorce:1`. Un panneau qui en reçoit une **attend la base** au lieu
+    de rendre : il affiche l'indicateur de chargement, puis le contenu réel — ou un message
+    d'erreur si la base ne répond pas. Jamais un état figé présenté comme actuel
+  - Effet de bord non prévu : le dictionnaire `_TRANSLATE` / `_tr()` vivait au sommet de
+    `data.countries.js` et est bien vivant, lui. Déplacé dans `traduire.js`
 
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → **B1** → F3/F4/F6 → D6/C1b (optionnels)

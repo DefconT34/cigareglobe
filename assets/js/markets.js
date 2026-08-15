@@ -19,10 +19,30 @@ function openMarketPanel(m){
   // nom du marche : « Japon » sur le drapeau cubain.
   if (window.stopFlags) window.stopFlags();
 
-  // m is already full from globe load — no extra API call needed
+  // L'en-tete tient avec l'amorcage : drapeau, nom et rang y sont.
   document.getElementById('bFlag').textContent   = m.flag;
   document.getElementById('bName').textContent   = m.name;
   document.getElementById('bRegion').textContent = t('mkt_consumer') + m.rank;
+
+  // Le corps, lui, demande des champs que `data.amorce.js` n'embarque
+  // pas (consommation, volumes, part, tendance, maisons en tete). Une
+  // ebauche d'amorcage veut dire que la base n'a pas repondu : on
+  // attend. Cf. E5 — mieux vaut un instant de patience qu'un chiffre
+  // d'il y a six mois presente comme actuel.
+  if (m.amorce && typeof window.versionFraiche === 'function') {
+    document.getElementById('panelBody').innerHTML =
+      '<div style="padding:30px;text-align:center;color:var(--text2);font-family:Cinzel,serif;font-size:10px;letter-spacing:.15em">'+t('loading_spinner')+'</div>';
+    window.versionFraiche(m, 'markets').then(function (frais) {
+      if (document.getElementById('bName').textContent !== m.name) return;
+      if (frais.amorce) {
+        document.getElementById('panelBody').innerHTML =
+          '<div style="padding:20px;color:#e55">' + t('error_loading') + '</div>';
+        return;
+      }
+      openMarketPanel(frais);
+    });
+    return;
+  }
 
   // Détecter la tendance sur la valeur FR originale (stockée en FR dans les données)
   const trendClass = (m.trend||'').includes('forte croissance') ? 'trend-up' :

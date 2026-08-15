@@ -8,15 +8,17 @@ var DATA_API = (typeof DATA_API !== 'undefined' && DATA_API)
   ? DATA_API
   : (window.CG_BACKEND_BASE || '/backend') + '/data.php';
 
-// Globals — initialisés seulement si pas déjà définis par data.inline.js
-if(typeof COUNTRIES        ==='undefined') var COUNTRIES        = (typeof COUNTRIES!=="undefined"&&COUNTRIES.length) ? COUNTRIES : [];
-if(typeof MARKETS          ==='undefined') var MARKETS          = (typeof MARKETS!=="undefined"&&MARKETS.length) ? MARKETS : [];
-if(typeof LOUNGE_COUNTRIES ==='undefined') var LOUNGE_COUNTRIES = (typeof LOUNGE_COUNTRIES!=="undefined"&&LOUNGE_COUNTRIES.length) ? LOUNGE_COUNTRIES : [];
-if(typeof LOUNGES          ==='undefined') var LOUNGES          = (typeof LOUNGES!=="undefined") ? LOUNGES : {};
-if(typeof ZONES            ==='undefined') var ZONES            = (typeof ZONES!=="undefined"&&Object.keys(ZONES).length) ? ZONES : {};
-if(typeof GEO_INFO         ==='undefined') var GEO_INFO         = (typeof GEO_INFO!=="undefined"&&Object.keys(GEO_INFO).length) ? GEO_INFO : {};
-if(typeof BRANDS_DB        ==='undefined') var BRANDS_DB        = (typeof BRANDS_DB!=="undefined") ? BRANDS_DB : {};
-if(typeof HABANOS_DATA     ==='undefined') var HABANOS_DATA     = (typeof HABANOS_DATA!=="undefined") ? HABANOS_DATA : {};
+// Globals — déclarés seulement s'ils manquent. data.amorce.js les a
+// normalement déjà posés ; ce repli sert au cas où il ne serait pas
+// chargé (tests unitaires du module, page réduite).
+if(typeof COUNTRIES        ==='undefined') var COUNTRIES        = [];
+if(typeof MARKETS          ==='undefined') var MARKETS          = [];
+if(typeof LOUNGE_COUNTRIES ==='undefined') var LOUNGE_COUNTRIES = [];
+if(typeof LOUNGES          ==='undefined') var LOUNGES          = {};
+if(typeof ZONES            ==='undefined') var ZONES            = {};
+if(typeof GEO_INFO         ==='undefined') var GEO_INFO         = {};
+if(typeof BRANDS_DB        ==='undefined') var BRANDS_DB        = {};
+if(typeof HABANOS_DATA     ==='undefined') var HABANOS_DATA     = {};
 
 /**
  * URL d'un endpoint, langue comprise.
@@ -132,22 +134,60 @@ window.loadMarket = function(marketId) {
     return _cachedFetch(_api('market', { id: marketId }));
 };
 
-// ── Bootstrap : lance le chargement et démarre le globe ──
-// Le globe démarre via animation.js (qui gère l'overlay et startGlobeLoop)
-// data.loader.js charge les données DB en arrière-plan uniquement
-window.addEventListener('DOMContentLoaded', function() {
-    // Si données inline présentes → animation.js démarre déjà le globe
-    // Ici on enrichit depuis la DB en arrière-plan
-    if (typeof COUNTRIES !== 'undefined' && COUNTRIES.length > 0) {
-        window.loadGlobeData()
-            .then(function() {
-                console.info('[CigarOdyssey] Données DB chargées ✓');
-            })
-            .catch(function(err) {
-                console.warn('[CigarOdyssey] DB indisponible — données inline utilisées:', err.message);
-            });
-    }
-});
+// ── Amorçage : la requête part TOUT DE SUITE ─────────────
+//
+// Elle attendait `DOMContentLoaded`, soit après l'exécution de tous les
+// scripts de la page. Le globe était déjà dessiné et cliquable pendant
+// que la requête n'était pas même partie : quiconque cliquait vite
+// ouvrait une fiche remplie avec la copie statique. En la lançant ici,
+// pendant le parsing, on gagne tout le temps des scripts suivants.
+//
+// `window.donneesPretes` est LA promesse que les panneaux attendent
+// quand ils tiennent une ébauche d'amorçage. Elle ne rejette jamais :
+// un panneau ne doit pas rester bloqué parce que la base est tombée —
+// il affiche ce qu'il peut et le dit.
+
+// La langue sort de <html lang="xx">, que index.php pose selon l'URL.
+// C'est la MÊME source que i18n.js, lequel s'exécute plus loin dans la
+// page : sans cette lecture, la requête partirait avant lui et
+// demanderait du français, si bien que l'interface serait traduite mais
+// pas les données. L'attribut fait foi, aucun des deux scripts.
+if (!window.currentLang) {
+    var _lg = (document.documentElement.getAttribute('lang') || 'fr').toLowerCase();
+    window.currentLang = ['fr','en','es','de','zh','ar'].indexOf(_lg) >= 0 ? _lg : 'fr';
+}
+
+window.donneesPretes = window.loadGlobeData()
+    .then(function (d) {
+        console.info('[CigarOdyssey] Données DB chargées ✓');
+        window.CG_AMORCE = false;
+        return d;
+    })
+    .catch(function (err) {
+        console.warn('[CigarOdyssey] base injoignable :', err.message);
+        window.CG_DB_INJOIGNABLE = true;
+        return null;
+    });
+
+/**
+ * Rend l'objet à jour correspondant à une ébauche d'amorçage.
+ *
+ * Les entrées de `data.amorce.js` portent `amorce:1` et ne contiennent
+ * que de quoi dessiner le globe. Un panneau qui en reçoit une doit
+ * attendre la base plutôt qu'afficher des champs qu'il n'a pas — et
+ * surtout plutôt que de ressortir un contenu figé d'il y a six mois.
+ *
+ * Retourne toujours quelque chose : si la base est injoignable, on rend
+ * l'ébauche telle quelle et l'appelant affiche ce qu'il peut.
+ */
+window.versionFraiche = function (obj, collection) {
+    if (!obj || !obj.amorce) return Promise.resolve(obj);
+    return window.donneesPretes.then(function () {
+        var liste = (collection === 'markets') ? MARKETS : COUNTRIES;
+        var frais = (liste || []).filter(function (x) { return x.id === obj.id; })[0];
+        return frais || obj;
+    });
+};
 
 
 

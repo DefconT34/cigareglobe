@@ -390,7 +390,10 @@ function action_export(): void {
 
     $js  = "// ═══════════════════════════════════════════════════\n";
     $js .= "// Établissements approuvés — exporté le " . date('Y-m-d H:i') . "\n";
-    $js .= "// Copiez ces entrées dans data.lounges.js\n";
+    // Le front ne lit plus aucun fichier de données (E5) : ces
+    // établissements sont déjà en base et servis par data.php. Cet
+    // export ne sert plus qu'à relire ou archiver.
+    $js .= "// Pour relecture ou archivage — le front lit la base, pas ce fichier\n";
     $js .= "// ═══════════════════════════════════════════════════\n\n";
 
     foreach ($byCountry as $cid => $lounges) {
