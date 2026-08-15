@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→024, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→025, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -96,6 +96,29 @@ Effort : P = Petit · M = Moyen · G = Gros.
     disparaissent, et la troisième dit ce qu'il en est
   - ~~**Défaut repéré, non corrigé** : « Punch » figure sur la fiche de Cuba *et* sur celle du
     Honduras, mais un seul article existe — le cubain.~~ ✅ **réparé par `024`**
+- [x] ~~**D34** — Douze maisons de plus, et une erreur d'inventaire réparée~~ ✅ · migration `025`
+  - **La migration `022` mentait sans le savoir.** Elle annonçait que Cuba tenait « le
+    portefeuille Habanos COMPLET » avec 27 marques. **La Flor de Cano manquait** : fondée en
+    1884, produite en petites quantités et surtout présente en éditions régionales, c'est
+    précisément la marque qu'on oublie en récitant la liste. Cuba en compte 28
+  - **96 → 108 articles.** Nicaragua +3 (Espinosa, Crowned Heads, Warped) · Rép. dominicaine
+    +5 (VegaFina, Don Diego, The Griffin's, Matilde, Juan Clemente) · États-Unis, Honduras,
+    Mexique, Cuba +1
+  - **Une relation que l'atlas ne montrait nulle part** : Crowned Heads et Warped n'ont pas
+    d'usine. Elles composent des assemblages et les font rouler chez d'autres. Une marque
+    peut donc être d'un pays sans rien y fabriquer, et le cigare qu'on tient peut sortir
+    d'un atelier dont le nom n'est écrit nulle part sur la boîte
+  - **`est_prose()` écartait des phrases en silence.** Sa règle exigeait trois mots ET soit
+    un mot d'une liste fermée, soit un accent. « Pas d'usine : elle choisit son rouleur
+    selon l'assemblage » n'a ni l'un ni l'autre : la description de Crowned Heads était
+    classée « nom propre » et **n'apparaissait même pas dans l'export**. Rien ne signalait
+    qu'elle manquait. Règle ajoutée : cinq mots ou plus, c'est une phrase. Le correctif a
+    révélé **trois autres segments** invisibles depuis toujours
+  - **À relire en priorité** : Warped, The Griffin's, Matilde, Juan Clemente, Bering et
+    Matacan sont moins documentées ; leurs dates sont au conditionnel dans le texte. Six
+    maisons, qui s'ajoutent aux quatre de `024`
+  - Les 108 articles restent à **100 %** dans les six langues
+
 - [x] ~~**D33** — Vingt-cinq maisons que l'atlas ignorait~~ ✅ · migration `024`
   - Point de départ : **A.J. Fernandez ne figurait pas sur la fiche du Nicaragua**. L'un des
     assembleurs les plus demandés de sa génération, absent du pays où il roule — et le

@@ -70,6 +70,20 @@ function est_prose(string $v, ?string $cle): bool {
     $mots = preg_split('/[^\p{L}\p{N}]+/u', mb_strtolower($v), -1, PREG_SPLIT_NO_EMPTY);
     if (count($mots) < 3) return false;
 
+    // Cinq mots ou plus : c'est une phrase, quels que soient les mots.
+    //
+    // Sans cette regle, « Pas d'usine : elle choisit son rouleur selon
+    // l'assemblage » etait classee NOM PROPRE — aucun mot de la liste
+    // ci-dessous, aucun accent — et n'a jamais ete proposee a la
+    // traduction. En silence : l'export ne la montrait pas, donc rien
+    // ne signalait qu'elle manquait. Les listes fermees echouent
+    // toujours ainsi, sur l'exemple qu'on n'avait pas prevu.
+    //
+    // Le seuil protege ce que la liste protegeait : « Vuelta Abajo »,
+    // « Connecticut Shade », « Habanos S.A. » tiennent en deux a
+    // quatre mots.
+    if (count($mots) >= 5) return true;
+
     $outils = ['de','du','des','le','la','les','un','une','avec','pour','en','et',
                'au','aux','sur','dans','par','sans','plus','depuis','monde',
                'mondial','mondiale','historique','ce','cette'];

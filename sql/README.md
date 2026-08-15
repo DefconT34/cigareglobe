@@ -50,6 +50,14 @@ espace communautaire (`forum_*`) + réglages du site (`site_languages`).
     aussi l'entrée « Punch » du Honduras, qui pointait sur l'article
     cubain. **71 → 96 articles.**
 
+  - `025_marques_manquantes_3.sql` — **données** : douze maisons, et une
+    erreur d'inventaire réparée. La migration `022` annonçait le
+    portefeuille Habanos « complet » avec 27 marques ; **La Flor de Cano
+    manquait**. Cuba en compte 28. S'y ajoutent Espinosa, Crowned Heads
+    et Warped (Nicaragua), VegaFina, Don Diego, The Griffin's, Matilde et
+    Juan Clemente (Rép. dom.), Nat Sherman (États-Unis), Bering
+    (Honduras) et Matacan (Mexique). **96 → 108 articles.**
+
   Le dossier fait foi ; cette liste résume.
 
 ## Installer / recréer la base
@@ -61,7 +69,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `024`).
+dans l'ordre (`001` → `025`).
 
 ## Régénérer `schema.sql`
 
