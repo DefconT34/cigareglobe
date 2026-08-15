@@ -132,6 +132,14 @@ html, body {
 .tier-badge { display:inline-flex; align-items:center; gap:5px; font-family:'Cinzel',serif; font-size:7px; letter-spacing:.22em; padding:3px 10px; border-radius:2px; margin-bottom:12px; border:1px solid; }
 .sec { font-family:'Cinzel',serif; font-size:7px; letter-spacing:.4em; color:var(--gold); text-transform:uppercase; margin:14px 0 6px; display:flex; align-items:center; gap:6px; }
 .sec::after { content:''; flex:1; height:1px; background:linear-gradient(to right, var(--gold-p), transparent); }
+/* La section « cape » porte une phrase d'explication, les deux autres
+   n'en ont pas besoin : « Marques emblématiques » se comprend seul,
+   « Cigares habillés de sa cape » demande une ligne. */
+.cape-note {
+  font-size:11px; line-height:1.5; color:var(--text2);
+  margin:-2px 0 8px; padding-left:10px;
+  border-left:2px solid var(--gold-p);
+}
 .srow { display:flex; justify-content:space-between; align-items:baseline; padding:5px 0; border-bottom:1px solid var(--bg3); }
 .sk { font-size:11px; color:var(--text2); }
 .sv { font-family:'Playfair Display',serif; font-size:11px; color:var(--text); font-weight:600; text-align:right; max-width:220px; }

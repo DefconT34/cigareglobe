@@ -274,9 +274,17 @@ function _renderPanel(c) {
     emerging: {bg:'#EEF7F1',        border:'var(--grn)',   color:'var(--grn)',   text:t('tier_emerging_text')}
   };
   var tc     = tierConf[c.tier] || tierConf.notable;
+  // TROIS relations possibles entre un pays et un cigare, et non deux.
+  // Le Cameroun annonçait « Marques emblématiques » puis listait trois
+  // cigares roulés au Honduras, en République dominicaine et au
+  // Nicaragua : ce que le Cameroun leur donne, c'est sa CAPE. Les
+  // articles le disaient déjà ; seul le titre prétendait autre chose.
+  // Les entrées marquées `cape` sortent donc des deux premières listes
+  // pour former la troisième (migration 023).
   var brands = c.brands || [];
-  var iconic = brands.filter(function(b) { return b.iconic; });
-  var other  = brands.filter(function(b) { return !b.iconic; });
+  var cape   = brands.filter(function(b) { return b.cape; });
+  var iconic = brands.filter(function(b) { return b.iconic && !b.cape; });
+  var other  = brands.filter(function(b) { return !b.iconic && !b.cape; });
 
   var habanos = HABANOS_DATA[c.id]
     ? renderHabanos(c.id)
@@ -300,9 +308,14 @@ function _renderPanel(c) {
     '<div class="tags">' + (c.varieties||[]).map(function(v){ return '<span class="tag" style="border-color:var(--grn);color:var(--grn)">'+v+'</span>'; }).join('') + '</div>' +
     '<div class="sec">'+t('s_tabacaleras_lbl')+'</div>' +
     '<div class="tags">' + (c.tabacaleras||[]).map(function(t){ return '<span class="tag" style="border-color:var(--gold);color:var(--gold)">'+t+'</span>'; }).join('') + '</div>' +
-    '<div class="sec">'+t('s_iconic_brands')+'</div>' +
-    '<div class="brand-grid">' + iconic.map(function(b){ return brandCard(b,c); }).join('') + '</div>' +
-    (other.length ? '<div class="sec">'+t('s_other_brands')+'</div><div class="brand-grid">' + other.map(function(b){ return brandCard(b,c); }).join('') + '</div>' : '') +
+    // Un pays sans marque à lui — le Cameroun, l'Équateur — n'affiche
+    // plus deux sections vides sous un titre faux : les deux premières
+    // disparaissent, la troisième dit ce qu'il en est.
+    (iconic.length ? '<div class="sec">'+t('s_iconic_brands')+'</div><div class="brand-grid">' + iconic.map(function(b){ return brandCard(b,c); }).join('') + '</div>' : '') +
+    (other.length  ? '<div class="sec">'+t('s_other_brands')+'</div><div class="brand-grid">' + other.map(function(b){ return brandCard(b,c); }).join('') + '</div>' : '') +
+    (cape.length   ? '<div class="sec">'+t('s_wrapper_brands')+'</div>' +
+                     '<div class="cape-note">'+t('s_wrapper_note')+'</div>' +
+                     '<div class="brand-grid">' + cape.map(function(b){ return brandCard(b,c); }).join('') + '</div>' : '') +
     '<div class="sec">'+t('notes_sommelier')+'</div>' +
     '<div class="sn">' + _tr(c.notes||'') + '</div>' +
     '<div id="panel-lounges"></div>' +

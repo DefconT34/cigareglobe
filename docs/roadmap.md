@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→022, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→023, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -75,6 +75,29 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**C5** — Tests de bout en bout du front (Playwright) + CI~~ ✅ · *prérequis levé pour C1b*
 
 ### D. Fonctionnel / produit
+- [x] ~~**D32** — Une cape n'est pas une marque~~ ✅ · migration `023`
+  - La fiche du **Cameroun** annonçait « Marques emblématiques » puis listait CAO Cameroon,
+    Arturo Fuente Hemingway et Oliva Serie G — trois cigares roulés au Honduras, en
+    République dominicaine et au Nicaragua. Aucun n'est camerounais. Ce que le Cameroun leur
+    donne, c'est sa **cape**, et leurs articles le disaient déjà (« wrapper importé du
+    Cameroun ») : seul le titre de la section prétendait autre chose. Même cas en Équateur,
+    et sur une entrée du Brésil et une du Mexique
+  - **Trois relations, pas deux** : marque du pays · marque du pays roulée ailleurs · cigare
+    à cape d'ici. Le drapeau qu'on voit sur un cigare est souvent celui de son usine ; son
+    goût doit beaucoup à un pays qui n'y figure pas. La troisième section le rend lisible,
+    avec une phrase d'explication que les deux autres n'ont pas besoin d'avoir
+  - **Le critère n'est pas une opinion** : une entrée est « cape » quand SON PROPRE ARTICLE
+    dit que la contribution du pays est la cape. Rien n'est déduit
+  - Trois cas voisins écartés, et pourquoi : l'**Indonésie** garde ses deux entrées (usines
+    déclarées à Java et Sumatra — elles produisent sur place) ; les **États-Unis** gardent
+    leurs marques américaines roulées à l'étranger, qui sont l'inverse exact du cas ;
+    **Cuba** n'est pas concernée
+  - Un pays sans marque à lui n'affiche plus deux sections sous un titre faux : elles
+    disparaissent, et la troisième dit ce qu'il en est
+  - **Défaut repéré, non corrigé** : « Punch » figure sur la fiche de Cuba *et* sur celle du
+    Honduras, mais un seul article existe — le cubain. La carte hondurienne ouvre donc
+    l'histoire de la marque cubaine. Le remède est un article « Punch Honduras », comme il
+    en existe pour les trois homonymes américaines
 - [x] ~~**D31** — Les marques qui manquaient à l'atlas~~ ✅ · migration `022`
   - **Cuba passe de 11 à 27 marques**, soit le portefeuille complet de Habanos S.A. Il en
     manquait seize, dont plusieurs des plus anciennes encore produites : Por Larrañaga

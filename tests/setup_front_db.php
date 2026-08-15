@@ -140,6 +140,16 @@ if (extension_loaded('gd')) {
     }
 }
 
+// ── Etager les dates d'activite ──────────────────────────
+// Tous les sujets ci-dessus naissent avec NOW(), donc dans la MEME
+// seconde : « le sujet le plus recemment actif » n'etait qu'un tirage
+// au sort que la base tranchait comme elle voulait, et le parcours de
+// l'activite recente passait par chance. On les etage explicitement et
+// on laisse 900 en tete — c'est le fil que les parcours ouvrent, celui
+// qui porte deux messages et deux images.
+$pdo->exec("UPDATE forum_topics SET last_post_at = DATE_SUB(last_post_at, INTERVAL 10 MINUTE)
+             WHERE id IN (901, 910, 911, 920, 921)");
+
 $compte = function (string $t) use ($pdo): int {
     return (int)$pdo->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
 };

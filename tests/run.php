@@ -473,6 +473,14 @@ check('forum : elle est bornee', count($r['json']['recent']) <= 5);
 
 // Le sujet le plus recemment actif vient en tete. Le sujet francais a
 // recu la derniere reponse : c'est lui qu'on doit lire en premier.
+//
+// Les deux sujets ont ete crees dans la MEME SECONDE, et l'assertion
+// dependait donc d'une egalite que la base tranchait comme elle
+// voulait — elle passait par chance. On ecarte explicitement le sujet
+// anglais d'une minute : « le plus recent » a alors un sens.
+test_pdo()->exec("UPDATE forum_topics SET last_post_at = DATE_SUB(last_post_at, INTERVAL 1 MINUTE)
+                  WHERE lang = 'en'");
+$r = http('GET', $base . '/backend/forum.php?action=sections', ['jar' => $anon]);
 $dernier = $r['json']['recent'][0] ?? [];
 eq('forum : le plus recent est en tete', $t_fr, (int)($dernier['id'] ?? 0));
 

@@ -34,12 +34,15 @@ espace communautaire (`forum_*`) + réglages du site (`site_languages`).
     articles de marque qu'aucune fiche pays n'affichait, et 34
     `brands.country_id` qui ne désignaient aucun pays. Vérifiable à tout
     moment par `php tools/marques_check.php`.
-
   - `022_marques_manquantes.sql` — **données** : Cuba passe de 11 à 27
     marques (le portefeuille Habanos complet), plus La Aurora (1903) et
     J.C. Newman (1895). Sans notes chiffrées ni célébrités : ce sont les
     champs les plus faciles à inventer et les plus difficiles à
     vérifier.
+  - `023_cape_ou_marque.sql` — **données** : marque `"cape": true` les
+    huit entrées dont l'article dit que la contribution du pays est la
+    cape, pas la marque (Cameroun, Équateur, une du Brésil, une du
+    Mexique). Le front leur donne leur propre section.
 
   Le dossier fait foi ; cette liste résume.
 
@@ -52,7 +55,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `022`).
+dans l'ordre (`001` → `023`).
 
 ## Régénérer `schema.sql`
 

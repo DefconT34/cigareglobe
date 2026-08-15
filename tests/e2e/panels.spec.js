@@ -255,6 +255,63 @@ test.describe('Panneaux', () => {
     await expect(plein).toContainText('Force: Medium');
     await expect(plein).toContainText('Wrapper: Habano Ecuador');
   });
+  // ── Une cape n'est pas une marque ─────────────────────
+  // La fiche du Cameroun annoncait « Marques emblematiques » puis
+  // listait trois cigares roules au Honduras, en Republique
+  // dominicaine et au Nicaragua. Ce que le Cameroun leur donne, c'est
+  // sa CAPE — leurs articles le disaient deja ; seul le titre
+  // pretendait autre chose (migration 023).
+  //
+  // On fabrique les deux cas plutot que de dependre du contenu de
+  // l'atlas : le jeu de test porte les listes d'avant la migration.
+  test('les cigares a cape ont leur propre section', async ({ page }) => {
+    await page.route('**/data.php?action=globe*', async (route) => {
+      const rep = await route.fetch();
+      const d = await rep.json();
+      const cu = (d.countries || []).find((c) => c.id === 'cuba');
+      if (cu) {
+        cu.brands = [
+          { name: 'Maison locale', desc: 'Roulee ici', iconic: true },
+          { name: 'Autre maison',  desc: 'Roulee ici aussi', iconic: false },
+          { name: 'Cigare a cape', desc: 'Roule ailleurs', iconic: false, cape: true },
+        ];
+      }
+      await route.fulfill({ response: rep, json: d });
+    });
+
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+    // On attend que la base ait remplace la copie inline.
+    await expect.poll(async () => page.locator('#panel .cape-note').count(),
+                      { timeout: 20_000 }).toBe(1);
+
+    // La zone Habanos ajoute plus bas un « Marques officielles » qui
+    // n'a rien a voir : on regarde les TROIS premiers titres, dans
+    // l'ordre, plutot que leur nombre.
+    const titres = (await page.locator('#panel .sec').allTextContents())
+      .filter((x) => /marque|cape/i.test(x));
+    expect(titres.length).toBeGreaterThanOrEqual(3);
+    expect(titres[0]).toMatch(/emblématiques/i);
+    expect(titres[1]).toMatch(/autres/i);
+    expect(titres[2]).toMatch(/cape/i);
+
+    // Le cigare a cape ne doit PAS figurer dans les deux premieres
+    // grilles : c'est tout l'objet de la separation.
+    const grilles = page.locator('#panel .brand-grid');
+    await expect(grilles).toHaveCount(3);
+    await expect(grilles.nth(0)).not.toContainText('Cigare a cape');
+    await expect(grilles.nth(1)).not.toContainText('Cigare a cape');
+    await expect(grilles.nth(2)).toContainText('Cigare a cape');
+  });
+
+  // CONTRE-EPREUVE : un pays SANS entree a cape n'affiche pas la
+  // troisieme section — ni son explication.
+  test('sans cigare a cape, pas de troisieme section', async ({ page }) => {
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+    await expect(page.locator('#panel .brand-grid').first()).toBeVisible();
+    await expect(page.locator('#panel .cape-note')).toHaveCount(0);
+  });
   test('aucun identifiant HTML n\'est duplique', async ({ page }) => {
     // Les etablissements etaient rendus dans deux conteneurs a la fois,
     // ce qui dupliquait les identifiants et cassait les interactions.

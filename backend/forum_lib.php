@@ -443,7 +443,12 @@ function forum_recents(PDO $db, ?array $langs = null, int $limite = 5): array {
          JOIN forum_sections s ON s.id = t.section_id
          LEFT JOIN users u ON u.id = t.user_id
          WHERE " . implode(' AND ', $where) . "
-         ORDER BY COALESCE(t.last_post_at, t.created_at) DESC
+         -- `id` departage : deux sujets peuvent porter la meme date a la
+         -- seconde pres, et MySQL rend alors l'ordre qu'il veut. La liste
+         -- changeait d'un rafraichissement a l'autre sans que rien n'ait
+         -- bouge — et le parcours qui verifie la tete de liste echouait
+         -- une fois de temps en temps.
+         ORDER BY COALESCE(t.last_post_at, t.created_at) DESC, t.id DESC
          LIMIT $limite"
     );
     $stmt->execute($args);
