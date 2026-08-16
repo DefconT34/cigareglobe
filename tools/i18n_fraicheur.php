@@ -183,3 +183,25 @@ if ($parEtat['perimee']) {
     echo "Des traductions decrivent un francais qui a change :\n";
     echo "  php tools/i18n_fraicheur.php --perimees > perimees.json\n";
 }
+if ($parEtat['manquante']) {
+    echo "Des cases sont vides face a un francais rempli :\n";
+    echo "  php tools/i18n_contenu.php --propager   (si le francais est deja traduit ailleurs)\n";
+    echo "  php tools/i18n_contenu.php --exporter   (sinon)\n";
+}
+
+// CE RAPPORT SORT EN ERREUR quand quelque chose cloche, et c'est le
+// coeur de E6.
+//
+// Cet outil existait depuis la migration 009 et n'a JAMAIS ete lance :
+// il sortait toujours en 0, donc rien ne pouvait s'en servir. La
+// migration 026 a corrige dix textes francais en laissant dix
+// traductions decrire l'ancien ; il aurait suffi de l'appeler pour le
+// voir. Un controle sans code de sortie n'est pas un controle, c'est
+// une page qu'on ne lit pas.
+//
+// Il est desormais appele par tests/run.php. Le compteur « relue »
+// n'entre pas dans le verdict : personne n'a jamais relu, et faire
+// echouer la campagne sur ce chiffre la rendrait rouge en permanence —
+// c'est-a-dire inutile.
+$defauts = $parEtat['perimee'] + $parEtat['non-scellee'] + $parEtat['manquante'];
+exit($defauts > 0 ? 1 : 0);

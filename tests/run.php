@@ -1555,6 +1555,40 @@ eq('forum : le texte libre prend le relais', 'Chez Marcel, Lyon', $lieu['place_l
 test_pdo()->exec("UPDATE users SET role = 'member' WHERE email = 'alice@test.local'");
 
 // ════════════════════════════════════════════════════════
+section('Aucune traduction ne decrit un francais perime');
+
+// Une colonne « champ_xx » ne sait dire que « pleine » ou « vide » :
+// elle ignore de QUEL francais elle est la traduction. Corriger un
+// texte laisse donc ses cinq traductions decrire l'ancien, et
+// `i18n_lot.php --reste` les compte comme completes — le compteur
+// affiche 100 % pendant que la fiche traduite dit autre chose.
+//
+// C'est arrive avec la migration 026 : dix articles corriges, dix
+// traductions devenues fausses et invisibles.
+//
+// L'instrument existait pourtant depuis la migration 009
+// (translation_status + i18n_fraicheur.php). Il n'a jamais servi parce
+// qu'il sortait toujours en 0 : rien ne pouvait s'en servir, personne
+// ne le lancait. Il a maintenant un code de sortie, et cette section
+// l'appelle a chaque campagne.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/i18n_fraicheur.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('traductions : aucune perimee, aucune manquante, aucune non scellee', 0, $code);
+    } else {
+        check('traductions : controle de fraicheur lancable', false);
+    }
+}
+
+// ════════════════════════════════════════════════════════
 section('Chaque point tombe dans son pays');
 
 // L'audit E4 avait teste 152 points en 2023 et corrige deux erreurs

@@ -47,7 +47,7 @@ passe, et ça n'a pas la même valeur partout : d'où le découpage.
 
 ## Séquencement
 
-### ⚠ Préalable : faire E6 d'abord
+### ~~⚠ Préalable : faire E6 d'abord~~ ✅ **fait**
 
 **Rien ne relie une traduction à la version du français dont elle est
 issue.** Corriger un texte laisse les colonnes `*_en`, `*_es`… remplies
@@ -59,7 +59,16 @@ C'est arrivé pour de vrai avec `026` — dix articles corrigés, dix
 traductions devenues fausses et invisibles, colonnes vidées à la main.
 
 Une relecture qui corrige cinq cents valeurs sans ce garde-fou
-produirait le même silence, cinquante fois. **E6 avant tout le reste.**
+produirait le même silence, cinquante fois.
+
+**C'est fait** — et la surprise est que l'instrument existait depuis la
+migration `009` : `translation_status` stocke déjà l'empreinte du
+français, `i18n_fraicheur.php` sait la comparer. Il sortait toujours en
+`0`, donc rien ne pouvait s'en servir et personne ne le lançait. Il a
+désormais un code de sortie et `tests/run.php` l'appelle.
+
+Les lots suivants peuvent donc corriger le français sans laisser
+derrière eux des traductions périmées : la campagne les signalera.
 
 ---
 

@@ -178,6 +178,55 @@ if ($posLibre !== false) {
     exit(0);
 }
 
+// ── Propagation ───────────────────────────────────────────
+//
+// LE TROU QUE CECI BOUCHE. `segments()` regroupe PAR VALEUR FRANCAISE
+// et prend `MAX(champ_lang)` : il suffit qu'UNE ligne porte la
+// traduction pour que la valeur passe pour traduite. Les autres lignes
+// qui portent le meme francais restent vides, et l'export ne les
+// propose jamais — elles sont invisibles.
+//
+// C'est arrive avec la migration 027 : la Jamaique et le Costa Rica
+// heritent de « Caraibes » et « Amerique Centrale », deja traduits
+// ailleurs. L'export ne proposait rien, l'etat affichait 100 %, et
+// l'API rendait du francais dans les six langues.
+//
+// La traduction est par VALEUR, le stockage par LIGNE : il manquait
+// l'etape qui recopie l'une sur l'autre. Aucune traduction nouvelle
+// n'est produite ici — on ne fait que distribuer ce qu'on sait deja.
+if (in_array('--propager', $argv, true)) {
+    $n = 0;
+    foreach ($plan as $table => $champs) {
+        $cols = [];
+        foreach ($db->query("DESCRIBE `$table`") as $c) $cols[] = $c['Field'];
+        foreach ($champs as $champ) {
+            if (!in_array($champ, $cols, true)) continue;
+            foreach (LANGUES_CIBLES as $l) {
+                $c = $champ . '_' . $l;
+                if (!in_array($c, $cols, true)) continue;
+                // « [] » compte pour vide : un tableau JSON vide est
+                // plein pour un compteur et vide a l'ecran. La lecon
+                // des colonnes `gamme_*` de la campagne F4b.
+                $sql = "UPDATE `$table` t
+                        JOIN (SELECT `$champ` src, MAX(`$c`) v FROM `$table`
+                               WHERE `$c` IS NOT NULL AND `$c` <> '' AND `$c` <> '[]'
+                               GROUP BY `$champ`) k ON k.src = t.`$champ`
+                          SET t.`$c` = k.v
+                        WHERE t.`$champ` IS NOT NULL AND t.`$champ` <> ''
+                          AND (t.`$c` IS NULL OR t.`$c` = '' OR t.`$c` = '[]')";
+                $st = $db->prepare($sql);
+                $st->execute();
+                if ($st->rowCount()) {
+                    printf("  %-20s %-14s %s : %d ligne(s)\n", $table, $champ, $l, $st->rowCount());
+                    $n += $st->rowCount();
+                }
+            }
+        }
+    }
+    printf("%d traduction(s) recopiee(s) sur des lignes qui partagent le meme francais.\n", $n);
+    exit(0);
+}
+
 // ── Export ────────────────────────────────────────────────
 if (in_array('--exporter', $argv, true)) {
     $tout = in_array('--tout', $argv, true);

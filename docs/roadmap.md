@@ -676,16 +676,24 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
   - Effet de bord non prévu : le dictionnaire `_TRANSLATE` / `_tr()` vivait au sommet de
     `data.countries.js` et est bien vivant, lui. Déplacé dans `traduire.js`
 
-- [ ] **E6** — Rien ne relie une traduction à la version du français dont elle est issue · P
-  - Corriger un texte français laisse les colonnes `*_en`, `*_es`… remplies de la traduction
-    de l'ANCIENNE version. `i18n_lot.php --reste` les voit non vides, donc complètes : le
-    compteur affiche 100 % et la fiche traduite dit autre chose que la fiche française
-  - C'est arrivé en vrai avec la migration `026` : dix articles corrigés, dix traductions
-    devenues fausses et invisibles. Il a fallu vider les colonnes à la main
-  - Remède : stocker l'empreinte du français à côté de chaque traduction — une colonne, ou
-    une table `brands_i18n_src` — et faire échouer un contrôle quand elles divergent. Le
-    dictionnaire `content_translations` le fait déjà (`source_hash`) ; les colonnes de
-    traduction, non
+- [x] ~~**E6** — Rien ne relie une traduction à la version du français dont elle est issue~~ ✅
+  - **L'instrument existait déjà.** `translation_status` (migration `009`) stocke l'empreinte
+    du français au moment de la traduction, et `tools/i18n_fraicheur.php` sait la comparer.
+    J'avais proposé de construire ce qui était là depuis le début
+  - **Pourquoi il n'a jamais servi** : il sortait toujours en `0`. Un contrôle sans code de
+    sortie ne peut être branché nulle part, donc personne ne le lance. Même maladie que R0 —
+    un instrument qui existe et qu'on n'appelle pas ne protège de rien
+  - Il a maintenant des dents (sortie `1` sur périmée / non scellée / manquante) et
+    `tests/run.php` l'appelle. **337 assertions.** Vérifié en cassant volontairement un texte
+    français : 5 traductions signalées périmées, sortie 1, puis restauration
+  - **Un vrai défaut trouvé au passage, invisible depuis `027`** : `segments()` regroupe par
+    valeur française et prend `MAX(champ_lang)` — il suffit qu'UNE ligne porte la traduction
+    pour que la valeur passe pour traduite. La Jamaïque et le Costa Rica héritaient de
+    « Caraïbes » et « Amérique Centrale », déjà traduits ailleurs : l'export ne proposait
+    rien, l'état affichait 100 %, et **l'API rendait du français dans les six langues**
+  - Remède : `i18n_contenu.php --propager` recopie une traduction connue sur toutes les
+    lignes qui partagent le même français. La traduction est par valeur, le stockage par
+    ligne ; il manquait l'étape entre les deux. 10 cases réparées
 
 ### R. Relecture du contenu
 *Plan détaillé : `docs/relecture.md`.*
