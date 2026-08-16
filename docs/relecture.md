@@ -63,7 +63,7 @@ produirait le même silence, cinquante fois. **E6 avant tout le reste.**
 
 ---
 
-### Lot 0 — Reboucler l'audit géométrique · P
+### ~~Lot 0 — Reboucler l'audit géométrique~~ ✅ **fait**
 
 L'audit E4 a testé 152 points en 2023 et corrigé deux erreurs (Israël,
 Semi Vuelta). Il n'a **laissé aucun outil** : la migration `027` a
@@ -110,7 +110,7 @@ la plupart.
 
 ---
 
-### Lot 3 — Les 90 fêtes nationales · M
+### ~~Lot 3 — Les 90 fêtes nationales~~ ✅ **fait — 2 erreurs sur 90**
 
 Jour, mois, année, et le type (`i` = indépendance, `n` = fête
 nationale). Le type se trompe facilement : la fête nationale française
@@ -120,6 +120,19 @@ neutralité.
 - Vérifiables une par une
 - Le fichier est déjà commenté pays par pays (`data.fetes.js`), ce qui
   rend la relecture rapide
+
+**Résultat** : 88 des 90 entrées confrontées à une source, **deux
+erreurs**. Le Koweït célébrait une fête nationale prise pour une
+indépendance ; la Croatie avait changé de date en 2020 sans que la
+mémoire le sache. Quatre pays où deux dates se disputent le titre
+(Burkina Faso, Inde, Maroc, Corée du Sud) sont désormais documentés
+plutôt qu'arbitrés en silence.
+
+**Deux fausses alertes méritent d'être retenues pour les lots suivants.**
+Des synthèses de sources secondaires ont poussé à « corriger » le Pérou
+et le Paraguay, dont les entrées étaient justes. Un résumé de moteur de
+recherche n'est pas une source : il faut remonter à la page qui tranche,
+sinon la relecture introduit autant d'erreurs qu'elle en retire.
 
 ---
 

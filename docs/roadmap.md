@@ -689,22 +689,43 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 
 ### R. Relecture du contenu
 *Plan détaillé : `docs/relecture.md`.*
-- [ ] **R0** — Reboucler l'audit géométrique + en faire un outil · P · **ne dépend de rien**
-  - E4 a testé 152 points en 2023 et corrigé deux erreurs, mais n'a laissé **aucun outil** :
-    les 3 pays et 4 zones ajoutés par `027` n'ont jamais été vérifiés. Un audit fait une
-    fois et jamais rejoué est une régression qui s'installe
-  - `tools/coords_check.php`, branché sur `tests/run.php` : 15 pays, 41 zones, 92 pays à
-    lounges, 10 marchés
+- [x] ~~**R0** — Reboucler l'audit géométrique + en faire un outil~~ ✅
+  - `tools/coords_check.php` décode le TopoJSON que le front dessine déjà (E3) et teste
+    **158 points** : 15 pays, 41 zones, 92 pays à lounges, 10 marchés. Branché sur
+    `tests/run.php` — **336 assertions** désormais
+  - **Aucun point ne se trompe de pays.** 139 dans leur polygone, 4 en marge côtière
+    (≤ 1°, simplification du fond 110m), 12 hors carte (micro-États absents du fond)
+  - **Ce que l'outil a révélé n'est pas une erreur de coordonnées** : les Canaries tombent
+    à 12° du polygone « Spain », parce que le fond 110m ne dessine pas l'archipel. Le point
+    est juste, la carte est grossière. Exception nommée dans `SANS_FOND`, avec sa raison —
+    une entité, jamais une catégorie : si Cuba dérive un jour, l'outil le dira quand même
+  - **Conséquence visible à l'écran** : le marqueur des Canaries flotte sur l'Atlantique.
+    C'est géographiquement exact ; seul un fond plus fin (500 Ko de plus) y changerait
+    quelque chose
 - [ ] **R1** — Les 21 valeurs chiffrées des fiches pays · M · *dépend de E6*
   - « ~90M cigares/an », « $500M d'exportations »… Fixer la source de référence avant de
     commencer. **Une valeur non sourcée est retirée**, pas conservée avec un astérisque
 - [ ] **R2** — Les 108 valeurs des fiches pratiques · M · *dépend de E6*
   - Capitale, population, superficie, monnaie, langue, fuseau, PIB, indépendance. Décider
     du sort des valeurs datées (« $100B (2022) »)
-- [ ] **R3** — Les 90 fêtes nationales · M · **ne dépend de rien** (aucune traduction)
-  - Jour, mois, année, et surtout le **type** : `i` = indépendance, `n` = fête nationale.
-    C'est là que ça se trompe — la France n'est pas une indépendance, l'Autriche est une
-    déclaration de neutralité
+- [x] ~~**R3** — Les 90 fêtes nationales~~ ✅
+  - **88 des 90 confrontées à une source.** Les deux exceptions sont des déductions, pas des
+    oublis : le 4 juillet 1776 ne demande pas de source, et Saint-Martin est une collectivité
+    française dont la fête est celle de la France, vérifiée
+  - **Deux erreurs trouvées et corrigées.** Le **Koweït** était donné comme indépendance au
+    25/02/1961 : c'est la fête nationale, pas l'indépendance (19/06/1961), et la date renvoie
+    à l'avènement de 1950. La **Croatie** était au 25/06/1991 ; elle est revenue au 30/05/1990
+    le 1ᵉʳ janvier 2020, par une loi de 2019. Sa valeur était **juste jusqu'en 2019** — une
+    donnée peut devenir fausse sans que personne n'y touche
+  - **Deux fausses alertes, aussi instructives.** Des synthèses de sources secondaires ont
+    poussé à corriger le Pérou vers le 29/07 et le Paraguay vers le 14/05 : les deux entrées
+    étaient justes. Vérifier protège dans les deux sens, à condition de remonter à une source
+    qui tranche plutôt qu'à un résumé
+  - **Quatre cas où deux dates se disputent le titre** — Burkina Faso, Inde, Maroc, Corée du
+    Sud célèbrent aussi autre chose. Le fichier retient l'indépendance et **le documente** ;
+    changer d'avis tient en une ligne
+  - Taux d'erreur final : **2 sur 90**. Le fichier est désormais la partie la mieux étayée de
+    l'atlas — les fiches pays, elles, attendent toujours
 - [ ] **R4** — Les 37 zones de production · M · *dépend de E6 et R0*
 - [ ] **R5** — La prose des fiches (157 valeurs) · G · *dépend de E6*
   - Non vérifiable ligne à ligne. On cherche les endroits où la prose **affirme un fait**

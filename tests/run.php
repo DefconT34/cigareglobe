@@ -1555,6 +1555,37 @@ eq('forum : le texte libre prend le relais', 'Chez Marcel, Lyon', $lieu['place_l
 test_pdo()->exec("UPDATE users SET role = 'member' WHERE email = 'alice@test.local'");
 
 // ════════════════════════════════════════════════════════
+section('Chaque point tombe dans son pays');
+
+// L'audit E4 avait teste 152 points en 2023 et corrige deux erreurs
+// (Israel, Semi Vuelta). Il n'a laisse AUCUN outil : la migration 027 a
+// ajoute trois pays et quatre zones que personne n'a verifies, et rien
+// ne le disait. Un audit fait une fois et jamais rejoue n'est pas un
+// audit, c'est une photo.
+//
+// Le controle porte sur la BASE APPLICATIVE — c'est la que vit le
+// contenu reel, et c'est lui qu'on publie. Il compare chaque
+// coordonnee au fond de carte que le front dessine deja.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/coords_check.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        // Le detail va a l'ecran seulement en cas d'echec : sinon la
+        // campagne noie ses 335 lignes sous un rapport de geographie.
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('coordonnees : aucun point ne se trompe de pays', 0, $code);
+    } else {
+        check('coordonnees : controle lancable', false);
+    }
+}
+
+// ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 
 // Un test qui ecrit dans la base APPLICATIVE ne se voit pas : il passe,

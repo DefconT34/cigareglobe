@@ -34,6 +34,18 @@
 //   QA  independance 03/09/1971, mais National Day le 18 decembre
 //   BG  independance 22/09/1908, mais Liberation Day le 3 mars
 //   CU  10 octobre (Grito de Yara) plutot que le 1er janvier
+//   KW  National Day le 25 fevrier (avenement de 1950), et non
+//       l'independance du 19 juin 1961 — deplace en fevrier des 1963
+//       parce qu'on ne defile pas dans la chaleur de juin
+//
+// DEUX DATES SE DISPUTENT LE TITRE. Ces quatre pays celebrent AUSSI
+// une autre journee, et les listes de reference ne choisissent pas
+// toujours la meme. Ce fichier retient l'independance ; changer d'avis
+// tient en une ligne :
+//   BF  independance 05/08/1960 retenue · Republique le 11 decembre
+//   IN  independance 15/08/1947 retenue · Republic Day le 26 janvier
+//   MA  independance 18/11/1956 retenue · Fete du Trone le 30 juillet
+//   KR  liberation 15/08/1945 retenue · Fondation nationale le 3 octobre
 //
 // ABSENTS, VOLONTAIREMENT :
 //   EU  l'Union europeenne n'est pas un pays
@@ -45,9 +57,34 @@
 //       annee dans le calendrier gregorien ; 14/05/1948 est la date de la
 //       declaration, pas celle de la celebration
 //
-// A RELIRE. Ces 90 dates sont saisies de memoire, pas extraites d'une
-// source faisant autorite. La lecon des traductions vaut ici : une
-// valeur presente n'est pas une valeur verifiee.
+// RELECTURE (R3) — FAITE. 88 des 90 entrees ont ete confrontees a une
+// source exterieure : la liste des fetes nationales de Wikipedia, les
+// pages de jours feries par pays, et une quinzaine de recherches
+// ciblees par groupes regionaux.
+//
+// Les deux exceptions sont des deductions, pas des oublis :
+//   US  le 4 juillet 1776 ne demande pas de source
+//   MF  Saint-Martin est une collectivite francaise : sa fete est celle
+//       de la France, verifiee au 14 juillet
+//
+// DEUX ERREURS TROUVEES, corrigees ici :
+//   KW  etait donne comme independance du Royaume-Uni au 25/02/1961.
+//       C'est la fete nationale, pas l'independance (19/06/1961), et la
+//       date renvoie a l'avenement de 1950.
+//   HR  etait au 25/06/1991. La Croatie est revenue au 30/05/1990 le
+//       1er janvier 2020, par une loi de 2019. La valeur etait juste
+//       JUSQU'EN 2019 : une donnee peut devenir fausse sans que
+//       personne n'y touche.
+//
+// DEUX FAUSSES ALERTES, tout aussi instructives. Des synthèses de
+// sources secondaires ont pousse a corriger le PEROU vers le 29/07 et
+// le PARAGUAY vers le 14/05. Les deux entrees etaient justes : le 29
+// juillet honore les forces armees peruviennes, et le 14 mai est le
+// jour du drapeau paraguayen. Verifier protege dans les deux sens —
+// encore faut-il remonter a une source qui tranche, pas a un resume.
+//
+// Ce fichier est desormais la partie la mieux etayee de l'atlas. Les
+// fiches pays, elles, attendent toujours (voir docs/relecture.md).
 // ════════════════════════════════════════════════════════
 
 var FETES_NATIONALES = {
@@ -92,7 +129,7 @@ var FETES_NATIONALES = {
   GR: [ 3, 25, 1821, 'i'],  // Grece — de l'Empire ottoman
   GT: [ 9, 15, 1821, 'i'],  // Guatemala — de l'Espagne
   HN: [ 9, 15, 1821, 'i'],  // Honduras — de l'Espagne
-  HR: [ 6, 25, 1991, 'i'],  // Croatie — de la Yougoslavie
+  HR: [ 5, 30, 1990, 'n'],  // Croatie — Dan drzavnosti, premier Parlement multipartite
   ID: [ 8, 17, 1945, 'i'],  // Indonesie — des Pays-Bas
   IL: [ 5, 14, 1948, 'i'],  // Israel — declaration d'independance (voir en-tete)
   IN: [ 8, 15, 1947, 'i'],  // Inde — du Royaume-Uni
@@ -104,7 +141,7 @@ var FETES_NATIONALES = {
   KH: [11,  9, 1953, 'i'],  // Cambodge — de la France
   KN: [ 9, 19, 1983, 'i'],  // Saint-Christophe-et-Nieves — du Royaume-Uni
   KR: [ 8, 15, 1945, 'i'],  // Coree du Sud — Gwangbokjeol, liberation
-  KW: [ 2, 25, 1961, 'i'],  // Koweit — du Royaume-Uni
+  KW: [ 2, 25, null, 'n'],  // Koweit — National Day (independance 19/06/1961)
   LB: [11, 22, 1943, 'i'],  // Liban — de la France
   LU: [ 6, 23, null, 'n'],  // Luxembourg — anniversaire du Grand-Duc
   MA: [11, 18, 1956, 'i'],  // Maroc — de la France
