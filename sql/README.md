@@ -69,6 +69,15 @@ espace communautaire (`forum_*`) + réglages du site (`site_languages`).
     1876 ; Alhambra était une société **suisse**, pas espagnole. Six
     autres articles sont précisés.
 
+  - `027_pays_manquants.sql` — **données** : l'atlas passe de **12 à 15
+    pays producteurs**. Jamaïque, Îles Canaries et Costa Rica, avec
+    fiches pratiques, zones de production et sept articles de marque.
+    Pérou, Colombie et Haïti ont été **écartés faute de sources** — les
+    deux premiers fournissent de la feuille sans maison vérifiable, le
+    troisième n'a rien donné du tout. ⚠ **Rejouer
+    `php tools/amorce_generer.php` après cette migration** : le globe
+    gagne trois marqueurs.
+
   Le dossier fait foi ; cette liste résume.
 
 ## Installer / recréer la base
@@ -80,7 +89,7 @@ mysql -u <user> -p <base> < sql/schema.sql
 Puis importer les données (dump séparé, non versionné — voir plus bas).
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `026`).
+dans l'ordre (`001` → `027`).
 
 ## Régénérer `schema.sql`
 

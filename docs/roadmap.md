@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→026, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→027, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -96,6 +96,32 @@ Effort : P = Petit · M = Moyen · G = Gros.
     disparaissent, et la troisième dit ce qu'il en est
   - ~~**Défaut repéré, non corrigé** : « Punch » figure sur la fiche de Cuba *et* sur celle du
     Honduras, mais un seul article existe — le cubain.~~ ✅ **réparé par `024`**
+- [x] ~~**D36** — Trois pays producteurs de plus, et trois écartés~~ ✅ · migration `027`
+  - L'atlas comptait **douze** pays producteurs ; il en compte **quinze**. Chaque candidat a
+    été vérifié sur sources AVANT d'écrire une ligne — c'est la leçon de `026`
+  - **Jamaïque.** Dans les années 1960-1970, après l'embargo américain, c'était le premier
+    pays du cigare des Caraïbes hors de Cuba. Royal Jamaica (1935) et la manufacture Temple
+    Hall de Kingston — **où Macanudo est né** avant de devenir dominicain. Le 12 septembre
+    1988, l'ouragan Gilbert détruit l'usine et mille acres de tabac à May Pen ; les marques
+    partent en République dominicaine dans l'année. **On peut dater la fin d'une industrie
+    nationale au jour près**
+  - **Îles Canaries.** La Vuelta Abajo a été colonisée par des paysans canariens : après
+    1960, plusieurs familles tabacoles cubaines sont revenues sur la terre de leurs aïeux.
+    Benjamín Menéndez ouvre en 1961 la Compañía Insular Tabacalera à Las Palmas et y lance
+    **Montecruz**, copie du Montecristo qu'il venait de perdre — habillé de cape
+    camerounaise, ce qui a installé cette feuille dans le goût américain
+  - **Costa Rica.** Un seul acteur : Selected Tobacco, fondée en 2012 par **Nelson
+    Alfonso**, l'artiste cubain qui avait dessiné l'identité du Cohiba Behike. Atabey, Byron
+    et Bandolero, en volumes minuscules
+  - **Trois écartés, et pourquoi** : le **Pérou** et la **Colombie** fournissent de la
+    feuille — du corps, une épice douce — que d'autres mettent dans leurs tripes, mais
+    aucune maison vérifiable ne s'y rattache ; les ajouter voudrait dire publier deux fiches
+    sans marques et aux chiffres inventés. **Haïti** : aucune source trouvée sur une
+    production cigarière, ancienne ou actuelle. Écrire ces fiches, c'était les fabriquer
+  - **Pas de chiffre inventé** : ces trois fiches n'ont ni revenus ni volumes chiffrés ni
+    calendrier de récolte. Les colonnes sont descriptives ou vides plutôt que fausses — à
+    la différence des douze fiches existantes, toujours en attente de relecture
+
 - [x] ~~**D35** — Relecture sur sources : quatre erreurs, six précisions~~ ✅ · migration `026`
   - Les dix maisons que `024` et `025` signalaient « moins documentées, à vérifier » l'ont
     été, une par une, sur sources extérieures. **Quatre affirmations étaient fausses** — dont
@@ -660,6 +686,31 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     une table `brands_i18n_src` — et faire échouer un contrôle quand elles divergent. Le
     dictionnaire `content_translations` le fait déjà (`source_hash`) ; les colonnes de
     traduction, non
+
+### R. Relecture du contenu
+*Plan détaillé : `docs/relecture.md`.*
+- [ ] **R0** — Reboucler l'audit géométrique + en faire un outil · P · **ne dépend de rien**
+  - E4 a testé 152 points en 2023 et corrigé deux erreurs, mais n'a laissé **aucun outil** :
+    les 3 pays et 4 zones ajoutés par `027` n'ont jamais été vérifiés. Un audit fait une
+    fois et jamais rejoué est une régression qui s'installe
+  - `tools/coords_check.php`, branché sur `tests/run.php` : 15 pays, 41 zones, 92 pays à
+    lounges, 10 marchés
+- [ ] **R1** — Les 21 valeurs chiffrées des fiches pays · M · *dépend de E6*
+  - « ~90M cigares/an », « $500M d'exportations »… Fixer la source de référence avant de
+    commencer. **Une valeur non sourcée est retirée**, pas conservée avec un astérisque
+- [ ] **R2** — Les 108 valeurs des fiches pratiques · M · *dépend de E6*
+  - Capitale, population, superficie, monnaie, langue, fuseau, PIB, indépendance. Décider
+    du sort des valeurs datées (« $100B (2022) »)
+- [ ] **R3** — Les 90 fêtes nationales · M · **ne dépend de rien** (aucune traduction)
+  - Jour, mois, année, et surtout le **type** : `i` = indépendance, `n` = fête nationale.
+    C'est là que ça se trompe — la France n'est pas une indépendance, l'Autriche est une
+    déclaration de neutralité
+- [ ] **R4** — Les 37 zones de production · M · *dépend de E6 et R0*
+- [ ] **R5** — La prose des fiches (157 valeurs) · G · *dépend de E6*
+  - Non vérifiable ligne à ligne. On cherche les endroits où la prose **affirme un fait**
+    — un rang mondial, une date, une paternité — et on traite ceux-là comme R1
+- **Question ouverte, non technique** : publier avant d'avoir relu, ou non ? À trancher
+  avec l'avis juridique (loi Évin) et la décision de modération
 
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → **B1** → F3/F4/F6 → D6/C1b (optionnels)
