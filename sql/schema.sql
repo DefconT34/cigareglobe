@@ -638,7 +638,6 @@ CREATE TABLE `producer_geo` (
   `area` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `currency` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `language` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `coords` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `timezone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `gdp` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `independent` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,

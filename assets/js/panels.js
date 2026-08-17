@@ -125,6 +125,25 @@ function renderHabanos(countryId) {
 
 // ════════════════════════════════════════════════════════
 // LEFT LEXICON PANEL
+// La position affichee se DERIVE du marqueur, elle ne se stocke plus.
+//
+// `producer_geo.coords` portait les coordonnees de la CAPITALE quand
+// `lat`/`lon` portent le CENTRE du pays : 18,7 degres d'ecart pour les
+// Etats-Unis, ou l'on affichait Washington. Et juste a cote, la
+// distance au visiteur — que fiche.js calcule sur `lat`/`lon`. Deux
+// nombres cote a cote qui parlaient de deux endroits.
+//
+// Le repli precedent ecrivait « °N » et « °O » en dur : le Bresil
+// s'affichait a 14°N au lieu de 14°S, l'Indonesie a 113°O au lieu de
+// 113°E. Il ne se declenchait jamais, la colonne etant pleine partout,
+// et devient ici le chemin unique.
+function _coordTexte(lat, lon) {
+  if (lat == null || lon == null) return '—';
+  var la = Math.round(Math.abs(lat)), lo = Math.round(Math.abs(lon));
+  return (la < 10 ? '0' : '') + la + '°' + (lat < 0 ? 'S' : 'N') + ' '
+       + (lo < 10 ? '0' : '') + lo + '°' + (lon < 0 ? 'O' : 'E');
+}
+
 // ════════════════════════════════════════════════════════
 function openLex(c) {
   document.getElementById('lexFlag').textContent = c.flag;
@@ -145,7 +164,7 @@ function openLex(c) {
 
     document.getElementById('lexBody').innerHTML =
       '<div class="lex-coords">' +
-        '<span class="lex-coords-val">📍 ' + (geo.coords || (c.lat+'°N '+Math.abs(c.lon)+'°O')) + '</span>' +
+        '<span class="lex-coords-val">📍 ' + _coordTexte(c.lat, c.lon) + '</span>' +
         (window.ficheDistanceHtml ? window.ficheDistanceHtml(c) : '') +
       '</div>' +
       '<div class="lex-sec">'+t('lex_general')+'</div>' +
@@ -321,7 +340,15 @@ function _renderPanel(c) {
     '<div class="rev-box"><div>' +
       '<div class="rev-lbl">'+t('rev_annual')+'</div>' +
       '<div class="rev-amt">' + (c.revenue||'—') + '</div>' +
-      '<div class="rev-sub">' + (c.revDetail||'') + '</div>' +
+      // L'API sert « rev_detail » : elle fait SELECT * et ne renomme
+      // rien. « revDetail » etait donc toujours undefined, et cette
+      // ligne toujours vide — depuis toujours, sans que rien ne le
+      // signale puisque le champ est facultatif.
+      // Elle porte le PERIMETRE du montant affiche juste au-dessus
+      // (« exportations de tabac vers les Etats-Unis », « chiffre
+      // d'affaires Habanos »). Sans elle, 368 M$ et 1,34 Md$ se lisent
+      // comme deux valeurs comparables, ce qu'elles ne sont pas.
+      '<div class="rev-sub">' + (_tr(c.rev_detail)||'') + '</div>' +
     '</div><div style="font-size:28px;opacity:.3">' + c.flag + '</div></div>' +
     '<div class="sec">'+t('s_production')+'</div>' +
     '<div class="srow"><span class="sk">'+t('s_volume')+'</span><span class="sv">' + (c.production||'—') + '</span></div>' +

@@ -1620,6 +1620,68 @@ section('Chaque point tombe dans son pays');
 }
 
 // ════════════════════════════════════════════════════════
+section('Les chiffres dates n\'ont pas trop vieilli');
+
+// Le lot R2 a trouve QUATORZE PIB perimes sur quatorze, plusieurs de 30
+// a 48 %, tous marques « (2022) ». Personne ne les avait regardes en
+// quatre ans, et rien ne pouvait le dire : une valeur fausse par
+// vieillissement ressemble exactement a une valeur juste.
+//
+// Les corriger a la main aurait rendez-vous avec la meme panne en 2029.
+// tools/geo_banquemondiale.php les tient desormais depuis l'API de la
+// Banque mondiale, et son mode --verifier tourne HORS LIGNE : il ne
+// regarde que l'annee inscrite dans la valeur. Une campagne ne doit pas
+// dependre du reseau.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s --verifier',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/geo_banquemondiale.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('fiches pays : population et PIB portent une annee recente', 0, $code);
+    } else {
+        check('fiches pays : controle de fraicheur lancable', false);
+    }
+}
+
+// ════════════════════════════════════════════════════════
+section('Le meme fait dit la meme chose partout');
+
+// Panne centrale du lot R5, et la plus couteuse de la relecture : une
+// correction ne suit pas la donnee, elle suit le CHAMP.
+//
+// « Premier exportateur mondial en valeur » a ete retire de rev_detail
+// par la migration 028 faute de source — et a survecu dans notes.
+// « Lombok » a ete retire des zones par la 030 — et est reste dans
+// regions ET varieties. « Jamastran Valley » a ete francise en zone,
+// pas dans regions. Sept fois la meme mecanique.
+//
+// Rien ne pouvait le voir : chaque champ etait juste vis-a-vis de
+// lui-meme. Ce controle regarde ce qui doit concorder ENTRE les
+// champs, et refuse le retour des rangs mondiaux non sources.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/coherence_check.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('fiches pays : regions, zones et superlatifs concordent', 0, $code);
+    } else {
+        check('fiches pays : controle de coherence lancable', false);
+    }
+}
+
+// ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 
 // Un test qui ecrit dans la base APPLICATIVE ne se voit pas : il passe,

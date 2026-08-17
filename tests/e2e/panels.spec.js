@@ -15,8 +15,39 @@ test.describe('Panneaux', () => {
     const panneau = page.locator('#panel');
     await expect(panneau).toHaveClass(/open/, { timeout: 15_000 });
     await expect(panneau).toContainText('Cuba');
-    // Donnees de production issues de la base, pas du snapshot statique
-    await expect(panneau).toContainText(/cigares\/an|Tropical/i);
+    // Donnees de production issues de la base, pas du snapshot statique.
+    // Le motif visait « cigares/an », que la relecture R1 a retire faute
+    // de source : Habanos ne publie plus d'unites. On vise desormais le
+    // climat, qui vient de la meme requete et ne porte pas de chiffre.
+    await expect(panneau).toContainText(/Tropical/i);
+  });
+
+  // La legende sous le montant porte le PERIMETRE du chiffre affiche :
+  // « chiffre d'affaires Habanos S.A. », « exportations de tabac vers
+  // les Etats-Unis (COMTRADE) ». Sans elle, deux montants mesurant des
+  // choses differentes se lisent comme comparables.
+  //
+  // Elle n'a JAMAIS ete affichee : panels.js lisait « c.revDetail »
+  // quand l'API sert « rev_detail » — elle fait SELECT * et ne renomme
+  // rien. Un champ rempli sur quinze pays, traduit en six langues et
+  // sauvegarde, rendu nulle part. Rien ne pouvait le voir : un
+  // sous-titre facultatif qui reste vide ne ressemble pas a une panne.
+  test('le montant affiche porte son perimetre', async ({ page }) => {
+    await ouvrir(page, '/?country=cuba');
+    await expect(page.locator('#panel')).toHaveClass(/open/, { timeout: 15_000 });
+
+    const sub = page.locator('#panel .rev-sub').first();
+    await expect(sub).toContainText(/Habanos/i);
+
+    // CONTRE-EPREUVE : un pays SANS montant garde sa legende. C'est le
+    // cas qui compte le plus — la fiche ne dit pas « on ne sait pas »,
+    // elle dit POURQUOI on ne sait pas.
+    await page.evaluate(() => {
+      const c = COUNTRIES.find((x) => x.id === 'usa');
+      selCountry = c; openPanel(c);
+    });
+    await expect(page.locator('#panel .rev-amt').first()).toHaveText('—');
+    await expect(page.locator('#panel .rev-sub').first()).not.toBeEmpty();
   });
 
   test('la fiche pays se ferme', async ({ page }) => {

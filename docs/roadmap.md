@@ -710,12 +710,69 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
   - **Conséquence visible à l'écran** : le marqueur des Canaries flotte sur l'Atlantique.
     C'est géographiquement exact ; seul un fond plus fin (500 Ko de plus) y changerait
     quelque chose
-- [ ] **R1** — Les 21 valeurs chiffrées des fiches pays · M · *dépend de E6*
-  - « ~90M cigares/an », « $500M d'exportations »… Fixer la source de référence avant de
-    commencer. **Une valeur non sourcée est retirée**, pas conservée avec un astérisque
-- [ ] **R2** — Les 108 valeurs des fiches pratiques · M · *dépend de E6*
-  - Capitale, population, superficie, monnaie, langue, fuseau, PIB, indépendance. Décider
-    du sort des valeurs datées (« $100B (2022) »)
+- [x] ~~**R1** — Les 21 valeurs chiffrées des fiches pays~~ ✅ · migration `028`
+  - **4 sourcées, 17 retirées.** Cuba : `$500M` → **827 M$** de CA Habanos 2024 (communiqué
+    officiel du XXVe Festival del Habano). Rép. dom. : `~400M cigares/an` → **181 M** roulés
+    main exportés, et `$1.2B` → **1,34 Md$** (Intabaco). Nicaragua : `~350M` → **253 M** vers
+    les USA (CAA), `$850M` → **368 M$** (COMTRADE). Honduras : `~80M` → **67 M** (CAA)
+  - Les huit montants restants n'ont aucune statistique publique derrière eux — vendeurs de
+    feuille ou productions non recensées. Retirés, avec le rang « 1er fournisseur mondial
+    wrapper » de l'Équateur, le « 1er mondial » dominicain et les deux altitudes de sol
+  - **Le chiffre juste peut porter le mauvais intitulé** : les 827 M$ sont le CA mondial d'un
+    distributeur, pas des « exportations annuelles ». Et une source honnête peut tromper par
+    son périmètre — les 368 M$ mêlent cigares et cigarettes vers une seule destination, ce que
+    le détail affiché sous le montant dit désormais
+  - **Angle mort trouvé** : `revenue` n'a pas de colonnes `_en/_es/…`. Y écrire « Non publié »
+    aurait montré du français aux cinq autres langues. La colonne passe à `NULL`, le panneau
+    rend « — », et `rev_detail` porte l'explication traduite. Les trois mentions laissées par
+    `027` dans le même angle mort sont parties avec
+  - **E6 a servi pour de vrai** : 20 textes français corrigés → 100 traductions périmées
+    signalées par la campagne, refaites, rescellées. Exactement le silence qu'il devait tuer
+  - **Défaut trouvé en chemin — la légende n'avait jamais été affichée.** `panels.js` lisait
+    `c.revDetail` quand l'API sert `rev_detail` : elle fait `SELECT *` et ne renomme rien. La
+    ligne sous le montant était donc vide depuis toujours, sans que rien ne le signale
+    puisque le champ est facultatif. Un champ rempli, traduit en six langues, sauvegardé — et
+    jamais montré. C'est elle qui porte le périmètre des chiffres : sans elle, `368 M$` et
+    `1,34 Md$` se lisaient comme comparables
+  - **Défaut trouvé en chemin — 133 serveurs de test orphelins.** `tests/bootstrap.php`
+    lançait `php -S` sans `bypass_shell` : sous Windows `proc_open` passe par `cmd.exe`, donc
+    `proc_terminate()` tuait l'enveloppe et laissait le serveur écouter. Un par campagne
+    depuis le 7 août. Et comme un processus Windows hérite des descripteurs de son parent,
+    chacun gardait ouverte la sortie standard de sa campagne : `php tests/run.php | grep …`
+    ne rendait jamais la main. **Ce qu'on mettait sur le compte d'un tampon de `grep` était
+    cette fuite.** Corrigé des deux côtés (`bypass_shell`, puis `taskkill /F /T` de contrôle)
+  - ⚠ Les 133 déjà en place datent d'avant le correctif et sont à balayer une fois
+- [x] ~~**R2** — Les valeurs des fiches pratiques~~ ✅ · migration `029` · `tools/geo_banquemondiale.php`
+  - 135 valeurs (et non 108 : `027` a ajouté trois pays). **45 ne sont jamais affichées** —
+    devise, langue et fuseau sont remplacés par `Intl`, et `data.pays.js` couvre les quinze
+    pays. Les relire aurait été vérifier ce que personne ne lit
+  - **14 PIB périmés sur 14**, tous marqués « (2022) » : Mexique `$1.3T` → **1,83 T$**,
+    Nicaragua `$15B` → **22,2 Md$**, Honduras `$28B` → **39,6 Md$**. Populations fausses dans
+    les deux sens : Brésil 215 M → **212,8 M**, Rép. dom. 10,8 M → **11,5 M**
+  - **Tenus plutôt que corrigés.** `tools/geo_banquemondiale.php` les tire de l'API de la
+    Banque mondiale (JSON, l'année attachée à chaque point). `--verifier` tourne **hors
+    ligne** dans la campagne — une campagne ne doit pas dépendre du réseau — et échoue si une
+    valeur n'annonce pas son année ou passe les trois ans. **338 assertions**
+  - Cuba dispensé nommément : la Banque mondiale n'a plus rien après 2020. « On n'a pas
+    regardé depuis quatre ans » et « personne ne publie » doivent se distinguer quelque part
+  - Philippines : `343 448 km²` → **300 000 km²**, faux de 14 %. Les treize autres superficies
+    sont justes — la Banque mondiale ne sert à rien ici, elle publie les terres émergées quand
+    une fiche affiche la superficie totale
+  - Quatre indépendances **se contredisaient avec le site lui-même** : la fiche disait « 1902 »
+    pour Cuba quand `data.fetes.js`, relu en R3, affichait le 10 octobre 1868 sur la même page.
+    Aucune n'était fausse — le cri de rupture n'est pas la naissance de l'État. Les deux dates
+    sont désormais écrites (Cuba, Équateur, Mexique, Philippines) plutôt qu'arbitrées en silence
+  - **La colonne `coords` est supprimée.** Elle portait la capitale quand le marqueur porte le
+    centre du pays : 18,7° d'écart aux États-Unis, où l'on affichait Washington. Le pire était
+    son voisinage — la distance au visiteur, calculée sur `lat`/`lon`, s'affichait collée
+    contre elle. `panels.js` dérive désormais la position du marqueur : une valeur dérivable ne
+    se stocke pas, c'est une occasion de diverger, et celle-ci avait divergé
+  - Le repli qui servait quand `coords` manquait écrivait « °N » et « °O » en dur — il plaçait
+    le Brésil dans l'hémisphère nord. Il ne s'était jamais déclenché ; il est maintenant le
+    chemin unique, et corrigé
+  - ⚠ **Jakarta reste la capitale de l'Indonésie**, confirmé par la Cour constitutionnelle le
+    12 mai 2026 : le décret de transfert vers Nusantara n'est pas signé. Valeur juste
+    aujourd'hui, à resurveiller — exactement le cas croate de R3
 - [x] ~~**R3** — Les 90 fêtes nationales~~ ✅
   - **88 des 90 confrontées à une source.** Les deux exceptions sont des déductions, pas des
     oublis : le 4 juillet 1776 ne demande pas de source, et Saint-Martin est une collectivité
@@ -734,10 +791,64 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     changer d'avis tient en une ligne
   - Taux d'erreur final : **2 sur 90**. Le fichier est désormais la partie la mieux étayée de
     l'atlas — les fiches pays, elles, attendent toujours
-- [ ] **R4** — Les 37 zones de production · M · *dépend de E6 et R0*
-- [ ] **R5** — La prose des fiches (157 valeurs) · G · *dépend de E6*
-  - Non vérifiable ligne à ligne. On cherche les endroits où la prose **affirme un fait**
-    — un rang mondial, une date, une paternité — et on traite ceux-là comme R1
+- [x] ~~**R4** — Les zones de production~~ ✅ · migration `030`
+  - Elles étaient **41**, pas 37 : `027` en avait ajouté quatre. Il en reste **39**
+  - **Ce lot montre la limite de R0.** Les trois zones camerounaises tombaient toutes dans le
+    Cameroun — `coords_check.php` les validait sans broncher — et toutes les trois étaient à
+    500 km de l'endroit où pousse la cape. *Un point peut être dans le bon pays et au mauvais
+    endroit ; aucune vérification automatique ne dira jamais cela*
+  - **Cameroun** : Mont Cameroun, Mungo et Wouri sont la côte volcanique de Douala. La cape
+    pousse **à l'Est, autour de Batouri**, en plein soleil, sur des terres si riches qu'elles
+    ne demandent pas d'engrais. Batouri est le seul lieu que les sources nomment : les deux
+    autres zones sont **retirées** plutôt que déplacées au jugé
+  - **Rép. dominicaine** : La Romana n'est pas « Plantation Arturo Fuente » mais **Tabacalera
+    de García** (1971), la plus grande manufacture du pays — Montecristo, Romeo y Julieta,
+    H. Upmann. Fuente est à Santiago, 200 km plus loin
+  - **Indonésie** : Lombok produit du **Virginia pour cigarettes**, pas du tabac à cigare. Le
+    troisième centre historique est **Klaten**, à Java Centre
+  - **Nicaragua** : Condega n'est pas « haute altitude » — **560 m, la plus basse des trois
+    vallées**, contre 844 m pour Estelí. Son sol rocailleux donne une feuille plus fine
+  - **L'erreur camerounaise débordait sur la fiche pays** : `soil` disait « volcanique »,
+    `regions` listait les trois lieux faux, `varieties` annonçait un « Cameroon Shade » pour un
+    tabac de plein soleil. Corrigés avec — comme l'altitude du Panama en R1
+  - Quatre superlatifs énoncés au présent de l'indicatif disent désormais la réputation plutôt
+    que le classement : « Meilleure terre à tabac au monde » → « la plus réputée au monde ».
+    La réputation est vraie, le classement n'existe pas
+  - Deux mots d'anglais partis : « Jamastran Valley », « Microclimate » — comme « Panama City »
+    en R2. **338 assertions**, 60 traductions refaites
+- [x] ~~**R5** — La prose des fiches~~ ✅ · migration `031` · `tools/coherence_check.php`
+  - 162 valeurs : `climate`, `soil`, `harvest`, `notes`, et les listes `tabacaleras`,
+    `regions`, `varieties`
+  - **La moitié des défauts venait des lots précédents.** Sept affirmations retirées en R1 et
+    R4 avaient survécu dans un autre champ de la même fiche : « Premier exportateur mondial en
+    valeur », retiré de `rev_detail` par `028`, vivait toujours dans `notes` ; « Lombok »,
+    retiré des zones par `030`, restait dans `regions` **et** `varieties` ; « Jamastran
+    Valley », francisé en zone, pas dans `regions`
+  - **Une correction ne suit pas la donnée, elle suit le champ.** Tant qu'un même fait est
+    écrit à trois endroits, le corriger une fois n'en corrige qu'un tiers. Rien ne pouvait le
+    voir : chaque champ était juste vis-à-vis de lui-même
+  - `tools/coherence_check.php` compare désormais `regions` aux zones réellement posées sur le
+    globe et refuse le retour des rangs mondiaux non sourcés. **Vérifié en cassant
+    volontairement les deux garde-fous.** Branché sur la campagne — **339 assertions**
+  - **Trois erreurs de fait inédites.** Cuba : la Vuelta Abajo n'est pas volcanique mais faite
+    de débris **calcaires** érodés et de limons du Quaternaire — rouges et ferrugineux, d'où la
+    confusion. Cameroun : « BAT Cameroun » est un **cigarettier** ; la cape a été tenue par le
+    monopole **SEITA** jusqu'en 1993 et est négociée depuis 120 ans par **M. Meerapfel &
+    Söhne**. Philippines : « Burley · Virginia » sont des tabacs à **cigarettes**, exactement la
+    faute de Lombok en R4
+  - Le Brésil listait **Suerdieck** parmi ses producteurs actuels alors que `026` avait établi
+    sa fermeture en 2000. La maison reste nommée — elle compte dans l'histoire du Mata Fina —
+    mais datée
+  - Cinq superlatifs disent la réputation plutôt que le classement, comme en R4
+
+- **La relecture est terminée** — six lots. Ce qu'il en reste n'est pas une liste de
+  corrections mais **quatre contrôles branchés sur la campagne** : `i18n_fraicheur.php` (E6),
+  `coords_check.php` (R0), `geo_banquemondiale.php` (R2), `coherence_check.php` (R5). Les trois
+  premiers existaient déjà sous une forme ou une autre et **ne servaient à rien faute de code
+  de sortie** — c'est le motif qui revient le plus dans ce journal
+- ⚠ **Ce que la relecture ne dit toujours pas** : le compteur « relue » est à **zéro sur 5 580
+  traductions**. Aucun humain n'a validé les cinq langues étrangères. Cette dette-là ne se
+  comble pas par un outil
 - **Question ouverte, non technique** : publier avant d'avoir relu, ou non ? À trancher
   avec l'avis juridique (loi Évin) et la décision de modération
 

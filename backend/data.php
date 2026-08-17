@@ -366,7 +366,6 @@ function action_globe(PDO $db, bool $rendre = false): ?array {
             'area'        => $g['area'],
             'currency'    => $g['currency'],
             'language'    => $g['language'],
-            'coords'      => $g['coords'],
             'timezone'    => $g['timezone'],
             'gdp'         => $g['gdp'],
             'independent' => $g['independent'],
@@ -402,7 +401,7 @@ function action_country(PDO $db): void {
     $geo = $geo_row ? [
         'capital'=>$geo_row['capital'], 'pop'=>$geo_row['population'],
         'area'=>$geo_row['area'], 'currency'=>$geo_row['currency'],
-        'language'=>$geo_row['language'], 'coords'=>$geo_row['coords'],
+        'language'=>$geo_row['language'],
         'timezone'=>$geo_row['timezone'], 'gdp'=>$geo_row['gdp'],
         'independent'=>$geo_row['independent'],
     ] : [];
