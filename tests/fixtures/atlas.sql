@@ -24,8 +24,8 @@ INSERT INTO `producer_countries` (`id`, `name`, `flag`, `lat`, `lon`, `region`, 
 
 -- producer_geo (15 lignes)
 INSERT INTO `producer_geo` (`country_id`, `capital`, `population`, `area`, `currency`, `language`, `timezone`, `gdp`, `independent`) VALUES
-  ('brazil', 'Brasília', '212,8 M (2025)', '8 516 000 km²', 'Réal brésilien (BRL)', 'Portugais', 'UTC−3', '2,28 T$ (2025)', '1822'),
-  ('cameroon', 'Yaoundé', '29,9 M (2025)', '475 442 km²', 'Franc CFA (XAF)', 'Fr./Anglais', 'UTC+1', '58,9 Md$ (2025)', '1960'),
+  ('brazil', 'Brasília', '212,8 M (2025)', '8 516 000 km²', 'Réal brésilien (BRL)', 'Portugais', 'UTC−3 à −5', '2,28 T$ (2025)', '1822'),
+  ('cameroon', 'Yaoundé', '29,9 M (2025)', '475 442 km²', 'Franc CFA (XAF)', 'Français / Anglais', 'UTC+1', '58,9 Md$ (2025)', '1960'),
   ('canaries', 'Las Palmas / Santa Cruz', '2,3 M (2026)', '7 493 km²', 'Euro (EUR)', 'Espagnol', 'UTC+0', '—', 'Communauté autonome d\'Espagne'),
   ('costarica', 'San José', '5,2 M (2025)', '51 100 km²', 'Colón (CRC)', 'Espagnol', 'UTC−6', '102,9 Md$ (2025)', '1821'),
   ('cuba', 'La Havane', '10,9 M (2025)', '109 884 km²', 'Peso cubain (CUP)', 'Espagnol', 'UTC−5', '107,4 Md$ (2020)', '1902 (soulèvement dès 1868)'),
@@ -34,9 +34,9 @@ INSERT INTO `producer_geo` (`country_id`, `capital`, `population`, `area`, `curr
   ('honduras', 'Tegucigalpa', '11,0 M (2025)', '112 492 km²', 'Lempira (HNL)', 'Espagnol', 'UTC−6', '39,6 Md$ (2025)', '1821'),
   ('indonesia', 'Jakarta', '285,7 M (2025)', '1 905 000 km²', 'Roupie (IDR)', 'Indonésien', 'UTC+7 à +9', '1,45 T$ (2025)', '1945'),
   ('jamaica', 'Kingston', '2,8 M (2025)', '10 991 km²', 'Dollar jamaïcain (JMD)', 'Anglais', 'UTC−5', '22,7 Md$ (2025)', '1962'),
-  ('mexico', 'Mexico', '131,9 M (2025)', '1 964 000 km²', 'Peso mexicain (MXN)', 'Espagnol', 'UTC−6', '1,83 T$ (2025)', '1821 (cri de Dolores en 1810)'),
-  ('nicaragua', 'Managua', '7,0 M (2025)', '130 370 km²', 'Córdoba oro (NIO)', 'Espagnol', 'UTC−6', '22,2 Md$ (2025)', '1821'),
-  ('panama', 'Panama', '4,6 M (2025)', '75 417 km²', 'Balboa / Dollar US', 'Espagnol', 'UTC−5', '90,5 Md$ (2025)', '1903'),
+  ('mexico', 'Mexico', '131,9 M (2025)', '1 964 000 km²', 'Peso mexicain (MXN)', 'Espagnol', 'UTC−6 à −8', '1,83 T$ (2025)', '1821 (cri de Dolores en 1810)'),
+  ('nicaragua', 'Managua', '7,0 M (2025)', '130 370 km²', 'Córdoba (NIO)', 'Espagnol', 'UTC−6', '22,2 Md$ (2025)', '1821'),
+  ('panama', 'Panama', '4,6 M (2025)', '75 417 km²', 'Balboa (PAB) / Dollar US (USD)', 'Espagnol', 'UTC−5', '90,5 Md$ (2025)', '1903'),
   ('philippines', 'Manille', '116,8 M (2025)', '300 000 km²', 'Peso philippin (PHP)', 'Filipino/Anglais', 'UTC+8', '487,1 Md$ (2025)', '1946 (de l\'Espagne en 1898)'),
   ('usa', 'Washington D.C.', '341,8 M (2025)', '9 834 000 km²', 'Dollar US (USD)', 'Anglais', 'UTC−5 à −8', '30,77 T$ (2025)', '1776');
 

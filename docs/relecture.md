@@ -337,6 +337,51 @@ sujet.
 | ~~4 — les zones~~ ✅ | M | E6, lot 0 |
 | ~~5 — la prose~~ ✅ | G | E6 |
 
+### ~~Reprise — les 45 valeurs écartées du lot 2~~ ✅ **fait — migration `032`**
+
+Le lot 2 avait délibérément **non** relu devise, langue et fuseau des
+quinze pays : `Intl` les remplace toujours à l'écran. Elles restent
+pourtant le repli d'un seizième pays qui manquerait à `data.pays.js`,
+et c'est à ce titre qu'elles ont été reprises.
+
+**Quarante et une sur quarante-cinq étaient justes** — le meilleur taux
+de toute la relecture, et c'est logique : une devise et un fuseau
+bougent rarement, là où un PIB vieillit tout seul. Quatre défauts de
+forme (Panama sans code ISO, « Córdoba oro » pour le córdoba,
+« Fr./Anglais » abrégé, Brésil et Mexique annonçant un fuseau unique
+alors qu'ils sont dans `PAYS_MULTIFUSEAUX`).
+
+#### Mais le vrai défaut n'était pas dans la base
+
+**`producer_geo` avait raison et l'écran avait tort** — l'inverse de ce
+qu'on cherchait.
+
+`data.pays.js` est indexé par code ISO, et ce code est **déduit du
+drapeau**. Les Canaries arborent 🇪🇸 : leur fiche héritait de toute la
+ligne espagnole, fuseau compris, et affichait **l'heure de Madrid —
+une heure de trop toute l'année**, l'archipel étant à UTC+0 quand la
+péninsule est à UTC+1. La base disait « UTC+0 », c'est-à-dire juste, et
+ce repli juste ne pouvait pas se déclencher.
+
+Corrigé par `TERRITOIRES_INFOS`, indexé par identifiant de fiche —
+puisque c'est justement le drapeau qui ne discrimine pas.
+`coherence_check.php` compare désormais les deux copies, code ISO
+contre code ISO et décalage contre décalage standard.
+
+**Une leçon de méthode sur le contrôle lui-même.** Sa première version
+acceptait le décalage d'hiver *ou* celui d'été, pour ne pas faire
+échouer Cuba six mois par an. La contre-épreuve l'a démasquée : « UTC+1 »
+injecté sur les Canaries passait sans bruit, puisque c'est leur heure
+d'été. **Un contrôle qui accepte les deux réponses ne vérifie rien.**
+Il lit maintenant le drapeau `isdst` des transitions IANA.
+
+*(À relire encore : `data.pays.js` porte lui-même la mention « saisi de
+mémoire » et couvre **93 pays**. Les quinze producteurs sont vérifiés ;
+les 78 autres servent les fiches d'établissements et ne l'ont jamais
+été.)*
+
+---
+
 **La relecture est terminée.** Les six lots sont passés.
 
 Ce qui en reste n'est pas une liste de corrections mais **quatre

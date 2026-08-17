@@ -106,7 +106,12 @@
    */
   function ficheInfos(pays) {
     var code = iso(pays);
-    var d = (window.PAYS_INFOS || {})[code];
+    // Un territoire qui arbore le drapeau de son Etat heriterait de la
+    // ligne de cet Etat. Les Canaries affichaient ainsi l'heure de
+    // Madrid, une heure de trop toute l'annee. La table par identifiant
+    // passe donc AVANT celle par drapeau.
+    var d = (window.TERRITOIRES_INFOS || {})[pays && pays.id]
+         || (window.PAYS_INFOS || {})[code];
     if (!d) return null;
     var lang = langueCourante();
     var h = heureLocale(d[2], lang);

@@ -841,6 +841,26 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     mais datée
   - Cinq superlatifs disent la réputation plutôt que le classement, comme en R4
 
+- [x] ~~**R2 bis** — Les 45 valeurs que R2 avait écartées~~ ✅ · migration `032`
+  - Devise, langue et fuseau des 15 pays : le repli que `Intl` remplace toujours à l'écran.
+    **41 sur 45 étaient justes** — le meilleur taux de la relecture, logique pour des données
+    de référence stables. Quatre défauts de forme (Panama sans code ISO, « Córdoba oro »,
+    « Fr./Anglais », Brésil et Mexique annonçant un fuseau unique alors qu'ils sont dans
+    `PAYS_MULTIFUSEAUX`)
+  - **Le vrai défaut n'était pas dans la base : `producer_geo` avait raison et l'écran avait
+    tort.** `data.pays.js` est indexé par code ISO, **déduit du drapeau** — les Canaries
+    arborent 🇪🇸 et héritaient donc de `Europe/Madrid`. Leur fiche affichait **l'heure de
+    Madrid, une heure de trop toute l'année**. La base disait « UTC+0 », c'est-à-dire juste,
+    et ce repli juste ne pouvait pas se déclencher
+  - Corrigé par `TERRITOIRES_INFOS`, indexé par identifiant de fiche — c'est le drapeau qui ne
+    discrimine pas. `coherence_check.php` compare désormais les deux copies
+  - **Leçon sur le contrôle lui-même** : sa première version acceptait le décalage d'hiver *ou*
+    celui d'été pour ménager Cuba. La contre-épreuve l'a démasquée — « UTC+1 » injecté sur les
+    Canaries passait sans bruit. **Un contrôle qui accepte les deux réponses ne vérifie rien.**
+    Il lit maintenant le drapeau `isdst` des transitions IANA
+  - ⚠ `data.pays.js` porte lui-même « saisi de mémoire » et couvre **93 pays**. Les 15
+    producteurs sont vérifiés ; les **78 autres**, qui servent les fiches d'établissements, ne
+    l'ont jamais été
 - **La relecture est terminée** — six lots. Ce qu'il en reste n'est pas une liste de
   corrections mais **quatre contrôles branchés sur la campagne** : `i18n_fraicheur.php` (E6),
   `coords_check.php` (R0), `geo_banquemondiale.php` (R2), `coherence_check.php` (R5). Les trois

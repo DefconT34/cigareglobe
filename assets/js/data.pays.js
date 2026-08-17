@@ -130,5 +130,28 @@ var PAYS_INFOS = {
 // laisser croire à une heure nationale unique.
 var PAYS_MULTIFUSEAUX = ['US', 'RU', 'BR', 'CA', 'AU', 'MX', 'ID', 'CN'];
 
+// ── Quand le drapeau ne suffit pas ────────────────────────
+//
+// La table ci-dessus est indexée par code ISO, et ce code est DÉDUIT DU
+// DRAPEAU (isoDepuisDrapeau, via les indicateurs régionaux de l'emoji).
+// Un territoire qui arbore le drapeau de son État hérite donc de toute
+// sa ligne — devise, langue ET fuseau.
+//
+// Les Canaries arborent 🇪🇸. Leur fiche affichait l'heure de Madrid,
+// soit UNE HEURE DE TROP toute l'année : l'archipel est à UTC+0 quand
+// la péninsule est à UTC+1. Personne ne pouvait le voir sans comparer
+// les deux à la même seconde.
+//
+// Ironie utile : `producer_geo.timezone` disait « UTC+0 », c'est-à-dire
+// juste. C'est le repli qui avait raison et l'affichage qui avait tort
+// — l'inverse de ce qu'on cherchait en relisant cette table.
+//
+// Indexé par identifiant de fiche, pas par drapeau : c'est justement le
+// drapeau qui ne discrimine pas.
+var TERRITOIRES_INFOS = {
+  canaries: ['EUR', 'es', 'Atlantic/Canary'],
+};
+
 window.PAYS_INFOS = PAYS_INFOS;
 window.PAYS_MULTIFUSEAUX = PAYS_MULTIFUSEAUX;
+window.TERRITOIRES_INFOS = TERRITOIRES_INFOS;
