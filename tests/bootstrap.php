@@ -195,9 +195,21 @@ function start_server(array $extra = []): string {
                    escapeshellarg(PHP_BINARY), $port, escapeshellarg(PROJECT_ROOT));
 
     $pipes = [];
+    // bypass_shell est INDISPENSABLE sous Windows. Sans lui, proc_open
+    // lance « cmd.exe /c php -S … » : le descripteur rendu designe le
+    // cmd.exe, pas le serveur. proc_terminate() tuait donc l'enveloppe
+    // en laissant php.exe ecouter pour toujours.
+    //
+    // Consequence mesuree : 133 serveurs de test orphelins accumules,
+    // le plus ancien datant du 7 aout. Et comme un processus Windows
+    // herite des descripteurs de son parent, chacun gardait ouverte la
+    // sortie standard de la campagne qui l'avait cree — si bien qu'un
+    // « php tests/run.php | grep … » ne rendait JAMAIS la main : le
+    // tube n'atteignait pas sa fin de flux. Ce qu'on avait mis sur le
+    // compte d'un tampon de grep etait cette fuite.
     $proc = proc_open($cmd, [1 => ['file', tempnam(sys_get_temp_dir(), 'cgsrv'), 'w'],
                              2 => ['file', tempnam(sys_get_temp_dir(), 'cgsrv'), 'w']],
-                      $pipes, PROJECT_ROOT, $env);
+                      $pipes, PROJECT_ROOT, $env, ['bypass_shell' => true]);
     if (!is_resource($proc)) { tprint('Impossible de demarrer le serveur de test.'); exit(2); }
     // Tous les serveurs lances sont arretes a la sortie, pas seulement
     // le dernier : sinon un processus PHP resterait a ecouter.
@@ -217,9 +229,21 @@ function start_server(array $extra = []): string {
 
 function stop_server(): void {
     foreach (($GLOBALS['t_servers'] ?? []) as $p) {
-        if (is_resource($p)) proc_terminate($p);
+        if (!is_resource($p)) continue;
+        // Ceinture ET bretelles : bypass_shell fait deja pointer le
+        // descripteur sur le bon processus, mais une campagne qui
+        // laisse un serveur derriere elle est invisible jusqu'a ce
+        // qu'on en compte cent trente-trois. On verifie donc qu'il est
+        // bien mort, et on insiste sinon.
+        $etat = proc_get_status($p);
+        proc_terminate($p);
+        proc_close($p);
+        if (!empty($etat['pid']) && stripos(PHP_OS_FAMILY, 'Windows') === 0) {
+            @exec(sprintf('taskkill /F /T /PID %d 2>NUL', (int)$etat['pid']));
+        }
     }
     $GLOBALS['t_servers'] = [];
+    $GLOBALS['t_server']  = null;
 }
 
 // ── Client HTTP ──────────────────────────────────────────
