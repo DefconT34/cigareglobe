@@ -879,6 +879,32 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     signalées « plusieurs fuseaux » par héritage alors qu'elles n'en ont qu'un
   - Ces contrôles valent surtout pour l'avenir : une devise qui change apparaîtra à la mise à
     jour suivante d'ICU. **339 assertions**
+- [x] ~~**R1 bis** — Les revenus manquants~~ ✅ · migrations `033`, `034`
+  - Onze fiches sur quinze affichaient un tiret. Choix assumé de `028` — une valeur non sourcée
+    est retirée — mais onze tirets se lisent comme un trou
+  - **Nicaragua : le chiffre mesurait la mauvaise chose.** `028` avait remplacé un `$850M`
+    inventé par 368 M$ sourcés, mais sur les exportations de **tabac** vers les **États-Unis** —
+    ligne douanière mêlant cigares et cigarettes, une seule destination. La bonne mesure est
+    HS 2402.10 vers le monde : **425 M$ (2023)**, série cohérente sur trois ans
+  - **Philippines** : la NTA publie **3,84 M de cigares exportés (2024)**. Remplit `production`,
+    pas `revenue` — la NTA donne les volumes de cigares et la valeur du **tabac brut**, jamais la
+    valeur des cigares
+  - **Brésil : 576 015 $ (2024)**, 7,1 t. L'API ComexStat est bloquée par quota IP ; le même
+    ministère publie les **déclarations douanières brutes** sans quota — source supérieure,
+    l'API n'en étant qu'une vue
+  - ⚠ **Le piège, qui a failli passer.** Ces fichiers font 100 Mo et la connexion les coupe sans
+    prévenir : `curl | grep` rend alors **moins de lignes sans aucune erreur**. Quatre chiffres
+    brésiliens ont été produits ainsi — le pire annonçait « aucune exportation en 2021 », un
+    autre donnait 46 445 $ pour 2023 à partir d'un fichier descendu à **16 %**
+  - Deux garde-fous obligatoires pour ce genre de source, écrits dans `034` : comparer les
+    octets reçus au `Content-Length` et reprendre avec `curl -C -` (24 reprises ici) ; et
+    compter un **témoin** dont on connaît l'ordre de grandeur — les 1 129 lignes de feuille que
+    le Brésil exporte massivement. *Un témoin ridicule dénonce la troncature ; un faible compte
+    de cigares, non*
+  - **Correction d'une affirmation précédente** : `033` rangeait les chiffres bas de COMTRADE
+    pour le Brésil parmi les fragments. Inférence fausse — ils étaient justes. Le commentaire est
+    amendé : « incomplet de façon imprévisible », pas « faux partout »
+  - Neuf tirets restent, tous assumés : cinq pays vendent de la **feuille**, pas des cigares
 - **La relecture est terminée** — six lots. Ce qu'il en reste n'est pas une liste de
   corrections mais **quatre contrôles branchés sur la campagne** : `i18n_fraicheur.php` (E6),
   `coords_check.php` (R0), `geo_banquemondiale.php` (R2), `coherence_check.php` (R5). Les trois

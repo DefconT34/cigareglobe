@@ -448,6 +448,38 @@ par un outil.
 
 ---
 
+## Une dernière leçon, arrivée après coup
+
+En comblant les revenus manquants (`033`, `034`), on a produit **quatre
+chiffres faux d'affilée** sans qu'aucun signal ne se déclenche.
+
+Les déclarations douanières brésiliennes font cent mégaoctets. La
+connexion les coupe sans prévenir, et `curl | grep` rend alors moins de
+lignes **sans aucune erreur**. Le plus trompeur annonçait « aucune
+exportation de cigares en 2021 » — le flux s'était arrêté avant. Un
+autre donnait 46 445 dollars pour 2023, tiré d'un fichier descendu à
+seize pour cent.
+
+C'est la même maladie que tout le reste de ce journal, sous une forme
+nouvelle : **un compte faible ressemble exactement à un compte juste.**
+Rien ne distingue « peu de lignes parce qu'il y en a peu » de « peu de
+lignes parce que le fichier est tronqué ».
+
+Le remède qui a marché tient en deux gestes :
+
+1. **Vérifier la complétude, pas le succès.** Comparer les octets reçus
+   au `Content-Length` annoncé — `curl` sort en 0 sur un flux coupé.
+2. **Compter un témoin dont on connaît l'ordre de grandeur.** Ici les
+   1 129 lignes de feuille que le Brésil exporte massivement. *Un
+   témoin ridicule dénonce la troncature ; un faible compte de cigares,
+   non.*
+
+Le second geste est le plus transposable, et c'est celui qui manquait
+partout ailleurs : **quand on mesure quelque chose de rare, mesurer en
+même temps quelque chose d'abondant.**
+
+---
+
 ## Une question à trancher avant de commencer
 
 Faut-il **publier** avant d'avoir relu ?
