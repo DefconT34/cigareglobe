@@ -375,10 +375,51 @@ injecté sur les Canaries passait sans bruit, puisque c'est leur heure
 d'été. **Un contrôle qui accepte les deux réponses ne vérifie rien.**
 Il lit maintenant le drapeau `isdst` des transitions IANA.
 
-*(À relire encore : `data.pays.js` porte lui-même la mention « saisi de
-mémoire » et couvre **93 pays**. Les quinze producteurs sont vérifiés ;
-les 78 autres servent les fiches d'établissements et ne l'ont jamais
-été.)*
+### ~~Reprise — les 78 autres pays de `data.pays.js`~~ ✅ **fait**
+
+Le fichier porte depuis sa création la mention « **À RELIRE, saisi de
+mémoire** » et couvre 93 pays — les quinze producteurs et les 78 qui
+servent les fiches d'établissements.
+
+**Les relire un par un aurait refait l'erreur qu'on corrige.** PHP
+embarque les deux sources de référence : **tzdata** pour les fuseaux,
+**ICU/CLDR** pour les devises. 234 valeurs confrontées mécaniquement à
+une autorité plutôt qu'à un souvenir.
+
+| Ce qui était écrit | Ce qui est vrai |
+|---|---|
+| Sint Maarten, `ANG` | **`XCG`** — le florin caribéen a remplacé celui des Antilles néerlandaises le **31 mars 2025**, et l'ancien n'a plus cours depuis le 1er juillet 2025 |
+| `PAYS_MULTIFUSEAUX` : 8 pays | **12** — manquaient le Chili (île de Pâques), l'Équateur (Galápagos), l'Espagne (Canaries) et le Portugal (Açores) |
+
+Tout le reste concordait : 93 devises, 93 fuseaux, tous les codes de
+langue. **Deux défauts sur 234.**
+
+**Les deux manques les plus gênants sont ceux qu'on avait déjà sous les
+yeux.** L'Espagne, dont les Canaries ont leur propre fiche de pays
+producteur — celle-là même dont on venait de corriger l'heure. Et
+l'Équateur, **pays producteur relu à la main au lot 2**, dont j'avais
+noté les Galápagos sans en tirer la conséquence. L'audit mécanique a vu
+ce que la relecture attentive avait laissé passer.
+
+**Un pays est écarté délibérément.** tzdata rattache
+`Europe/Simferopol` à l'Ukraine, à UTC+3 : c'est l'heure imposée en
+Crimée occupée, quand l'heure légale ukrainienne est UTC+2 sur tout le
+territoire. Signaler UA comme « pays à plusieurs fuseaux » entérinerait
+l'occupation. Le contrôle le propose ; on le refuse, et la raison est
+écrite dans le code — sinon quelqu'un « corrigera » l'écart un jour.
+
+**Et une demi-réparation rattrapée de justesse.** L'astérisque
+« plusieurs fuseaux » vient lui aussi de `PAYS_MULTIFUSEAUX`, indexé par
+code ISO donc par drapeau. Une fois l'Espagne ajoutée à la liste, les
+Canaries — qui n'ont qu'un fuseau et affichaient enfin le bon — se
+voyaient signalées « plusieurs fuseaux » par héritage. Corriger le
+fuseau sans corriger l'astérisque n'aurait réparé que la moitié de la
+fiche.
+
+Ces deux contrôles sont désormais dans `coherence_check.php`. Ils
+valent surtout pour l'avenir : une devise qui change ou un pays qui
+abandonne l'heure d'été apparaîtront à la mise à jour suivante d'ICU ou
+de tzdata, sans que personne ait à y penser.
 
 ---
 

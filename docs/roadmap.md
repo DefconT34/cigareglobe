@@ -858,9 +858,27 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     celui d'été pour ménager Cuba. La contre-épreuve l'a démasquée — « UTC+1 » injecté sur les
     Canaries passait sans bruit. **Un contrôle qui accepte les deux réponses ne vérifie rien.**
     Il lit maintenant le drapeau `isdst` des transitions IANA
-  - ⚠ `data.pays.js` porte lui-même « saisi de mémoire » et couvre **93 pays**. Les 15
-    producteurs sont vérifiés ; les **78 autres**, qui servent les fiches d'établissements, ne
-    l'ont jamais été
+- [x] ~~**R2 ter** — Les 78 autres pays de `data.pays.js`~~ ✅ · `coherence_check.php`
+  - Le fichier portait depuis sa création « **À RELIRE, saisi de mémoire** » et couvre 93 pays.
+    **Les relire un par un aurait refait l'erreur qu'on corrige** : PHP embarque **tzdata**
+    pour les fuseaux et **ICU/CLDR** pour les devises. 234 valeurs confrontées à une autorité
+    plutôt qu'à un souvenir
+  - **Deux défauts sur 234.** Sint Maarten annonçait `ANG` : le florin caribéen **`XCG`** l'a
+    remplacé le 31 mars 2025, l'ancien n'ayant plus cours depuis le 1er juillet 2025. Et
+    `PAYS_MULTIFUSEAUX` n'en comptait que 8 au lieu de **12** — manquaient le Chili (île de
+    Pâques), l'Équateur (Galápagos), l'Espagne (Canaries), le Portugal (Açores)
+  - **Les deux manques les plus gênants étaient sous nos yeux** : l'Espagne, dont les Canaries
+    ont leur propre fiche — celle dont on venait de corriger l'heure — et l'Équateur, **pays
+    producteur relu à la main en R2**, dont j'avais noté les Galápagos sans en tirer la
+    conséquence. L'audit mécanique a vu ce que la relecture attentive avait laissé passer
+  - **L'Ukraine est écartée délibérément** : tzdata lui rattache `Europe/Simferopol` à UTC+3,
+    l'heure imposée en Crimée occupée, quand l'heure légale ukrainienne est UTC+2 partout. Le
+    contrôle le propose, on le refuse, et la raison est écrite dans le code
+  - **Demi-réparation rattrapée** : l'astérisque « plusieurs fuseaux » vient aussi de
+    `PAYS_MULTIFUSEAUX`, indexé par drapeau. L'Espagne ajoutée, les Canaries se voyaient
+    signalées « plusieurs fuseaux » par héritage alors qu'elles n'en ont qu'un
+  - Ces contrôles valent surtout pour l'avenir : une devise qui change apparaîtra à la mise à
+    jour suivante d'ICU. **339 assertions**
 - **La relecture est terminée** — six lots. Ce qu'il en reste n'est pas une liste de
   corrections mais **quatre contrôles branchés sur la campagne** : `i18n_fraicheur.php` (E6),
   `coords_check.php` (R0), `geo_banquemondiale.php` (R2), `coherence_check.php` (R5). Les trois

@@ -110,8 +110,8 @@
     // ligne de cet Etat. Les Canaries affichaient ainsi l'heure de
     // Madrid, une heure de trop toute l'annee. La table par identifiant
     // passe donc AVANT celle par drapeau.
-    var d = (window.TERRITOIRES_INFOS || {})[pays && pays.id]
-         || (window.PAYS_INFOS || {})[code];
+    var propre = (window.TERRITOIRES_INFOS || {})[pays && pays.id];
+    var d = propre || (window.PAYS_INFOS || {})[code];
     if (!d) return null;
     var lang = langueCourante();
     var h = heureLocale(d[2], lang);
@@ -123,7 +123,16 @@
       langue:  d[1].split(',').map(function (l) { return nomDe('language', l, lang); }).join(' · '),
       heure:   h ? h.heure : null,
       fuseau:  h ? h.fuseau : null,
-      multi:   (window.PAYS_MULTIFUSEAUX || []).indexOf(code) !== -1,
+      // L'asterisque « plusieurs fuseaux » vient de PAYS_MULTIFUSEAUX,
+      // indexe par code ISO — donc par DRAPEAU. Un territoire qui a sa
+      // propre ligne l'heritait de son Etat : les Canaries, qui n'ont
+      // qu'un fuseau et affichent desormais le bon, se voyaient
+      // signalees « plusieurs fuseaux » parce que l'Espagne l'est.
+      //
+      // Corriger le fuseau sans corriger l'asterisque n'aurait repare
+      // que la moitie de la fiche. Une ligne propre decrit un
+      // territoire a un seul fuseau, par construction.
+      multi:   propre ? false : (window.PAYS_MULTIFUSEAUX || []).indexOf(code) !== -1,
       zone:    d[2]
     };
   }

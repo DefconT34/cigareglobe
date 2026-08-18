@@ -222,6 +222,75 @@ if (!$front['pays']) {
     }
 }
 
+// ── 4. data.pays.js contre tzdata et CLDR ────────────────
+//
+// Le fichier porte depuis sa creation la mention « A RELIRE, saisi de
+// memoire », et couvre 93 pays. Les relire un par un serait refaire
+// l'erreur qu'on corrige : PHP embarque deja les deux sources de
+// reference — tzdata pour les fuseaux, ICU/CLDR pour les devises.
+//
+// Ce controle a trouve ce que la relecture manuelle n'avait pas vu :
+// le florin des Antilles neerlandaises (ANG), remplace par le florin
+// caribeen (XCG) le 31 mars 2025, et quatre pays dont l'heure affichee
+// ne vaut pas pour tout le territoire — dont l'ESPAGNE et l'EQUATEUR,
+// ce dernier etant un pays producteur deja relu a la main.
+//
+// Il vaut surtout pour l'avenir : une devise qui change ou un pays qui
+// abandonne l'heure d'ete apparaitront a la mise a jour suivante d'ICU
+// ou de tzdata, sans que personne ait a y penser.
+
+// tzdata rattache Europe/Simferopol a l'Ukraine : c'est l'heure imposee
+// en Crimee occupee, pas une seconde heure legale ukrainienne. Signaler
+// UA comme pays a plusieurs fuseaux enterinerait l'occupation.
+const MULTIFUSEAUX_REFUSES = [
+    'UA' => 'Europe/Simferopol est l\'heure imposee en Crimee occupee ; '
+          . 'l\'heure legale ukrainienne est UTC+2 sur tout le territoire',
+];
+
+if (!$front['pays']) {
+    // deja signale plus haut
+} elseif (!extension_loaded('intl')) {
+    echo "  (intl absent : le controle des devises de data.pays.js est saute)\n\n";
+} else {
+    preg_match('/PAYS_MULTIFUSEAUX = \[([^\]]+)\]/',
+               (string)@file_get_contents(__DIR__ . '/../assets/js/data.pays.js'), $mz);
+    preg_match_all("/'([A-Z]{2})'/", $mz[1] ?? '', $mzz);
+    $declares = $mzz[1] ?? [];
+
+    foreach ($front['pays'] as $iso => $d) {
+        // Devise : celle que CLDR donne pour la region.
+        $f = NumberFormatter::create("en_$iso", NumberFormatter::CURRENCY);
+        $attendue = $f ? $f->getTextAttribute(NumberFormatter::CURRENCY_CODE) : null;
+        if ($attendue && $attendue !== $d[0]) {
+            $defauts[] = sprintf('data.pays.js %s : devise %s, CLDR donne %s',
+                                 $iso, $d[0], $attendue);
+        }
+
+        // Fuseau : appartient-il bien a ce pays ?
+        $zonesDuPays = DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, $iso) ?: [];
+        if ($zonesDuPays && !in_array($d[2], $zonesDuPays, true)) {
+            $defauts[] = sprintf('data.pays.js %s : %s n\'est pas une zone de ce pays',
+                                 $iso, $d[2]);
+        }
+
+        // Le pays a-t-il plusieurs decalages sans le dire ?
+        $offsets = [];
+        foreach ($zonesDuPays as $z) {
+            $o = decalage_standard($z);
+            if ($o !== null) $offsets[$o] = true;
+        }
+        $multi = count($offsets) > 1;
+        if ($multi && !in_array($iso, $declares, true) && !isset(MULTIFUSEAUX_REFUSES[$iso])) {
+            $defauts[] = sprintf('data.pays.js %s : %d decalages (%s) mais absent de PAYS_MULTIFUSEAUX',
+                                 $iso, count($offsets),
+                                 implode(' ', array_map(fn($o) => sprintf('%+d', $o), array_keys($offsets))));
+        }
+        if (!$multi && in_array($iso, $declares, true)) {
+            $defauts[] = sprintf('data.pays.js %s : declare multifuseaux mais n\'a qu\'un decalage', $iso);
+        }
+    }
+}
+
 // ── Rapport ──────────────────────────────────────────────
 
 echo "CigarOdyssey — coherence entre champs\n\n";
@@ -230,6 +299,12 @@ if (!$defauts) {
     echo "  Les listes de regions suivent les zones posees sur le globe.\n";
     echo "  Aucun rang mondial non source n'est reapparu.\n";
     echo "  Le repli de la base dit la meme devise et le meme fuseau que l'ecran.\n";
+    printf("  Les %d pays de data.pays.js concordent avec tzdata %s et ICU %s.\n",
+           count($front['pays']), timezone_version_get(),
+           extension_loaded('intl') ? INTL_ICU_VERSION : '(absent)');
+    foreach (MULTIFUSEAUX_REFUSES as $iso => $pourquoi) {
+        echo "  $iso : ecart assume — " . preg_replace('/\s+/', ' ', $pourquoi) . "\n";
+    }
     exit(0);
 }
 

@@ -112,7 +112,10 @@ var PAYS_INFOS = {
   SA: ['SAR', 'ar',       'Asia/Riyadh'],
   SG: ['SGD', 'en,ms,zh', 'Asia/Singapore'],
   SN: ['XOF', 'fr',       'Africa/Dakar'],
-  SX: ['ANG', 'nl,en',    'America/Lower_Princes'],
+  // ANG jusqu'au 31 mars 2025 : le florin des Antilles neerlandaises a
+  // laisse la place au florin caribeen, et n'a plus cours depuis le
+  // 1er juillet 2025. C'est le cas dont l'en-tete prevenait.
+  SX: ['XCG', 'nl,en',    'America/Lower_Princes'],
   TG: ['XOF', 'fr',       'Africa/Lome'],
   TH: ['THB', 'th',       'Asia/Bangkok'],
   TR: ['TRY', 'tr',       'Europe/Istanbul'],
@@ -128,7 +131,27 @@ var PAYS_INFOS = {
 // Pays à plusieurs fuseaux : l'heure affichée est celle de la capitale
 // et ne vaut pas pour tout le territoire. On le signale plutôt que de
 // laisser croire à une heure nationale unique.
-var PAYS_MULTIFUSEAUX = ['US', 'RU', 'BR', 'CA', 'AU', 'MX', 'ID', 'CN'];
+//
+// La liste ne retenait que les grands pays continentaux. Quatre autres
+// manquaient, tous à cause d'un archipel lointain — et ce sont
+// justement ceux qu'on n'a pas en tête :
+//
+//   CL  île de Pâques        −5/−6  contre −3/−4 à Santiago
+//   EC  Galápagos            −6     contre −5 à Quito
+//   ES  Canaries             +0     contre +1 à Madrid
+//   PT  Açores               −1     contre +0 à Lisbonne
+//
+// L'ESPAGNE ET L'ÉQUATEUR sont les deux cas les plus gênants : les
+// Canaries ont leur propre fiche de pays producteur, et l'Équateur EST
+// un pays producteur relu au lot 2. Aucun des deux ne le disait.
+//
+// L'UKRAINE n'y figure PAS, et c'est délibéré. tzdata lui rattache
+// Europe/Simferopol à UTC+3, mais c'est l'heure imposée en Crimée
+// occupée : l'heure légale ukrainienne est UTC+2 sur tout le
+// territoire. Signaler le pays comme « à plusieurs fuseaux » entérinerait
+// l'occupation. Le contrôle automatique la propose ; on la refuse.
+var PAYS_MULTIFUSEAUX = ['US', 'RU', 'BR', 'CA', 'AU', 'MX', 'ID', 'CN',
+                         'CL', 'EC', 'ES', 'PT'];
 
 // ── Quand le drapeau ne suffit pas ────────────────────────
 //
