@@ -1,0 +1,81 @@
+-- ════════════════════════════════════════════════════════
+-- 033 — Le chiffre nicaraguayen mesurait la mauvaise chose
+-- ────────────────────────────────────────────────────────
+-- La migration 028 avait remplacé un « $850M » inventé par 368 M$
+-- sourcés — mais sur la seule statistique que j'avais trouvée alors :
+-- les exportations de TABAC vers les ÉTATS-UNIS. Deux défauts de
+-- périmètre que le détail affiché avouait honnêtement, sans les
+-- corriger :
+--
+--   - la ligne douanière mêle cigares ET cigarettes ;
+--   - elle ne couvre qu'une destination sur toutes.
+--
+-- La bonne mesure existe et porte un nom : HS 2402.10, « cigares,
+-- cigarillos et cheroots contenant du tabac », exportations vers le
+-- monde. C'est exactement ce dont cet atlas parle.
+--
+--   2021   355,2 M$   8 040 t
+--   2022   404,5 M$   8 509 t
+--   2023   425,4 M$   8 505 t
+--
+-- Une série de trois années cohérente en valeur comme en tonnage, ce
+-- qui est le meilleur signe de complétude qu'on puisse avoir sans
+-- second témoin. Elle recoupe par ailleurs le volume de la Cigar
+-- Association of America — 253 millions de cigares premium entrés aux
+-- États-Unis en 2024 — à un poids par cigare comparable à celui du
+-- Honduras.
+--
+-- ── POURQUOI 2023 ET NON 2024 ───────────────────────────
+--
+-- Parce que 2024 n'est pas fiable. La même requête a rendu
+-- « 438,2 M$ / 8 434 t » puis, dix minutes plus tard, RIEN. L'accès
+-- public de COMTRADE sert tantôt le total annuel, tantôt un fragment,
+-- tantôt rien — et cela varie d'un appel à l'autre.
+--
+-- ── ET POURQUOI LES ONZE AUTRES GARDENT LEUR TIRET ──────
+--
+-- La tentation était d'aligner les quinze pays sur cette même source.
+-- Elle ne résiste pas à l'épreuve. Sur la Rép. dominicaine, la série
+-- donne :
+--
+--   2019    788,8 M$   44 361 t
+--   2020      2,6 M$      184 t     ← fragment
+--   2021     61,8 M$    4 656 t     ← fragment
+--   2022      (rien)
+--   2023   1 032,6 M$   42 112 t
+--   2024      3,2 M$       19 t     ← fragment
+--
+-- Prendre « la dernière année disponible » aurait publié 3,2 M$ pour un
+-- pays qui en exporte pour plus d'un milliard : faux d'un facteur
+-- quatre cents.
+--
+-- ── UNE NUANCE AJOUTÉE APRÈS COUP, ET QUI COMPTE ────────
+--
+-- Ce commentaire disait aussi « le Brésil tombe à zéro », en rangeant
+-- ses chiffres bas parmi les fragments. C'ÉTAIT UNE INFÉRENCE, ET ELLE
+-- ÉTAIT FAUSSE. Les déclarations douanières brésiliennes, lues
+-- directement (voir la migration 034), donnent 576 015 dollars pour
+-- 2024 : le Brésil exporte réellement très peu de cigares finis, il
+-- vend de la feuille. Les chiffres bas de COMTRADE le concernant
+-- étaient JUSTES.
+--
+-- Ce qui reste établi n'est pas « la source est mauvaise » mais « la
+-- source est incomplète de façon imprévisible » : la série dominicaine
+-- oscille bien entre 3,2 M$ et 1 032 M$, et la requête Nicaragua 2024 a
+-- rendu une valeur puis plus rien. On ne peut pas s'y fier
+-- automatiquement — ce n'est pas la même chose que de la déclarer
+-- fausse partout.
+--
+-- Trier le bon grain de l'ivraie demanderait MON jugement sur la
+-- plausibilité de chaque nombre — c'est-à-dire exactement ce que toute
+-- cette relecture s'emploie à retirer du site. Un tiret accompagné de
+-- sa raison vaut mieux qu'un chiffre que je serais seul à cautionner.
+--
+-- Cette source n'est donc branchée sur aucun outil : elle n'est pas
+-- assez stable pour qu'on lui confie une valeur publiée.
+-- ════════════════════════════════════════════════════════
+
+UPDATE producer_countries SET
+    revenue    = '425 M$ (2023)',
+    rev_detail = 'exportations de cigares vers le monde (COMTRADE)'
+WHERE id = 'nicaragua';
