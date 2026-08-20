@@ -916,6 +916,27 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     (`.rev-absente`, `.lex-v-raison`). Une phrase ne doit pas se lire comme une valeur
   - Le panneau gauche n'affichait même **pas** le détail : son tiret solitaire ne disait rien du
     tout. Il porte maintenant la même raison
+- [x] ~~**R1 quater** — Les États-Unis, et le critère appliqué à tous~~ ✅ · migration `035`
+  - `033` avait retenu le Nicaragua sur un critère explicite — série de plusieurs années **sans
+    trou**, valeur et tonnage évoluant ensemble — **sans passer les huit autres pays au même
+    test**. Un critère qui ne sert qu'une fois n'est pas un critère
+  - **États-Unis : 15,6 M$ (2024)**, six ans pleins de 40,8 à 15,6 M$, 91 à 136 $/kg. Retenu
+  - Écartés : Honduras (trous en 2019, 21, 22, 24), Indonésie (2019 vaut vingt fois les autres),
+    Panama (19,9 M$ en 2020, 0,00 en 2023), et Cameroun / Équateur / Jamaïque / Mexique, quasi
+    nuls — ce qui n'est pas une lacune mais l'information : ces pays vendent de la **feuille**
+  - **Le Costa Rica passe le critère et est écarté quand même.** Sa série est propre mais
+    contredit sa propre fiche : 100 t, une douzaine de millions de pièces, pour « un seul
+    acteur, séries très limitées ». Deux affirmations contradictoires sur la même page, ce que
+    R5 a passé une migration à retirer
+  - **Le doute costaricien a révélé une imprécision générale** : HS 2402.10 n'est pas « les
+    cigares » mais « cigares, cheroots **et cigarillos** ». Trois fiches annonçaient
+    « exportations de cigares » — même défaut que le Nicaragua de `028`, un chiffre juste sous
+    un intitulé trop large
+  - ⚠ **Le test a cassé une seconde fois, et c'était ma faute** : il prenait les États-Unis comme
+    exemple de pays *sans* montant, et cette migration leur en donne un. Il épinglait un **pays**
+    là où il devait épingler un **comportement**. Combler un revenu manquant est un progrès :
+    ça ne doit pas faire rougir la campagne
+  - **Cinq pays chiffrés, dix qui disent pourquoi**
 - **La relecture est terminée** — six lots. Ce qu'il en reste n'est pas une liste de
   corrections mais **quatre contrôles branchés sur la campagne** : `i18n_fraicheur.php` (E6),
   `coords_check.php` (R0), `geo_banquemondiale.php` (R2), `coherence_check.php` (R5). Les trois
