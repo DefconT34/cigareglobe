@@ -147,6 +147,10 @@ html, body {
 .rev-lbl { font-family:'Cinzel',serif; font-size:7px; letter-spacing:.25em; color:var(--gold-p); opacity:.8; text-transform:uppercase; margin-bottom:2px; }
 .rev-amt { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--gold-b); line-height:1; }
 .rev-sub { font-size:9px; color:rgba(255,255,255,.4); margin-top:2px; }
+/* Pas de montant : la raison prend la place principale. Volontairement
+   PAS le style de .rev-amt — italique, plus petit, moins contraste :
+   c'est une phrase, elle ne doit pas se lire comme un chiffre. */
+.rev-absente { font-family:'Playfair Display',serif; font-size:11px; font-style:italic; font-weight:400; color:var(--gold-b); opacity:.72; line-height:1.4; max-width:215px; }
 .tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
 .tag { font-family:'Cinzel',serif; font-size:7px; letter-spacing:.08em; padding:3px 7px; border:1px solid var(--panel-border); color:var(--text2); border-radius:2px; background:var(--bg3); }
 .sn { border-left:3px solid var(--gold); padding:9px 11px; background:var(--bg3); font-family:'Playfair Display',serif; font-style:italic; font-size:11px; color:var(--text2); line-height:1.7; margin-top:6px; }
@@ -157,6 +161,8 @@ html, body {
 .lex-row { display:flex; justify-content:space-between; align-items:flex-start; padding:4px 0; border-bottom:1px solid var(--bg3); }
 .lex-k { font-size:10px; color:var(--text2); flex-shrink:0; max-width:90px; }
 .lex-v { font-family:'Playfair Display',serif; font-size:10px; color:var(--text); font-weight:600; text-align:right; flex:1; padding-left:6px; }
+/* Une raison n'est pas une valeur : meme traitement que .rev-absente. */
+.lex-v-raison { font-style:italic; font-weight:400; color:var(--text2); }
 .lex-coords { font-family:'Cinzel',serif; font-size:10px; color:var(--gold); letter-spacing:.05em; padding:8px; background:var(--bg3); border-radius:3px; text-align:center; margin:8px 0; border:1px solid var(--panel-border); }
 .lex-zone-item { display:flex; align-items:flex-start; gap:8px; padding:5px 0; border-bottom:1px solid var(--bg3); }
 .lex-zone-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:3px; }

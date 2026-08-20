@@ -905,6 +905,17 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     pour le Brésil parmi les fragments. Inférence fausse — ils étaient justes. Le commentaire est
     amendé : « incomplet de façon imprévisible », pas « faux partout »
   - Neuf tirets restent, tous assumés : cinq pays vendent de la **feuille**, pas des cigares
+- [x] ~~**R1 ter** — Le tiret devient une phrase~~ ✅ · `panels.js`, `components.css`
+  - Neuf fiches sans montant affichaient « — ». Le choix était juste, la lecture ne l'était pas :
+    un tiret se lit comme une **donnée manquante**, et neuf tirets sous une étiquette qui promet
+    un montant font passer l'atlas pour incomplet
+  - Or la raison est souvent l'information la plus intéressante de la fiche. Sans montant,
+    l'explication prend désormais la place principale — « le wrapper est vendu de gré à gré aux
+    fabricants » plutôt qu'un blanc
+  - **Volontairement pas le style du chiffre** : italique, plus petit, moins contrasté
+    (`.rev-absente`, `.lex-v-raison`). Une phrase ne doit pas se lire comme une valeur
+  - Le panneau gauche n'affichait même **pas** le détail : son tiret solitaire ne disait rien du
+    tout. Il porte maintenant la même raison
 - **La relecture est terminée** — six lots. Ce qu'il en reste n'est pas une liste de
   corrections mais **quatre contrôles branchés sur la campagne** : `i18n_fraicheur.php` (E6),
   `coords_check.php` (R0), `geo_banquemondiale.php` (R2), `coherence_check.php` (R5). Les trois

@@ -39,15 +39,23 @@ test.describe('Panneaux', () => {
     const sub = page.locator('#panel .rev-sub').first();
     await expect(sub).toContainText(/Habanos/i);
 
-    // CONTRE-EPREUVE : un pays SANS montant garde sa legende. C'est le
-    // cas qui compte le plus — la fiche ne dit pas « on ne sait pas »,
-    // elle dit POURQUOI on ne sait pas.
+    // CONTRE-EPREUVE : un pays SANS montant dit POURQUOI il n'en a pas.
+    // C'est le cas qui compte le plus — neuf fiches sur quinze.
+    //
+    // Ce test attendait auparavant « — » dans .rev-amt avec la raison
+    // en sous-titre. Le tiret a disparu : il se lisait comme une donnee
+    // manquante alors que l'absence est un CHOIX, et la raison prend
+    // desormais la place principale. Le test a echoue a ce changement,
+    // ce qui est exactement son office ; il epingle le nouveau contrat.
     await page.evaluate(() => {
       const c = COUNTRIES.find((x) => x.id === 'usa');
       selCountry = c; openPanel(c);
     });
-    await expect(page.locator('#panel .rev-amt').first()).toHaveText('—');
-    await expect(page.locator('#panel .rev-sub').first()).not.toBeEmpty();
+    const raison = page.locator('#panel .rev-absente').first();
+    await expect(raison).toBeVisible();
+    await expect(raison).not.toBeEmpty();
+    // Et surtout : plus de chiffre du tout, pas meme un tiret deguise.
+    await expect(page.locator('#panel .rev-amt')).toHaveCount(0);
   });
 
   test('la fiche pays se ferme', async ({ page }) => {

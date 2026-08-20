@@ -144,6 +144,34 @@ function _coordTexte(lat, lon) {
        + (lo < 10 ? '0' : '') + lo + '°' + (lon < 0 ? 'O' : 'E');
 }
 
+// Le cartouche « Revenus annuels », selon qu'il y a un montant ou non.
+//
+// Neuf pays sur quinze n'en ont pas, et c'est un CHOIX, pas un oubli :
+// la relecture retire toute valeur qu'on ne source pas. Mais un tiret
+// se lit comme une donnee manquante, et neuf tirets sous une etiquette
+// qui promet un montant font passer l'atlas pour incomplet.
+//
+// Or la raison est souvent l'information la plus interessante de la
+// fiche : le Cameroun, l'Equateur, l'Indonesie, le Mexique et les
+// Etats-Unis vendent de la FEUILLE, pas des cigares — aucune
+// statistique ne mesurera jamais leur « revenu cigare ». Le dire vaut
+// mieux que de laisser un blanc.
+//
+// Quand il y a un montant, rien ne change : le chiffre en grand, son
+// PERIMETRE dessous (« chiffre d'affaires Habanos », « exportations de
+// cigares vers le monde »), sans lequel 425 M$ et 1,34 Md$ se liraient
+// comme deux valeurs comparables.
+function _revenuHtml(c) {
+  var detail = _tr(c.rev_detail) || '';
+  if (c.revenue) {
+    return '<div class="rev-amt">' + c.revenue + '</div>'
+         + (detail ? '<div class="rev-sub">' + detail + '</div>' : '');
+  }
+  // Pas de montant : l'explication prend la place principale, mais pas
+  // le style du nombre — sinon elle se lirait comme une valeur.
+  return '<div class="rev-absente">' + (detail || '—') + '</div>';
+}
+
 // ════════════════════════════════════════════════════════
 function openLex(c) {
   document.getElementById('lexFlag').textContent = c.flag;
@@ -178,7 +206,11 @@ function openLex(c) {
       '<div class="lex-row"><span class="lex-k">'+t('lex_independence')+'</span><span class="lex-v">' + (geo.independent||'—') + '</span></div>' +
       '<div class="lex-sec">'+t('lex_tobacco')+'</div>' +
       '<div class="lex-row"><span class="lex-k">'+t('s_volume')+'</span><span class="lex-v">' + (c.production||'—') + '</span></div>' +
-      '<div class="lex-row"><span class="lex-k">'+t('lex_revenue_lbl')+'</span><span class="lex-v">' + (c.revenue||'—') + '</span></div>' +
+      // Meme parti pris que dans le cartouche du panneau droit : sans
+      // montant, la raison plutot qu'un tiret. Ici le detail n'etait
+      // meme pas affiche, si bien qu'un tiret solitaire ne disait rien
+      // du tout.
+      '<div class="lex-row"><span class="lex-k">'+t('lex_revenue_lbl')+'</span><span class="lex-v' + (c.revenue ? '' : ' lex-v-raison') + '">' + (c.revenue || _tr(c.rev_detail) || '—') + '</span></div>' +
       '<div class="lex-row"><span class="lex-k">'+t('s_harvest_lbl')+'</span><span class="lex-v">' + (_tr(c.harvest)||'—') + '</span></div>' +
       '<div class="lex-row"><span class="lex-k">'+t('s_climate_lbl')+'</span><span class="lex-v">' + (_tr(c.climate)||'—') + '</span></div>' +
       '<div class="lex-row"><span class="lex-k">'+t('s_soil_lbl')+'</span><span class="lex-v">' + (_tr(c.soil)||'—') + '</span></div>' +
@@ -339,16 +371,7 @@ function _renderPanel(c) {
     '<span class="tier-badge" style="background:' + tc.bg + ';border-color:' + tc.border + ';color:' + tc.color + '">' + tc.text + '</span>' +
     '<div class="rev-box"><div>' +
       '<div class="rev-lbl">'+t('rev_annual')+'</div>' +
-      '<div class="rev-amt">' + (c.revenue||'—') + '</div>' +
-      // L'API sert « rev_detail » : elle fait SELECT * et ne renomme
-      // rien. « revDetail » etait donc toujours undefined, et cette
-      // ligne toujours vide — depuis toujours, sans que rien ne le
-      // signale puisque le champ est facultatif.
-      // Elle porte le PERIMETRE du montant affiche juste au-dessus
-      // (« exportations de tabac vers les Etats-Unis », « chiffre
-      // d'affaires Habanos »). Sans elle, 368 M$ et 1,34 Md$ se lisent
-      // comme deux valeurs comparables, ce qu'elles ne sont pas.
-      '<div class="rev-sub">' + (_tr(c.rev_detail)||'') + '</div>' +
+      _revenuHtml(c) +
     '</div><div style="font-size:28px;opacity:.3">' + c.flag + '</div></div>' +
     '<div class="sec">'+t('s_production')+'</div>' +
     '<div class="srow"><span class="sk">'+t('s_volume')+'</span><span class="sv">' + (c.production||'—') + '</span></div>' +
