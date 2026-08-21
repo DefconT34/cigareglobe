@@ -937,6 +937,31 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
     là où il devait épingler un **comportement**. Combler un revenu manquant est un progrès :
     ça ne doit pas faire rougir la campagne
   - **Cinq pays chiffrés, dix qui disent pourquoi**
+- [x] ~~**R1 quinquies** — Un revenu pour quatorze pays sur quinze~~ ✅ · migration `036`
+  - **La voie qui manquait** : jusqu'ici on demandait à chaque pays ce qu'il **exporte**. Les
+    petits producteurs déclarent mal et par à-coups. On demande désormais aux **États-Unis ce
+    qu'ils importent** de lui — le Census américain déclare avec une régularité que le Honduras
+    n'a pas, et les États-Unis sont le premier marché mondial du cigare
+  - Séries pleines sur six ans : **Honduras 115 M$**, **Indonésie 8,7 M$**, **Costa Rica
+    2,95 M$**
+  - **Le Costa Rica se règle de lui-même** : `035` l'avait écarté parce que ses 100 t
+    contredisaient « un seul acteur, séries très limitées ». Vu des douanes américaines,
+    2,95 M$ pour 19 t — compatible. La contradiction venait du chiffre mondial, pas de la fiche
+  - **Mesurer ce que le pays vend vraiment.** Cameroun, Équateur et Mexique n'exportent aucun
+    cigare vers les États-Unis — six ans de zéro. Ils vendent de la **feuille** ; les mesurer au
+    cigare revenait à peser un boulanger au poids de sa farine. HS 2401 leur donne un chiffre
+    qui décrit leur métier : **Mexique 13,7 M$**, **Équateur 2,65 M$**, **Cameroun 0,73 M$**
+  - ⚠ **La colonne n'est plus homogène, et c'est assumé.** Trois bases coexistent — CA d'un
+    distributeur (Cuba), exportations mondiales (Rép. dom., Nicaragua, Brésil, États-Unis),
+    importations américaines (les autres). Les uniformiser serait pire : tout ramener aux
+    importations américaines mettrait **Cuba à zéro** (embargo). La parade est celle de R1 —
+    `rev_detail` s'affiche sous le montant et nomme sa base
+  - **Jamaïque : 0 M$, et il est juste.** Aucune importation américaine sur six ans ; comme les
+    États-Unis déclarent exhaustivement, cette absence *est* la donnée
+  - **Îles Canaries : le seul pays sans montant.** L'ISTAC publie bien leur commerce extérieur
+    séparément — **127 M€** de tabac exporté en 2024, devant la banane — mais l'essentiel est de
+    la **cigarette** et la part du cigare n'est pas ventilée. Publier les 127 M€ referait pour la
+    quatrième fois l'erreur de `028`. Le détail affiche le fait **et** sa limite
 - **La relecture est terminée** — six lots. Ce qu'il en reste n'est pas une liste de
   corrections mais **quatre contrôles branchés sur la campagne** : `i18n_fraicheur.php` (E6),
   `coords_check.php` (R0), `geo_banquemondiale.php` (R2), `coherence_check.php` (R5). Les trois
