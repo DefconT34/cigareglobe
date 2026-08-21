@@ -175,6 +175,11 @@ html, body {
 .brand-card:hover { border-color:var(--gold-l); box-shadow:0 2px 10px var(--shd); }
 .brand-card.iconic { border-left:3px solid var(--gold); }
 .brand-card.other  { border-left:3px solid var(--panel-border); }
+/* Une entrée « cape » n'est pas une maison de ce pays : c'est un cigare
+   qui porte sa feuille, et il est roulé ailleurs. Le filet en pointillés
+   le dit avant même d'ouvrir la fiche — un trait plein la ferait passer
+   pour une maison locale, ce que les deux autres classes signifient. */
+.brand-card.cape   { border-left:3px dashed var(--gold-p); }
 .bn { font-family:'Playfair Display',serif; font-size:13px; font-weight:700; color:var(--text); }
 .btag { font-family:'Cinzel',serif; font-size:7px; letter-spacing:.15em; color:var(--gold); background:var(--gold-p); padding:2px 5px; border-radius:2px; }
 .bdesc  { font-size:10px; color:var(--text2); margin-top:2px; line-height:1.5; }

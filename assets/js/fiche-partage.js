@@ -255,7 +255,11 @@
     // Or l'image est produite sur le poste du visiteur : un Windows
     // partagerait une fiche ornée de « ◆◆◆◆ ». Le nom du pays dit la
     // même chose, partout.
-    var surtitre = (t('bm_maison') || 'MAISON') + ' · '
+    // Le meme fait est ecrit a deux endroits — ici et dans la modale —
+    // et c'est le piege du lot 5 : corriger l'un laisse l'autre mentir.
+    // Une entree `cape` n'est pas une maison de ce pays ; l'image
+    // partagee doit le dire comme l'ecran.
+    var surtitre = (t(window._capeCourante ? 'bm_cape' : 'bm_maison') || 'MAISON') + ' · '
                  + ((pays && pays.name) ? pays.name.toUpperCase() : '');
     interlettre(g, surtitre, x, y, 6, rtl);
     y += 62;

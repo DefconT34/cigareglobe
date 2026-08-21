@@ -402,8 +402,12 @@ function _renderPanel(c) {
 function brandCard(b, c) {
   // Toutes les marques sont cliquables (données chargées depuis MySQL à la demande)
   var safeName = b.name.replace(/'/g, "\\'");
-  return '<div class="brand-card ' + (b.iconic?'iconic':'other') + '"' +
-    ' onclick="openBrand(\'' + safeName + '\',\'' + c.id + '\')"' +
+  // Une entrée `cape` n'est PAS une maison de ce pays : c'est un cigare
+  // qui porte sa feuille. Le drapeau voyage jusqu'a la modale, qui
+  // annoncait « MAISON · Cameroun » pour un cigare roule au Honduras —
+  // en contradiction avec la ligne « usine » affichee juste dessous.
+  return '<div class="brand-card ' + (b.cape ? 'cape' : (b.iconic?'iconic':'other')) + '"' +
+    ' onclick="openBrand(\'' + safeName + '\',\'' + c.id + '\',' + (b.cape ? 'true' : 'false') + ')"' +
     ' style="cursor:pointer">' +
     '<div style="display:flex;justify-content:space-between;align-items:center">' +
       '<div class="bn">' + b.name + '</div>' +
@@ -423,9 +427,13 @@ function brandCard(b, c) {
 // fiche, pas un lien copie. Une seule definition — deux fonctions du
 // meme nom dans deux fichiers, c'est le piege qui a fige le globe sur
 // mobile ce matin (la derniere chargee gagne, en silence).
-function openBrand(name, cid) {
+function openBrand(name, cid, cape) {
   var modal = document.getElementById('bmodal');
   modal.classList.add('open');
+  // Retenu pour le rendu differe ET pour l'image de partage : sans lui,
+  // le lien direct « ?brand=… » et la carte partagee reannonceraient
+  // « MAISON » alors que la fiche d'origine disait « cape ».
+  window._capeCourante = !!cape;
 
   // L'URL suit la lecture : rafraichir ou copier la barre d'adresse
   // ramene sur cet article, et c'est ce lien que partage le bouton.
@@ -445,7 +453,7 @@ function openBrand(name, cid) {
 
   // Afficher skeleton immédiatement
   var c = COUNTRIES.find(function(x){ return x.id === cid; }) || {flag:'',name:cid};
-  document.getElementById('bmEy').textContent      = (c.flag?' ':'') + c.flag + t('bm_maison') + ' · ' + c.name;
+  document.getElementById('bmEy').textContent      = (c.flag?' ':'') + c.flag + t(cape ? 'bm_cape' : 'bm_maison') + ' · ' + c.name;
   document.getElementById('bmName').textContent    = name;
   document.getElementById('bmFounded').textContent = '…';
   document.getElementById('bmHist').textContent    = '';
@@ -489,8 +497,14 @@ function _renderBrand(name, cid) {
   var pid = cid || b.country || '';
   var c = COUNTRIES.find(function(x){ return x.id === pid; }) || {flag:'', name:''};
 
+  // « Maison » ou « habillé de cette cape » : la nuance vient de la
+  // fiche d'ou l'on a clique. Sur un lien direct « ?brand=… » il n'y a
+  // pas de fiche d'origine — on retombe alors sur le pays de la marque,
+  // ou « maison » est le mot juste.
   document.getElementById('bmEy').textContent      =
-    (c.flag ? c.flag + ' ' : '') + t('bm_maison') + (c.name ? ' · ' + c.name : '');
+    (c.flag ? c.flag + ' ' : '')
+    + t((window._capeCourante && cid) ? 'bm_cape' : 'bm_maison')
+    + (c.name ? ' · ' + c.name : '');
   document.getElementById('bmName').textContent    = name;
   document.getElementById('bmFounded').textContent = b.founded || '—';
   document.getElementById('bmHist').textContent    = b.history || '';

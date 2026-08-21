@@ -69,6 +69,52 @@ foreach ($listees as $nom => $ou) {
     if (!in_array($nom, $noms, true)) $sansArticle[] = $nom . '  (' . implode(', ', $ou) . ')';
 }
 
+// ── Introuvable là où elle est fabriquée ─────────────────
+//
+// Les trois contrôles ci-dessus passaient au vert alors que MEERAPFEL
+// manquait sur la fiche dominicaine. Aucun ne demandait la seule chose
+// qui comptait : une marque est-elle trouvable dans le pays où ses
+// cigares sont ROULÉS ?
+//
+// La migration 026 avait corrigé son article — elle négocie la cape du
+// Cameroun et fait rouler en Rép. dominicaine — sans compléter le
+// rattachement. Encore « la correction suit le champ, pas la donnée ».
+//
+// Le champ `factory` nomme l'atelier en clair. On y cherche un pays de
+// l'atlas, et on verifie que la marque, OU LA MAISON DONT ELLE EST UNE
+// DÉCLINAISON, y figure : « Arturo Fuente Hemingway » n'a pas à être
+// listée en Rép. dominicaine si « Arturo Fuente » l'est. C'est ce qui
+// distingue les huit cas legitimes du seul vrai manque.
+const PAYS_DANS_USINE = [
+    'dominicaine' => 'dominican', 'dominic' => 'dominican',
+    'nicaragua'   => 'nicaragua', 'honduras' => 'honduras',
+    'jamaïque'    => 'jamaica',   'mexique'  => 'mexico',
+    'brésil'      => 'brazil',    'panama'   => 'panama',
+    'costa rica'  => 'costarica', 'canaries' => 'canaries',
+];
+
+$introuvables = [];
+foreach ($db->query("SELECT name, factory FROM brands
+                     WHERE factory IS NOT NULL AND factory <> ''") as $b) {
+    $f = mb_strtolower((string)$b['factory']);
+    foreach (PAYS_DANS_USINE as $mot => $id) {
+        if (mb_strpos($f, $mot) === false) continue;
+        if (in_array($id, $listees[$b['name']] ?? [], true)) break;   // listée là-bas
+
+        // Une déclinaison est couverte par sa maison mère : on cherche
+        // un nom listé dans ce pays qui soit un préfixe du sien.
+        $couverte = false;
+        foreach ($listees as $autre => $ou) {
+            if ($autre !== $b['name'] && in_array($id, $ou, true)
+                && str_starts_with($b['name'], $autre . ' ')) { $couverte = true; break; }
+        }
+        if (!$couverte) {
+            $introuvables[] = sprintf('%s  → roulée en %s, absente de cette fiche', $b['name'], $id);
+        }
+        break;
+    }
+}
+
 // ── Rapport ──────────────────────────────────────────────
 $ligne = str_repeat('─', 58);
 echo "\n", $ligne, "\n";
@@ -99,6 +145,36 @@ foreach ([
     $souci += count($liste);
     echo "  ⚠    ", $titre, " : ", count($liste), "\n";
     foreach ($liste as $x) echo "         ", $x, "\n";
+}
+
+// ── Renseignement, PAS une anomalie ──────────────────────
+//
+// Cette liste ne compte pas dans le verdict, et c'est délibéré.
+//
+// Elle a été ajoutée parce que MEERAPFEL manquait sur la fiche
+// dominicaine alors que ses cigares y sont roulés : les trois contrôles
+// ci-dessus passaient au vert, aucun ne demandant si une marque est
+// trouvable là où elle est fabriquée.
+//
+// Mais sur neuf cas relevés, HUIT SONT UN CHOIX ÉDITORIAL : Cohiba USA,
+// Partagás USA, Romeo y Julieta USA, Nat Sherman sont des maisons
+// AMÉRICAINES dont les cigares sont fabriqués ailleurs, et la fiche des
+// États-Unis les revendique à ce titre. C'est la symétrie de la
+// convention `cape` du Cameroun, sans le drapeau.
+//
+// Les faire échouer rendrait ce rapport rouge en permanence — ce qui le
+// rendrait inutile, et c'est précisément la maladie que ce projet passe
+// son temps à soigner : un contrôle qu'on ne peut pas mettre au vert
+// est un contrôle que plus personne ne lit.
+//
+// Elle sert donc de CARTE : à relire quand on ajoute une maison, pour
+// décider en connaissance de cause si elle doit aussi paraître là où
+// elle roule.
+if ($introuvables) {
+    echo $ligne, "\n";
+    echo "  Roulées ailleurs que là où elles sont listées : ", count($introuvables), "\n";
+    echo "  (choix éditorial assumé pour les maisons américaines — pas une faute)\n";
+    foreach ($introuvables as $x) echo "         ", $x, "\n";
 }
 
 echo $ligne, "\n";
