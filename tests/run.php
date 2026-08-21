@@ -365,6 +365,69 @@ check('all : porte AUSSI la presence Habanos', array_key_exists('habanos', $r['j
 $r = http('GET', $base . '/backend/data.php?action=inconnue', ['jar' => $anon]);
 eq('action inconnue : refus', 404, $r['status']);
 
+// ── La fiche d'une feuille ───────────────────────────────
+//
+// Six pays de l'atlas vendent de la FEUILLE et non des cigares. Leur
+// fiche n'en disait qu'une liste de noms ; la table `feuilles` leur
+// donne l'equivalent de ce qu'une maison a depuis toujours.
+$r = http('GET', $base . '/backend/data.php?action=feuille&id=feuille-de-test', ['jar' => $anon]);
+eq('feuille : reponse valide', 200, $r['status']);
+$f = $r['json']['feuille'] ?? [];
+eq('feuille : porte son nom', 'Feuille de test', $f['name'] ?? null);
+check('feuille : porte sa genese', !empty($f['genese']));
+check('feuille : notes et accords sont des tableaux',
+      is_array($f['notes'] ?? null) && is_array($f['pairings'] ?? null));
+
+// La liste des cigares qui portent la feuille n'est PAS stockee : elle
+// se derive des entrees `cape: true` de la fiche pays. Si elle revenait
+// vide, c'est que la derivation est cassee — et rien d'autre ne le
+// dirait, puisqu'une liste vide s'affiche simplement comme un bloc
+// masque.
+check('feuille : les cigares qui la portent sont derives de la fiche pays',
+      in_array('Cigare a cape de test', $f['cigares'] ?? [], true));
+
+$r = http('GET', $base . '/backend/data.php?action=feuille&id=inconnue', ['jar' => $anon]);
+eq('feuille inconnue : refus', 404, $r['status']);
+
+// La fiche pays annonce ses feuilles documentees : sans cela, aucune
+// etiquette de « Varietes » ne devient cliquable.
+$r = http('GET', $base . '/backend/data.php?action=country&id=testland', ['jar' => $anon]);
+check('pays : annonce ses feuilles documentees',
+      !empty($r['json']['feuilles']) && ($r['json']['feuilles'][0]['id'] ?? '') === 'feuille-de-test');
+
+// ── Deux listes du meme fait ─────────────────────────────
+//
+// Les champs traduisibles sont declares DEUX FOIS : dans
+// backend/data.php (ce que le serveur substitue) et dans
+// tools/i18n_contenu_plan.php (ce que l'outillage exporte). Une table
+// ajoutee d'un cote seulement se traduit sans jamais s'afficher
+// traduite, ou l'inverse — et rien ne le dit.
+//
+// C'est le motif du lot 5, applique a du code plutot qu'a du contenu.
+{
+    $srcApi  = (string)@file_get_contents(PROJECT_ROOT . '/backend/data.php');
+    $srcPlan = (string)@file_get_contents(PROJECT_ROOT . '/tools/i18n_contenu_plan.php');
+    $tables = function (string $src): array {
+        preg_match_all("/'([a-z_]+)'\s*=>\s*\[('[a-z_]+'(?:\s*,\s*'[a-z_]+')*)\]/", $src, $m, PREG_SET_ORDER);
+        $out = [];
+        foreach ($m as $x) {
+            preg_match_all("/'([a-z_]+)'/", $x[2], $c);
+            $champs = $c[1]; sort($champs);
+            $out[$x[1]] = $champs;
+        }
+        return $out;
+    };
+    $a = $tables($srcApi);
+    $b = $tables($srcPlan);
+    $communes = array_intersect(array_keys($a), array_keys($b));
+    $divergentes = [];
+    foreach ($communes as $t) if ($a[$t] !== $b[$t]) $divergentes[] = $t;
+    check('i18n : le serveur et l\'outillage listent les memes champs traduisibles',
+          $divergentes === [], implode(', ', $divergentes));
+    check('i18n : la table des feuilles est declaree des deux cotes',
+          isset($a['feuilles'], $b['feuilles']));
+}
+
 // ════════════════════════════════════════════════════════
 section('Espace communautaire');
 

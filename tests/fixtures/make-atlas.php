@@ -23,9 +23,14 @@ require_once __DIR__ . '/../../backend/config.php';
 // petites et stables. `brands` en est exclue — ses historiques et
 // gammes multilingues pesent 718 Ko a elles seules, sans rien apporter
 // de plus aux tests qu'une poignee de marques.
+// Cette liste est FIGEE : une table ajoutee au schema n'y entre pas
+// toute seule. `feuilles` a bien ete creee dans la base de test — le
+// schema versionne la porte — mais elle y est restee VIDE, et les tests
+// de la fiche feuille rendaient 404 sans que rien n'explique pourquoi.
+// Une table vide ne ressemble pas a une table manquante.
 $completes = [
     'producer_countries', 'producer_geo', 'production_zones',
-    'markets', 'lounge_countries', 'habanos_presence',
+    'markets', 'lounge_countries', 'habanos_presence', 'feuilles',
 ];
 // Etablissements : un echantillon suffit a exercer panneaux et Explorer.
 $echantillon = 40;

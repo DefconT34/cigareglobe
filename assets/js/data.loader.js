@@ -129,6 +129,19 @@ window.loadBrand = function(brandName) {
         });
 };
 
+// ── Chargement d'une feuille (au clic) ───────────────────
+// Le pendant de loadBrand pour les pays qui vendent du tabac et non des
+// cigares. Le cache est porte par _cachedFetch, indexe par langue.
+window.FEUILLES_DB = window.FEUILLES_DB || {};
+window.loadFeuille = function(id) {
+    if (FEUILLES_DB[id]) return Promise.resolve(FEUILLES_DB[id]);
+    return _cachedFetch(_api('feuille', { id: id }))
+        .then(function(data) {
+            if (data.feuille) FEUILLES_DB[id] = data.feuille;
+            return data.feuille;
+        });
+};
+
 // ── Chargement d'un marché (au clic) ─────────────────────
 window.loadMarket = function(marketId) {
     return _cachedFetch(_api('market', { id: marketId }));

@@ -1268,3 +1268,10 @@ button, a, input, select, textarea, label,
 .mm-forum:hover { border-color: var(--gold); }
 .mm-forum .mmf-ico { font-size: 14px; line-height: 1; }
 [dir="rtl"] .mm-forum { text-align: right; }
+
+/* Une variété DOCUMENTÉE se distingue d'un simple mot : elle s'ouvre.
+   Sans ce signal, rien ne dit au visiteur que la moitié des étiquettes
+   cache une fiche et l'autre non. */
+.tag-feuille { cursor:pointer; transition:all .18s; }
+.tag-feuille:hover { background:var(--bg2); box-shadow:0 2px 8px var(--shd); }
+.tag-feuille em { font-style:normal; opacity:.55; font-size:.85em; letter-spacing:.06em; }

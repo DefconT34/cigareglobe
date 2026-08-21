@@ -8,6 +8,7 @@
 //   GET ?action=country&id=X   → détail complet d'un pays producteur
 //   GET ?action=lounges&id=X   → établissements d'un pays
 //   GET ?action=brand&name=X   → détail d'une marque
+//   GET ?action=feuille&id=X   → détail d'une feuille
 //   GET ?action=market&id=X    → détail d'un marché
 //   GET ?action=all            → tout d'un coup (fallback)
 // ════════════════════════════════════════════════════════
@@ -80,6 +81,7 @@ try {
         'lounges'     => action_lounges($db),
         'lounges_all' => action_lounges_all($db),
         'brand'   => action_brand($db),
+        'feuille' => action_feuille($db),
         'market'  => action_market($db),
         'all'     => action_all($db),
         default   => (function(){ http_response_code(404); jout(err('unknown_action', 'Action inconnue')); })(),
@@ -149,6 +151,10 @@ function champs_traduits(string $table): array {
         'production_zones'   => ['note'],
         'habanos_presence'   => ['status','ownership','description','festival'],
         'brands'             => ['history','gamme','celebrities','pairings'],
+        // Doit rester d'accord avec tools/i18n_contenu_plan.php : deux
+        // listes du meme fait, et c'est le piege documente au lot 5.
+        // tests/run.php compare desormais les deux.
+        'feuilles'           => ['genese','culture','caracteres','notes','pairings'],
     ][$table] ?? [];
 }
 
@@ -425,11 +431,20 @@ function action_country(PDO $db): void {
         unset($habanos['status_color']);
     }
 
+    // Les feuilles documentees de ce pays — juste id et nom. La fiche
+    // en a besoin pour savoir QUELLES etiquettes de « Varietes » sont
+    // cliquables : les autres restent de simples mots, et c'est voulu
+    // tant que le contenu se remplit par lots.
+    $lf = $db->prepare("SELECT id, name FROM feuilles WHERE country_id = ? ORDER BY name");
+    $lf->execute([$id]);
+    $feuilles = $lf->fetchAll(PDO::FETCH_ASSOC);
+
     jout([
-        'country' => $country,
-        'geo'     => $geo,
-        'zones'   => $zones,
-        'habanos' => $habanos,
+        'country'  => $country,
+        'geo'      => $geo,
+        'zones'    => $zones,
+        'habanos'  => $habanos,
+        'feuilles' => $feuilles,
     ]);
 }
 
@@ -495,6 +510,39 @@ function action_brand(PDO $db): void {
     unset($brand['country_id']);
 
     jout(['brand' => $brand]);
+}
+
+/**
+ * Detail d'une feuille — le pendant de action_brand pour les pays qui
+ * vendent du tabac et non des cigares.
+ *
+ * La liste des cigares qui la portent N'EST PAS stockee : elle se
+ * derive des entrees `cape: true` de la fiche du pays, qui existent
+ * depuis la migration 023. Stocker ce qu'on peut deriver, c'est offrir
+ * une occasion de diverger — le lot 2 a supprime `producer_geo.coords`
+ * pour exactement cette raison.
+ */
+function action_feuille(PDO $db): void {
+    $id = trim($_GET['id'] ?? '');
+    if (!$id) { http_response_code(400); jout(err('id_required_param', 'id requis')); }
+
+    $stmt = $db->prepare("SELECT * FROM feuilles WHERE id = ?");
+    $stmt->execute([$id]);
+    $f = $stmt->fetch();
+    if (!$f) { http_response_code(404); jout(err('not_found_leaf', 'Feuille introuvable')); }
+
+    $f = traduire_table($f, 'feuilles');
+    $f = row_parse($f, ['notes', 'pairings']);
+
+    $q = $db->prepare("SELECT brands FROM producer_countries WHERE id = ?");
+    $q->execute([$f['country_id']]);
+    $portees = [];
+    foreach (json_decode((string)$q->fetchColumn(), true) ?: [] as $b) {
+        if (!empty($b['cape']) && !empty($b['name'])) $portees[] = $b['name'];
+    }
+    $f['cigares'] = $portees;
+
+    jout(['feuille' => $f]);
 }
 
 // ── Market : détail d'un marché ──────────────────────────

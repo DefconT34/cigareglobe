@@ -275,6 +275,34 @@
   </div>
 </div>
 
+<!-- ══ FICHE D'UNE FEUILLE ══════════════════════════════
+     Le pendant de la modale des marques, pour les pays qui vendent du
+     tabac et non des cigares. Elle réutilise les classes `bm-*` : c'est
+     la même page, montrée d'un autre côté, et deux habillages proches
+     mais distincts finiraient par diverger. -->
+<div class="bmodal" id="fmodal" role="dialog" aria-modal="true" aria-labelledby="fmName" aria-hidden="true">
+  <div class="bm-back" id="fmBack" aria-hidden="true"></div>
+  <div class="bm-box">
+    <div class="bm-hdr">
+      <div class="bm-ey"      id="fmEy"></div>
+      <div class="bm-name"    id="fmName"></div>
+      <div class="bm-founded" id="fmEmploi"></div>
+      <button class="bm-close" id="fmClose" aria-label="Close leaf modal">✕</button>
+    </div>
+    <div class="bm-body">
+      <div class="gam-title" data-i18n="fe_genese">Genèse</div>
+      <div class="bm-hist"   id="fmGenese"></div>
+      <div class="gam-title" data-i18n="fe_culture">Culture</div>
+      <div class="bm-hist"   id="fmCulture"></div>
+      <div class="gam-title" data-i18n="fe_caracteres">Caractères</div>
+      <div class="bm-hist"   id="fmCaracteres"></div>
+      <div id="fmNotes"    style="display:none;margin-top:16px"></div>
+      <div id="fmPairings" style="display:none;margin-top:16px"></div>
+      <div id="fmCigares"  style="display:none;margin-top:16px"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ ZOOM CONTROLS ════════════════════════════════════ -->
 <div id="zoom-ctrl" role="group" aria-label="Zoom controls">
   <button class="zoom-btn" id="zIn"    aria-label="Zoom in">+</button>

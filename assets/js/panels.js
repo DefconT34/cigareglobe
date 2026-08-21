@@ -172,6 +172,24 @@ function _revenuHtml(c) {
   return '<div class="rev-absente">' + (detail || '—') + '</div>';
 }
 
+// Les etiquettes de « Varietes ».
+//
+// Une variete DOCUMENTEE — c'est-a-dire qui a une ligne dans `feuilles`
+// — devient cliquable et ouvre sa fiche. Les autres restent des mots.
+//
+// C'est volontaire : le contenu se remplit par lots, et proposer
+// d'ouvrir une fiche vide serait pire que de ne rien proposer. Le
+// visiteur voit d'un coup d'oeil ce qui est documente.
+function _varietesHtml(c) {
+  return (c.varieties || []).map(function (v) {
+    var f = (c.feuilles || []).filter(function (x) { return x.name === v; })[0];
+    if (!f) return '<span class="tag" style="border-color:var(--grn);color:var(--grn)">' + v + '</span>';
+    return '<span class="tag tag-feuille" style="border-color:var(--grn);color:var(--grn)"'
+         + ' onclick="openFeuille(\'' + f.id.replace(/'/g, "\\'") + '\',\'' + c.id + '\')"'
+         + ' role="button" tabindex="0">' + v + ' <em>' + t('fe_ouvrir') + '</em></span>';
+  }).join('');
+}
+
 // ════════════════════════════════════════════════════════
 function openLex(c) {
   document.getElementById('lexFlag').textContent = c.flag;
@@ -302,7 +320,7 @@ function openPanel(c) {
     // Enrichissement depuis la base. On interroge TOUJOURS, sans tester la
     // presence en memoire : le chargeur met en cache par pays ET par
     // langue, donc une seule requete par couple.
-    window.loadCountryDetails(pays.id).then(function() {
+    window.loadCountryDetails(pays.id).then(function(data) {
       // Re-render habanos section only — DOM surgery
       var panelBody = document.getElementById('panelBody');
       // Conteneur stable : l'ancien marqueur disparaissait des le premier
@@ -310,6 +328,14 @@ function openPanel(c) {
       // et le bloc restait dans la langue de l'instantane statique.
       var habBlock = panelBody.querySelector('.habanos-zone');
       if (habBlock) habBlock.innerHTML = renderHabanos(pays.id);
+
+      // Les feuilles documentees n'arrivent qu'avec le detail : les
+      // etiquettes de « Varietes » ne deviennent cliquables qu'ici.
+      var vb = document.getElementById('panel-varietes');
+      if (vb && data && data.feuilles) {
+        pays.feuilles = data.feuilles;
+        vb.innerHTML = _varietesHtml(pays);
+      }
     }).catch(function() {});
   }
 
@@ -381,7 +407,11 @@ function _renderPanel(c) {
     '<div class="sec">'+t('s_regions_lbl')+'</div>' +
     '<div class="tags">' + (c.regions||[]).map(function(r){ return '<span class="tag">'+r+'</span>'; }).join('') + '</div>' +
     '<div class="sec">'+t('s_varieties_lbl')+'</div>' +
-    '<div class="tags">' + (c.varieties||[]).map(function(v){ return '<span class="tag" style="border-color:var(--grn);color:var(--grn)">'+v+'</span>'; }).join('') + '</div>' +
+    // Conteneur STABLE : `c` vient du globe et ne porte pas encore les
+    // feuilles — elles arrivent avec le detail du pays. Le bloc est donc
+    // reinjecte quand la base repond, comme celui d'Habanos. Sans id
+    // stable, la version enrichie n'aurait nulle part ou se poser.
+    '<div class="tags" id="panel-varietes">' + _varietesHtml(c) + '</div>' +
     '<div class="sec">'+t('s_tabacaleras_lbl')+'</div>' +
     '<div class="tags">' + (c.tabacaleras||[]).map(function(t){ return '<span class="tag" style="border-color:var(--gold);color:var(--gold)">'+t+'</span>'; }).join('') + '</div>' +
     // Un pays sans marque à lui — le Cameroun, l'Équateur — n'affiche
@@ -397,6 +427,67 @@ function _renderPanel(c) {
     '<div id="panel-lounges"></div>' +
     '<div class="habanos-zone">' + habanos + '</div>';
 
+}
+
+// ════════════════════════════════════════════════════════
+// FICHE D'UNE FEUILLE
+// ════════════════════════════════════════════════════════
+// Six pays de cet atlas vendent de la FEUILLE et non des cigares — la
+// migration 036 l'a etabli chiffres en main. Leurs fiches n'en disaient
+// qu'une liste de noms dans un encadre « Varietes » : une maison a son
+// histoire et ses accords, la feuille qui l'habille n'avait rien.
+//
+// La modale reutilise les classes `bm-*`. C'est la meme page vue d'un
+// autre cote, et deux habillages proches mais distincts finiraient par
+// diverger — le motif que le lot 5 a passe une migration a retirer.
+function openFeuille(id, cid) {
+  var modal = document.getElementById('fmodal');
+  if (!modal) return;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+
+  var pays = COUNTRIES.filter(function (x) { return x.id === cid; })[0] || { flag: '', name: '' };
+  document.getElementById('fmEy').textContent   =
+    (pays.flag ? pays.flag + ' ' : '') + t('fe_feuille') + (pays.name ? ' · ' + pays.name : '');
+  document.getElementById('fmName').textContent = '…';
+  ['fmGenese', 'fmCulture', 'fmCaracteres'].forEach(function (k) {
+    document.getElementById(k).textContent = '';
+  });
+
+  window.loadFeuille(id).then(function (f) {
+    if (!f) return;
+    document.getElementById('fmName').textContent       = f.name || '';
+    document.getElementById('fmEmploi').textContent     = f.emploi || '';
+    document.getElementById('fmGenese').textContent     = f.genese || '';
+    document.getElementById('fmCulture').textContent    = f.culture || '';
+    document.getElementById('fmCaracteres').textContent = f.caracteres || '';
+
+    // Notes, accords et cigares : trois listes de pastilles. Un bloc
+    // VIDE reste masque plutot que d'afficher un titre suivi de rien —
+    // c'est la lecon des trente-deux vitoles sans etiquette.
+    [['fmNotes', f.notes, 'fe_notes'],
+     ['fmPairings', f.pairings, 'fe_pairings'],
+     ['fmCigares', f.cigares, 'fe_cigares']].forEach(function (x) {
+      var el = document.getElementById(x[0]);
+      var liste = x[1] || [];
+      if (!liste.length) { el.style.display = 'none'; return; }
+      el.style.display = '';
+      el.innerHTML = '<div class="gam-title">' + t(x[2]) + '</div>'
+                   + '<div class="tags">'
+                   + liste.map(function (v) { return '<span class="tag">' + _tr(v) + '</span>'; }).join('')
+                   + '</div>';
+    });
+  }).catch(function (err) {
+    console.error('[feuille] ' + id + ' :', err);
+    document.getElementById('fmGenese').textContent = t('error_loading');
+  });
+}
+
+function fermerFeuille() {
+  var m = document.getElementById('fmodal');
+  if (!m) return;
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden', 'true');
 }
 
 function brandCard(b, c) {
@@ -640,6 +731,16 @@ document.getElementById('bmClose').onclick = function() {
 document.getElementById('bmBack').onclick = function() {
   document.getElementById('bmodal').classList.remove('open');
 };
+
+// La modale des feuilles se ferme comme celle des marques. Les gardes
+// sur l'existence des noeuds evitent qu'un index.html plus ancien
+// (page en cache) fasse tomber tout ce fichier a l'evaluation.
+(function () {
+  var f = document.getElementById('fmClose');
+  var b = document.getElementById('fmBack');
+  if (f) f.onclick = fermerFeuille;
+  if (b) b.onclick = fermerFeuille;
+})();
 
 
 

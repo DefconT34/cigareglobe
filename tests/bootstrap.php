@@ -142,6 +142,43 @@ function setup_test_database(): PDO {
         "INSERT INTO brands (name, country_id, founded, history, gamme)
          VALUES ('Marque de test', 'testland', '1900', 'Histoire de test', '[]')"
     );
+
+    // Une feuille, pour la meme raison que la marque ci-dessus.
+    //
+    // La campagne API ne charge PAS tests/fixtures/atlas.sql — c'est le
+    // decor des parcours Playwright. Elle construit son propre jeu
+    // minimal, et une table ajoutee au schema y arrive donc VIDE. Les
+    // premiers tests de la fiche feuille rendaient 404 sans que rien
+    // n'explique pourquoi : une table vide ne ressemble pas a une table
+    // manquante.
+    //
+    // Le pays d'abord : `feuilles.country_id` est une cle etrangere, et
+    // « testland » n'existait jusqu'ici que du cote des etablissements.
+    //
+    // La liste `cape` sert la derivation des cigares qui portent la
+    // feuille — elle n'est pas stockee sur la feuille elle-meme.
+    $pdo->exec(
+        "INSERT INTO producer_countries (id, name, flag, lat, lon, region, tier, color, varieties, brands)
+         -- SIX chiffres, pas trois : le globe concatene « 55 » au code
+         -- pour obtenir l'alpha, et « #888 » devenait « #88855 » — une
+         -- couleur invalide. Le canvas levait alors une SyntaxError qui
+         -- faisait tomber NEUF parcours, dont des tests de mobile sans
+         -- rapport apparent avec les feuilles.
+         --
+         -- Ce jeu minimal sert AUSSI les parcours Playwright :
+         -- setup_front_db.php appelle cette fonction avant de charger
+         -- le decor. Une graine de la campagne API se retrouve donc
+         -- dessinee sur le globe.
+         VALUES ('testland', 'Testland', '🏳', 0, 0, 'Nulle part', 'emerging', '#888888',
+                 '[\"Feuille de test\"]',
+                 '[{\"name\":\"Cigare a cape de test\",\"desc\":\"Porte la feuille\",\"cape\":true,\"iconic\":false}]')"
+    );
+    $pdo->exec(
+        "INSERT INTO feuilles (id, name, country_id, emploi, genese, culture, caracteres, notes, pairings)
+         VALUES ('feuille-de-test', 'Feuille de test', 'testland', 'Cape',
+                 'Genese de test', 'Culture de test', 'Caracteres de test',
+                 '[\"Note de test\"]', '[\"Accord de test\"]')"
+    );
     return $pdo;
 }
 
