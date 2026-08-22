@@ -386,6 +386,26 @@ check('feuille : notes et accords sont des tableaux',
 check('feuille : les cigares qui la portent sont derives de la fiche pays',
       in_array('Cigare a cape de test', $f['cigares'] ?? [], true));
 
+// ── Les illustrations des notes et des accords ───────────
+//
+// La famille d'illustration est choisie par le SERVEUR, sur le
+// francais, parce que le front recoit « 咖啡 » ou « قهوة » selon la
+// langue et n'y reconnaitrait pas un cafe.
+//
+// Deux proprietes a tenir, et aucune ne se voit a l'oeil :
+//   - un tableau d'icones AUSSI LONG que sa liste, sinon les icones se
+//     decalent d'un cran et illustrent la note d'a cote ;
+//   - le MEME choix quelle que soit la langue — c'est tout l'interet de
+//     le calculer avant traduction.
+check('feuille : autant d\'icones que de notes',
+      count($f['notes'] ?? []) === count($f['notes_icones'] ?? [null]));
+check('feuille : autant d\'icones que d\'accords',
+      count($f['pairings'] ?? []) === count($f['pairings_icones'] ?? [null]));
+
+$r2 = http('GET', $base . '/backend/data.php?action=feuille&id=feuille-de-test&lang=zh', ['jar' => $anon]);
+eq('feuille : les icones ne dependent pas de la langue',
+   $f['notes_icones'] ?? null, $r2['json']['feuille']['notes_icones'] ?? null);
+
 $r = http('GET', $base . '/backend/data.php?action=feuille&id=inconnue', ['jar' => $anon]);
 eq('feuille inconnue : refus', 404, $r['status']);
 

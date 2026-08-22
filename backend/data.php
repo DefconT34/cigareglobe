@@ -513,6 +513,68 @@ function action_brand(PDO $db): void {
 }
 
 /**
+ * Famille d'illustration d'une note ou d'un accord, deduite du FRANCAIS.
+ *
+ * Soixante-quatre libelles distincts se ramenent a une quinzaine de
+ * familles : sept variantes de cafe, huit de rhum, quatre de bois. On
+ * illustre la famille, pas le libelle — sinon il faudrait dessiner
+ * « Cafe Blue Mountain » et « Cafe allonge » separement pour un
+ * resultat identique.
+ *
+ * L'ORDRE DES REGLES COMPTE. « The noir fume » doit tomber dans « the »
+ * et non dans « fumee » ; « Note boisee » dans « bois ». Les regles les
+ * plus specifiques passent donc devant.
+ *
+ * Rend une chaine vide quand rien ne correspond : le front n'affiche
+ * alors pas d'icone plutot qu'un point d'interrogation. Un libelle
+ * nouveau degrade proprement.
+ */
+function famille_arome(string $terme): string {
+    $t = mb_strtolower($terme);
+    // Accents retires pour que « cafe », « the » et « epices » matchent
+    // quelle que soit la saisie.
+    //
+    // ATTENTION : la translitteration d'iconv ne rend PAS « cafe » mais
+    // « caf'e » — elle remplace l'accent par le signe diacritique isole.
+    // « cedre » devient « c`edre », « patisserie » devient « p^atisserie ».
+    // Sans le nettoyage qui suit, la moitie des regles rataient en
+    // silence et les libelles accentues n'avaient pas d'icone.
+    $t = (string)iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $t);
+    $t = (string)preg_replace('/[^a-z0-9 ]/', '', $t);
+
+    $regles = [
+        'the'         => ['the '],            // AVANT « fumee » : « the noir fume »
+        'cafe'        => ['cafe'],
+        'cacao'       => ['cacao', 'chocolat'],
+        'spiritueux'  => ['rhum', 'bourbon', 'mezcal', 'cachaca'],
+        'vin'         => ['vin', 'champagne', 'porto', 'malvoisie'],
+        'biere'       => ['biere', 'stout'],
+        'fruits'      => ['fruit', 'amande'],
+        'patisserie'  => ['patisserie'],
+        'bois'        => ['bois', 'cedre'],
+        'epices'      => ['epice', 'poivre'],
+        'foin'        => ['foin', 'pain grille', 'grille'],
+        'fleur'       => ['fleur', 'floral', 'aromatique', 'arome'],
+        // « terre » AVANT « douceur » : dans « Terre sucree », c'est la
+        // terre qui domine, pas le sucre.
+        'terre'       => ['terre'],
+        'douceur'     => ['douceur', 'creme', 'sucre'],
+        'cuir'        => ['cuir'],
+        'force'       => ['corps', 'force'],
+        'fumee'       => ['fumee'],
+    ];
+    foreach ($regles as $famille => $motifs) {
+        foreach ($motifs as $m) if (mb_strpos($t, $m) !== false) return $famille;
+    }
+    return '';
+}
+
+/** @param string[] $termes @return string[] */
+function familles_aromes(array $termes): array {
+    return array_map(fn($t) => famille_arome((string)$t), $termes);
+}
+
+/**
  * Detail d'une feuille — le pendant de action_brand pour les pays qui
  * vendent du tabac et non des cigares.
  *
@@ -531,8 +593,17 @@ function action_feuille(PDO $db): void {
     $f = $stmt->fetch();
     if (!$f) { http_response_code(404); jout(err('not_found_leaf', 'Feuille introuvable')); }
 
+    // Les illustrations sont choisies AVANT la traduction, sur le
+    // francais. C'est la seule facon qui tienne : le front recoit
+    // « 咖啡 » ou « قهوة » selon la langue, et ne peut pas y reconnaitre
+    // un cafe. Le serveur, lui, a la source sous la main.
+    $iconesNotes    = familles_aromes(json_decode((string)$f['notes'], true) ?: []);
+    $iconesAccords  = familles_aromes(json_decode((string)$f['pairings'], true) ?: []);
+
     $f = traduire_table($f, 'feuilles');
     $f = row_parse($f, ['notes', 'pairings']);
+    $f['notes_icones']    = $iconesNotes;
+    $f['pairings_icones'] = $iconesAccords;
 
     $q = $db->prepare("SELECT brands FROM producer_countries WHERE id = ?");
     $q->execute([$f['country_id']]);

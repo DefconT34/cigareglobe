@@ -465,16 +465,34 @@ function openFeuille(id, cid) {
     // Notes, accords et cigares : trois listes de pastilles. Un bloc
     // VIDE reste masque plutot que d'afficher un titre suivi de rien —
     // c'est la lecon des trente-deux vitoles sans etiquette.
-    [['fmNotes', f.notes, 'fe_notes'],
-     ['fmPairings', f.pairings, 'fe_pairings'],
-     ['fmCigares', f.cigares, 'fe_cigares']].forEach(function (x) {
+    //
+    // Les deux premieres portent une ILLUSTRATION. La famille est
+    // choisie par le serveur, sur le francais (famille_arome dans
+    // backend/data.php) : ici on ne recoit que du chinois ou de
+    // l'arabe selon la langue, et « cafe » n'y serait pas
+    // reconnaissable.
+    //
+    // Une famille vide ne dessine rien plutot qu'un point
+    // d'interrogation : un libelle nouveau degrade proprement.
+    [['fmNotes', f.notes, 'fe_notes', f.notes_icones],
+     ['fmPairings', f.pairings, 'fe_pairings', f.pairings_icones],
+     ['fmCigares', f.cigares, 'fe_cigares', null]].forEach(function (x) {
       var el = document.getElementById(x[0]);
       var liste = x[1] || [];
+      var icones = x[3] || [];
       if (!liste.length) { el.style.display = 'none'; return; }
       el.style.display = '';
       el.innerHTML = '<div class="gam-title">' + t(x[2]) + '</div>'
                    + '<div class="tags">'
-                   + liste.map(function (v) { return '<span class="tag">' + _tr(v) + '</span>'; }).join('')
+                   + liste.map(function (v, i) {
+                       var fam = icones[i] || '';
+                       var ic = fam
+                         ? '<svg class="tag-ic" aria-hidden="true" focusable="false">'
+                           + '<use href="#ar-' + fam + '"></use></svg>'
+                         : '';
+                       return '<span class="tag' + (ic ? ' tag-illustre' : '') + '">'
+                            + ic + _tr(v) + '</span>';
+                     }).join('')
                    + '</div>';
     });
   }).catch(function (err) {

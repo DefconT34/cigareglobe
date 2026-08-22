@@ -1275,3 +1275,14 @@ button, a, input, select, textarea, label,
 .tag-feuille { cursor:pointer; transition:all .18s; }
 .tag-feuille:hover { background:var(--bg2); box-shadow:0 2px 8px var(--shd); }
 .tag-feuille em { font-style:normal; opacity:.55; font-size:.85em; letter-spacing:.06em; }
+
+/* ── Illustrations des notes et des accords ────────────────
+   Le trait suit `currentColor`, donc la couleur de la pastille, donc
+   le thème courant : les six habillages du site sont servis sans une
+   règle de plus. Un jeu d'images aurait demandé six jeux.
+
+   `fill:none` et un trait fin : ces glyphes vivent à 13 px au milieu
+   d'un texte en petites capitales, pas dans une barre d'outils. */
+.tag-ic { width:13px; height:13px; flex-shrink:0; fill:none; stroke:currentColor;
+          stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; opacity:.8; }
+.tag-illustre { display:inline-flex; align-items:center; gap:5px; }
