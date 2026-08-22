@@ -73,6 +73,52 @@ foreach ($db->query('SELECT id, regions FROM producer_countries ORDER BY id') as
     }
 }
 
+// ── 1 bis. Une etiquette de variete qui rate sa fiche ────
+//
+// `producer_countries.varieties` nomme les varietes ; `feuilles` porte
+// leur article. Le front apparie par nom EXACT : une etiquette dont le
+// nom differe d'un mot reste un simple mot, et la fiche derriere elle
+// devient injoignable.
+//
+// C'est arrive DEUX FOIS dans la migration 040, sans que rien ne le
+// dise : « San Andres Maduro Negro » pour une fiche nommee « Negro San
+// Andres », « Broadleaf » pour « Connecticut Broadleaf ». Deux articles
+// ecrits, sources, traduits en six langues — et invisibles.
+//
+// Le defaut est invisible PAR CONSTRUCTION : une etiquette non
+// cliquable est le comportement normal d'une variete pas encore
+// documentee. Rien ne distingue « pas encore ecrite » de « ecrite mais
+// mal nommee » — sauf ce controle.
+//
+// Une variete SANS fiche n'est pas une faute : le contenu se remplit
+// par lots, et deux etiquettes restent volontairement sans article
+// (« Ecuador Sumatra », le « Claro » mexicain). On ne signale donc que
+// les fiches ORPHELINES, celles qu'aucune etiquette ne designe.
+$feuillesParPays = [];
+try {
+    foreach ($db->query('SELECT country_id, name FROM feuilles') as $f) {
+        $feuillesParPays[$f['country_id']][] = $f['name'];
+    }
+} catch (Throwable $e) {
+    // Table absente (base pas encore migree) : rien a comparer.
+}
+
+foreach ($db->query('SELECT id, varieties FROM producer_countries ORDER BY id') as $c) {
+    $fiches = $feuillesParPays[$c['id']] ?? [];
+    if (!$fiches) continue;
+
+    $listees = json_decode((string)$c['varieties'], true);
+    if (!is_array($listees)) $listees = [];
+
+    foreach ($fiches as $nom) {
+        if (!in_array($nom, $listees, true)) {
+            $defauts[] = sprintf(
+                '%s : la feuille « %s » n\'est designee par aucune etiquette de varietes — sa fiche est injoignable',
+                $c['id'], $nom);
+        }
+    }
+}
+
 // ── 2. Les rangs mondiaux que la relecture a bannis ──────
 //
 // R1, R4 et R5 ont retire tous les classements mondiaux non sources :
