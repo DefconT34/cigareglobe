@@ -1011,6 +1011,36 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
   famille a dû être **réécrite** : elle parlait de canne et de fût de chêne, ce qui est vrai
   du rhum et faux de la grappa. Une glose écrite d'après son exemple le plus fréquent ment
   dès qu'un membre s'ajoute à la famille
+### Les drapeaux dessinés, repris un par un
+
+Les drapeaux des fiches pays sont **peints en code** sur canvas, et ondulent. Le choix a été
+confirmé plutôt que remplacé par des images — mais il fallait qu'ils ressemblent aux vrais.
+
+- **Quatre pays n'avaient aucun dessin** : Costa Rica, Canaries, Jamaïque, et l'Italie depuis
+  `053`. Ils tombaient sur trois bandes grises — un défaut **invisible par construction**,
+  puisque trois bandes grises sont un dessin valide pour qui ne connaît pas le drapeau attendu
+- **Huit corrections** sur les douze existants, trouvées en les faisant rendre côte à côte
+  plutôt qu'en lisant le code :
+  - Cuba et Philippines : triangle de hampe **écrasé** (0,62 et 0,72 au lieu de √3/2 ≈ 0,87)
+  - Philippines : **deux étoiles sur trois hors du triangle**, posées sur le bleu et le rouge
+  - Honduras : cinq étoiles en zigzag sur toute la largeur au lieu d'un quinconce centré
+  - Nicaragua : l'emblème était un **losange rouge** ; c'est un triangle à volcans et arc-en-ciel
+  - Brésil : la banderole était un arc **sur le flanc droit** du globe ; elle le traverse. Et
+    8 étoiles au lieu de 27
+  - Équateur : armoiries réduites à une tache grise translucide
+  - Rép. dominicaine et Panama : peints au `fillRect` nu, donc **raides** pendant que les
+    autres flottaient
+  - Mexique : l'aigle était un empilement de trois disques
+- Les armoiries du Mexique, de l'Équateur et de la Rép. dominicaine restent des **stylisations
+  assumées** : à trente pixels, un blason est une silhouette
+- `coherence_check.php` compare désormais `FLAGS_DESSINES` à `producer_countries` — c'est le
+  contrôle qui manquait, et qui aurait signalé l'Italie le jour même de `053`
+- ⚠ **Les drapeaux emoji ne s'affichent pas sur Windows.** Mesuré : la largeur de 🇮🇹 égale
+  celle des deux indicateurs régionaux séparés, contre 55 px pour un emoji ordinaire. Windows
+  n'a pas de glyphe de drapeau et rend « IT ». Cela concerne les listes, l'Explorer, le
+  formulaire de contribution et les fêtes — partout sauf les fiches pays, qui ont le dessin.
+  **Non traité**, hors du périmètre choisi
+
 - ⚠ **Deux sessions ont partagé la même base MySQL** pendant ce chantier. `sql/schema.sql`
   régénéré a capté cinq colonnes `emploi_*` créées par l'autre, et la fixture les a nommées.
   `make-atlas.php` écarte désormais — **bruyamment** — toute colonne absente de

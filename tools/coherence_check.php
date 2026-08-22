@@ -352,6 +352,34 @@ if (!$front['pays']) {
     }
 }
 
+// ── 4 bis. Un pays producteur sans drapeau dessine ───────
+//
+// `drawFlag()` peint chaque drapeau en code, et FLAGS_DESSINES declare
+// ceux qu'il sait tracer. Tout autre identifiant tombe sur trois bandes
+// grises.
+//
+// Le defaut est INVISIBLE PAR CONSTRUCTION, comme celui des etiquettes
+// de varietes : trois bandes grises sont un dessin valide pour qui ne
+// connait pas le drapeau attendu. La liste en comptait douze quand
+// l'atlas avait seize pays — le Costa Rica, les Canaries et la Jamaique
+// depuis des mois, l'Italie depuis la migration 053, c'est-a-dire
+// depuis le chantier qui aurait du y penser.
+$flagsJs = (string)@file_get_contents(__DIR__ . '/../assets/js/flags.js');
+if (preg_match('/FLAGS_DESSINES\s*=\s*\[(.*?)\]/s', $flagsJs, $mf)) {
+    preg_match_all("/'([a-z0-9_-]+)'/", $mf[1], $mff);
+    $dessines = $mff[1] ?? [];
+    foreach ($db->query('SELECT id, name FROM producer_countries ORDER BY id') as $c) {
+        if (!in_array($c['id'], $dessines, true)) {
+            $defauts[] = sprintf(
+                '%s : aucun drapeau dessine dans flags.js — la fiche affiche trois bandes grises',
+                $c['id']);
+        }
+    }
+    $nbDessines = count($dessines);
+} else {
+    $defauts[] = 'flags.js : FLAGS_DESSINES introuvable — le controle des drapeaux n\'a rien verifie';
+}
+
 // ── 5. Un UPDATE du dump ne doit toucher qu'UNE ligne ────
 //
 // CE QUI EST ARRIVE. sql/traductions.sql est genere par i18n_dump.php,
@@ -409,6 +437,11 @@ if (!$defauts) {
     printf("  Les %d pays de data.pays.js concordent avec tzdata %s et ICU %s.\n",
            count($front['pays']), timezone_version_get(),
            extension_loaded('intl') ? INTL_ICU_VERSION : '(absent)');
+    if (isset($nbDessines)) {
+        printf("  Les %d pays producteurs ont chacun leur drapeau dessine (%d dans flags.js).\n",
+               (int)$db->query('SELECT COUNT(*) FROM producer_countries')->fetchColumn(),
+               $nbDessines);
+    }
     if (isset($updatesDump)) {
         printf("  Les %d UPDATE de traductions.sql designent chacun une seule ligne.\n",
                $updatesDump);
