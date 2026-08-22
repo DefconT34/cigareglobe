@@ -547,7 +547,10 @@ function famille_arome(string $terme): string {
         'the'         => ['the '],            // AVANT « fumee » : « the noir fume »
         'cafe'        => ['cafe'],
         'cacao'       => ['cacao', 'chocolat'],
-        'spiritueux'  => ['rhum', 'bourbon', 'mezcal', 'cachaca'],
+        // « grappa » ajoutee avec l'Italie (053) : sans elle, l'accord
+        // le plus evident du Toscano ne tombait dans aucune famille et
+        // s'affichait sans icone ni glose — muet, comme avant 051.
+        'spiritueux'  => ['rhum', 'bourbon', 'mezcal', 'cachaca', 'grappa'],
         'vin'         => ['vin', 'champagne', 'porto', 'malvoisie'],
         'biere'       => ['biere', 'stout'],
         'fruits'      => ['fruit', 'amande'],

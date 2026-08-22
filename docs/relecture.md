@@ -552,6 +552,39 @@ dans les fiches de marques, le mot n'apparaît jamais isolé, toujours
 accolé à une variété. Un contrôle qui trouve un trou ne dit pas s'il
 faut le combler ou le supprimer.
 
+### Deux sessions, une seule base
+
+L'Italie a été écrite pendant qu'un autre chantier tournait sur la
+**même base MySQL**. Il y a ajouté cinq colonnes `emploi_*`. Deux de
+mes artefacts les ont ramassées sans un mot :
+
+- `sql/schema.sql`, régénéré par `mysqldump`, les déclarait — alors
+  qu'aucune migration de ma branche ne les crée ;
+- `tests/fixtures/atlas.sql`, généré par `SELECT *`, les **nommait**
+  dans son `INSERT`.
+
+La seconde est la dangereuse. La fixture est rechargée dans une base
+construite à partir de `sql/schema.sql` : nommer une colonne qu'il
+ignore fait échouer le chargement **entier**, et le décor part vide.
+C'est le défaut que la migration `038` avait déjà rencontré sous une
+autre forme — *une table vide ne ressemble pas à une table manquante*.
+
+Deux gestes :
+
+1. `sql/schema.sql` est revenu à sa version commitée. C'était le bon
+   réflexe pour une raison simple : mes migrations `053` et `054`
+   n'ajoutent **aucune colonne**. Tout écart entre la base et le schéma
+   versionné venait donc forcément d'ailleurs.
+2. `make-atlas.php` écarte désormais les colonnes absentes de
+   `sql/schema.sql` — mais **en le disant sur la sortie d'erreur**. Le
+   silence aurait transformé une contamination visible en fixture
+   incomplète, et la prochaine colonne légitime aurait disparu sans que
+   personne le sache.
+
+La leçon générale : **un fichier généré depuis une ressource partagée
+n'enregistre pas l'état de votre travail, il enregistre l'état de la
+ressource.** Les deux coïncident tant qu'on est seul.
+
 ---
 
 ## Une question à trancher avant de commencer

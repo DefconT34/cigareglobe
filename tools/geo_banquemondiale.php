@@ -34,6 +34,7 @@ const PAYS_BM = [
     'honduras'    => 'HN', 'indonesia' => 'ID', 'jamaica'   => 'JM',
     'mexico'      => 'MX', 'nicaragua' => 'NI', 'panama'    => 'PA',
     'philippines' => 'PH', 'usa'       => 'US',
+    'italy'       => 'IT',
 ];
 
 // Les pays dont la source elle-meme n'a plus rien de recent. Ce n'est

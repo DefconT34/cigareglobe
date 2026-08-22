@@ -992,6 +992,30 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 - ⚠ **Reste en français dans les six langues** : le champ `emploi` (« Cape », « Tripe et
   sous-cape »), sous-titre de chaque fiche. Vocabulaire fermé de neuf valeurs, jamais
   déclaré dans le plan de traduction
+
+### L'Italie, seizième pays producteur (`053`, `054`)
+
+- **Le seul terroir d'Europe continentale**, et l'une des deux seules origines au monde
+  à sécher son tabac à cigare **au feu** — l'autre étant le Kentucky/Tennessee américain.
+  Kentucky cultivé en Valtiberina (Toscane-Ombrie) et en Campanie, qui donne le Toscano
+- **36,0 M$ (2024)**, exportations de cigares vers le monde (COMTRADE, HS 2402.10). Série
+  complète sur six ans, mais **2020, 2022 et 2024 sont revenues vides au premier appel** :
+  trois relances les ont remplies. Témoin de complétude posé à côté — le tabac brut italien
+  (HS 2401) sort à 417 M$ pour 55 633 t, donc l'endpoint ne tronquait pas
+  - Ces 417 M$ ont été **écartés comme base de revenu** : c'est surtout du Virginia pour la
+    cigarette, et les prendre referait l'erreur des Canaries
+  - Le montant ne mesure que l'export ; le Toscano se vend d'abord en Italie, et `notes` le dit
+- Le Veneto est **volontairement absent** des zones : on y cultive du Bright pour la
+  cigarette. L'y mettre répéterait l'erreur de Lombok, retirée par `030`
+- La grappa a rejoint la famille « spiritueux » de `famille_arome`, et la glose de cette
+  famille a dû être **réécrite** : elle parlait de canne et de fût de chêne, ce qui est vrai
+  du rhum et faux de la grappa. Une glose écrite d'après son exemple le plus fréquent ment
+  dès qu'un membre s'ajoute à la famille
+- ⚠ **Deux sessions ont partagé la même base MySQL** pendant ce chantier. `sql/schema.sql`
+  régénéré a capté cinq colonnes `emploi_*` créées par l'autre, et la fixture les a nommées.
+  `make-atlas.php` écarte désormais — **bruyamment** — toute colonne absente de
+  `sql/schema.sql` : la fixture est rechargée dans une base construite à partir de ce
+  fichier, et nommer une colonne qu'il ignore fait échouer tout le chargement
 - **Question ouverte, non technique** : publier avant d'avoir relu, ou non ? À trancher
   avec l'avis juridique (loi Évin) et la décision de modération
 

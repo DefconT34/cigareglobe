@@ -50,13 +50,42 @@ $out = "-- Genere par tests/fixtures/make-atlas.php — NE PAS EDITER A LA MAIN\
      . "-- rechargees dans la base de test avant les tests de bout en bout.\n\n"
      . "SET FOREIGN_KEY_CHECKS = 0;\n\n";
 
+/**
+ * Colonnes que `sql/schema.sql` déclare. La fixture est rechargée dans
+ * une base construite À PARTIR DE CE FICHIER : nommer une colonne qu'il
+ * ignore fait échouer tout le chargement, et le décor part vide.
+ *
+ * Le cas arrive dès que deux chantiers partagent la même base MySQL —
+ * l'un ajoute une colonne, l'autre régénère la fixture avant que la
+ * migration correspondante n'existe chez lui. La colonne étrangère est
+ * donc écartée, mais BRUYAMMENT : si elle est légitime, c'est
+ * `sql/schema.sql` qu'il faut régénérer, et le silence ferait croire à
+ * une fixture complète.
+ */
+function colonnes_du_schema(): array {
+    static $cols = null;
+    if ($cols !== null) return $cols;
+    $sql = (string)@file_get_contents(dirname(__DIR__, 2) . '/sql/schema.sql');
+    preg_match_all('/^\s{2}`([a-z0-9_]+)`\s/mi', $sql, $m);
+    return $cols = array_flip($m[1]);
+}
+
 function insertions(PDO $db, string $table, string $sql, array $args = []): string {
     $stmt = $db->prepare($sql);
     $stmt->execute($args);
     $lignes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if (!$lignes) return "-- $table : aucune ligne\n\n";
 
+    $connues = colonnes_du_schema();
     $cols = array_keys($lignes[0]);
+    $hors = array_values(array_filter($cols, fn($c) => !isset($connues[$c])));
+    if ($hors) {
+        fwrite(STDERR, "  ATTENTION $table : " . implode(', ', $hors)
+            . " existe(nt) en base mais pas dans sql/schema.sql — colonne(s) ecartee(s).\n"
+            . "  Si elles sont legitimes, regenerer sql/schema.sql (voir sql/README.md).\n");
+        $cols   = array_values(array_diff($cols, $hors));
+        $lignes = array_map(fn($l) => array_intersect_key($l, array_flip($cols)), $lignes);
+    }
     $txt  = "-- $table (" . count($lignes) . " lignes)\n"
           . 'INSERT INTO `' . $table . '` (`' . implode('`, `', $cols) . "`) VALUES\n";
     $vals = [];
