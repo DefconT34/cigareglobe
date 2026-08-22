@@ -28,6 +28,12 @@ require_once __DIR__ . '/../../backend/config.php';
 // schema versionne la porte — mais elle y est restee VIDE, et les tests
 // de la fiche feuille rendaient 404 sans que rien n'explique pourquoi.
 // Une table vide ne ressemble pas a une table manquante.
+//
+// `aromes` en est volontairement ABSENTE, et c'est l'exception a la
+// regle du dessus : bootstrap.php la peuple deja, depuis la migration
+// 051 pour le francais et depuis sql/traductions.sql pour le reste.
+// L'ajouter ici ferait echouer le chargement de la fixture sur une
+// violation de cle primaire, les lignes etant deja la.
 $completes = [
     'producer_countries', 'producer_geo', 'production_zones',
     'markets', 'lounge_countries', 'habanos_presence', 'feuilles',

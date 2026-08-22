@@ -155,6 +155,7 @@ function champs_traduits(string $table): array {
         // listes du meme fait, et c'est le piege documente au lot 5.
         // tests/run.php compare desormais les deux.
         'feuilles'           => ['genese','culture','caracteres','notes','pairings'],
+        'aromes'             => ['texte'],
     ][$table] ?? [];
 }
 
@@ -612,6 +613,30 @@ function action_feuille(PDO $db): void {
         if (!empty($b['cape']) && !empty($b['name'])) $portees[] = $b['name'];
     }
     $f['cigares'] = $portees;
+
+    // Le glossaire : une phrase par famille, qui rend le mot sensible.
+    // « Terre » ne dit rien a qui n'a pas le vocabulaire du metier ;
+    // « l'humus d'un sous-bois apres la pluie » se retient.
+    //
+    // On ne rend QUE les familles utilisees par cette feuille — inutile
+    // d'envoyer les vingt a chaque ouverture.
+    $besoins = array_values(array_unique(array_filter(
+        array_merge(
+            array_map(fn($x) => 'note|'   . $x, $iconesNotes),
+            array_map(fn($x) => 'accord|' . $x, $iconesAccords)
+        ),
+        fn($k) => substr($k, strpos($k, '|') + 1) !== ''
+    )));
+    $f['glossaire'] = [];
+    if ($besoins) {
+        $q = $db->query('SELECT * FROM aromes');
+        foreach ($q as $a) {
+            $cle = $a['contexte'] . '|' . $a['famille'];
+            if (!in_array($cle, $besoins, true)) continue;
+            $a = traduire_table($a, 'aromes');
+            $f['glossaire'][$cle] = $a['texte'];
+        }
+    }
 
     jout(['feuille' => $f]);
 }

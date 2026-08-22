@@ -51,7 +51,7 @@ function inventaire(PDO $db): array {
 
     $out = [];
     foreach (plan_contenu() as $table => $champs) {
-        $pk = cle_primaire($db, $table);
+        $pk = cles_primaires($db, $table);
         if (!$pk) continue;
         $cols = colonnes_de($db, $table);
 
@@ -60,16 +60,17 @@ function inventaire(PDO $db): array {
                 fn($l) => in_array($champ . '_' . $l, $cols, true)));
             if (!$traduites) continue;
 
-            $sel = "`$pk` k, `$champ` src";
+            $sel = '`' . implode('`, `', $pk) . "`, `$champ` src";
             foreach ($traduites as $l) $sel .= ", `{$champ}_{$l}` `$l`";
             $q = $db->query("SELECT $sel FROM `$table`
                              WHERE `$champ` IS NOT NULL AND `$champ` <> ''");
 
             foreach ($q as $r) {
-                $h = empreinte_source($r['src']);
+                $h  = empreinte_source($r['src']);
+                $id = identite_ligne($pk, $r);
                 foreach ($traduites as $l) {
                     $vide = trim((string)$r[$l]) === '';
-                    $cle  = "$table|{$r['k']}|$champ|$l";
+                    $cle  = "$table|$id|$champ|$l";
                     $ref  = $connu[$cle] ?? null;
 
                     if ($vide)                   $etat = 'manquante';
@@ -78,7 +79,7 @@ function inventaire(PDO $db): array {
                     elseif ($ref[1] === 'relu')  $etat = 'relue';
                     else                         $etat = 'a-jour';
 
-                    $out[] = ['t' => $table, 'k' => (string)$r['k'], 'c' => $champ,
+                    $out[] = ['t' => $table, 'k' => $id, 'c' => $champ,
                               'l' => $l, 'src' => $r['src'], 'etat' => $etat];
                 }
             }

@@ -406,6 +406,39 @@ $r2 = http('GET', $base . '/backend/data.php?action=feuille&id=feuille-de-test&l
 eq('feuille : les icones ne dependent pas de la langue',
    $f['notes_icones'] ?? null, $r2['json']['feuille']['notes_icones'] ?? null);
 
+// ── Le glossaire, et pourquoi il a deux entrees par famille ──
+//
+// « Terre » ne dit rien a qui ne pratique pas. La fiche joint donc une
+// phrase par famille employee — et SEULEMENT celles-la : servir les
+// vingt gloses a chaque fiche ferait grossir la reponse pour rien.
+$glo = $f['glossaire'] ?? [];
+check('feuille : le glossaire est servi avec la fiche', $glo !== []);
+check('feuille : glose la famille terre en note', !empty($glo['note|terre']));
+check('feuille : ne sert pas les familles absentes de la fiche',
+      !isset($glo['note|foin'], $glo['accord|vin']));
+
+$glo2 = $r2['json']['feuille']['glossaire'] ?? [];
+check('feuille : le glossaire suit la langue demandee',
+      !empty($glo2['note|terre']) && $glo2['note|terre'] !== ($glo['note|terre'] ?? null));
+eq('feuille : les memes familles glosees dans toutes les langues',
+   array_keys($glo), array_keys($glo2));
+
+// LE PIEGE QUE CECI TIENT. `aromes` a pour cle (famille, contexte). Un
+// outil qui identifie une ligne par sa premiere colonne de cle confond
+// les deux « cacao » — c'est arrive au dump des traductions, qui
+// recopiait la glose de l'accord sur celle de la note. Les deux textes
+// restent lisibles, le compte reste juste : seul l'ecran ment.
+//
+// ET C'EST EN LANGUE QUE CA SE VOIT. Le dump ne reecrit que les colonnes
+// traduites : le francais sort indemne d'une corruption qui a deja
+// mange les cinq autres. Un controle pose sur le francais aurait donc
+// repondu OK sur une base fausse — verifie, et c'est ce qu'il faisait.
+foreach (['fr' => $glo, 'zh' => $glo2] as $lg => $g) {
+    check("feuille [$lg] : cacao ne dit pas la meme chose en note et en accord",
+          !empty($g['note|cacao']) && !empty($g['accord|cacao'])
+          && $g['note|cacao'] !== $g['accord|cacao']);
+}
+
 $r = http('GET', $base . '/backend/data.php?action=feuille&id=inconnue', ['jar' => $anon]);
 eq('feuille inconnue : refus', 404, $r['status']);
 

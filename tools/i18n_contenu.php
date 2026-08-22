@@ -284,7 +284,17 @@ if ($posImport !== false) {
                 // Retenir de QUEL francais cette traduction est issue.
                 // Sans cela la table de fraicheur serait perimee des le
                 // premier lot importe, et ne saurait plus rien dire.
-                if ($st->rowCount() > 0) $scelles += sceller($db, $table, $champ, $l, $src);
+                //
+                // rowCount() vaut 0 dans DEUX cas opposes : rien n'a ete
+                // ecrit, ou la valeur ecrite etait deja la (MySQL ne
+                // compte pas une reecriture a l'identique). Sous --forcer
+                // le second cas est le bon : la base porte le texte
+                // voulu, il faut le sceller. Sans --forcer, 0 signifie
+                // que la colonne etait deja remplie par AUTRE CHOSE — et
+                // sceller la mentirait.
+                if ($forcer || $st->rowCount() > 0) {
+                    $scelles += sceller($db, $table, $champ, $l, $src);
+                }
             }
         }
     }

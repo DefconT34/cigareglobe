@@ -37,6 +37,21 @@ CREATE TABLE `approved_lounges` (
   CONSTRAINT `fk_approved_contrib` FOREIGN KEY (`contribution_id`) REFERENCES `contributions` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `aromes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `aromes` (
+  `famille` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `contexte` enum('note','accord') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `texte` text COLLATE utf8mb4_unicode_ci,
+  `texte_en` text COLLATE utf8mb4_unicode_ci,
+  `texte_es` text COLLATE utf8mb4_unicode_ci,
+  `texte_de` text COLLATE utf8mb4_unicode_ci,
+  `texte_zh` text COLLATE utf8mb4_unicode_ci,
+  `texte_ar` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`famille`,`contexte`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `auth_attempts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -182,6 +197,51 @@ CREATE TABLE `favorites` (
   KEY `idx_fav_user` (`user_id`),
   KEY `idx_fav_target` (`target_type`,`target_id`),
   CONSTRAINT `fk_fav_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `feuilles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `feuilles` (
+  `id` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `country_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `emploi` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `genese` text COLLATE utf8mb4_unicode_ci,
+  `culture` text COLLATE utf8mb4_unicode_ci,
+  `caracteres` text COLLATE utf8mb4_unicode_ci,
+  `notes` longtext COLLATE utf8mb4_unicode_ci,
+  `pairings` longtext COLLATE utf8mb4_unicode_ci,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `genese_en` text COLLATE utf8mb4_unicode_ci,
+  `genese_es` text COLLATE utf8mb4_unicode_ci,
+  `genese_de` text COLLATE utf8mb4_unicode_ci,
+  `genese_zh` text COLLATE utf8mb4_unicode_ci,
+  `genese_ar` text COLLATE utf8mb4_unicode_ci,
+  `culture_en` text COLLATE utf8mb4_unicode_ci,
+  `culture_es` text COLLATE utf8mb4_unicode_ci,
+  `culture_de` text COLLATE utf8mb4_unicode_ci,
+  `culture_zh` text COLLATE utf8mb4_unicode_ci,
+  `culture_ar` text COLLATE utf8mb4_unicode_ci,
+  `caracteres_en` text COLLATE utf8mb4_unicode_ci,
+  `caracteres_es` text COLLATE utf8mb4_unicode_ci,
+  `caracteres_de` text COLLATE utf8mb4_unicode_ci,
+  `caracteres_zh` text COLLATE utf8mb4_unicode_ci,
+  `caracteres_ar` text COLLATE utf8mb4_unicode_ci,
+  `notes_en` longtext COLLATE utf8mb4_unicode_ci,
+  `notes_es` longtext COLLATE utf8mb4_unicode_ci,
+  `notes_de` longtext COLLATE utf8mb4_unicode_ci,
+  `notes_zh` longtext COLLATE utf8mb4_unicode_ci,
+  `notes_ar` longtext COLLATE utf8mb4_unicode_ci,
+  `pairings_en` longtext COLLATE utf8mb4_unicode_ci,
+  `pairings_es` longtext COLLATE utf8mb4_unicode_ci,
+  `pairings_de` longtext COLLATE utf8mb4_unicode_ci,
+  `pairings_zh` longtext COLLATE utf8mb4_unicode_ci,
+  `pairings_ar` longtext COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  KEY `feuilles_pays` (`country_id`),
+  CONSTRAINT `feuilles_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `producer_countries` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `forum_attendance`;
@@ -772,45 +832,3 @@ CREATE TABLE `votes` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-DROP TABLE IF EXISTS `feuilles`;
-CREATE TABLE `feuilles` (
-  `id` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `country_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `emploi` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `genese` text COLLATE utf8mb4_unicode_ci,
-  `culture` text COLLATE utf8mb4_unicode_ci,
-  `caracteres` text COLLATE utf8mb4_unicode_ci,
-  `notes` longtext COLLATE utf8mb4_unicode_ci,
-  `pairings` longtext COLLATE utf8mb4_unicode_ci,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `genese_en` text COLLATE utf8mb4_unicode_ci,
-  `genese_es` text COLLATE utf8mb4_unicode_ci,
-  `genese_de` text COLLATE utf8mb4_unicode_ci,
-  `genese_zh` text COLLATE utf8mb4_unicode_ci,
-  `genese_ar` text COLLATE utf8mb4_unicode_ci,
-  `culture_en` text COLLATE utf8mb4_unicode_ci,
-  `culture_es` text COLLATE utf8mb4_unicode_ci,
-  `culture_de` text COLLATE utf8mb4_unicode_ci,
-  `culture_zh` text COLLATE utf8mb4_unicode_ci,
-  `culture_ar` text COLLATE utf8mb4_unicode_ci,
-  `caracteres_en` text COLLATE utf8mb4_unicode_ci,
-  `caracteres_es` text COLLATE utf8mb4_unicode_ci,
-  `caracteres_de` text COLLATE utf8mb4_unicode_ci,
-  `caracteres_zh` text COLLATE utf8mb4_unicode_ci,
-  `caracteres_ar` text COLLATE utf8mb4_unicode_ci,
-  `notes_en` longtext COLLATE utf8mb4_unicode_ci,
-  `notes_es` longtext COLLATE utf8mb4_unicode_ci,
-  `notes_de` longtext COLLATE utf8mb4_unicode_ci,
-  `notes_zh` longtext COLLATE utf8mb4_unicode_ci,
-  `notes_ar` longtext COLLATE utf8mb4_unicode_ci,
-  `pairings_en` longtext COLLATE utf8mb4_unicode_ci,
-  `pairings_es` longtext COLLATE utf8mb4_unicode_ci,
-  `pairings_de` longtext COLLATE utf8mb4_unicode_ci,
-  `pairings_zh` longtext COLLATE utf8mb4_unicode_ci,
-  `pairings_ar` longtext COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`),
-  KEY `feuilles_pays` (`country_id`),
-  CONSTRAINT `feuilles_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `producer_countries` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

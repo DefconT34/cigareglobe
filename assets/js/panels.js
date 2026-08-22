@@ -474,27 +474,53 @@ function openFeuille(id, cid) {
     //
     // Une famille vide ne dessine rien plutot qu'un point
     // d'interrogation : un libelle nouveau degrade proprement.
-    [['fmNotes', f.notes, 'fe_notes', f.notes_icones],
-     ['fmPairings', f.pairings, 'fe_pairings', f.pairings_icones],
-     ['fmCigares', f.cigares, 'fe_cigares', null]].forEach(function (x) {
+    // Notes et accords sont des ITEMS COMMENTES : l'illustration, le
+    // mot, et une phrase qui le rend sensible. « Terre » ne dit rien a
+    // qui n'a pas le vocabulaire du metier ; « l'humus d'un sous-bois
+    // apres la pluie » se retient.
+    //
+    // La phrase vient du glossaire servi avec la fiche, indexe par
+    // « contexte|famille » : le meme cacao se commente differemment
+    // selon qu'on le SENT ou qu'on le BOIT a cote.
+    var glo = f.glossaire || {};
+    [['fmNotes', f.notes, 'fe_notes', f.notes_icones, 'note'],
+     ['fmPairings', f.pairings, 'fe_pairings', f.pairings_icones, 'accord']]
+    .forEach(function (x) {
       var el = document.getElementById(x[0]);
       var liste = x[1] || [];
       var icones = x[3] || [];
       if (!liste.length) { el.style.display = 'none'; return; }
       el.style.display = '';
       el.innerHTML = '<div class="gam-title">' + t(x[2]) + '</div>'
-                   + '<div class="tags">'
-                   + liste.map(function (v, i) {
-                       var fam = icones[i] || '';
-                       var ic = fam
-                         ? '<svg class="tag-ic" aria-hidden="true" focusable="false">'
-                           + '<use href="#ar-' + fam + '"></use></svg>'
-                         : '';
-                       return '<span class="tag' + (ic ? ' tag-illustre' : '') + '">'
-                            + ic + _tr(v) + '</span>';
-                     }).join('')
-                   + '</div>';
+        + '<div class="arome-liste">'
+        + liste.map(function (v, i) {
+            var fam = icones[i] || '';
+            var dit = fam ? (glo[x[4] + '|' + fam] || '') : '';
+            return '<div class="arome">'
+                 + '<div class="arome-tete">'
+                 + (fam ? '<svg class="arome-ic" aria-hidden="true" focusable="false">'
+                          + '<use href="#ar-' + fam + '"></use></svg>' : '')
+                 + '<span class="arome-nom">' + _tr(v) + '</span></div>'
+                 // Une glose ABSENTE ne laisse pas de ligne vide : un
+                 // libelle nouveau s'affiche seul, comme avant.
+                 + (dit ? '<div class="arome-dit">' + dit + '</div>' : '')
+                 + '</div>';
+          }).join('')
+        + '</div>';
     });
+
+    // Les cigares restent des pastilles : ce sont des NOMS PROPRES,
+    // pas des sensations. Il n'y a rien a y expliquer.
+    (function () {
+      var el = document.getElementById('fmCigares');
+      var liste = f.cigares || [];
+      if (!liste.length) { el.style.display = 'none'; return; }
+      el.style.display = '';
+      el.innerHTML = '<div class="gam-title">' + t('fe_cigares') + '</div>'
+                   + '<div class="tags">'
+                   + liste.map(function (v) { return '<span class="tag">' + _tr(v) + '</span>'; }).join('')
+                   + '</div>';
+    })();
   }).catch(function (err) {
     console.error('[feuille] ' + id + ' :', err);
     document.getElementById('fmGenese').textContent = t('error_loading');

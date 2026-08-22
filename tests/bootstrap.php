@@ -119,14 +119,35 @@ function setup_test_database(): PDO {
     // Meme raison pour site_languages (migration 019) : sans ses six
     // lignes, langues_actives() retombe sur les six langues connues et
     // le test « fermer une langue » ne verrait aucune difference.
-    $reference = 'forum_sections|site_languages';
+    //
+    // Et pour aromes (migration 051) : ce sont les phrases qui expliquent
+    // « Terre » ou « Cuir » a qui ne pratique pas. Sans elles la fiche
+    // d'une feuille se sert quand meme — avec un glossaire vide, ce qui
+    // ressemble trait pour trait a une fiche dont les libelles ne
+    // tombent dans aucune famille.
+    $reference = 'forum_sections|site_languages|aromes';
     $migrations = glob(PROJECT_ROOT . '/sql/migrations/*.sql') ?: [];
     sort($migrations);
     foreach ($migrations as $f) {
         $sql = (string)@file_get_contents($f);
-        if (preg_match_all('/(?:INSERT IGNORE INTO|UPDATE)\s+`?(?:' . $reference . ')`?\b[^;]*;/si', $sql, $m)) {
+        // Le point-virgule cherche est celui qui FERME l'instruction,
+        // c'est-a-dire celui qui termine une ligne. « [^;]*; » coupait
+        // a l'interieur d'une chaine des que le texte francais en
+        // contenait un — « un vieux rhum prolonge la fumee ; un blanc la
+        // tranche » suffisait a produire une instruction tronquee.
+        if (preg_match_all('/(?:INSERT(?: IGNORE)? INTO|UPDATE)\s+`?(?:' . $reference . ')`?\b.*?;\s*$/sim', $sql, $m)) {
             foreach ($m[0] as $stmt) $pdo->exec($stmt);
         }
+    }
+    // Les migrations ne portent que le francais : les cinq autres langues
+    // vivent dans sql/traductions.sql. La campagne n'en a besoin que pour
+    // `aromes` — c'est la seule table dont un test compare deux langues.
+    // On rejoue donc ces lignes-la, et pas le fichier entier : y verser
+    // 739 UPDATE ferait passer pour traduites des tables que d'autres
+    // tests attendent en repli francais.
+    $trad = (string)@file_get_contents(PROJECT_ROOT . '/sql/traductions.sql');
+    if (preg_match_all('/^UPDATE `aromes` .*;$/mi', $trad, $m)) {
+        foreach ($m[0] as $stmt) $pdo->exec($stmt);
     }
     // Le cache de langues.php est un FICHIER : une base de test refaite
     // ne l'efface pas. Un reglage laisse par un test precedent (ou par
@@ -177,7 +198,14 @@ function setup_test_database(): PDO {
         "INSERT INTO feuilles (id, name, country_id, emploi, genese, culture, caracteres, notes, pairings)
          VALUES ('feuille-de-test', 'Feuille de test', 'testland', 'Cape',
                  'Genese de test', 'Culture de test', 'Caracteres de test',
-                 '[\"Note de test\"]', '[\"Accord de test\"]')"
+                 -- Des libelles REELS, pas « Note de test » : les icones et
+                 -- le glossaire se choisissent sur le francais, et une
+                 -- graine inventee ne declencherait ni l'un ni l'autre.
+                 -- « Cacao » en note et « Chocolat noir » en accord font
+                 -- expres la meme famille dans les deux contextes — c'est
+                 -- la seule paire qui distingue une glose juste d'une
+                 -- glose recopiee de l'autre cote.
+                 '[\"Terre\", \"Cacao\"]', '[\"Chocolat noir\"]')"
     );
     return $pdo;
 }

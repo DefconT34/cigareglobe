@@ -1286,3 +1286,34 @@ button, a, input, select, textarea, label,
 .tag-ic { width:13px; height:13px; flex-shrink:0; fill:none; stroke:currentColor;
           stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; opacity:.8; }
 .tag-illustre { display:inline-flex; align-items:center; gap:5px; }
+
+/* ── Notes et accords commentés ────────────────────────────
+   Une pastille nue disait « Terre » à qui ne sait pas ce que ça veut
+   dire. L'item porte donc trois choses : l'illustration, le mot, et la
+   phrase qui le rend sensible.
+
+   Deux colonnes sur large, une seule sur étroit : au-dessous de ~380 px
+   de panneau, deux colonnes couperaient les phrases en confettis. */
+.arome-liste { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; margin-top:2px; }
+.arome { border-left:2px solid var(--gold-p); padding:2px 0 2px 9px; }
+.arome-tete { display:flex; align-items:center; gap:6px; }
+.arome-ic { width:15px; height:15px; flex-shrink:0; fill:none; stroke:currentColor;
+            stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; color:var(--gold); }
+.arome-nom { font-family:'Cinzel',serif; font-size:8px; letter-spacing:.22em;
+             text-transform:uppercase; color:var(--gold); }
+/* La glose est de la PROSE : Playfair en italique, comme les notes du
+   sommelier ailleurs dans le site — pas du Cinzel, qui sert aux
+   étiquettes. */
+.arome-dit { font-family:'Playfair Display',serif; font-style:italic; font-size:11px;
+             line-height:1.6; color:var(--text2); margin-top:3px; }
+/* En arabe, ces trois réglages travaillent contre le texte : Cinzel n'a
+   pas de glyphes arabes, `letter-spacing` disjoint des lettres qui
+   doivent se lier, et 8 px rend un mot lié illisible là où il suffisait
+   à une petite capitale latine. L'étiquette garde son or et son rang,
+   elle change seulement de dessin. */
+[dir="rtl"] .arome-nom { font-family:inherit; font-size:11px; letter-spacing:0; }
+/* Le filet d'or marque le DÉBUT de la carte : à droite quand on lit de
+   droite à gauche, sinon il se retrouve du côté où la phrase finit. */
+[dir="rtl"] .arome { border-left:none; border-right:2px solid var(--gold-p);
+                     padding:2px 9px 2px 0; }
+@media (max-width:520px) { .arome-liste { grid-template-columns:1fr; } }

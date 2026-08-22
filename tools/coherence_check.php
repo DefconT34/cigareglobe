@@ -337,6 +337,47 @@ if (!$front['pays']) {
     }
 }
 
+// ── 5. Un UPDATE du dump ne doit toucher qu'UNE ligne ────
+//
+// CE QUI EST ARRIVE. sql/traductions.sql est genere par i18n_dump.php,
+// qui identifiait chaque ligne par la premiere colonne de sa cle
+// primaire. Sur `aromes`, dont la cle est (famille, contexte), le dump
+// ecrivait « WHERE famille = 'cacao' » : deux lignes designees, et la
+// glose de l'accord recopiee sur celle de la note au prochain rejeu.
+//
+// Rien ne l'aurait signale. Le dump se relit parfaitement, la base
+// reste coherente, le compteur de fraicheur ne bronche pas — c'est
+// seulement le texte affiche qui devient faux, et il faut connaitre les
+// deux gloses pour s'en apercevoir.
+//
+// On ne verifie donc pas la forme du fichier mais sa PORTEE : chaque
+// WHERE genere est rejoue en SELECT COUNT(*), et doit rendre 1.
+$dump = __DIR__ . '/../sql/traductions.sql';
+if (is_file($dump)) {
+    $vus = 0;
+    foreach (file($dump, FILE_IGNORE_NEW_LINES) as $no => $ligne) {
+        if (!preg_match('/^UPDATE `([a-z_]+)` SET .* WHERE (.+);$/', $ligne, $m)) continue;
+        $vus++;
+        try {
+            $n = (int)$db->query("SELECT COUNT(*) FROM `$m[1]` WHERE $m[2]")->fetchColumn();
+        } catch (Throwable $e) {
+            $defauts[] = sprintf('traductions.sql ligne %d : WHERE illisible — %s',
+                                 $no + 1, $e->getMessage());
+            continue;
+        }
+        if ($n !== 1) {
+            $defauts[] = sprintf('traductions.sql ligne %d : « WHERE %s » designe %d lignes de %s',
+                                 $no + 1, $m[2], $n, $m[1]);
+        }
+    }
+    // Un fichier qu'on ne sait pas lire passerait pour un fichier sain :
+    // le nombre d'UPDATE reconnus fait donc partie du rapport.
+    if ($vus === 0) {
+        $defauts[] = 'traductions.sql : aucun UPDATE reconnu — le controle n\'a rien verifie';
+    }
+    $updatesDump = $vus;
+}
+
 // ── Rapport ──────────────────────────────────────────────
 
 echo "CigarOdyssey — coherence entre champs\n\n";
@@ -348,6 +389,10 @@ if (!$defauts) {
     printf("  Les %d pays de data.pays.js concordent avec tzdata %s et ICU %s.\n",
            count($front['pays']), timezone_version_get(),
            extension_loaded('intl') ? INTL_ICU_VERSION : '(absent)');
+    if (isset($updatesDump)) {
+        printf("  Les %d UPDATE de traductions.sql designent chacun une seule ligne.\n",
+               $updatesDump);
+    }
     foreach (MULTIFUSEAUX_REFUSES as $iso => $pourquoi) {
         echo "  $iso : ecart assume — " . preg_replace('/\s+/', ' ', $pourquoi) . "\n";
     }

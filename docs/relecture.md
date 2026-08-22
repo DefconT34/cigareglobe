@@ -480,6 +480,55 @@ même temps quelque chose d'abondant.**
 
 ---
 
+## Une leçon de plus : l'identité d'une ligne
+
+Le glossaire des arômes (`051`) a mis au jour un défaut qui dormait
+depuis la migration `009`.
+
+`translation_status` retient de **quel** français une traduction est la
+traduction. Pour cela il lui faut désigner une ligne, et il le faisait
+en prenant *la première colonne marquée `PRI`*. Sur une clé simple,
+exact. Sur `aromes`, dont la clé est `(famille, contexte)`, deux lignes
+distinctes — « cacao » en note, « cacao » en accord — se sont mises à
+porter le même identifiant.
+
+Ce qui s'est vu tout de suite était bénin : quinze traductions
+déclarées **périmées le jour même de leur écriture**, une empreinte
+écrasant l'autre. Ce qui ne se voyait pas l'était moins :
+`i18n_dump.php` écrivait `UPDATE aromes … WHERE famille = 'cacao'`, si
+bien qu'au prochain rejeu du fichier versionné **la glose de l'accord
+recouvrait celle de la note**, dans les cinq langues.
+
+Trois traits à retenir, tous déjà croisés ailleurs dans ce journal :
+
+1. **Le compteur disait vrai.** L'import annonçait « 100 lignes mises à
+   jour », et c'était le cas. C'est l'étape d'après qui confondait.
+2. **Une clé composée n'est pas un cas particulier, c'est le cas
+   général.** Le code qui l'ignore ne casse pas : il devient faux
+   silencieusement, le jour où une telle table arrive.
+3. **Le français sortait indemne.** Le dump ne réécrit que les colonnes
+   traduites. Un contrôle posé sur le français aurait donc répondu
+   « conforme » sur une base déjà corrompue — c'est exactement ce que
+   faisait la première version du test, vérifiée puis corrigée.
+
+Deux garde-fous posés, et l'un et l'autre **vus échouer** avant d'être
+gardés :
+
+- `tools/coherence_check.php` rejoue chaque `WHERE` de
+  `sql/traductions.sql` en `SELECT COUNT(*)` et exige 1. La panne
+  réintroduite produit six échecs.
+- `tests/run.php` compare les deux gloses de « cacao » **en chinois**
+  autant qu'en français. La graine de test a changé pour cela : la
+  fiche témoin porte désormais de vrais libellés (`Terre`, `Cacao`,
+  `Chocolat noir`) au lieu de « Note de test », parce qu'un libellé
+  inventé ne tombe dans aucune famille et n'aurait rien déclenché.
+
+Au passage, un troisième piège du même bois : `rowCount()` rend `0`
+dans deux cas opposés — rien n'a été écrit, ou la valeur écrite était
+déjà là. L'import ne rescellait donc jamais un lot réimporté.
+
+---
+
 ## Une question à trancher avant de commencer
 
 Faut-il **publier** avant d'avoir relu ?

@@ -24,6 +24,7 @@ function plan_contenu(): array {
         'habanos_presence'   => ['status','ownership','description','festival'],
         'brands'             => ['history','gamme','celebrities','pairings'],
         'feuilles'           => ['genese','culture','caracteres','notes','pairings'],
+        'aromes'             => ['texte'],
         'lounges'            => ['description'],
     ];
 }
@@ -46,14 +47,44 @@ function cles_non_traduites(): array {
     return ['name', 'city', 'founded', 'iconic', 'distributeur'];
 }
 
-/** Cle primaire d'une table, telle que declaree par MySQL. */
-function cle_primaire(PDO $db, string $table): ?string {
+/**
+ * Cle primaire d'une table, telle que declaree par MySQL — TOUTES ses
+ * colonnes.
+ *
+ * CE QUE LA VERSION PRECEDENTE RATAIT. Elle rendait la PREMIERE colonne
+ * marquee PRI et s'arretait la. Sur une cle simple c'est exact ; sur une
+ * cle composee c'est une identite tronquee, et deux lignes distinctes se
+ * mettent a porter le meme identifiant.
+ *
+ * `aromes` l'a montre : cle (famille, contexte), et donc « cacao » en
+ * NOTE et « cacao » en ACCORD confondus. Consequences en chaine —
+ * translation_status ecrasait une empreinte par l'autre (quinze
+ * traductions declarees perimees le jour meme de leur ecriture), et le
+ * dump ecrivait « UPDATE aromes ... WHERE famille = 'cacao' », soit la
+ * traduction de l'accord recopiee sur la note.
+ *
+ * Rien n'avertissait : le compteur d'import annoncait 100 lignes ecrites,
+ * ce qui etait vrai. C'est l'etape d'apres qui melangeait.
+ */
+function cles_primaires(PDO $db, string $table): array {
     static $cache = [];
-    if (array_key_exists($table, $cache)) return $cache[$table];
+    if (isset($cache[$table])) return $cache[$table];
+    $out = [];
     foreach ($db->query("DESCRIBE `$table`") as $c) {
-        if ($c['Key'] === 'PRI') return $cache[$table] = $c['Field'];
+        if ($c['Key'] === 'PRI') $out[] = $c['Field'];
     }
-    return $cache[$table] = null;
+    return $cache[$table] = $out;
+}
+
+/**
+ * Identifiant d'une ligne pour translation_status : les valeurs de la
+ * cle primaire jointes par « | ». Sur une cle simple c'est la valeur
+ * elle-meme, donc les empreintes deja posees restent valables.
+ */
+function identite_ligne(array $pk, array $ligne): string {
+    $vals = [];
+    foreach ($pk as $c) $vals[] = (string)$ligne[$c];
+    return implode('|', $vals);
 }
 
 /** Colonnes d'une table. */
@@ -90,7 +121,7 @@ function sceller(PDO $db, string $table, string $champ, string $lang, string $sr
     static $st = null, $indisponible = false;
     if ($indisponible) return 0;
 
-    $pk = cle_primaire($db, $table);
+    $pk = cles_primaires($db, $table);
     if (!$pk) return 0;
 
     try {
@@ -103,14 +134,14 @@ function sceller(PDO $db, string $table, string $champ, string $lang, string $sr
                                          statut      = VALUES(statut)'
             );
         }
-        $q = $db->prepare("SELECT `$pk` k FROM `$table` WHERE `$champ` = ?");
+        $q = $db->prepare('SELECT `' . implode('`, `', $pk) . "` FROM `$table` WHERE `$champ` = ?");
         $q->execute([$src]);
         $h = empreinte_source($src);
         $n = 0;
         foreach ($q as $r) {
             // « machine » : une traduction fraichement importee n'a par
             // definition pas ete relue. Seul --relu le fait passer.
-            $st->execute([$table, (string)$r['k'], $champ, $lang, $h, 'machine']);
+            $st->execute([$table, identite_ligne($pk, $r), $champ, $lang, $h, 'machine']);
             $n++;
         }
         return $n;

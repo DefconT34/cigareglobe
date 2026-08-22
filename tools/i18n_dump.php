@@ -26,7 +26,7 @@ require_once __DIR__ . '/i18n_contenu_plan.php';
 
 $db = getDB();
 
-// cle_primaire() et colonnes_de() vivent dans i18n_contenu_plan.php.
+// cles_primaires() et colonnes_de() vivent dans i18n_contenu_plan.php.
 
 echo "-- CigarOdyssey — traductions du contenu\n";
 echo "-- Genere par tools/i18n_dump.php le " . date('Y-m-d') . "\n";
@@ -35,7 +35,7 @@ echo "SET NAMES utf8mb4;\n\n";
 
 $total = 0;
 foreach (plan_contenu() as $table => $champs) {
-    $pk   = cle_primaire($db, $table);
+    $pk   = cles_primaires($db, $table);
     $cols = colonnes_de($db, $table);
     if (!$pk) { fwrite(STDERR, "  ignore (pas de cle primaire) : $table\n"); continue; }
 
@@ -48,8 +48,9 @@ foreach (plan_contenu() as $table => $champs) {
     if (!$traduites) continue;
 
     echo "-- ── $table " . str_repeat('─', max(0, 50 - strlen($table))) . "\n";
-    $sel = array_merge([$pk], $traduites);
-    $q = $db->query('SELECT `' . implode('`, `', $sel) . "` FROM `$table` ORDER BY `$pk`");
+    $sel   = array_merge($pk, $traduites);
+    $ordre = '`' . implode('`, `', $pk) . '`';
+    $q = $db->query('SELECT `' . implode('`, `', $sel) . "` FROM `$table` ORDER BY $ordre");
     foreach ($q as $r) {
         $sets = [];
         foreach ($traduites as $col) {
@@ -58,8 +59,13 @@ foreach (plan_contenu() as $table => $champs) {
         }
         if (!$sets) continue;
         $total += count($sets);
+        // Toutes les colonnes de la cle : sur `aromes`, « WHERE famille =
+        // 'cacao' » designe DEUX lignes et recopierait la glose de
+        // l'accord sur celle de la note.
+        $ou = [];
+        foreach ($pk as $c) $ou[] = "`$c` = " . $db->quote((string)$r[$c]);
         echo "UPDATE `$table` SET " . implode(', ', $sets)
-           . " WHERE `$pk` = " . $db->quote((string)$r[$pk]) . ";\n";
+           . ' WHERE ' . implode(' AND ', $ou) . ";\n";
     }
     echo "\n";
 }
