@@ -90,10 +90,16 @@ foreach ($db->query('SELECT id, regions FROM producer_countries ORDER BY id') as
 // documentee. Rien ne distingue « pas encore ecrite » de « ecrite mais
 // mal nommee » — sauf ce controle.
 //
-// Une variete SANS fiche n'est pas une faute : le contenu se remplit
-// par lots, et deux etiquettes restent volontairement sans article
-// (« Ecuador Sumatra », le « Claro » mexicain). On ne signale donc que
-// les fiches ORPHELINES, celles qu'aucune etiquette ne designe.
+// Une variete SANS fiche n'est pas une faute en soi : le contenu se
+// remplit par lots. Depuis la migration 052 il n'en reste toutefois
+// AUCUNE — « Ecuador Sumatra » a recu son article, et le « Claro »
+// mexicain a quitte la liste, n'etant pas une variete mais une nuance
+// de cape.
+//
+// Les deux sens sont donc verifies : une fiche qu'aucune etiquette ne
+// designe est injoignable, une etiquette sans fiche est un article
+// qu'on croit ecrit et qui ne l'est pas. La seconde se leve legitimement
+// des qu'un lot commence ; c'est alors au lot de la refermer.
 $feuillesParPays = [];
 try {
     foreach ($db->query('SELECT country_id, name FROM feuilles') as $f) {
@@ -105,16 +111,25 @@ try {
 
 foreach ($db->query('SELECT id, varieties FROM producer_countries ORDER BY id') as $c) {
     $fiches = $feuillesParPays[$c['id']] ?? [];
-    if (!$fiches) continue;
 
     $listees = json_decode((string)$c['varieties'], true);
     if (!is_array($listees)) $listees = [];
 
+    // Un pays sans AUCUNE fiche n'est pas forcement en retard : le Costa
+    // Rica n'annonce aucune variete parce qu'il est une manufacture, pas
+    // une origine de feuille. C'est la liste `varieties` qui fait foi.
     foreach ($fiches as $nom) {
         if (!in_array($nom, $listees, true)) {
             $defauts[] = sprintf(
                 '%s : la feuille « %s » n\'est designee par aucune etiquette de varietes — sa fiche est injoignable',
                 $c['id'], $nom);
+        }
+    }
+    foreach ($listees as $etiquette) {
+        if (!in_array($etiquette, $fiches, true)) {
+            $defauts[] = sprintf(
+                '%s : la variete « %s » est annoncee mais n\'a pas de fiche — l\'etiquette ne mene nulle part',
+                $c['id'], $etiquette);
         }
     }
 }
@@ -384,6 +399,11 @@ echo "CigarOdyssey — coherence entre champs\n\n";
 
 if (!$defauts) {
     echo "  Les listes de regions suivent les zones posees sur le globe.\n";
+    // Dans cette branche $varietesSansFiche vaut zero par construction :
+    // afficher « N fiches pour N etiquettes » donnerait l'illusion de
+    // deux comptes independants qui concordent. Un seul chiffre, donc.
+    printf("  Les %d etiquettes de varietes ont chacune leur fiche, et reciproquement.\n",
+           array_sum(array_map('count', $feuillesParPays)));
     echo "  Aucun rang mondial non source n'est reapparu.\n";
     echo "  Le repli de la base dit la meme devise et le meme fuseau que l'ecran.\n";
     printf("  Les %d pays de data.pays.js concordent avec tzdata %s et ICU %s.\n",

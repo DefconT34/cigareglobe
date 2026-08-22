@@ -527,6 +527,31 @@ Au passage, un troisième piège du même bois : `rowCount()` rend `0`
 dans deux cas opposés — rien n'a été écrit, ou la valeur écrite était
 déjà là. L'import ne rescellait donc jamais un lot réimporté.
 
+### Et un contrôle qui ne regardait que dans un sens
+
+En comptant les fiches de feuilles pour répondre à la question « les
+avons-nous toutes ? », il a fallu écrire une requête à la main. Le
+contrôle existant ne savait pas répondre : il vérifiait qu'aucune fiche
+n'était **orpheline** (écrite mais désignée par aucune étiquette), pas
+qu'aucune étiquette n'était **vide** (annoncée mais sans article).
+
+Les deux défauts sont pourtant symétriques, et le second est le plus
+courant : c'est celui qui reste quand un lot s'arrête en chemin. Il
+manquait parce que le premier était né d'un incident précis — deux
+fiches mal nommées dans la migration `040` — et qu'on avait écrit le
+contrôle de cet incident-là, pas de la propriété qu'il violait.
+
+Le contrôle regarde maintenant dans les deux sens. Il se lèvera
+légitimement pendant qu'un lot est en cours ; c'est à ce lot de le
+refermer.
+
+Une des deux étiquettes trouvées, le « Claro » mexicain, n'appelait
+d'ailleurs pas un article mais un **retrait** : *claro* désigne une
+nuance de cape, pas une variété. Le corpus le disait déjà tout seul —
+dans les fiches de marques, le mot n'apparaît jamais isolé, toujours
+accolé à une variété. Un contrôle qui trouve un trou ne dit pas s'il
+faut le combler ou le supprimer.
+
 ---
 
 ## Une question à trancher avant de commencer

@@ -45,7 +45,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→027, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→052, cron des rappels) · M
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 
@@ -967,9 +967,31 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
   `coords_check.php` (R0), `geo_banquemondiale.php` (R2), `coherence_check.php` (R5). Les trois
   premiers existaient déjà sous une forme ou une autre et **ne servaient à rien faute de code
   de sortie** — c'est le motif qui revient le plus dans ce journal
-- ⚠ **Ce que la relecture ne dit toujours pas** : le compteur « relue » est à **zéro sur 5 580
+- ⚠ **Ce que la relecture ne dit toujours pas** : le compteur « relue » est à **zéro sur 6 405
   traductions**. Aucun humain n'a validé les cinq langues étrangères. Cette dette-là ne se
   comble pas par un outil
+
+### Les fiches de feuilles (migrations `038`→`052`)
+
+- **29 fiches, 15 pays producteurs**, chacune avec genèse, culture, caractères, notes et
+  accords dans les six langues. Toutes atteignables : `coherence_check.php` vérifie
+  désormais **les deux sens** — une fiche qu'aucune étiquette ne désigne est injoignable,
+  une étiquette sans fiche est un article qu'on croit écrit et qui ne l'est pas
+- **Le glossaire des arômes** (`051`) : vingt phrases qui rendent « Terre » ou « Cuir »
+  compréhensibles à qui ne pratique pas. Clé `(famille, contexte)`, parce que *Cacao* en
+  note annonce ce qu'on va goûter et *Chocolat noir* en accord ce qu'on boit à côté
+  - Cette clé composée a révélé un défaut dormant depuis `009` : les outils i18n
+    identifiaient une ligne par la **première** colonne de sa clé primaire, et le dump
+    recopiait donc une glose sur l'autre. Voir `docs/relecture.md`, dernière section
+- **Deux étiquettes restaient sans article** ; elles ne demandaient pas le même geste
+  (`052`). *Ecuador Sumatra* était un vrai manque — la troisième cape équatorienne, entre
+  la douceur de la Connecticut et le corps de l'Habano. Le *« Claro »* mexicain était une
+  **erreur de catégorie** : c'est une nuance de cape, pas une variété. Le corpus le disait
+  déjà — dans les fiches de marques, « Claro » n'apparaît jamais seul, toujours accolé à
+  une variété (« Habano Claro », « Colorado Claro »). Retiré plutôt que documenté
+- ⚠ **Reste en français dans les six langues** : le champ `emploi` (« Cape », « Tripe et
+  sous-cape »), sous-titre de chaque fiche. Vocabulaire fermé de neuf valeurs, jamais
+  déclaré dans le plan de traduction
 - **Question ouverte, non technique** : publier avant d'avoir relu, ou non ? À trancher
   avec l'avis juridique (loi Évin) et la décision de modération
 
