@@ -1821,6 +1821,88 @@ section('Le meme fait dit la meme chose partout');
 }
 
 // ════════════════════════════════════════════════════════
+section('Les fiches de marques n\'affirment rien d\'invérifiable');
+
+// L'inventaire des 116 maisons avait trouve 61 notes chiffrees attribuees
+// a une source nommee — avec annee et vitole precises — dont aucune
+// n'etait verifiable, et huit anecdotes mettant une phrase entre
+// guillemets dans la bouche d'une personne reelle, dont une seule etait
+// authentique.
+//
+// Les migrations 057 et 058 ont traite l'existant. Ce controle empeche le
+// stock de se reconstituer : il exige `source_url` sur toute note, refuse
+// toute parole pretee hors liste explicite, et verifie que les six
+// colonnes de chaque tableau portent le meme nombre d'entrees — c'est ce
+// dernier point qui avait trouve deux anecdotes invisibles hors du
+// francais, la ou le controle du contenu avait echoue.
+// Le detecteur de paroles pretees a echoue CINQ fois : verbe apres la
+// citation, incise, citation courte, apostrophe d'elision prise pour un
+// guillemet, verbe absent de la liste. Un passage vert sur le corpus du
+// jour ne dit rien de sa sante — il dit qu'il n'y a pas de defaut
+// aujourd'hui. `--autotest` le confronte aux douze cas qu'il a deja
+// rates ou sur lesquels il s'est deja trompe.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s --autotest',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/marques_check.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('parole pretee : les 12 cas construits restent conformes', 0, $code);
+    } else {
+        check('parole pretee : autotest lancable', false);
+    }
+}
+
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/marques_check.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('marques : aucune note sans source, aucune parole pretee', 0, $code);
+    } else {
+        check('marques : controle lancable', false);
+    }
+}
+
+// Des colonnes espagnoles, allemandes, chinoises et arabes contiennent de
+// l'ANGLAIS — le texte anglais entier, recopie tel quel dans les quatre
+// langues. `i18n_fraicheur` ne pouvait pas le voir : une case remplie
+// d'anglais est remplie, et scellee sur le bon francais. La traduction
+// existe, elle est juste dans la mauvaise langue.
+//
+// 691 elements sont concernes, pour ~131 000 caracteres a retraduire :
+// c'est un chantier de plusieurs passes. Le controle fonctionne donc au
+// CLIQUET — il echoue si un element NOUVEAU apparait, et le compte ne
+// peut que descendre.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/i18n_langue_check.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('traductions : aucune nouvelle colonne remplie d\'anglais', 0, $code);
+    } else {
+        check('traductions : controle de langue lancable', false);
+    }
+}
+
+// ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 
 // Un test qui ecrit dans la base APPLICATIVE ne se voit pas : il passe,

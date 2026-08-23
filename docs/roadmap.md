@@ -1080,6 +1080,143 @@ Les seize pays producteurs faits, restaient les **92 pays à lounges et les 10 m
 - Trois assertions Playwright verrouillent l'ensemble, dont une qui cherche explicitement le
   plan U+1F1E6–U+1F1FF dans les cartes : si un emoji de drapeau revient, elle le dit
 
+### Ce que les fiches de marques affirmaient (`056`, `057`, `058`)
+
+Un inventaire des 116 maisons a mesuré **274 assertions non sourçables** — 61 notes
+chiffrées, 73 anecdotes, 140 éditions limitées — soit **1 644 une fois les six langues
+comptées, un quart du contenu traduit de l'atlas**. Le compteur `relue` est toujours à zéro.
+
+- **Les paroles prêtées d'abord** (`057`), parce que c'est le seul endroit où une erreur de
+  contenu cesse d'être un problème avec un lecteur pour devenir un problème avec une
+  personne. Sur huit citations, **une seule était authentique** : le vers de Kipling dans
+  « The Betrothed ». Les sept autres étaient des aphorismes plausibles attribués à des gens
+  réels. Retirées, avec trois affirmations sur la consommation de **personnes vivantes** —
+  Michael Jordan, Jack Nicholson, Arnold Schwarzenegger — et celle d'Alain Ducasse
+  - Cinq entrées réécrites sans la parole inventée : le fait documenté tenait sans elle
+  - Les suppressions passent par `JSON_REMOVE` sur **les six colonnes à la fois**, index
+    décroissants. Retirer `[1]` du français seul aurait décalé le reste : le lecteur anglais
+    aurait lu l'anecdote de Churchill sous le nom de Groucho Marx
+- **Les 61 notes chiffrées retirées** (`058`). Aucune n'était sourçable. Signal
+  supplémentaire : **52 des 61 tombaient entre 2018 et 2023**, en une montée régulière
+  jusqu'à douze pour la seule année 2022 — une bibliographie réellement compilée est
+  grumeleuse, contient les classements anciens et célèbres, et a des trous
+- **`tools/marques_check.php`** empêche le stock de se reconstituer. Trois règles, **toutes
+  vues échouer** avant d'être gardées : `source_url` en http(s) exigé sur toute note ; aucune
+  parole prêtée hors liste explicite ; et les six colonnes de chaque tableau doivent porter
+  le même nombre d'entrées
+  - ⚠ **C'est la troisième règle qui a trouvé ce que les deux autres manquaient.** Drew Estate
+    et Macanudo portaient deux anecdotes en français et **une seule dans les cinq autres
+    langues**. Les deux orphelines étaient précisément du genre que `057` retirait, et avaient
+    survécu au balayage parce qu'elles ne contiennent ni citation ni verbe de consommation.
+    Le contrôle de forme rattrape ce que le contrôle de fond laisse passer — les deux ne se
+    remplacent pas
+- **`056`** avait enrichi onze marcas cubaines sur des faits d'histoire seulement, et laissé
+  `scores` vide d'emblée. Quatre marcas restent sans rubrique — Juan López, La Flor de Cano,
+  Saint Luis Rey, Vegueros — faute de fait documenté, ce qui est l'information juste
+### La fuite d'anglais dans les colonnes traduites (`059`→`072`)
+
+Des colonnes espagnoles, allemandes, chinoises et arabes contenaient de l'**anglais** — et pas
+une bribe : le texte anglais entier, recopié tel quel dans les quatre langues. Le récit du
+My Father Le Bijou 1922 était le même texte anglais dans les quatre.
+
+- **Aucun compteur ne pouvait le voir.** `i18n_fraicheur` compte les cases REMPLIES et vérifie
+  de quel français elles dérivent. Une case remplie d'anglais est remplie, et scellée sur le
+  bon français : la traduction existe, elle est simplement dans la mauvaise langue.
+  « 100 % traduit » était vrai et ne disait rien
+- **`tools/i18n_langue_check.php`** mesure des mots outils anglais avec un **témoin français** :
+  4 sur 575 déclencheraient le détecteur, donc il ne compte pas des faux positifs. Le chantier
+  faisant ~131 000 caractères, il fonctionne au **cliquet** — le compte ne peut que descendre,
+  et aucun élément nouveau ne peut apparaître
+- **691 → 0**, en quinze lots. Progression du cliquet : 691 → 635 → 551 → 535 → 459 → 368 →
+  360 → 329 *(mesure affinée, +37 défauts réels révélés)* → 323 → 315 → 249 → 181 → 125 → 73
+  → 27 → **0**. Fraîcheur pleine, zéro écriture étrangère, 116 fiches vertes
+- ⚠ **6 695 traductions, 0 relue par un humain.** Le compteur `relue` reste à zéro : c'est le
+  seul chiffre qui engage quelqu'un, et personne n'est encore engagé
+
+**Ce que la relecture a trouvé, et qu'une traduction mécanique aurait recopié :**
+
+- **Montecristo portait l'anecdote de Kennedy — qui concerne H. Upmann.** Et les deux versions
+  se contredisaient : chez H. Upmann ce sont les cigares de Kennedy, chez Montecristo « les
+  cigares préférés de Pierre Salinger », qui était l'attaché envoyé les acheter. Aucun contrôle
+  ne pouvait le voir : chaque fiche était cohérente **avec elle-même** — la panne du lot R5,
+  celle qui avait fait naître `coherence_check`
+- **Dix-neuf notes de presse cachées dans la prose** des vitoles, en deux vagues. La seconde
+  (six) a survécu à la première parce que mon motif exigeait le nombre *juste après* « score »,
+  et que le nom de la revue s'intercale : « Score Cigar Aficionado 93 ». **Troisième fois dans
+  ce chantier qu'un contrôle rate par sa forme et non par son intention**
+- **Deux affirmations au conditionnel** : Sinatra qui « aurait fumé les premiers prototypes
+  Avo », Clark Gable qui « aurait fumé plus de 300 cigares » sur un tournage. Un chiffre précis
+  sous un conditionnel — la combinaison la plus trompeuse qui soit
+- Une suppression par expression régulière a été **refusée** : elle produisait « Lancée 2004,
+  Cigar Aficionado. » et « lors du lancement. ». Les dix-neuf récits sont réécrits à la main
+### Ce que les douze lots suivants ont trouvé (`062`→`072`)
+
+**Sept fois, un contrôle écrit pour une affirmation a raté la même affirmation.** Les sept
+échappées ne sont pas sept étourderies : elles se rangent sur **trois axes distincts**, et
+c'est ce classement qui vaut d'être retenu.
+
+- **Axe 1 — la FORME de l'idée.** Cinq écritures d'une note de presse : « Score 96 » (`059`),
+  « Score Cigar Aficionado 93 » (`061`, le nom de la revue s'intercale), « Top 25 » / « classé
+  parmi » (`064`, pas de mot « score »), « scores 93-95 » (`065`, le pluriel bloque `\b`),
+  « Score parfait 100/100 » (`067`, trois chiffres et non deux). Puis « le meilleur PETIT
+  cigare cubain » (`068`), où l'adjectif s'intercale
+- **Axe 2 — la COLONNE.** « Le cigare de l'année n°1 » chez My Father (`068`). Le motif
+  connaissait la formule ; il ne lisait que `gamme.story`, et elle était dans
+  `celebrities.anecdote`. **Un contrôle rate aussi ce qu'il ne regarde pas.** Les trois champs
+  narratifs sont balayés depuis
+- **Axe 3 — le MARQUEUR.** La Flor Dominicana posait deux phrases entières entre guillemets,
+  après un point, **sans aucun verbe** (`071`). Le détecteur cherchait la syntaxe de
+  l'attribution — « dit », « déclara », un deux-points. Ici l'attribution était faite par
+  **l'en-tête de la fiche**, « José Blanco » en gras au-dessus, et une expression régulière ne
+  lit pas la mise en page. `citation_en_soi()` ne cherche plus de verbe : une portion citée
+  longue, ou contenant une phrase complète, suffit
+
+**Trois personnes réelles, trois citations inventées** — dont deux **vivantes** : José Blanco
+(La Flor Dominicana) et Hendrik Kelner (Santa Damiana). Plus Ramón Cifuentes (Partagás USA).
+Chez Kelner le verbe était là — « répète-t-il » — mais absent de la liste. **Un inventaire de
+verbes est toujours incomplet ;** c'est pour cela que la règle ne s'y appuie plus.
+
+- **Bianca Jagger retirée** de Joya de Nicaragua (`069`) : « souvent photographiée avec des
+  cigares » ne renvoie à aucune photo, et la seule chose vérifiable — être née à Managua — ne
+  relie personne à une marque. Personne vivante, militante des droits humains, rangée parmi les
+  figures d'une marque de tabac sans l'avoir jamais dit
+- **Un en-tête qui contredisait son texte** (`069`) : la migration `065` avait réécrit
+  l'anecdote de Joya pour dire qu'aucune préférence de Nixon n'est attestée — et laissé le
+  titre « Richard Nixon » au-dessus. **Ma propre correction était incomplète, et aucun contrôle
+  ne compare un en-tête à son texte**
+- **Trois dates de marque collées à une gamme** : Trinidad 1985 (`062`), Rocky Patel « vieilli
+  depuis 1992 » (`068`), Romeo y Julieta « lancée en 1875 » (`070`). Une fiche de gamme veut une
+  date, et la seule disponible est celle de la maison
+- **Quatre doublons divergents** : Kennedy sur Montecristo *et* H. Upmann, Drew Estate *et*
+  Liga Privada (`066`, avec la coquille « il en a **épité** quelques millions »). Chaque fiche
+  est cohérente **avec elle-même** — le seul angle mort que `coherence_check` ne couvre pas
+- **Cinq fautes de français dans le texte source** — « teste chaque blend en **les** fumant »
+  (`068`), « un accord d'**une** raffinement absolu » (`069`), « l'Armagnac **vieillit** »
+  (`071`), « le cognac d'entrée gamme » et « poivre **commun** aux deux » (`072`). **Toutes les
+  cinq trouvées en traduisant, aucune en relisant le français.** Relire sa propre langue, c'est
+  glisser sur le sens déjà connu ; traduire oblige à décider ce que chaque mot fait
+- **`--autotest`** : le détecteur de paroles ayant échoué cinq fois, `marques_check.php` porte
+  désormais **douze cas construits** — chacun une tournure qui l'a déjà pris en défaut — joués
+  à chaque campagne. Un passage vert sur le corpus du jour ne dit rien de la santé du contrôle
+- **Une exception nommée plutôt qu'un motif affaibli** : El Rey del Mundo *rapporte* un slogan
+  de 1848 en le qualifiant de réclame immodeste. `AFFIRMATIONS_HISTORIQUES` la déclare et la
+  réaffiche à chaque passage vert — une exception qu'on ne voit plus redevient un trou
+- **Un compromis assumé** : le deux-points et « comme » ont quitté les marqueurs de parole. Ils
+  produisaient deux faux positifs constants (« L'idée : la 'zone dorée' », « considéré comme le
+  meilleur 'petit cigare' »). Le prix : une citation **courte** introduite par un seul
+  deux-points n'est plus vue. Le même signe sert aux deux usages, on ne peut pas avoir les deux
+
+⚠ **Chantier ouvert, non traité : 127 anglicismes techniques dans 84 textes FRANÇAIS**
+(`wrapper` ×75, `blend` ×36, `medium-full` ×10, puis `binder`, `filler`, `sun-grown`,
+`shade-grown`). Les textes réécrits par ces migrations passent à « cape / sous-cape / tripe » ;
+le reste attend une décision de vocabulaire. Effet secondaire à connaître : `MOTS_ANGLAIS`, dans
+le détecteur de fuite, contient `wrapper`, `filler`, `binder` et `blend` — **le français source
+alimente le vocabulaire qui sert à détecter l'anglais résiduel** (témoin à 1/568).
+
+⚠ Le champ `name`, qui ne doit jamais être traduit, porte encore « Spanish Empire » en espagnol,
+allemand, chinois et arabe pour Tabacalera ; « Aztecs and Totonacs » pour Te Amo ; « The
+European Café » pour Café Crème.
+
 ### Les étiquettes : lisibles, et cliquables pour de bon
 
 - **Le corps était à 7 px**, et le suffixe « ▶ La feuille » à `.85em` de 7 px, soit **5,95 px
