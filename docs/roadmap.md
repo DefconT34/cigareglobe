@@ -1035,6 +1035,32 @@ confirmé plutôt que remplacé par des images — mais il fallait qu'ils ressem
   assumées** : à trente pixels, un blason est une silhouette
 - `coherence_check.php` compare désormais `FLAGS_DESSINES` à `producer_countries` — c'est le
   contrôle qui manquait, et qui aurait signalé l'Italie le jour même de `053`
+### Puis les quatre-vingt-sept autres
+
+Les seize pays producteurs faits, restaient les **92 pays à lounges et les 10 marchés** —
+87 identifiants sans dessin, soit **78 drapeaux réels** une fois les doublons de marché
+(`usa_mkt`, `france_mkt`…) renvoyés vers le pays qu'ils désignent.
+
+- **Une table déclarative plutôt que cent `case`.** À seize, écrire chaque drapeau en code
+  tenait ; à quatre-vingt-quatorze, chaque tricolore aurait recopié les mêmes trois lignes.
+  `FLAGS_SPEC` décrit en une ligne les drapeaux qui se ramènent à des bandes plus, parfois,
+  une figure. Seuls les quatorze qui n'entrent dans aucun moule — Union Jack, pairle
+  sud-africain, taegeuk coréen, dentelures du Qatar — gardent un tracé dédié
+- **Les emblèmes complexes sont des stylisations assumées** et le code le dit : sphère
+  armillaire portugaise, aigle égyptien, armes du Guatemala, chahada saoudienne. À trente
+  pixels, un blason est une silhouette — on cherche la lecture juste, pas le fac-similé
+- **Un défaut trouvé au rendu, invisible autrement** : l'Australie ne peignait que son canton
+  et ses étoiles, sans champ bleu. Sur une vignette blanche ça ressemblait à un drapeau ;
+  sur le panneau sombre du site, à un trou. La liste était complète, la fonction ne jetait
+  pas, aucun compteur ne bronchait
+- **Deux garde-fous, tous deux vus échouer** :
+  - `coherence_check.php` couvre désormais les **trois** familles de fiches — producteurs,
+    pays à lounges, marchés — soit 118 fiches. Ne vérifier que les seize producteurs aurait
+    laissé quatre-vingt-sept fiches sur des bandes grises
+  - `tests/e2e/drapeaux.spec.js` mesure la **surface peinte** de chaque drapeau sur quatre
+    trames d'animation. C'est la seule chose qui attrape le cas australien : en le
+    réintroduisant, le test le dénonce à 27 % de couverture
+
 - ⚠ **Les drapeaux emoji ne s'affichent pas sur Windows.** Mesuré : la largeur de 🇮🇹 égale
   celle des deux indicateurs régionaux séparés, contre 55 px pour un emoji ordinaire. Windows
   n'a pas de glyphe de drapeau et rend « IT ». Cela concerne les listes, l'Explorer, le

@@ -368,11 +368,19 @@ $flagsJs = (string)@file_get_contents(__DIR__ . '/../assets/js/flags.js');
 if (preg_match('/FLAGS_DESSINES\s*=\s*\[(.*?)\]/s', $flagsJs, $mf)) {
     preg_match_all("/'([a-z0-9_-]+)'/", $mf[1], $mff);
     $dessines = $mff[1] ?? [];
-    foreach ($db->query('SELECT id, name FROM producer_countries ORDER BY id') as $c) {
-        if (!in_array($c['id'], $dessines, true)) {
-            $defauts[] = sprintf(
-                '%s : aucun drapeau dessine dans flags.js — la fiche affiche trois bandes grises',
-                $c['id']);
+    // Les TROIS familles de fiches, pas seulement les producteurs : un
+    // pays a lounges et un marche ouvrent le meme panneau et appellent
+    // le meme drawFlag(). Ne verifier que les seize producteurs aurait
+    // laisse quatre-vingt-sept fiches sur des bandes grises.
+    foreach (['producer_countries' => 'pays producteur',
+              'lounge_countries'   => 'pays a lounges',
+              'markets'            => 'marche'] as $table => $quoi) {
+        foreach ($db->query("SELECT id FROM `$table` ORDER BY id") as $c) {
+            if (!in_array($c['id'], $dessines, true)) {
+                $defauts[] = sprintf(
+                    '%s (%s) : aucun drapeau dessine dans flags.js — la fiche affiche trois bandes grises',
+                    $c['id'], $quoi);
+            }
         }
     }
     $nbDessines = count($dessines);
@@ -438,9 +446,11 @@ if (!$defauts) {
            count($front['pays']), timezone_version_get(),
            extension_loaded('intl') ? INTL_ICU_VERSION : '(absent)');
     if (isset($nbDessines)) {
-        printf("  Les %d pays producteurs ont chacun leur drapeau dessine (%d dans flags.js).\n",
-               (int)$db->query('SELECT COUNT(*) FROM producer_countries')->fetchColumn(),
-               $nbDessines);
+        $fiches = 0;
+        foreach (['producer_countries','lounge_countries','markets'] as $t) {
+            $fiches += (int)$db->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
+        }
+        printf("  Les %d fiches pays, lounges et marches ont chacune leur drapeau dessine.\n", $fiches);
     }
     if (isset($updatesDump)) {
         printf("  Les %d UPDATE de traductions.sql designent chacun une seule ligne.\n",
