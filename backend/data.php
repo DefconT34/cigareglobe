@@ -154,7 +154,7 @@ function champs_traduits(string $table): array {
         // Doit rester d'accord avec tools/i18n_contenu_plan.php : deux
         // listes du meme fait, et c'est le piege documente au lot 5.
         // tests/run.php compare desormais les deux.
-        'feuilles'           => ['genese','culture','caracteres','notes','pairings'],
+        'feuilles'           => ['emploi','genese','culture','caracteres','notes','pairings'],
         'aromes'             => ['texte'],
     ][$table] ?? [];
 }

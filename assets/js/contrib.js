@@ -23,10 +23,10 @@ function populateCountrySelect() {
 
   var all = [];
   if (typeof COUNTRIES !== 'undefined') {
-    COUNTRIES.forEach(function(c) { all.push({ id:c.id, name:c.flag+' '+c.name }); });
+    COUNTRIES.forEach(function(c) { all.push({ id:c.id, name:c.name }); });
   }
   if (typeof LOUNGE_COUNTRIES !== 'undefined') {
-    LOUNGE_COUNTRIES.forEach(function(c) { all.push({ id:c.id, name:c.flag+' '+c.name }); });
+    LOUNGE_COUNTRIES.forEach(function(c) { all.push({ id:c.id, name:c.name }); });
   }
   all.sort(function(a,b){ return a.name.slice(2).localeCompare(b.name.slice(2)); });
   all.forEach(function(c) {

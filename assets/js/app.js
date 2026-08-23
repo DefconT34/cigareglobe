@@ -241,7 +241,9 @@ function openLoungePanel(c, background) {
   var excerpt = document.getElementById('panel-lounges');
   if (excerpt) excerpt.innerHTML = '';
 
-  document.getElementById('lFlag').textContent   = c.flag || '';
+  // Vignette dessinee, pas l'emoji : Windows n'a pas de glyphe de
+  // drapeau et affichait « IT » pour l'Italie.
+  drapeauDans(document.getElementById('lFlag'), c.id, 44, 29);
   document.getElementById('lName').textContent   = c.name || '';
   document.getElementById('lRegion').textContent = c.region || 'Caves & Lounges';
 

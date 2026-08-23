@@ -207,6 +207,26 @@ function setup_test_database(): PDO {
                  -- glose recopiee de l'autre cote.
                  '[\"Terre\", \"Cacao\"]', '[\"Chocolat noir\"]')"
     );
+
+    // `feuilles.emploi` est un vocabulaire ferme de neuf valeurs, traduit
+    // par la migration 055 en UPDATE indexes SUR LA VALEUR — pas sur un
+    // identifiant de fiche. Les rejouer traduit donc aussi la graine, qui
+    // porte « Cape » comme onze fiches reelles.
+    //
+    // APRES l'insertion, evidemment : place avec les autres rejeux de
+    // reference, plus haut, ils mettaient a jour une table encore vide et
+    // n'ecrivaient rien. Le test tombait alors sur un emploi francais dans
+    // les six langues — exactement le defaut qu'il surveille.
+    //
+    // On ne prend que les UPDATE : ajouter `feuilles` au rejeu de
+    // reference emporterait aussi les INSERT des trente fiches reelles, et
+    // la base de test cesserait d'etre minimale.
+    foreach (glob(PROJECT_ROOT . '/sql/migrations/*.sql') ?: [] as $f) {
+        $sql = (string)@file_get_contents($f);
+        if (preg_match_all('/UPDATE\s+`?feuilles`?\s+SET\s+`?emploi_.*?;\s*$/sim', $sql, $m)) {
+            foreach ($m[0] as $stmt) $pdo->exec($stmt);
+        }
+    }
     return $pdo;
 }
 

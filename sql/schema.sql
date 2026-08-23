@@ -239,6 +239,11 @@ CREATE TABLE `feuilles` (
   `pairings_de` longtext COLLATE utf8mb4_unicode_ci,
   `pairings_zh` longtext COLLATE utf8mb4_unicode_ci,
   `pairings_ar` longtext COLLATE utf8mb4_unicode_ci,
+  `emploi_en` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emploi_es` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emploi_de` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emploi_zh` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `emploi_ar` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `feuilles_pays` (`country_id`),
   CONSTRAINT `feuilles_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `producer_countries` (`id`)

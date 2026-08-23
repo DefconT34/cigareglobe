@@ -23,7 +23,7 @@ function plan_contenu(): array {
         'production_zones'   => ['note'],
         'habanos_presence'   => ['status','ownership','description','festival'],
         'brands'             => ['history','gamme','celebrities','pairings'],
-        'feuilles'           => ['genese','culture','caracteres','notes','pairings'],
+        'feuilles'           => ['emploi','genese','culture','caracteres','notes','pairings'],
         'aromes'             => ['texte'],
         'lounges'            => ['description'],
     ];

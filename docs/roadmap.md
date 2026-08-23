@@ -1061,11 +1061,40 @@ Les seize pays producteurs faits, restaient les **92 pays à lounges et les 10 m
     trames d'animation. C'est la seule chose qui attrape le cas australien : en le
     réintroduisant, le test le dénonce à 27 % de couverture
 
-- ⚠ **Les drapeaux emoji ne s'affichent pas sur Windows.** Mesuré : la largeur de 🇮🇹 égale
-  celle des deux indicateurs régionaux séparés, contre 55 px pour un emoji ordinaire. Windows
-  n'a pas de glyphe de drapeau et rend « IT ». Cela concerne les listes, l'Explorer, le
-  formulaire de contribution et les fêtes — partout sauf les fiches pays, qui ont le dessin.
-  **Non traité**, hors du périmètre choisi
+### Les emoji remplacés par des vignettes dessinées
+
+- **Le défaut, mesuré** : la largeur de 🇮🇹 égale celle des deux indicateurs régionaux pris
+  séparément, contre 55 px pour un emoji ordinaire. Windows n'embarque aucun glyphe de
+  drapeau et rend « IT ». macOS, iOS et Android les affichent parfaitement — c'est pourquoi
+  le défaut a tenu si longtemps : **il ne se voit pas chez celui qui développe sur Mac**
+- Puisque `drawFlag()` sait tracer les 103 fiches, on s'en sert : une **vignette PNG en
+  data-URL**, mise en cache par identifiant et par taille. Pas de fichier à héberger, pas de
+  requête réseau, rien à autoriser dans la CSP. L'Explorer affiche 500 vignettes tirées de
+  185 dessins
+- Six emplacements basculés : en-tête de fiche pays, en-tête du panneau lounges, cartes de
+  l'Explorer, bulle de regroupement, bandeau de fête nationale. Là où une image est
+  impossible — les `<option>` du formulaire de contribution — l'emoji est **retiré** plutôt
+  que laissé : « IT Italie » n'aide personne
+- La **liste d'accessibilité** perd aussi ses emoji : un lecteur d'écran sous Windows épelait
+  « I T » avant chaque nom de pays, qui est déjà écrit juste après
+- Trois assertions Playwright verrouillent l'ensemble, dont une qui cherche explicitement le
+  plan U+1F1E6–U+1F1FF dans les cartes : si un emoji de drapeau revient, elle le dit
+
+### L'emploi des feuilles, dans les six langues (`055`)
+
+- Le sous-titre de chaque fiche de feuille — « Cape », « Tripe et sous-cape » — s'affichait
+  en **français dans les six langues**
+- **Le compteur ne pouvait pas le voir** : `emploi` n'était déclaré dans aucun des deux plans
+  de traduction, et `i18n_fraicheur` annonçait 100 % — ce qui était vrai des champs *déclarés*
+  et muet sur celui qui ne l'était pas. Un champ hors périmètre n'est pas « manquant », il est
+  absent
+- Vocabulaire fermé de neuf valeurs, traduit dans le vocabulaire du métier :
+  *Wrapper/Binder/Filler*, *Capa/Capote/Tripa*, *Deckblatt/Umblatt/Einlage*, 茄衣/茄套/茄芯,
+  غلاف/رابط/حشوة. Les traductions viennent d'un chantier parallèle dont la migration n'avait
+  jamais atteint le dépôt — elles ont été relues puis reprises
+- Le garde-fou est désormais automatique et **vérifié** : en introduisant une dixième valeur,
+  `i18n_fraicheur` la signale aussitôt comme cinq traductions manquantes, ce que
+  `tests/run.php` fait échouer
 
 - ⚠ **Deux sessions ont partagé la même base MySQL** pendant ce chantier. `sql/schema.sql`
   régénéré a capté cinq colonnes `emploi_*` créées par l'autre, et la fixture les a nommées.

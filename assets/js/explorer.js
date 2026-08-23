@@ -140,7 +140,7 @@ function renderList() {
     var insta  = l.instagram ? '<a class="exp-link" href="https://instagram.com/'+l.instagram.replace('@','')+'" target="_blank" rel="noopener">📸</a>' : '';
     return '<div class="exp-card" data-uid="'+l.uid+'" onclick="expSelectCard(\''+l.uid+'\')">'+
       '<div class="exp-card-head">'+
-        '<span class="exp-flag">'+l.flag+'</span>'+
+        '<span class="exp-flag">'+drapeauImg(l.cid, 'exp-flag-img', 26, 17)+'</span>'+
         '<div class="exp-card-info">'+
           '<div class="exp-card-name">'+l.name+'</div>'+
           '<div class="exp-card-meta">'+
@@ -209,7 +209,7 @@ function updateMapMarkers() {
   // Grouper par pays (éviter 198 marqueurs individuels au zoom 2)
   var byCountry = {};
   _filtered.forEach(function(l) {
-    if (!byCountry[l.cid]) byCountry[l.cid] = { lat:l.lat, lon:l.lon, country:l.country, flag:l.flag, lounges:[] };
+    if (!byCountry[l.cid]) byCountry[l.cid] = { cid:l.cid, lat:l.lat, lon:l.lon, country:l.country, flag:l.flag, lounges:[] };
     byCountry[l.cid].lounges.push(l);
   });
 
@@ -245,7 +245,7 @@ function updateMapMarkers() {
 
 function buildPopup(g) {
   var html = '<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:.1em;color:#C9A227;margin-bottom:6px">'+
-    g.flag+' '+g.country.toUpperCase()+'</div>';
+    drapeauImg(g.cid, 'exp-flag-img', 20, 13)+' '+g.country.toUpperCase()+'</div>';
   g.lounges.slice(0,5).forEach(function(l) {
     var color = TYPE_COLORS[l.normType] || '#8B2BE2';
     html += '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.08)">'+
@@ -499,7 +499,7 @@ window.addEventListener('DOMContentLoaded', function() {
     .exp-card:hover { border-color:var(--gold); background:var(--bg3); }
     .exp-card.active { border-color:var(--gold); border-left:3px solid var(--gold); }
     .exp-card-head { display:flex; align-items:flex-start; gap:8px; }
-    .exp-flag { font-size:18px; flex-shrink:0; line-height:1.3; }
+    .exp-flag { flex-shrink:0; line-height:0; }
     .exp-card-info { flex:1; min-width:0; }
     .exp-card-name {
       font-family:'Playfair Display',serif; font-size:13px;

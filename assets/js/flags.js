@@ -1020,6 +1020,66 @@ function drawFlag(cvs,id,t=0){
   }
 }
 
+// ════════════════════════════════════════════════════════
+// VIGNETTES — le drapeau la ou l'emoji ne s'affiche pas
+// ────────────────────────────────────────────────────────
+// LE DEFAUT. Les listes, l'Explorer, les fetes nationales et l'en-tete
+// des panneaux affichaient le drapeau EMOJI. Windows n'embarque aucun
+// glyphe de drapeau : il rend les deux indicateurs regionaux comme deux
+// lettres, « IT » pour l'Italie. Mesure dans le navigateur — la largeur
+// de l'emoji italien egale exactement celle des deux indicateurs pris
+// separement, contre 55 px pour un emoji ordinaire.
+//
+// macOS, iOS et Android les affichent parfaitement, ce qui explique que
+// personne ne l'ait vu : le defaut ne se manifeste que chez une partie
+// des visiteurs, et jamais chez celui qui developpe sur Mac.
+//
+// Puisque drawFlag() sait desormais tracer les cent trois fiches de
+// l'atlas, on s'en sert : une vignette PNG en data-URL, mise en cache.
+// Pas de fichier a heberger, pas de requete reseau, et la CSP n'a rien
+// a autoriser.
+var _vignettes = {};
+
+/** Drapeau d'une fiche en data-URL PNG. Trace une seule fois par taille. */
+function drapeauURL(id, w, h) {
+  var cle = id + '|' + w + '|' + h;
+  if (_vignettes[cle]) return _vignettes[cle];
+  var cv = document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  // t = 0 : une vignette ne flotte pas. L'ondulation est reservee aux
+  // grands drapeaux animes des fiches pays.
+  drawFlag(cv, id, 0);
+  return (_vignettes[cle] = cv.toDataURL('image/png'));
+}
+
+/**
+ * Balise <img> prete a coller dans du HTML.
+ *
+ * Une image plutot qu'un canvas : elle se clone, se met en cache par le
+ * navigateur et n'immobilise pas un contexte graphique par vignette —
+ * l'Explorer en affiche parfois quatre-vingt-dix d'un coup.
+ *
+ * `alt` reste VIDE et l'element est masque aux lecteurs d'ecran : le nom
+ * du pays est toujours ecrit juste a cote, et le repeter ferait entendre
+ * « Italie Italie ».
+ */
+function drapeauImg(id, classe, w, h) {
+  if (!id) return '';
+  // Un identifiant inconnu recoit le repli gris de drawFlag(), comme le
+  // grand drapeau anime — et non du vide. Rendre '' laissait un trou
+  // dans la carte, ce qui se voit moins qu'un drapeau faux mais casse
+  // l'alignement. Qu'aucune fiche REELLE n'y tombe est garanti par
+  // tools/coherence_check.php, pas par cette fonction.
+  return '<img class="' + (classe || 'drapeau-vignette') + '" alt="" aria-hidden="true"'
+       + ' width="' + w + '" height="' + h + '" src="' + drapeauURL(id, w * 2, h * 2) + '">';
+}
+
+/** Pose le drapeau dans un element existant, ou le vide si l'id est inconnu. */
+function drapeauDans(el, id, w, h) {
+  if (!el) return;
+  el.innerHTML = drapeauImg(id, el.className.indexOf('vignette') > -1 ? el.className : 'drapeau-vignette', w, h);
+}
+
 var flagT=0,flagRaf=null,bannerRaf=null,lexBannerRaf=null;
 
 // Les pays dont drawFlag() sait tracer le drapeau ; tout autre

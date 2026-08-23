@@ -181,7 +181,7 @@
     var drapeau = document.createElement('span');
     drapeau.className = 'fete-drapeau';
     drapeau.setAttribute('aria-hidden', 'true');
-    drapeau.textContent = pays.flag;
+    drapeau.innerHTML = drapeauImg(pays.id, 'fete-drapeau-img', 42, 28);
 
     var textes = document.createElement('div');
     textes.className = 'fete-textes';

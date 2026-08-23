@@ -439,6 +439,29 @@ foreach (['fr' => $glo, 'zh' => $glo2] as $lg => $g) {
           && $g['note|cacao'] !== $g['accord|cacao']);
 }
 
+// ── L'emploi de la feuille suit la langue ────────────────
+//
+// « Cape », « Tripe et sous-cape » : le sous-titre de la fiche, et le
+// seul mot qui dise a quoi la feuille sert. Il s'affichait en francais
+// dans les six langues, parce que `emploi` n'etait declare dans aucun
+// des deux plans de traduction.
+//
+// LE COMPTEUR NE POUVAIT PAS LE VOIR. i18n_fraicheur annoncait 100 %,
+// ce qui etait vrai des champs DECLARES et muet sur celui qui ne l'etait
+// pas. Un champ hors perimetre n'est pas « manquant » : il est absent.
+// Maintenant qu'il est declare, une dixieme valeur saisie plus tard
+// remontera d'elle-meme comme manquante.
+check('feuille : porte son emploi', !empty($f['emploi']));
+$emplois = [];
+foreach (['fr', 'en', 'de'] as $lg) {
+    $rr = http('GET', $base . '/backend/data.php?action=feuille&id=feuille-de-test&lang=' . $lg,
+               ['jar' => $anon]);
+    $emplois[$lg] = $rr['json']['feuille']['emploi'] ?? null;
+}
+check('feuille : l\'emploi est traduit, pas servi en francais partout',
+      $emplois['fr'] !== null && $emplois['en'] !== null
+      && $emplois['fr'] !== $emplois['en'] && $emplois['en'] !== $emplois['de']);
+
 $r = http('GET', $base . '/backend/data.php?action=feuille&id=inconnue', ['jar' => $anon]);
 eq('feuille inconnue : refus', 404, $r['status']);
 

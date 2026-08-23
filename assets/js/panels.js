@@ -192,7 +192,7 @@ function _varietesHtml(c) {
 
 // ════════════════════════════════════════════════════════
 function openLex(c) {
-  document.getElementById('lexFlag').textContent = c.flag;
+  drapeauDans(document.getElementById('lexFlag'), c.id, 38, 25);
   document.getElementById('lexName').textContent = c.name;
   document.getElementById('lexReg').textContent  = _tr(c.region);
   document.getElementById('lex').classList.add('open');

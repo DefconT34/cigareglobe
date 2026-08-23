@@ -64,6 +64,61 @@ test.describe('Drapeaux dessines', () => {
     expect(bilan.nb).toBeGreaterThan(90);
   });
 
+  // ── L'emoji ne s'affiche pas sur Windows ──────────────
+  //
+  // Les listes affichaient le drapeau EMOJI. Windows n'embarque aucun
+  // glyphe de drapeau : il rend les deux indicateurs regionaux comme
+  // deux lettres — « IT » pour l'Italie. macOS, iOS et Android les
+  // affichent parfaitement, ce qui explique que le defaut ait tenu si
+  // longtemps : il ne se voit pas chez celui qui developpe sur Mac.
+  //
+  // Ce test ne peut pas verifier le rendu de la police — il verifie ce
+  // qui le remplace : la presence d'une VIGNETTE DESSINEE, et l'absence
+  // du caractere emoji dans le texte.
+  test('les listes portent une vignette dessinee, pas un emoji', async ({ page }) => {
+    await ouvrir(page, '/');
+    await page.waitForFunction(() => typeof drapeauImg === 'function', null, { timeout: 15_000 });
+
+    const bilan = await page.evaluate(async () => {
+      if (typeof openExplorer === 'function') openExplorer();
+      await new Promise(r => setTimeout(r, 2000));
+      const cases = Array.from(document.querySelectorAll('.exp-flag'));
+      // Les indicateurs regionaux vivent dans le plan U+1F1E6..U+1F1FF.
+      const emoji = /[\u{1F1E6}-\u{1F1FF}]/u;
+      return {
+        cases:   cases.length,
+        avecImg: cases.filter(e => e.querySelector('img')).length,
+        avecEmoji: cases.filter(e => emoji.test(e.textContent || '')).length
+      };
+    });
+
+    // Un compteur a zero passerait les deux assertions suivantes sans
+    // rien avoir verifie.
+    expect(bilan.cases, 'aucune carte dans l\'Explorer').toBeGreaterThan(20);
+    expect(bilan.avecEmoji, 'emoji de drapeau encore present').toBe(0);
+    expect(bilan.avecImg).toBe(bilan.cases);
+  });
+
+  test('l\'en-tete d\'une fiche pays porte sa vignette', async ({ page }) => {
+    await ouvrir(page, '/');
+    await page.waitForFunction(
+      () => typeof openLex === 'function' && Array.isArray(window.COUNTRIES) && COUNTRIES.length,
+      null, { timeout: 15_000 }
+    );
+    const t = await page.evaluate(async () => {
+      openLex(COUNTRIES[0]);
+      await new Promise(r => setTimeout(r, 500));
+      const el = document.getElementById('lexFlag');
+      const img = el && el.querySelector('img');
+      return { img: !!img, largeur: img ? img.width : 0,
+               dataURL: img ? img.src.slice(0, 15) : '' };
+    });
+    expect(t.img, 'pas de vignette dans l\'en-tete').toBe(true);
+    expect(t.largeur).toBeGreaterThan(10);
+    // Une data-URL : rien a telecharger, donc rien a autoriser dans la CSP.
+    expect(t.dataURL).toContain('data:image');
+  });
+
   test('un identifiant inconnu retombe sur le repli, sans jeter', async ({ page }) => {
     await ouvrir(page, '/');
     await page.waitForFunction(() => typeof drawFlag === 'function', null, { timeout: 15_000 });

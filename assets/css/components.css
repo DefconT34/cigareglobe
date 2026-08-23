@@ -115,8 +115,24 @@ html, body {
 .lex-banner { height:100px; }
 #panel-flag-cvs, #lex-flag-cvs { width:100%; height:100%; display:block; }
 .banner-ov, .lex-banner-ov { position:absolute; top:0;right:0;bottom:0;left:0; background:linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,.55)); }
-.banner-flag { position:absolute; bottom:8px; left:16px; font-size:38px; line-height:1; filter:drop-shadow(0 2px 6px rgba(0,0,0,.3)); }
-.lex-flag-emoji { position:absolute; bottom:8px; left:14px; font-size:32px; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,.4)); }
+.banner-flag { position:absolute; bottom:8px; left:16px; line-height:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.3)); }
+.lex-flag-emoji { position:absolute; bottom:8px; left:14px; line-height:0; filter:drop-shadow(0 2px 4px rgba(0,0,0,.4)); }
+
+/* ── Vignettes de drapeau ──────────────────────────────────
+   Ces quatre classes portent une IMAGE, plus un emoji : Windows n'a
+   aucun glyphe de drapeau et rendait « IT » pour l'Italie. Le dessin
+   vient de drawFlag(), déjà utilisé pour les grands drapeaux animés.
+
+   Le liseré et le rayon sont là pour que la vignette se détache du
+   fond sombre : un drapeau à dominante noire ou blanche s'y fondrait
+   sans lui. */
+.drapeau-vignette, .exp-flag-img, .fete-drapeau-img {
+  display:inline-block; vertical-align:middle; border-radius:2px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14);
+  object-fit:cover;
+}
+.exp-flag-img  { width:26px; height:17px; }
+.fete-drapeau-img { width:42px; height:28px; }
 .banner-name { position:absolute; bottom:12px; left:66px; font-family:'Playfair Display',serif; font-size:22px; font-weight:900; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.5); }
 .lex-country-name { position:absolute; bottom:10px; left:58px; font-family:'Playfair Display',serif; font-size:18px; font-weight:900; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,.5); }
 .banner-region { position:absolute; bottom:0; left:68px; font-family:'Playfair Display',serif; font-style:italic; font-size:10px; color:rgba(255,255,255,.7); }
@@ -928,7 +944,7 @@ body.mobile-mode .contrib-box { width:100%; max-width:100%; border-radius:16px 1
 }
 /* Le pave de texte est en lecture seule : lui laisser pointer-events
    masquerait le globe juste dessous. */
-.fete-drapeau { font-size: 30px; line-height: 1; }
+.fete-drapeau { line-height: 0; }
 .fete-textes  { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .fete-libelle {
   font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .14em;

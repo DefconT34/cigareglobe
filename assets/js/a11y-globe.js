@@ -80,11 +80,11 @@
     var out = [];
     (window.COUNTRIES || []).forEach(function (c) {
       out.push({ type: 'country', data: c, group: c.tier ? t('a11y_grp_producers') : t('a11y_grp_countries'),
-                 label: (c.flag ? c.flag + ' ' : '') + c.name });
+                 label: c.name });
     });
     (window.MARKETS || []).forEach(function (m) {
       out.push({ type: 'market', data: m, group: t('a11y_grp_markets'),
-                 label: (m.flag ? m.flag + ' ' : '') + m.name + ' '
+                 label: m.name + ' '
                         + t('a11y_market_rank').replace('{n}', m.rank) });
     });
     var producers = {};
@@ -92,7 +92,7 @@
     (window.LOUNGE_COUNTRIES || []).forEach(function (lc) {
       if (producers[lc.id]) return;               // déjà listé comme pays producteur
       out.push({ type: 'lounge', data: lc, group: t('a11y_grp_lounges'),
-                 label: (lc.flag ? lc.flag + ' ' : '') + lc.name });
+                 label: lc.name });
     });
     return out;
   }
