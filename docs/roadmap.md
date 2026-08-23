@@ -1080,6 +1080,24 @@ Les seize pays producteurs faits, restaient les **92 pays à lounges et les 10 m
 - Trois assertions Playwright verrouillent l'ensemble, dont une qui cherche explicitement le
   plan U+1F1E6–U+1F1FF dans les cartes : si un emoji de drapeau revient, elle le dit
 
+### Les étiquettes : lisibles, et cliquables pour de bon
+
+- **Le corps était à 7 px**, et le suffixe « ▶ La feuille » à `.85em` de 7 px, soit **5,95 px
+  à 55 % d'opacité**. Sous le seuil où l'on lit quoi que ce soit. Porté à 9 px / 7,92 px / 0,75
+- **La cliquable et l'inerte ne différaient que par `cursor:pointer` et un effet de survol** —
+  donc rien au premier coup d'œil, rien au clavier, et rien du tout sur mobile où le survol
+  n'existe pas. La cliquable porte désormais trois marques permanentes : fond teinté de sa
+  propre couleur, bordure pleine, chevron. L'inerte est **déclarée** (`tag-inerte`, contour
+  pointillé) au lieu d'être déduite d'une absence de classe
+- Le chevron `▶` était **enfermé dans les six chaînes traduites** : du mobilier d'interface
+  dans du contenu traduit, impossible à styler, recopié six fois et pointant du mauvais côté
+  en arabe. Passé en CSS, avec son inversion RTL
+- L'élément porte `role="button"` et `tabindex="0"` mais **aucun anneau de focus** :
+  atteignable au clavier, invisible une fois atteint
+- `color-mix` a un repli explicite : là où il n'est pas connu la déclaration est ignorée, et
+  la cliquable garderait le fond de l'inerte — exactement la confusion qu'on corrige
+- Contraste vérifié en thème sombre : **4,68:1**, au-dessus du seuil AA
+
 ### L'emploi des feuilles, dans les six langues (`055`)
 
 - Le sous-titre de chaque fiche de feuille — « Cape », « Tripe et sous-cape » — s'affichait

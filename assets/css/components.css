@@ -168,7 +168,15 @@ html, body {
    c'est une phrase, elle ne doit pas se lire comme un chiffre. */
 .rev-absente { font-family:'Playfair Display',serif; font-size:11px; font-style:italic; font-weight:400; color:var(--gold-b); opacity:.72; line-height:1.4; max-width:215px; }
 .tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
-.tag { font-family:'Cinzel',serif; font-size:7px; letter-spacing:.08em; padding:3px 7px; border:1px solid var(--panel-border); color:var(--text2); border-radius:2px; background:var(--bg3); }
+/* ── Étiquettes ────────────────────────────────────────────
+   7 px était sous le seuil de lisibilité — et le suffixe « ▶ La
+   feuille » descendait à 5,95 px à 55 % d'opacité, c'est-à-dire à rien.
+   Une étiquette qu'on ne lit pas ne remplit aucun office, cliquable ou
+   non. */
+.tag { font-family:'Cinzel',serif; font-size:9px; letter-spacing:.06em;
+       padding:4px 9px; border:1px solid var(--panel-border);
+       color:var(--text2); border-radius:3px; background:var(--bg3);
+       line-height:1.35; }
 .sn { border-left:3px solid var(--gold); padding:9px 11px; background:var(--bg3); font-family:'Playfair Display',serif; font-style:italic; font-size:11px; color:var(--text2); line-height:1.7; margin-top:6px; }
 
 /* ── LEXICON ── */
@@ -1288,9 +1296,49 @@ button, a, input, select, textarea, label,
 /* Une variété DOCUMENTÉE se distingue d'un simple mot : elle s'ouvre.
    Sans ce signal, rien ne dit au visiteur que la moitié des étiquettes
    cache une fiche et l'autre non. */
-.tag-feuille { cursor:pointer; transition:all .18s; }
-.tag-feuille:hover { background:var(--bg2); box-shadow:0 2px 8px var(--shd); }
-.tag-feuille em { font-style:normal; opacity:.55; font-size:.85em; letter-spacing:.06em; }
+/* ── Cliquable ou non : la différence doit se voir AU REPOS ──
+   Les deux variantes ne différaient que par `cursor:pointer` et un
+   effet de survol. Autrement dit : rien pour qui ne promène pas la
+   souris dessus — donc rien au premier coup d'œil, rien au clavier,
+   rien du tout sur mobile.
+
+   L'étiquette cliquable porte donc trois marques permanentes : un fond
+   teinté de sa propre couleur, une bordure pleine, et un chevron. */
+.tag-feuille {
+  cursor:pointer; transition:background .18s, box-shadow .18s, transform .12s;
+  /* Repli AVANT le color-mix : là où il n'est pas connu, la déclaration
+     suivante est ignorée et l'étiquette garderait le fond des inertes —
+     soit exactement la confusion qu'on corrige. */
+  background:var(--bg2);
+  background:color-mix(in srgb, currentColor 10%, var(--bg3));
+  border-color:currentColor;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.tag-feuille::after {
+  content:'›'; font-size:1.5em; line-height:0; opacity:.85;
+  transition:transform .18s;
+}
+[dir="rtl"] .tag-feuille::after { content:'‹'; }
+.tag-feuille:hover {
+  background:color-mix(in srgb, currentColor 20%, var(--bg3));
+  box-shadow:0 2px 8px var(--shd);
+}
+.tag-feuille:hover::after { transform:translateX(2px); }
+[dir="rtl"] .tag-feuille:hover::after { transform:translateX(-2px); }
+.tag-feuille:active { transform:translateY(1px); box-shadow:none; }
+/* L'élément porte role="button" et tabindex="0" : sans anneau de focus,
+   il était atteignable au clavier et invisible une fois atteint. */
+.tag-feuille:focus-visible {
+  outline:2px solid var(--gold); outline-offset:2px;
+}
+/* Le suffixe reste secondaire, mais lisible : .55 d'opacité sur 6 px ne
+   se lisait pas. */
+.tag-feuille em { font-style:normal; opacity:.75; font-size:.88em; letter-spacing:.05em; }
+
+/* La variante NON cliquable est déclarée, pas déduite d'une absence :
+   fond plat, bordure discrète, curseur normal. Elle se distingue au
+   repos de sa jumelle cliquable. */
+.tag-inerte { cursor:default; background:transparent; border-style:dashed; opacity:.8; }
 
 /* ── Illustrations des notes et des accords ────────────────
    Le trait suit `currentColor`, donc la couleur de la pastille, donc

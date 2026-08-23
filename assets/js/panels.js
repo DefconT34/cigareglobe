@@ -183,7 +183,9 @@ function _revenuHtml(c) {
 function _varietesHtml(c) {
   return (c.varieties || []).map(function (v) {
     var f = (c.feuilles || []).filter(function (x) { return x.name === v; })[0];
-    if (!f) return '<span class="tag" style="border-color:var(--grn);color:var(--grn)">' + v + '</span>';
+    // Pas de fiche derriere l'etiquette : `tag-inerte` le DIT, au lieu
+    // de laisser l'absence de `tag-feuille` le suggerer.
+    if (!f) return '<span class="tag tag-inerte" style="border-color:var(--grn);color:var(--grn)">' + v + '</span>';
     return '<span class="tag tag-feuille" style="border-color:var(--grn);color:var(--grn)"'
          + ' onclick="openFeuille(\'' + f.id.replace(/'/g, "\\'") + '\',\'' + c.id + '\')"'
          + ' role="button" tabindex="0">' + v + ' <em>' + t('fe_ouvrir') + '</em></span>';
