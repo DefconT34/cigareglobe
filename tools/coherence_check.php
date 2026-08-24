@@ -29,6 +29,9 @@
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 
 require_once __DIR__ . '/../backend/config.php';
+// Les familles d'aromes vivent dans leur propre fichier depuis ce
+// lot : les inclure ici NE charge pas le routeur de l'API.
+require_once __DIR__ . '/../backend/aromes.php';
 
 $db = getDB();
 $defauts = [];
@@ -130,6 +133,44 @@ foreach ($db->query('SELECT id, varieties FROM producer_countries ORDER BY id') 
             $defauts[] = sprintf(
                 '%s : la variete « %s » est annoncee mais n\'a pas de fiche — l\'etiquette ne mene nulle part',
                 $c['id'], $etiquette);
+        }
+    }
+}
+
+// ── 1quater. Deux notes qui disent la meme chose ─────────
+//
+// Signale par un lecteur : la fiche Corojo du Honduras portait
+// « Épices » ET « Poivre », et le poivre est une epice.
+//
+// Le signal existait deja et personne ne le lisait. Le glossaire range
+// chaque libelle dans une FAMILLE et sert une phrase par famille ; deux
+// notes d'une meme famille affichent donc DEUX FOIS la meme icone et la
+// meme glose. Le doublon etait visible a l'ecran depuis la migration
+// 051 — il suffisait de comparer les familles d'une meme liste.
+//
+// On verifie aussi l'inverse : un libelle qui ne tombe dans AUCUNE
+// famille s'affiche sans icone ni glose. C'est l'autre facon de rater
+// la rubrique, et elle est silencieuse elle aussi.
+{
+    foreach ($db->query('SELECT id, notes, pairings FROM feuilles ORDER BY id') as $f) {
+        foreach (['notes', 'pairings'] as $champ) {
+            $parFamille = [];
+            foreach (json_decode((string)$f[$champ], true) ?: [] as $t) {
+                $fam = famille_arome((string)$t);
+                if ($fam === '') {
+                    $defauts[] = sprintf(
+                        '%s : « %s » ne tombe dans aucune famille — ni icone ni glose',
+                        $f['id'], $t);
+                    continue;
+                }
+                $parFamille[$fam][] = $t;
+            }
+            foreach ($parFamille as $fam => $termes) {
+                if (count($termes) < 2) continue;
+                $defauts[] = sprintf(
+                    '%s : %s porte « %s » — meme famille « %s », donc meme glose deux fois',
+                    $f['id'], $champ, implode(' + ', $termes), $fam);
+            }
         }
     }
 }

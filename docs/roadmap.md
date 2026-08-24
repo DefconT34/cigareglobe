@@ -1254,6 +1254,42 @@ désormais ce sens-là aussi, et la contre-épreuve échoue comme elle doit.
 Le logo fourni n'est pas repris : marque déposée, et le chantier des logos reste suspendu à
 l'avis loi Évin.
 
+### Deux notes qui disaient la même chose (`085`)
+
+Signalé par un lecteur sur la fiche Corojo du Honduras : « Épices » et « Poivre » y figuraient
+côte à côte, et le poivre **est** une épice.
+
+**Le signal existait déjà, et personne ne le lisait.** Le glossaire d'arômes range chaque libellé
+dans une famille — `'epices' => ['epice', 'poivre']` — et sert une phrase par famille. Deux notes
+d'une même famille affichaient donc **deux fois la même icône et la même glose**. Le doublon
+était visible à l'écran depuis la migration 051 ; il suffisait de comparer les familles d'une
+même liste.
+
+Six cas en tout, tous dans `notes` : quatre « Épices + Poivre » (Corojo de Cuba, du Honduras, du
+Panamá ; Habano d'Équateur) et deux « Douceur + Crème » (San Vicente, Ecuador Connecticut).
+Aucun libellé muet en revanche — les soixante-dix tombent tous dans une famille.
+
+**La correction garde le terme le plus précis** — « Poivre » plutôt qu'« Épices » — et remplace
+le générique par une note d'une autre famille, tirée de ce que la fiche dit déjà : « sol
+volcanique » → Terre pour le Panamá, « goût crémeux » → Foin pour San Vicente. Le sens inverse,
+suggéré par le lecteur — garder « Épices » et citer le poivre dans sa glose — n'était pas
+possible : la glose appartient à la **famille** et se partage entre toutes les feuilles ; y
+écrire « poivre » l'aurait affiché sur des fiches qui n'en portent pas.
+
+**⚠ Mon contrôle s'est sauté lui-même.** Écrit dans `coherence_check`, il commençait par
+`if (function_exists('famille_arome'))` — or la fonction vivait dans `data.php`, que cet outil ne
+charge pas. Le bloc était donc ignoré **en silence** : zéro défaut trouvé, zéro protection. Les
+familles vivent désormais dans `backend/aromes.php`, inclus des deux côtés, et le garde-fou est
+retiré. Contre-épreuve : la redondance remise est bien signalée.
+
+> Deuxième fois dans la journée — après le test du lexique — qu'un contrôle mesure sa **propre
+> disponibilité** au lieu de la propriété voulue.
+
+Et en extrayant le fichier, j'ai placé le `require_once` à l'endroit où la fonction est utilisée,
+ligne 590. Or le routeur de `data.php` s'exécute ligne 78 : les fonctions d'un fichier inclus
+plus bas ne sont pas remontées par PHP, et `action=feuille` répondait 500. **Le piège est
+documenté deux fonctions plus loin dans ce même fichier**, à propos des constantes.
+
 ### Le lexique du métier (`083`)
 
 Ouvert à la suite du signalement ci-dessus. Vingt entrées, six langues, servies avec la fiche.
