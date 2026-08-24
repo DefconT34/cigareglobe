@@ -1232,6 +1232,17 @@ Au passage, une coquille chinoise identique sur les quatre fiches : **霉霜病*
   trois de Selected Tobacco. Le Costa Rica n'a pas de terroir tabacole : sa présence dans l'atlas
   tient entièrement à deux ateliers qui y roulent des feuilles venues d'ailleurs, et la fiche du
   pays devenait fausse par omission sans la seconde.
+**⚠ Les deux étaient invisibles depuis le globe** (`084`). Insérer une ligne dans `brands` ne
+suffit pas : la liste affichée sur la page d'un pays vient d'ailleurs, du JSON
+`producer_countries.brands`. **Même fait, deux domiciles** — et écrire dans l'un n'inscrit rien
+dans l'autre. Les deux fiches répondaient 200 sur leur URL et la recherche les trouvait ; le
+chemin le plus naturel, ouvrir le pays et lire ses maisons, ne les montrait pas.
+
+C'est le défaut de la migration 021, « les onze articles que personne ne pouvait ouvrir ». Le
+balayage complet n'a trouvé que ces deux-là : les 116 autres figurent bien dans la fiche de leur
+pays — c'est mon insertion qui était incomplète, pas le modèle. `coherence_check` vérifie
+désormais ce sens-là aussi, et la contre-épreuve échoue comme elle doit.
+
 - **Capitol** (`082`) — maison nicaraguayenne. La fiche ne porte **que** le nom et le pays :
   ni année, ni atelier, ni gammes. Ces rubriques restent vides, comme pour Juan López, La Flor
   de Cano, Saint Luis Rey et Vegueros. La tentation, sur une marque qu'on connaît mal, est

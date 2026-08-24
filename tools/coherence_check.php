@@ -134,6 +134,40 @@ foreach ($db->query('SELECT id, varieties FROM producer_countries ORDER BY id') 
     }
 }
 
+// ── 1ter. Une marque a DEUX domiciles ────────────────────
+//
+// La table `brands` porte la fiche. La liste affichee sur la page d'un
+// pays vient d'ailleurs : du JSON `producer_countries.brands`. Meme fait,
+// deux adresses — et inserer dans l'une n'inscrit rien dans l'autre.
+//
+// Les migrations 081 et 082 ont ajoute Casdagli et Capitol dans `brands`
+// seulement. Les deux repondaient 200 sur leur URL, la recherche les
+// trouvait, et le chemin le plus naturel — ouvrir le pays sur le globe,
+// lire ses maisons — ne les montrait pas. C'est le defaut de la
+// migration 021, « les onze articles que personne ne pouvait ouvrir ».
+//
+// Le sens verifie est celui qui rend injoignable : une ligne de `brands`
+// que la fiche de son pays n'annonce pas. L'inverse — une entree listee
+// sans ligne en base — est deja couvert par tools/marques_check.php.
+$marquesListees = [];
+foreach ($db->query('SELECT id, brands FROM producer_countries') as $c) {
+    foreach (json_decode((string)$c['brands'], true) ?: [] as $b) {
+        if (!empty($b['name'])) $marquesListees[$c['id']][$b['name']] = true;
+    }
+}
+foreach ($db->query('SELECT name, country_id FROM brands
+                      WHERE country_id IS NOT NULL AND country_id <> ""
+                      ORDER BY country_id, name') as $m) {
+    // Un pays qui n'est pas producteur n'a pas de liste : les marques
+    // rattachees a un marche ou a un pays de lounges ne sont pas
+    // concernees.
+    if (!isset($marquesListees[$m['country_id']])) continue;
+    if (isset($marquesListees[$m['country_id']][$m['name']])) continue;
+    $defauts[] = sprintf(
+        '%s : la marque « %s » existe en base mais la fiche du pays ne l\'annonce pas — invisible depuis le globe',
+        $m['country_id'], $m['name']);
+}
+
 // ── 2. Les rangs mondiaux que la relecture a bannis ──────
 //
 // R1, R4 et R5 ont retire tous les classements mondiaux non sources :
