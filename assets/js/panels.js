@@ -3,6 +3,28 @@
 // Chargement lazy : HABANOS et détails chargés depuis MySQL au clic
 // ════════════════════════════════════════════════════════
 
+// ── Force d'une vitole ──────────────────────────────────
+// `force` est un vocabulaire FERME de cinq valeurs, stockees en anglais
+// (Light … Full) a l'identique dans les six colonnes de langue : 244
+// pastilles que la campagne de traduction n'a jamais touchees, parce
+// qu'elle mesurait de la PROSE et que ceci est une etiquette.
+//
+// Un vocabulaire ferme se resout par une cle, pas par une traduction
+// ligne a ligne — c'est la regle F2, « le serveur ne traduit pas ».
+// Une valeur hors nomenclature s'affiche telle quelle : mieux vaut un
+// libelle anglais visible qu'une pastille disparue.
+var FORCE_CLES = {
+  'light':        'force_light',
+  'light-medium': 'force_light_medium',
+  'medium':       'force_medium',
+  'medium-full':  'force_medium_full',
+  'full':         'force_full'
+};
+function forceLibelle(v) {
+  var cle = FORCE_CLES[String(v).trim().toLowerCase()];
+  return cle ? t(cle) : v;
+}
+
 // ── Lounges du pays ─────────────────────────────────────
 // Le rendu est delegue a _renderLoungeCards (app.js), celui du panneau
 // des lounges : memes cartes, avec notes, avis, favoris et photos.
@@ -648,11 +670,33 @@ function _renderBrand(name, cid) {
 
   // ── Gammes ──────────────────────────────────────────────
   document.getElementById('bmGam').innerHTML = (b.gamme || []).map(function(g) {
-    var scoreHtml = (g.scores && g.scores.length)
-      ? '<div class="gam-scores">' + g.scores.map(function(s){
-          return '<span class="gam-score" title="'+s.source+' '+s.year+'">' +
-            (s.score === 100 ? '💯' : '★') + ' ' + s.score + '/100' +
-            '<span class="gam-score-src"> ' + s.source + ' ' + s.year + '</span></span>';
+    // Une note ne s'affiche QUE si elle est verifiable.
+    //
+    // Quarante notes vivaient ici — « Cigar Aficionado 96 (2011) », en
+    // pastille doree sur chaque fiche — pendant que marques_check
+    // annoncait « 0 note, toutes sourcees ». Il lisait la colonne
+    // `scores`, videe a la migration 058 ; celles-ci etaient dans
+    // `gamme[].scores`, une seconde adresse que personne ne regardait.
+    //
+    // La base est nettoyee (migration 077) et le controle lit desormais
+    // les deux adresses. Ce filtre est la troisieme barriere : meme si
+    // une note revenait en base, sans `source_url` elle ne s'affiche
+    // pas. Le lecteur ne peut plus voir un chiffre qu'il ne peut pas
+    // aller verifier.
+    //
+    // `source` et `year` etaient par ailleurs injectes bruts dans un
+    // attribut title et dans le corps — echappes desormais.
+    var notes = (g.scores || []).filter(function(s){
+      return s && /^https?:\/\//i.test(String(s.source_url || ''));
+    });
+    var scoreHtml = notes.length
+      ? '<div class="gam-scores">' + notes.map(function(s){
+          var src = _escHtml(String(s.source || '')), an = _escHtml(String(s.year || ''));
+          return '<a class="gam-score" href="' + _escAttr(String(s.source_url)) + '"'
+            + ' target="_blank" rel="noopener noreferrer"'
+            + ' title="' + src + ' ' + an + '">'
+            + (Number(s.score) === 100 ? '💯' : '★') + ' ' + _escHtml(String(s.score)) + '/100'
+            + '<span class="gam-score-src"> ' + src + ' ' + an + '</span></a>';
         }).join('') + '</div>' : '';
     return '<div class="gam-item" style="border-left-color:' + g.color + '">' +
       '<div class="gam-info">' +
@@ -664,9 +708,19 @@ function _renderBrand(name, cid) {
         // articles que personne ne pouvait ouvrir (migration 021), et le
         // defaut n'a donc jamais ete vu. Il aurait suffi d'une fiche
         // incomplete pour qu'il le soit.
+        // « Force: » et « Wrapper: » etaient ecrits en dur, en anglais,
+        // juste a cote d'un t('bm_distinctions') qui, lui, etait traduit.
+        // Un lecteur chinois lisait « Wrapper: Connecticut Shade ».
+        //
+        // La VALEUR de force l'etait aussi : cinq libelles anglais
+        // (Light … Full) stockes a l'identique dans les six colonnes de
+        // langue, soit 244 pastilles jamais traduites. C'est un
+        // vocabulaire ferme : il se resout par une cle, pas par une
+        // traduction ligne a ligne. Une valeur inconnue s'affiche telle
+        // quelle plutot que de disparaitre.
         '<div class="gam-metas">' +
-          (g.force   ? '<span class="gam-mt">Force: '   + g.force   + '</span>' : '') +
-          (g.wrapper ? '<span class="gam-mt">Wrapper: ' + g.wrapper + '</span>' : '') +
+          (g.force   ? '<span class="gam-mt">' + t('gam_force') + ': ' + forceLibelle(g.force) + '</span>' : '') +
+          (g.wrapper ? '<span class="gam-mt">' + t('gam_cape')  + ': ' + g.wrapper + '</span>' : '') +
           (g.vitolas||[]).map(function(v){ return '<span class="gam-mt">'+v+'</span>'; }).join('') +
         '</div>' + scoreHtml +
       '</div></div>';

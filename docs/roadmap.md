@@ -1206,12 +1206,91 @@ verbes est toujours incomplet ;** c'est pour cela que la règle ne s'y appuie pl
   meilleur 'petit cigare' »). Le prix : une citation **courte** introduite par un seul
   deux-points n'est plus vue. Le même signe sert aux deux usages, on ne peut pas avoir les deux
 
-⚠ **Chantier ouvert, non traité : 127 anglicismes techniques dans 84 textes FRANÇAIS**
-(`wrapper` ×75, `blend` ×36, `medium-full` ×10, puis `binder`, `filler`, `sun-grown`,
-`shade-grown`). Les textes réécrits par ces migrations passent à « cape / sous-cape / tripe » ;
-le reste attend une décision de vocabulaire. Effet secondaire à connaître : `MOTS_ANGLAIS`, dans
-le détecteur de fuite, contient `wrapper`, `filler`, `binder` et `blend` — **le français source
-alimente le vocabulaire qui sert à détecter l'anglais résiduel** (témoin à 1/568).
+### Le vocabulaire, et ce qu'il a fait remonter (`073`→`079`)
+
+Chantier ouvert pour remplacer « wrapper » par « cape » dans le français. Il a mis au jour
+**quatre défauts d'une tout autre gravité**, tous invisibles aux compteurs.
+
+**⚠ Quarante notes affichées sous un contrôle vert.** `marques_check` annonçait, à chaque
+campagne : « 0 note chiffrée, toutes accompagnées d'une source consultable ». Littéralement
+vrai — la migration 058 avait vidé la **colonne** `scores`, et le contrôle lisait cette
+colonne. Quarante notes vivaient dans le **sous-tableau** `gamme[].scores`, avec revue, note et
+année, et `panels.js` les affichait en pastille dorée sur chaque fiche, dans les six langues.
+
+> Les leçons précédentes portaient sur la **forme** d'une idée, sur la **colonne** où elle se
+> cache, sur le **marqueur** grammatical auquel un contrôle s'accroche. Celle-ci est d'un autre
+> ordre : le contrôle vérifiait un **contenant**, pas une **donnée**. Vider `scores` et
+> contrôler `scores` ne prouve rien — elle avait une seconde adresse. **Un contrôle qui ne peut
+> pas échouer ne protège de rien**, et celui-ci n'avait jamais échoué depuis la migration 058.
+
+Corrigé par la migration `077`. Le contrôle lit désormais les deux adresses, vérifie la parité
+des sous-tableaux entre langues (le français en avait 40, les autres 38), et `panels.js` refuse
+d'afficher une note sans `source_url` — trois barrières au lieu d'une.
+
+**⚠ Cent six affirmations vivantes dans les cinq langues traduites.** Depuis la migration 058,
+chaque note retirée l'a été du **français**, et le contrôle ne lisait que le français. Le
+lecteur allemand voyait toujours « eine 96 im Cigar Aficionado », l'espagnol « logró un 96 ».
+`marques_check` balaie désormais les six langues (`PRESSE_LANGUES`), vérifié en réintroduisant
+une affirmation en allemand seul.
+
+**Une note de presse sans chiffre.** « Score parfait par plusieurs experts » chez Cohiba, dans
+les six langues. Le motif exigeait le mot « score » **et** un nombre ; « parfait » dit
+exactement « 100/100 » sans l'écrire. Huitième forme de la même affirmation, et la première à
+se passer entièrement de chiffre — l'hypothèse tacite du motif que personne n'avait écrite.
+
+**Onze affirmations dans `brands.history`**, champ hors du balayage — deuxième fois après My
+Father (`068`), où j'avais justement élargi le périmètre. Trois des dix premières alertes
+étaient des **faux positifs de mon propre motif** (« le meilleur cigare serait celui qu'il
+roulerait lui-même » est une conviction de 1912) : ce qui fait le classement n'est pas le mot
+« meilleur », c'est le champ sur lequel il porte.
+
+**Deux vocabulaires de données jamais traduits** — invisibles à `i18n_langue_check`, qui mesure
+des mots outils dans de la **prose** :
+
+| | volume | traitement |
+|---|---|---|
+| `force` | 244 pastilles, 5 libellés anglais identiques dans les 6 langues | clé i18n côté front |
+| `wrapper` | 87 étiquettes anglaises identiques dans les 6 langues | traduites en base (`073`) |
+
+Et deux libellés **écrits en dur en anglais** dans `panels.js` — `Force:` et `Wrapper:` — juste
+à côté d'un `t('bm_distinctions')` traduit. Plus la ligne d'accroche du site, qui en **français**
+disait « The World's Premium Cigar Atlas » quand les cinq autres langues étaient traduites.
+
+**Le piège du compteur qui lit la structure.** Mon premier inventaire annonçait 736 anglicismes
+au lieu de 246 : il balayait le JSON brut et comptait la **clé** `"wrapper":` comme du texte.
+Refait deux fois de plus avec `"scores":`. Trois occurrences du même piège en une journée.
+
+**Deux fautes rattrapées à la relecture**, toutes deux dans l'outil et non dans le contenu :
+un découpage en phrases qui **supprimait toutes les espaces après les points** (séparateur jeté
+par `preg_split`), et des motifs espagnol et allemand qui rataient « logró un 96 » et « eine
+96 » — la forme la plus courante. Le découpage est désormais vérifié **réversible** avant tout
+traitement. Une suppression de phrase peut aussi **orpheliner la suivante** (« Über Nacht wurde
+Alec Bradley zur weltweiten Referenz » — le lendemain de quoi ?) : ces phrases-là ne portent
+aucune affirmation, donc aucun motif ne les voit.
+
+⚠ **Le vocabulaire anglais est aussi dans les traductions** : 155 occurrences dans 113 valeurs
+espagnoles, allemandes, chinoises et arabes — `Blend` ×99, `Wrapper` ×33, `Full body` ×15 — dont
+**82 % en allemand**, qui dit ailleurs « Mischung » et « Deckblatt ». Le relevé n'est juste
+qu'en excluant les clés `force` et `wrapper`, sinon 162 faux « medium-full » viennent du champ
+de force. C'est la **quatrième** fois dans ce chantier qu'un compteur lit la structure au lieu
+du contenu.
+
+⚠ **Reste ouvert : 82 textes de vocabulaire français** (`brands.gamme` 57, `brands.history` 25), et
+surtout — **les six colonnes de `history` ne sont pas des traductions les unes des autres**.
+L'anglais d'Alec Bradley fait 2 461 caractères pour 794 en français ; l'espagnol en fait 320.
+Sur 116 fiches, 43 anglaises, 32 espagnoles, 32 allemandes, 37 chinoises et 34 arabes sortent
+des proportions attendues. Ce sont des **textes différents**, pas des versions — et
+`i18n_fraicheur` les compte à jour parce qu'elles sont scellées sur le bon français.
+
+Note de vocabulaire : `MOTS_ANGLAIS`, dans le détecteur de fuite, contient `wrapper`, `filler`,
+`binder` et `blend` — **le français source alimente le vocabulaire qui sert à détecter l'anglais
+résiduel** (témoin à 1/568).
+
+⚠ **Piège d'exploitation** : `tools/i18n_dump.php` écrit sur la **sortie standard**. La bonne
+commande est `php tools/i18n_dump.php > sql/traductions.sql` ; un `> /dev/null` par réflexe ne
+produit rien et laisse le fichier versionné en retard sur la base, sans que rien ne le signale.
+`coherence_check` rejoue bien chaque `UPDATE` du fichier, mais un UPDATE périmé désigne toujours
+une ligne : le contrôle reste vert sur un fichier obsolète.
 
 ⚠ Le champ `name`, qui ne doit jamais être traduit, porte encore « Spanish Empire » en espagnol,
 allemand, chinois et arabe pour Tabacalera ; « Aztecs and Totonacs » pour Te Amo ; « The

@@ -301,10 +301,46 @@ test.describe('Panneaux', () => {
     await expect(vide).not.toContainText('undefined');
     await expect(vide.locator('.gam-mt')).toHaveCount(0);
 
-    // CONTRE-EPREUVE : quand les etiquettes existent, elles s'affichent.
+    // CONTRE-EPREUVE : quand les etiquettes existent, elles s'affichent —
+    // ET DANS LA LANGUE DE LA PAGE.
+    //
+    // Ce test exigeait « Force: Medium » et « Wrapper: Habano Ecuador ».
+    // Les deux libelles etaient ecrits EN DUR, EN ANGLAIS, dans
+    // panels.js, juste a cote d'un t('bm_distinctions') traduit : un
+    // lecteur chinois lisait « Wrapper: ». Et la VALEUR de force l'etait
+    // aussi — cinq libelles anglais (Light … Full) stockes a l'identique
+    // dans les six colonnes de langue, soit 244 pastilles que la
+    // campagne de traduction n'avait jamais touchees parce qu'elle
+    // mesurait de la PROSE et que ceci est une etiquette.
+    //
+    // Le test verifie desormais ce qui compte : le libelle ET la valeur
+    // suivent la langue.
     const plein = page.locator('#bmGam .gam-item').nth(1);
-    await expect(plein).toContainText('Force: Medium');
-    await expect(plein).toContainText('Wrapper: Habano Ecuador');
+    await expect(plein).toContainText('Force: Moyenne');
+    await expect(plein).toContainText('Cape: Habano Ecuador');
+  });
+
+  // La meme pastille, dans une autre langue. Sans cette contre-epreuve,
+  // « Force: Moyenne » pourrait n'etre qu'une chaine en dur de plus.
+  test('les etiquettes de gamme suivent la langue', async ({ page }) => {
+    await page.route('**/data.php?action=brand*', async (route) => {
+      const rep = await route.fetch();
+      const d = await rep.json();
+      if (d.brand) {
+        d.brand.gamme = [{ name: 'Avec etiquettes', color: '#C9A227',
+                           story: 'Les deux sont la.',
+                           force: 'Medium-Full', wrapper: 'Habano Ecuador' }];
+      }
+      await route.fulfill({ response: rep, json: d });
+    });
+
+    await ouvrir(page, '/?lang=de&brand=Marque de test');
+    await expect(page.locator('#bmodal')).toHaveClass(/open/, { timeout: 15_000 });
+    const item = page.locator('#bmGam .gam-item').first();
+    await expect(item).toContainText('Stärke: Mittel bis kräftig', { timeout: 15_000 });
+    await expect(item).toContainText('Deckblatt: Habano Ecuador');
+    // Le libelle anglais ne doit plus apparaitre nulle part.
+    await expect(item).not.toContainText('Wrapper:');
   });
   // ── Une cape n'est pas une marque ─────────────────────
   // La fiche du Cameroun annoncait « Marques emblematiques » puis
