@@ -1243,11 +1243,45 @@ Au passage, une coquille chinoise identique sur les quatre fiches : **霉霜病*
 Le logo fourni n'est pas repris : marque déposée, et le chantier des logos reste suspendu à
 l'avis loi Évin.
 
-⚠ **Chantier proposé, non ouvert : un glossaire du métier.** Le relevé des termes techniques
-cités sans glose donne, hors variétés qui ont déjà leur fiche cliquable : `vitola`/`vitole` ×12,
-`ligero` ×10, `figurado` ×8, `torcedor` ×4, plus `entubado`, `pilón`, `lector`, `box-pressed`,
-`perfecto`. Le mécanisme existe déjà pour les arômes (table `aromes`, migration 051) ; il reste
-à l'étendre au vocabulaire de fabrication.
+### Le lexique du métier (`083`)
+
+Ouvert à la suite du signalement ci-dessus. Vingt entrées, six langues, servies avec la fiche.
+
+**Ce qui n'y entre pas.** Les *variétés* de tabac — habano, corojo, criollo, broadleaf, sumatra —
+ont déjà leur fiche, et l'étiquette qui la porte est cliquable. Le manque portait sur le
+vocabulaire de **fabrication**, qu'aucune fiche ne couvrait : les trois parties du cigare (cape,
+sous-cape, tripe), les étages du plant (ligero, viso, seco, volado, medio tiempo), l'atelier
+(torcedor, galera, lector, entubado, pilón), les formes (vitole, figurado, perfecto, pressé en
+boîte) et les robes (claro, maduro, oscuro).
+
+`corona` en est écarté : c'est à la fois une vitole et un morceau de nom de gamme (Double
+Corona). Une glose qui s'affiche au mauvais endroit est pire qu'une absence.
+
+**Le mécanisme réutilise celui des arômes** plutôt que d'en inventer un second : détection sur le
+**français**, restitution dans la langue du lecteur. C'est la règle déjà écrite dans
+`action_feuille` — le front reçoit 茄衣 et ne pourrait pas y reconnaître une cape ; le serveur, lui,
+a la source sous la main.
+
+La colonne `variantes` porte les formes (`vitole|vitoles|vitola|vitolas`) comme des chaînes
+**littérales**, passées à `preg_quote` : rien de ce qui vient de la base n'entre dans une
+expression régulière sans échappement. Plafond de six entrées par fiche — sans lui, « cape » et
+« tripe » étant partout depuis le passage de vocabulaire, le bloc deviendrait un pavé identique
+sur 118 fiches.
+
+**⚠ Mon premier test ne pouvait pas échouer.** Il vérifiait que le lexique est aussi fourni en
+allemand qu'en français — mais la marque de test n'avait pas de `history_de`, donc `traduire`
+retombait sur le français et une détection faite *après* traduction lisait encore « cape ».
+Vérifié en introduisant le défaut : **les sept assertions restaient vertes**. La marque de test
+porte désormais un allemand réel, et la contre-épreuve échoue comme elle doit (« attendu 3,
+obtenu 0 »).
+
+> C'est la leçon de la migration 077 appliquée à mon propre test : mesurer une **présence** n'est
+> pas mesurer la **propriété voulue**. Un contrôle qui ne peut pas échouer ne protège de rien.
+
+`lexique` est déclaré dans les **deux** listes de champs traduisibles — `backend/data.php` et
+`tools/i18n_contenu_plan.php` — et `tests/bootstrap.php` le rejoue comme donnée de référence, au
+même titre qu'`aromes` : sans la table, la fiche se sert avec un bloc vide, ce qui ressemble
+trait pour trait à une fiche dont aucun terme n'est reconnu.
 
 ### Le vocabulaire, et ce qu'il a fait remonter (`073`→`079`)
 

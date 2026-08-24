@@ -1381,3 +1381,16 @@ button, a, input, select, textarea, label,
 [dir="rtl"] .arome { border-left:none; border-right:2px solid var(--gold-p);
                      padding:2px 9px 2px 0; }
 @media (max-width:520px) { .arome-liste { grid-template-columns:1fr; } }
+
+/* ── Lexique du métier ────────────────────────────────────
+   Même grammaire visuelle que le glossaire d'arômes (.arome) :
+   le mot, puis la phrase qui le rend concret. Deux colonnes sur
+   large, une seule dès qu'on manque de place. */
+.lex-liste { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; margin-top:2px; }
+.lex        { border-left:2px solid var(--gold-p); padding-left:9px; }
+.lex-mot    { font-family:'Cinzel',serif; font-size:10px; letter-spacing:.09em;
+              text-transform:uppercase; color:var(--gold); margin-bottom:2px; }
+.lex-dit    { font-size:11px; line-height:1.5; color:var(--text2); }
+[dir="rtl"] .lex { border-left:0; border-right:2px solid var(--gold-p);
+                   padding-left:0; padding-right:9px; }
+@media (max-width:520px) { .lex-liste { grid-template-columns:1fr; } }

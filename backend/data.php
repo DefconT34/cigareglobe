@@ -156,6 +156,7 @@ function champs_traduits(string $table): array {
         // tests/run.php compare desormais les deux.
         'feuilles'           => ['emploi','genese','culture','caracteres','notes','pairings'],
         'aromes'             => ['texte'],
+        'lexique'            => ['terme','definition'],
     ][$table] ?? [];
 }
 
@@ -498,9 +499,22 @@ function action_brand(PDO $db): void {
     $stmt->execute([$name]);
     $brand = $stmt->fetch();
     if (!$brand) { http_response_code(404); jout(err('not_found_brand', 'Marque introuvable')); }
+
+    // Le lexique se repere AVANT la traduction, sur le francais — meme
+    // regle que les icones d'aromes : le front recoit « 茄衣 » ou
+    // « الغلاف » et ne peut pas y reconnaitre une cape. Le serveur, lui,
+    // a la source sous la main.
+    $lexique = lexique_present($db, [
+        (string)$brand['history'],
+        (string)$brand['gamme'],
+        (string)$brand['celebrities'],
+        (string)$brand['pairings'],
+    ]);
+
     // Langue et nettoyage des colonnes multilingues : meme traitement que
     // pour les autres tables de l'atlas.
     $brand = traduire_table($brand, 'brands');
+    $brand['lexique'] = $lexique;
     // Colonnes legacy à nettoyer aussi
     foreach (['notes_en','notes_es','notes_de','notes_zh','notes_ar'] as $col) {
         unset($brand[$col]);
@@ -511,6 +525,66 @@ function action_brand(PDO $db): void {
     unset($brand['country_id']);
 
     jout(['brand' => $brand]);
+}
+
+/**
+ * Les termes du lexique presents dans des textes FRANCAIS.
+ *
+ * Ne rend que ce que la fiche emploie : envoyer les vingt entrees a
+ * chaque ouverture serait un glossaire, pas une aide de lecture.
+ *
+ * ── POURQUOI LES VARIANTES VIENNENT DE LA BASE ──────────
+ *
+ * Un terme a des formes — vitole, vitoles, vitola, vitolas. Les stocker
+ * evite de coder la morphologie en dur ici. Elles sont LITTERALES et
+ * passees a preg_quote : rien de ce qui vient de la base n'entre dans
+ * une expression reguliere sans etre echappe.
+ *
+ * ── LA LIMITE, ET POURQUOI ELLE EXISTE ──────────────────
+ *
+ * Six entrees au plus. « Cape » et « tripe » figurent dans presque
+ * toutes les fiches depuis le passage de vocabulaire (migrations 073 a
+ * 079) ; sans plafond, le bloc deviendrait un pave identique partout,
+ * et un pave qu'on ne lit plus ne vaut pas mieux qu'une absence.
+ * L'ordre de la table decide : les parties du cigare d'abord.
+ */
+function lexique_present(PDO $db, array $textes): array
+{
+    $texte = mb_strtolower(implode("\n", array_filter($textes)));
+    if (trim($texte) === '') return [];
+
+    static $entrees = null;
+    if ($entrees === null) {
+        $entrees = [];
+        try {
+            foreach ($db->query('SELECT * FROM lexique') as $l) $entrees[] = $l;
+        } catch (PDOException $e) {
+            // Table absente : l'atlas fonctionne sans lexique.
+            $entrees = [];
+        }
+    }
+
+    $trouves = [];
+    foreach ($entrees as $l) {
+        foreach (explode('|', (string)$l['variantes']) as $v) {
+            $v = trim($v);
+            if ($v === '') continue;
+            // Frontieres de mot : « seco » ne doit pas s'allumer dans
+            // « secondaire », ni « claro » dans « clarofication ».
+            if (!preg_match('/(?<![\p{L}\p{N}])' . preg_quote(mb_strtolower($v), '/')
+                          . '(?![\p{L}\p{N}])/u', $texte)) continue;
+            $t = traduire_table($l, 'lexique');
+            $trouves[] = [
+                'id'         => $l['id'],
+                'categorie'  => $l['categorie'],
+                'terme'      => $t['terme'],
+                'definition' => $t['definition'],
+            ];
+            break;
+        }
+        if (count($trouves) >= 6) break;
+    }
+    return $trouves;
 }
 
 /**

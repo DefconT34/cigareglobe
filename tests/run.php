@@ -1821,6 +1821,55 @@ section('Le meme fait dit la meme chose partout');
 }
 
 // ════════════════════════════════════════════════════════
+section('Le lexique du metier');
+
+// Signale par un lecteur : « moho azul, qu'est-ce que c'est ? ». Le
+// releve qui a suivi a trouve vingt-six termes de fabrication employes
+// dans la prose sans qu'aucune phrase ne les explique.
+//
+// Ce qui peut se casser en silence :
+//   — la table videe ou absente : la fiche se sert quand meme, avec un
+//     bloc vide, ce qui ressemble a une fiche dont aucun terme n'est
+//     reconnu (le piege documente pour `aromes` dans bootstrap.php) ;
+//   — la detection faite sur la LANGUE SERVIE au lieu du francais :
+//     elle marcherait en francais et nulle part ailleurs.
+{
+    $r = http('GET', $base . '/backend/data.php?action=brand&name='
+                   . rawurlencode('Marque de test'), ['jar' => $anon]);
+    $termes = $r['json']['brand']['lexique'] ?? null;
+    check('lexique : la fiche marque en porte', is_array($termes) && count($termes) > 0);
+
+    if (is_array($termes) && $termes) {
+        $ids = array_column($termes, 'id');
+        check('lexique : les termes employes sont reconnus',
+              in_array('vitole', $ids, true) || in_array('cape', $ids, true));
+        check('lexique : chaque entree porte terme ET definition',
+              count(array_filter($termes, fn($x) => !empty($x['terme']) && !empty($x['definition'])))
+              === count($termes));
+        // Le plafond de six : sans lui, « cape » et « tripe » etant
+        // partout, le bloc deviendrait un pave identique sur 118 fiches.
+        check('lexique : six entrees au plus', count($termes) <= 6);
+    }
+
+    // LA detection se fait sur le francais, la restitution dans la langue
+    // demandee. Un lexique qui disparait hors du francais serait le
+    // symptome d'une detection faite apres traduction.
+    $rd = http('GET', $base . '/backend/data.php?action=brand&name='
+                    . rawurlencode('Marque de test') . '&lang=de', ['jar' => $anon]);
+    $termesDe = $rd['json']['brand']['lexique'] ?? [];
+    eq('lexique : autant de termes en allemand qu\'en francais',
+       count($termes ?? []), count($termesDe));
+    if ($termesDe) {
+        $capeDe = null;
+        foreach ($termesDe as $x) if ($x['id'] === 'cape') $capeDe = $x;
+        if ($capeDe) {
+            eq('lexique : le terme lui-meme est traduit', 'Deckblatt', $capeDe['terme']);
+            check('lexique : la definition aussi',
+                  str_contains($capeDe['definition'], 'Blatt'));
+        }
+    }
+}
+
 section('Les fiches de marques n\'affirment rien d\'invérifiable');
 
 // L'inventaire des 116 maisons avait trouve 61 notes chiffrees attribuees

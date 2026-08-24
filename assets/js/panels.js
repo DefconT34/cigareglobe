@@ -786,6 +786,34 @@ function _renderBrand(name, cid) {
     limitEl.style.display = '';
   } else if (limitEl) { limitEl.style.display = 'none'; }
 
+  // ── Le lexique du métier ───────────────────────────────
+  //
+  // Signale par un lecteur : « moho azul, qu'est-ce que c'est ? ». Le
+  // releve qui a suivi a trouve vingt-six termes de fabrication employes
+  // dans la prose sans qu'aucune phrase ne les explique — vitola x12,
+  // ligero x10, figurado x8, torcedor x4.
+  //
+  // Les VARIETES de tabac ne sont pas concernees : elles ont deja leur
+  // fiche, et l'etiquette qui la porte est cliquable. Le manque portait
+  // sur le vocabulaire d'atelier, qu'aucune fiche ne couvre.
+  //
+  // Le serveur reconnait les termes sur le FRANCAIS puis les rend
+  // traduits : le front recoit « 茄衣 » et ne pourrait pas y voir une
+  // cape. Meme regle que les icones d'aromes.
+  var lexEl = document.getElementById('bmLexique');
+  if (lexEl && b.lexique && b.lexique.length) {
+    lexEl.innerHTML = '<div class="bm-section-title">' + t('bm_lexique') + '</div>'
+      + '<div class="lex-liste">'
+      + b.lexique.map(function (x) {
+          return '<div class="lex">'
+               + '<div class="lex-mot">' + _escHtml(x.terme) + '</div>'
+               + '<div class="lex-dit">' + _escHtml(x.definition) + '</div>'
+               + '</div>';
+        }).join('')
+      + '</div>';
+    lexEl.style.display = '';
+  } else if (lexEl) { lexEl.style.display = 'none'; }
+
   // ── En discuter ────────────────────────────────────────
   // L'ancrage sur l'atlas : les discussions consacrees a cette maison,
   // depuis sa fiche. C'est ce qu'aucun forum generique ne peut faire —

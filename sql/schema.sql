@@ -837,3 +837,28 @@ CREATE TABLE `votes` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+-- ── Lexique du metier (migration 083) ────────────────────
+-- Les mots que la prose emploie sans les expliquer : vitole,
+-- torcedor, ligero, maduro. Reperes cote serveur sur le FRANCAIS,
+-- puis servis traduits — meme regle que les icones d aromes.
+-- `variantes` : formes LITTERALES separees par des barres,
+-- echappees par preg_quote avant tout usage. Rien de ce qui vient
+-- de la base n entre dans une expression reguliere sans echappement.
+CREATE TABLE `lexique` (
+  `id` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `categorie` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `variantes` varchar(160) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `terme` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `definition` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `terme_en` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_en` text COLLATE utf8mb4_unicode_ci,
+  `terme_es` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_es` text COLLATE utf8mb4_unicode_ci,
+  `terme_de` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_de` text COLLATE utf8mb4_unicode_ci,
+  `terme_zh` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_zh` text COLLATE utf8mb4_unicode_ci,
+  `terme_ar` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_ar` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

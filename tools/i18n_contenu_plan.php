@@ -25,6 +25,7 @@ function plan_contenu(): array {
         'brands'             => ['history','gamme','celebrities','pairings'],
         'feuilles'           => ['emploi','genese','culture','caracteres','notes','pairings'],
         'aromes'             => ['texte'],
+        'lexique'            => ['terme','definition'],
         'lounges'            => ['description'],
     ];
 }

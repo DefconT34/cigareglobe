@@ -125,7 +125,12 @@ function setup_test_database(): PDO {
     // d'une feuille se sert quand meme — avec un glossaire vide, ce qui
     // ressemble trait pour trait a une fiche dont les libelles ne
     // tombent dans aucune famille.
-    $reference = 'forum_sections|site_languages|aromes';
+    // Et pour `lexique` (migration 083) : ce sont les mots du metier —
+    // vitole, torcedor, ligero — que la prose emploie sans les
+    // expliquer. Sans la table, la fiche se sert avec un lexique vide,
+    // ce qui ressemble trait pour trait a une fiche dont aucun terme
+    // n'est reconnu. Meme piege que `aromes` ci-dessus.
+    $reference = 'forum_sections|site_languages|aromes|lexique';
     $migrations = glob(PROJECT_ROOT . '/sql/migrations/*.sql') ?: [];
     sort($migrations);
     foreach ($migrations as $f) {
@@ -146,7 +151,7 @@ function setup_test_database(): PDO {
     // 739 UPDATE ferait passer pour traduites des tables que d'autres
     // tests attendent en repli francais.
     $trad = (string)@file_get_contents(PROJECT_ROOT . '/sql/traductions.sql');
-    if (preg_match_all('/^UPDATE `aromes` .*;$/mi', $trad, $m)) {
+    if (preg_match_all('/^UPDATE `(?:aromes|lexique)` .*;$/mi', $trad, $m)) {
         foreach ($m[0] as $stmt) $pdo->exec($stmt);
     }
     // Le cache de langues.php est un FICHIER : une base de test refaite
@@ -159,9 +164,28 @@ function setup_test_database(): PDO {
     // Sans elle, la reponse restait vide de marques et l'on ne pouvait
     // pas distinguer « le bloc n'est jamais atteint » de « il n'y a rien
     // a servir » — c'est precisement le defaut qui etait passe inapercu.
+    // L'histoire emploie DELIBEREMENT des mots du lexique — cape,
+    // vitole, torcedor. Sans eux, le bloc « les mots de cette fiche »
+    // reste vide et le test ne distinguerait pas « la detection ne
+    // marche pas » de « il n'y avait rien a detecter ». C'est le meme
+    // raisonnement que la marque elle-meme, deux lignes plus haut.
+    // Et une traduction ALLEMANDE, sans aucun de ces mots francais.
+    //
+    // Sans elle le test du lexique ne pouvait pas echouer : `traduire`
+    // retombe sur le francais quand la colonne allemande est vide, donc
+    // une detection faite APRES traduction lisait encore « cape » et
+    // rendait le meme resultat. Verifie en introduisant le defaut : les
+    // sept assertions restaient vertes.
+    //
+    // Avec un allemand reel, une detection mal placee rend zero terme et
+    // la parite entre les deux langues casse. C'est la difference entre
+    // mesurer une presence et mesurer la propriete voulue.
     $pdo->exec(
-        "INSERT INTO brands (name, country_id, founded, history, gamme)
-         VALUES ('Marque de test', 'testland', '1900', 'Histoire de test', '[]')"
+        "INSERT INTO brands (name, country_id, founded, history, history_de, gamme)
+         VALUES ('Marque de test', 'testland', '1900',
+                 'Histoire de test : une cape posee par un torcedor, sur une vitole courte.',
+                 'Testgeschichte: ein Deckblatt, von einem Roller aufgelegt, auf einem kurzen Format.',
+                 '[]')"
     );
 
     // Une feuille, pour la meme raison que la marque ci-dessus.
