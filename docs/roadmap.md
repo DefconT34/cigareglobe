@@ -1206,6 +1206,49 @@ verbes est toujours incomplet ;** c'est pour cela que la règle ne s'y appuie pl
   meilleur 'petit cigare' »). Le prix : une citation **courte** introduite par un seul
   deux-points n'est plus vue. Le même signe sert aux deux usages, on ne peut pas avoir les deux
 
+### Trois signalements d'un lecteur (`080`→`082`)
+
+Trois remarques d'usage, dont une a mis au jour un angle mort que **aucun compteur du projet ne
+pouvait voir**.
+
+**« Moho azul, qu'est-ce que c'est ? »** C'est le champignon qui a détruit les récoltes cubaines
+à la fin des années 1970 — en français, le **mildiou bleu**. Il apparaît sur quatre fiches de
+feuilles, et **une seule l'expliquait** (« — un champignon — », sur Habano 2000). Ces fiches
+s'ouvrent indépendamment : le lecteur qui entre par Criollo 98 lit un mot espagnol que rien ne
+lui explique. Même motif que les défauts précédents — juste à un endroit, absent à un autre.
+
+> Ce qui rend ce cas nouveau : **les cinq autres langues avaient traduit** (blue mould,
+> Blauschimmel, العفن الأزرق). Le français était la seule des six à garder le terme espagnol.
+> La campagne cherchait de l'anglais dans les colonnes traduites ; **personne ne cherchait de
+> l'espagnol dans la colonne source**. Un mot étranger non traduit dans la langue de départ ne
+> déclenche aucun contrôle — il ne peut être signalé que par un lecteur.
+
+Au passage, une coquille chinoise identique sur les quatre fiches : **霉霜病** au lieu de
+**霜霉病**, les deux caractères du milieu inversés. Recopiée d'une traduction à l'autre.
+
+**Deux maisons manquantes**, portant l'atlas à 118 marques :
+
+- **Casdagli** (`081`) — quatrième maison du Costa Rica, après Atabey, Bandolero et Byron, toutes
+  trois de Selected Tobacco. Le Costa Rica n'a pas de terroir tabacole : sa présence dans l'atlas
+  tient entièrement à deux ateliers qui y roulent des feuilles venues d'ailleurs, et la fiche du
+  pays devenait fausse par omission sans la seconde.
+- **Capitol** (`082`) — maison nicaraguayenne. La fiche ne porte **que** le nom et le pays :
+  ni année, ni atelier, ni gammes. Ces rubriques restent vides, comme pour Juan López, La Flor
+  de Cano, Saint Luis Rey et Vegueros. La tentation, sur une marque qu'on connaît mal, est
+  d'écrire ce que disent les revendeurs — « assemblage nicaraguayen corsé, poivre et cacao » —
+  ce qui est plausible pour n'importe quel cigare nicaraguayen, donc ne dit rien, et **aurait
+  exactement l'air d'un fait**. La fiche existe malgré son vide parce que l'absence trompe
+  davantage : un atlas qui ne mentionne pas une maison laisse croire qu'elle n'existe pas.
+
+Le logo fourni n'est pas repris : marque déposée, et le chantier des logos reste suspendu à
+l'avis loi Évin.
+
+⚠ **Chantier proposé, non ouvert : un glossaire du métier.** Le relevé des termes techniques
+cités sans glose donne, hors variétés qui ont déjà leur fiche cliquable : `vitola`/`vitole` ×12,
+`ligero` ×10, `figurado` ×8, `torcedor` ×4, plus `entubado`, `pilón`, `lector`, `box-pressed`,
+`perfecto`. Le mécanisme existe déjà pour les arômes (table `aromes`, migration 051) ; il reste
+à l'étendre au vocabulaire de fabrication.
+
 ### Le vocabulaire, et ce qu'il a fait remonter (`073`→`079`)
 
 Chantier ouvert pour remplacer « wrapper » par « cape » dans le français. Il a mis au jour
