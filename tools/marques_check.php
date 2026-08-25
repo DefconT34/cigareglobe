@@ -108,6 +108,73 @@ const VERBES = 'dit|d[ée]clar\w*|d[ée]crivit|confia|affirm\w*|racont\w*|lanç\
 // signe servant aux deux usages.
 const VERBE_PROCHE = '/\b(?:' . VERBES . ')\b[^.]{0,40}$/iu';
 
+// LE NOM DE LA REVUE, PLUTOT QUE LA FORME DU CHIFFRE.
+//
+// Neuf fois, un motif ecrit pour « une note de presse » a rate la meme
+// affirmation dite autrement — « Score 96 », « Top 25 », « scores 93-95 »,
+// « Score parfait », « awarded it scores between 92 and 95 », « rated it
+// between 91 and 94 », « a 96-point score », « على 97 في CA », et
+// « la recompense CA 2011 » en francais.
+//
+// Courir apres les formes ne marche pas : il y en a toujours une de
+// plus. Une fiche, en revanche, n'a aucune raison de NOMMER Cigar
+// Aficionado sinon pour s'en prevaloir. C'est le marqueur robuste, et il
+// vaut pour les six langues d'un coup.
+//
+// FAUX POSITIF ASSUME : en chinois, 雪茄爱好者 est a la fois le nom de la
+// revue et le mot courant pour « amateur de cigares ». La fiche Quintero
+// l'emploie au second sens — d'ou l'exception nommee plus bas.
+const REVUES_CITEES = '/Cigar\s*Aficionado|Cigar\s*Journal|Cigar\s*Insider|Cigar\s*Snob'
+                    . '|سيجار أفيسيونادو|雪茄爱好者|\bin CA\b|\ben CA\b|\bفي CA\b'
+                    . '|\bCA\b\s*[,.:]?\s*\d{2,3}|r[ée]compense\s+CA\b/u';
+
+// LES RANGS MONDIAUX, DANS LES SIX LANGUES.
+//
+// Les migrations R1, R4 et R5 les ont retires du FRANCAIS : personne ne
+// publie de classement mondial des ventes de cigares, ni de palmares des
+// degustateurs. Le controle, lui, ne lisait que le francais.
+//
+// L'anglais en portait sept, dans les 43 fiches ou `history` est un
+// autre texte que le francais : « the world's best-selling cigar »,
+// « the world's most prestigious », « the most important independent
+// tobacco family in the world », « the most experienced tasters in the
+// world », « the most complex cigar ever commercially released ».
+//
+// « many experts consider » n'est pas une source : c'est une facon de ne
+// pas en donner. Le motif le prend.
+const RANGS_MONDIAUX = '/\bworld\x27s\s+(?:best|finest|most|leading|top)\b'
+                     . '|\bthe\s+(?:best|finest|greatest|most\s+\w+)\b[^.]{0,50}\b(?:in the world|ever|of all time|anywhere)\b'
+                     . '|\bmany experts consider\b'
+                     . '|\b(?:le|la|les)\s+plus\s+\w+[^.]{0,45}?\b(?:au|du)\s+monde\b'
+                     . '|\b(?:le|la)\s+plus\s+\w+\s+jamais\b|\bpremier\s+\w+\s+mondial\b'
+                     . '|\bel\s+m[áa]s\s+\w+\s+del\s+mundo\b|\bder\s+\w+ste\s+der\s+Welt\b'
+                     . '|世界上最|الأكثر\s+\S+\s+في\s+العالم/iu';
+
+// LA CONSOMMATION DE TABAC ATTRIBUEE A QUELQU'UN DE NOMME.
+//
+// L'inventaire initial en comptait quatre, sur des personnes VIVANTES.
+// L'anglais d'Avo en gardait une : « having smoked his own cigars daily
+// throughout his final years ».
+//
+// Le motif vise la forme affirmative. Une NEGATION est legitime — la
+// fiche Hemingway dit « a format that Hemingway never actually smoked »,
+// ce qui corrige une croyance au lieu d'en creer une.
+const CONSOMMATION_PRETEE = '/\bhaving smoked\b|\bsmoked\s+(?:his|her|their)\s+own\b'
+                          . '|\bwas never seen without\b|\ba devoted smoker\b'
+                          . '|\bfumait\s+(?:quotidiennement|chaque jour|tous les jours)\b/iu';
+
+// Le seul rang mondial admis, et pourquoi.
+const RANGS_ADMIS = [
+    'Guantanamera|history' =>
+        'porte sur la chanson dont la marque tire son nom, et reste au conditionnel',
+];
+
+// Les emplois LEGITIMES d'un nom de revue, declares un par un.
+const REVUES_ADMISES = [
+    'Quintero|celebrities|zh' =>
+        '雪茄爱好者 y designe des amateurs de cigares, pas la revue homonyme',
+];
+
 /**
  * Une parole est-elle pretee dans ce texte ? Rend l'extrait, ou ''.
  *
@@ -392,6 +459,10 @@ foreach ($db->query("SELECT name, scores, celebrities, gamme, pairings, history$
             $qui  = (string)($e['name'] ?? $e['type'] ?? '?');
             $exempt = isset(AFFIRMATIONS_HISTORIQUES["{$r['name']}|$champ|$i"]);
 
+            if (!$exempt && preg_match(REVUES_CITEES, $s, $mr)) {
+                $defauts[] = sprintf('%s : %s « %s » cite une revue — « %s »',
+                                     $r['name'], $champ, $qui, trim($mr[0]));
+            }
             if (!$exempt && preg_match($presse, $s, $m)) {
                 $defauts[] = sprintf('%s : %s « %s » porte une note de presse — « %s »',
                                      $r['name'], $champ, $qui, trim($m[0]));
@@ -422,6 +493,7 @@ foreach ($db->query("SELECT name, scores, celebrities, gamme, pairings, history$
 // Un contrôle qui ne lit qu'une langue sur six ne protège qu'un
 // sixième du site.
 // ════════════════════════════════════════════════════════
+
 const PRESSE_LANGUES = [
  'en' => '/\bscored?\s+(?:a\s+|of\s+)?\d{2,3}\b|\b\d{2,3}\s*points?\b|Cigar of the Year'
        . '|\bTop\s*\d+|perfect scores?|most awarded|highest (?:score|rating|ranking)/i',
@@ -463,6 +535,21 @@ foreach (['history', 'gamme', 'celebrities', 'pairings'] as $champ) {
             }
             if (preg_match($motif, $t, $m)) {
                 $defauts[] = sprintf('%s : %s_%s porte une note de presse — « %s »',
+                                     $r['name'], $champ, $l, trim($m[0]));
+            }
+            // Le nom de la revue, quelle que soit la forme du chiffre.
+            if (preg_match(REVUES_CITEES, $t, $m)
+                && !isset(REVUES_ADMISES["{$r['name']}|$champ|$l"])) {
+                $defauts[] = sprintf('%s : %s_%s cite une revue — « %s »',
+                                     $r['name'], $champ, $l, trim($m[0]));
+            }
+            if (preg_match(RANGS_MONDIAUX, $t, $m)
+                && !isset(RANGS_ADMIS["{$r['name']}|$champ"])) {
+                $defauts[] = sprintf('%s : %s_%s porte un rang mondial — « %s »',
+                                     $r['name'], $champ, $l, trim($m[0]));
+            }
+            if (preg_match(CONSOMMATION_PRETEE, $t, $m)) {
+                $defauts[] = sprintf('%s : %s_%s prete une consommation de tabac — « %s »',
                                      $r['name'], $champ, $l, trim($m[0]));
             }
         }

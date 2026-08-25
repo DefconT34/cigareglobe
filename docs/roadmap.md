@@ -1254,6 +1254,47 @@ désormais ce sens-là aussi, et la contre-épreuve échoue comme elle doit.
 Le logo fourni n'est pas repris : marque déposée, et le chantier des logos reste suspendu à
 l'avis loi Évin.
 
+### La divergence de `history` (`086`→`088`)
+
+**La mesure d'abord.** Sur 118 fiches, l'anglais de `history` est bien une traduction pour 75
+d'entre elles — médiane du rapport de longueur : **0,96**. Mais **43 dépassent x1,6**, jusqu'à
+x7,14. Là, ce n'est plus une version : c'est un autre texte, qu'aucun contrôle n'a jamais relu
+puisqu'ils tournent tous sur le français.
+
+Comparer les longueurs ne suffisait pas — le chinois est naturellement plus court. J'ai donc
+comparé les **faits** : années et nombres présents dans une langue et absents du français.
+Résultat : **121 faits ajoutés, 352 perdus** sur 262 couples (marque, langue).
+
+**Ce que les faits ajoutés cachaient :**
+
+| | |
+|---|---|
+| six notes de presse | « awarded it scores between 92 and 95 », « rated it between 91 and 94 », « a 96-point score », « على 97 في CA » |
+| sept rangs mondiaux | « the world's best-selling cigar », « the most important independent tobacco family in the world », « the most complex cigar ever » |
+| une consommation attribuée | Avo : « having smoked his own cigars daily throughout his final years » |
+
+**Changement de méthode.** Neuf fois, un motif écrit pour « une note de presse » avait raté la
+même affirmation dite autrement. Courir après les formes ne marche pas : il y en a toujours une
+de plus. Le marqueur robuste n'est pas la forme du chiffre, c'est le **nom de la revue** — une
+fiche n'a aucune raison de citer Cigar Aficionado sinon pour s'en prévaloir. `marques_check`
+balaie désormais les noms de revues, les rangs mondiaux et les consommations attribuées, **dans
+les six langues**.
+
+**Et quatre défauts en français**, que le motif français ratait parce qu'il exigeait « du monde »
+collé à l'adjectif : « la plus grande manufacture de cigares premium **du monde** », « le plus
+cher **jamais** lancé ». L'un d'eux est de ma main — la migration 072 avait recopié « le thé le
+plus floral du monde » en traitant l'anglicisme et pas le superlatif. **Corriger une chose dans
+une phrase ne garantit pas d'avoir lu le reste.**
+
+⚠ **Le détecteur de fuite d'anglais a un seuil.** Trois entrées espagnoles étaient restées en
+anglais, dont deux en hybride — « Nombrada por the ocean liner sunk in 1915 ». `i18n_langue_check`
+annonce pourtant zéro : son seuil est de **trois mots outils par texte**, et une entrée courte
+passe dessous. Le compte était exact et incomplet.
+
+⚠ **L'écart de volume reste.** Ce lot corrige ce qui est faux ou invérifiable, pas la divergence
+elle-même. Aligner les six colonnes demanderait de retraduire ~65 000 caractères, ou d'enrichir
+le français depuis un anglais dont je ne peux vérifier aucune source.
+
 ### Deux notes qui disaient la même chose (`085`)
 
 Signalé par un lecteur sur la fiche Corojo du Honduras : « Épices » et « Poivre » y figuraient
