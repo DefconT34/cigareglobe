@@ -1296,6 +1296,45 @@ sa référence. Deux fiches d'établissement y étaient **entièrement en anglai
 le signale — même angle mort que « moho azul » (`080`), où le français était la seule des six
 langues à ne pas avoir traduit.
 
+### Les récompenses, dans les six langues (`100`)
+
+Aucun motif de presse ne contenait de mot signifiant « récompense » — c'est ainsi que
+« Tras el galardón de 2011 » avait survécu chez Alec Bradley dans cinq colonnes (`099`). Le
+balayage complet en ramène **26**.
+
+**Onze ne désignent aucun prix**, et sont écartées une par une plutôt que par une tolérance
+globale qui aurait aussi laissé passer les vraies :
+
+| faux ami | ce que c'est |
+|---|---|
+| *prized for its mildness*, *blenders prize it* | l'anglais pour **apprécié** — le motif ignore `prize`, ne garde que `award` |
+| « le lieu **prime** sur la marque » | un verbe français |
+| « **Prime**'s Rum » | une marque de rhum |
+| *Gran Premio*, 大奖赛, الجائزة الكبرى | le **Grand Prix de Monaco**, dans trois langues |
+| *the Nobel Prize in Literature* | Churchill — un fait historique vérifiable |
+
+⚠ **Écrit `prim[ée]s?`, le motif acceptait aussi bien « primé » que « prime »** : la classe
+contient le *e* nu. L'accent devait être **obligatoire**, sans quoi le verbe et la marque de rhum
+repassaient tous les deux.
+
+**La ligne, la même que partout.** Ce que le projet retire depuis `057`, ce n'est pas la
+distinction : c'est celle *que personne ne peut aller voir*. Sont restés « fondée en 1787 »,
+« 555 m », « plus de mille ouvriers », « organisé par Habanos S.A. depuis 1999 » — spécifiques et
+attribuables.
+
+- **Quatre restent** — « Davidoff Best Performance EMEA 2021 » nomme donneur, catégorie, région et
+  année : un lecteur peut le chercher. Les quatre établissements sont admis par exception
+  **nommée**, et le rapport de l'outil les **affiche** : une exception qu'on ne voit pas est une
+  tolérance cachée.
+- **Deux partent** — « brasserie artisanale **primée** », « art contemporain **primé** » : ni par
+  qui, ni pour quoi, ni quand. Le fait vérifiable est conservé dans les deux cas.
+- Et un superlatif de ville au passage — « l'hôtel de luxe le plus audacieux de Kuala Lumpur sur le
+  plan du design ». `RANGS_MONDIAUX` cherche « au monde » et ne voit pas les rangs municipaux.
+
+⚠ **Cinq langues sortaient, pas le chinois** — il dit « 屡获殊荣 », *maintes fois distingué*, sans
+le caractère 奖 que le motif exigeait. Cinq langues sur six est le symptôme d'un motif incomplet,
+pas d'une base propre : **quatrième fois du chantier**.
+
 ### Une traduction dit-elle ce que dit sa source ? (`099`)
 
 Chantiers 5 (divergence de `history`) et 6 (relecture humaine). **Je ne peux pas être le relecteur

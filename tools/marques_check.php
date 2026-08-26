@@ -537,6 +537,71 @@ const PRESSE_FR = '/(?<!\d\s)\b\d{2,3}\s*points?\b(?!\s+de\s+vente)'
                 . '|\bnote\s+de\s+\d{2,3}\b|Cigare\s+de\s+l\x27[Aa]nn[ée]e'
                 . '|\bTop\s*\d+|\bmeilleur\w*\s+note\b/u';
 
+// ── LES RÉCOMPENSES, DANS LES SIX LANGUES ───────────────
+//
+// Aucun motif de presse ne contenait de mot signifiant « récompense ».
+// C'est ainsi que « Tras el galardón de 2011 » a survécu chez Alec
+// Bradley dans cinq colonnes traduites (migration 099), alors que le
+// français avait été corrigé.
+//
+// ── LA LIGNE, LA MÊME QUE PARTOUT ───────────────────────
+//
+// Ce que le projet retire depuis la migration 057, ce n'est pas la
+// distinction : c'est la distinction QUE PERSONNE NE PEUT ALLER VOIR.
+// Sont restés « fondée en 1787 », « 555 m », « plus de mille ouvriers »,
+// « organisé par Habanos S.A. depuis 1999 » — tous spécifiques et
+// attribuables. Sont partis les superlatifs sans mesure.
+//
+// « Davidoff Best Performance EMEA 2021 » nomme son donneur, sa
+// catégorie, sa région et son année : il relève de la première
+// catégorie, et il est admis par exception nommée.
+// « Brasserie artisanale primée » ne dit ni par qui ni pour quoi : il
+// relève de la seconde.
+//
+// ── LES FAUX AMIS, ÉCARTÉS UN PAR UN ────────────────────
+//
+// Un balayage naïf ramène onze occurrences qui ne désignent aucun prix :
+//   « prized for its mildness », « blenders prize it » — anglais pour
+//     *apprécié*. Le motif ignore donc `prize` et ne garde que `award`.
+//   « le lieu PRIME sur la marque » — verbe français. Le motif exige
+//     l'accent : `primé`, `primée`, jamais `prime`.
+//   « Prime's Rum » — une marque de rhum.
+//   « Gran Premio », « 大奖赛 », « الجائزة الكبرى » — le Grand Prix de
+//     Monaco, une course automobile, dans trois langues.
+//   « the Nobel Prize in Literature » — Churchill. Un fait historique
+//     vérifiable, et pas une distinction de cigare.
+const RECOMPENSES = [
+// L'ACCENT EST LE DISCRIMINANT, ET IL DOIT ÊTRE OBLIGATOIRE.
+// Écrit « prim[ée]{1,2}s? », le motif accepte aussi bien « primé » que
+// « prime » — la classe [ée] contient le e nu. Il faut « primé » avec
+// l'accent exigé, sans quoi le verbe « primer » et la marque de rhum
+// « Prime's » repassent tous les deux.
+ 'fr' => '/\br[ée]compens(?:e|ée|es|ées)\b|\bdistinction\b|\bprimée?s?\b|\blaur[ée]at\w*/iu',
+ 'en' => '/\baward\w*|\baccolade\w*/i',
+ 'es' => '/\bgalard[óo]n\w*|\bpremiad\w*/iu',
+ 'de' => '/\bAuszeichnung\w*|\bpr[äa]miert\w*|\bpreisgekr[öo]nt\w*/iu',
+// Le chinois dit aussi « 屡获殊荣 » — « maintes fois distingué ». Sans
+// 奖, la première version du motif ne voyait pas les deux seules fiches
+// chinoises concernées, alors que les cinq autres langues sortaient.
+// Cinq langues sur six est le symptôme habituel d'un motif incomplet,
+// pas d'une base propre.
+ 'zh' => '/获奖|奖项|得奖|殊荣|大奖(?!赛)/u',
+ 'ar' => '/جائزة(?!\s*الكبرى)|جوائز/u',
+];
+
+// Clé « table|nom|champ » — la langue n'entre pas : une distinction
+// admise l'est dans les six.
+const RECOMPENSES_ADMISES = [
+    'lounges|Cava Magallanes|description'
+        => 'Davidoff Best Performance EMEA 2021 — donneur, categorie, region et annee nommes',
+    'lounges|Dagbladhandel Vandevenne|description'
+        => 'Davidoff Best Performance EMEA Belgique 2021 — idem',
+    'lounges|Lerida International — Bucarest|description'
+        => 'Davidoff Best Partner of the Year EMEA 2021 — idem',
+    'lounges|Mohilla Tabakspezialitätengeschäft|description'
+        => 'Davidoff Best Performance EMEA Autriche 2021 — idem',
+];
+
 const PRESSE_LANGUES = [
  'en' => '/\bscored?\s+(?:a\s+|of\s+)?\d{2,3}\b|\b\d{2,3}\s*points?\b|Cigar of the Year'
        . '|\bTop\s*\d+|perfect scores?|most awarded|highest (?:score|rating|ranking)/i',
@@ -624,6 +689,11 @@ foreach (['history', 'gamme', 'celebrities', 'pairings'] as $champ) {
                 $defauts[] = sprintf('%s : %s_%s prete une consommation de tabac — « %s »',
                                      $r['name'], $champ, $l, trim($m[0]));
             }
+            if (preg_match(RECOMPENSES[$l], $t, $m)
+                && !isset(RECOMPENSES_ADMISES["brands|{$r['name']}|$champ"])) {
+                $defauts[] = sprintf('%s : %s_%s annonce une recompense — « %s »',
+                                     $r['name'], $champ, $l, trim($m[0]));
+            }
         }
     }
 }
@@ -661,6 +731,7 @@ const REVUES_ADMISES_HORS_MARQUES = [
     'lounges|Elite Cigar Abidjan|description|zh'
         => '雪茄爱好者聚集地 = « lieu de rassemblement des amateurs de cigares », pas la revue',
 ];
+
 
 const TABLES_NARRATIVES = [
     'lounges'            => ['description'],
@@ -711,6 +782,11 @@ foreach (TABLES_NARRATIVES as $table => $champs) {
                 }
                 if (preg_match(CONSOMMATION_PRETEE, $t, $m)) {
                     $defauts[] = sprintf('%s.%s (%s) — %s : prete une consommation — « %s »',
+                                         $table, $champ, $l, $r['name'], trim($m[0]));
+                }
+                if (preg_match(RECOMPENSES[$l], $t, $m)
+                    && !isset(RECOMPENSES_ADMISES["$table|{$r['name']}|$champ"])) {
+                    $defauts[] = sprintf('%s.%s (%s) — %s : annonce une recompense — « %s »',
                                          $table, $champ, $l, $r['name'], trim($m[0]));
                 }
             }
@@ -803,6 +879,8 @@ if (!$defauts) {
         ? sprintf(" — %d regle(s), penser a --figer-rangs\n", count($rangsRegles))
         : "\n";
     echo "  `lounges` et `producer_countries` sont balayes a tolerance zero.\n";
+    foreach (RECOMPENSES_ADMISES as $k => $pourquoi)
+        printf("  Recompense admise — %s : %s\n", $k, $pourquoi);
     echo "  Les six colonnes de chaque tableau portent le meme nombre d'entrees.\n";
     echo "  Les quatre champs narratifs sont balayes : gamme, celebrities, pairings, history.\n";
     echo "  Les SIX langues sont balayees, pas seulement le francais.\n";
