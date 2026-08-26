@@ -66,8 +66,29 @@ const LANGUES = ['en', 'es', 'de', 'zh', 'ar'];
 /** Rapport de longueur au-delà (ou en deçà) duquel on signale. */
 const FACTEUR = 2.0;
 
-/** Les années plausibles pour ce domaine. */
-const ANNEES = '/\b(1[5-9]\d\d|20[0-2]\d)\b/u';
+/**
+ * Les années plausibles pour ce domaine.
+ *
+ * ── POURQUOI PAS \b ─────────────────────────────────────
+ *
+ * La première version écrivait « \b(1[5-9]\d\d|20[0-2]\d)\b ». En
+ * UTF-8, PCRE fonde \b sur \w, qui reste ASCII : la frontière de mot
+ * suppose une espace ou une ponctuation latine.
+ *
+ * Le chinois n'en met pas. Dans « 创立于1893年 », le chiffre est collé
+ * aux idéogrammes, et le motif ne voyait RIEN — testé : zéro
+ * correspondance là où « founded in 1893. » en donne une.
+ *
+ * La colonne chinoise échappait donc entièrement au contrôle des faits,
+ * et le rapport affichait la même chose que si elle était saine.
+ * L'arabe passait, lui, parce qu'il sépare le chiffre par une espace :
+ * c'est ce hasard qui a laissé sortir la fiche Oliva et son « Melanio
+ * en 2014 », en donnant l'illusion que les six langues étaient lues.
+ *
+ * Les délimiteurs sont désormais des assertions sur le CHIFFRE lui-même,
+ * qui ne dépendent d'aucune écriture.
+ */
+const ANNEES = '/(?<!\d)(1[5-9]\d\d|20[0-2]\d)(?!\d)/u';
 
 /** Texte utile d'une valeur, JSON compris. */
 function texte_utile(string $brut): string {
@@ -106,6 +127,13 @@ foreach ($echantillon as $l => $v) { sort($v); $mediane[$l] = $v[intdiv(count($v
 // ── Le relevé ───────────────────────────────────────────
 $volumes = [];   // « table.champ|clé|langue » => facteur d'écart
 $faits   = [];   // idem => années ajoutées
+
+// Les traductions que `i18n_fraicheur` sait périmées, sous la même clé.
+// Voir plus bas pourquoi le contrôle des faits les écarte.
+$enAttente = [];
+foreach (json_decode((string)@file_get_contents(__DIR__ . '/i18n_attente_baseline.json'), true) ?: [] as $k) {
+    $enAttente[$k] = true;
+}
 
 foreach (plan_contenu() as $table => $champs) {
     $cle = null;
@@ -148,9 +176,51 @@ foreach (plan_contenu() as $table => $champs) {
                 // trouvaille qui a fait écrire cet outil.
                 if ($k > FACTEUR) continue;
 
+                // ── NE PAS CONFONDRE INVENTÉ ET PÉRIMÉ ──────────
+                //
+                // Deux causes produisent la même trace, et une seule est
+                // un défaut :
+                //
+                //   la traduction AFFIRME un fait que sa source n'a
+                //     jamais eu — Oliva et son « Melanio en 2014 » ;
+                //   la traduction est PÉRIMÉE et garde une date que le
+                //     français a perdue en étant réécrit — Café Crème et
+                //     son « 1904 », après la promotion de la migration
+                //     107.
+                //
+                // Le second cas n'est pas une invention : c'est une
+                // traduction à refaire, déjà nommée dans le cliquet de
+                // `i18n_fraicheur`. Les mélanger noierait le signal qui a
+                // fait écrire cet outil sous les traces de la campagne
+                // de promotion elle-même.
+                if (isset($enAttente[$id])) continue;
+
                 preg_match_all(ANNEES, $fr, $a);
                 preg_match_all(ANNEES, $tr, $b);
-                $ajoutees = array_values(array_unique(array_diff($b[1], $a[1])));
+
+                // ── LES DÉCENNIES S'ÉCRIVENT AUTREMENT SELON LA LANGUE
+                //
+                // Le français dit « les années 80 ». L'anglais dit « in
+                // the 1980s », l'allemand « der 1990er-Jahre ». Même
+                // fait, autre écriture — et le motif ne voyait que la
+                // forme longue, donc signalait une invention là où il
+                // n'y avait qu'une convention typographique.
+                //
+                // Deux fiches en faisaient les frais : Café Crème
+                // (« années 80 » / « the 1980s ») et Macanudo
+                // (« années 90 » / « the 1990s », « der 1990er »).
+                //
+                // On complète donc l'ensemble français : « années NN »
+                // vaut 19NN et 20NN. Permissif de ce côté, ce qui
+                // n'affaiblit pas la détection d'un fait réellement
+                // inventé — celui-ci porte une année précise que le
+                // français ne contient sous aucune forme.
+                $connues = $a[1];
+                if (preg_match_all('/ann[ée]es\s+(\d{2})(?!\d)/iu', $fr, $d)) {
+                    foreach ($d[1] as $dd) { $connues[] = "19$dd"; $connues[] = "20$dd"; }
+                }
+
+                $ajoutees = array_values(array_unique(array_diff($b[1], $connues)));
                 if ($ajoutees) { sort($ajoutees); $faits[$id] = implode(', ', $ajoutees); }
             }
         }
