@@ -1254,6 +1254,170 @@ désormais ce sens-là aussi, et la contre-épreuve échoue comme elle doit.
 Le logo fourni n'est pas repris : marque déposée, et le chantier des logos reste suspendu à
 l'avis loi Évin.
 
+### Le vocabulaire, terminé (`089`→`094`)
+
+Six lots. Le français de l'atlas ne porte plus `wrapper`, `blend`, `full body` ni `medium-full`
+nulle part — hors **noms propres** conservés : « VSG — Virgin Sun Grown » (gamme Ashton),
+« American Barrel-Aged » (gamme Camacho), « Toro Sun Grown Natural » (format Perdomo).
+
+| lot | portée |
+|---|---|
+| `089`–`090` | `brands.history`, 25 fiches → **0** |
+| `091`–`092` | `brands.gamme`, 55 récits → **0** |
+| `093` | reliquat + deux fiches d'établissement |
+| `094` | `lounges.description`, 17 « walk-in humidor » et 2 fiches entièrement en anglais |
+
+**Ce que la relecture a fait remonter, encore.** Remplacer un mot oblige à relire la phrase, et
+chaque lot a livré des défauts qui n'avaient rien à voir avec le vocabulaire :
+
+- **quinze affirmations non sourçables** — « la référence mondiale du Honduran Corojo », « le
+  laboratoire le plus actif de l'industrie », « l'un des rares wrappers du monde », « la seule
+  maison à », « les cigares les plus doux du marché », « le best-seller depuis 30 ans », « la
+  révolte ouvrière la plus réussie », « le cigare de golf premium par excellence »… Aucune n'est
+  attrapée par le motif des rangs mondiaux : *du marché*, *de l'industrie*, *la seule*, *que
+  personne n'avait osés* sont autant de façons de dire un premier rang sans écrire « monde ».
+- **un conditionnel sur Sinatra** — « le cigare que Sinatra aurait aimé fumer ». La migration
+  `060` s'appelait *avo_sinatra* : elle avait traité l'anecdote et laissé le récit de gamme.
+- **un doublon que ma propre correction avait manqué** — « le best-seller américain depuis 30
+  ans » vivait sur la fiche Macanudo **et** sur celle de General Cigar. La migration `070` n'en
+  avait corrigé qu'une.
+- un néologisme (« capes connecticutaises »), une répétition (« la gamme entrée de gamme »), et
+  des hybrides franco-anglais en série : « Wrapper Camerounais sur Dominican », « Blend
+  Pennsylvania-Virginia-Connecticut wrapper ».
+
+⚠ **Deux tables restent hors de tout contrôle d'affirmation.** `marques_check` balaie les quatre
+champs narratifs de `brands` dans les six langues ; il ne regarde ni `lounges` — 500 fiches,
+écrites en partie par des contributeurs, où j'ai trouvé un « Cigar Journal Award » — ni
+`producer_countries`, où la migration `074` avait déjà dû retirer deux superlatifs mondiaux.
+
+⚠ **Et le français n'est contrôlé par personne pour les langues étrangères.**
+`i18n_langue_check` cherche de l'anglais dans les colonnes *traduites* : la colonne française est
+sa référence. Deux fiches d'établissement y étaient **entièrement en anglais** sans que rien ne
+le signale — même angle mort que « moho azul » (`080`), où le français était la seule des six
+langues à ne pas avoir traduit.
+
+### Les affirmations hors `brands` (`097`→`098`)
+
+Deux chantiers annoncés comme « une heure » et « une à deux heures ». Le premier a tenu. Le
+second a montré que le contrôle qu'il fallait étendre était **aveugle bien au-delà** des deux
+tables visées.
+
+**`097` — les onze rangs mondiaux de `lounges`, triés un par un.** Il n'y avait pas de motif à
+appliquer : un rang sur un *établissement* n'est pas de la réclame de la même façon qu'un rang sur
+un cigare.
+
+- **Gardé** — « la plus haute tour de Corée » (Lotte World Tower, 555 m) : rang national,
+  vérifiable, sur une structure. Il figure comme exception *nommée et motivée* dans l'outil.
+- **Retiré** — « L'hôtel le plus luxueux du monde **(7 étoiles)** » : aucun système de classement
+  hôtelier ne compte sept étoiles. « le plus grand centre commercial du monde » : contesté selon
+  la mesure retenue. « Le plus ancien **cigare merchant** au monde » : la maison le dit d'elle-même,
+  et l'expression n'était ni du français ni de l'anglais.
+- ⚠ **Un superlatif devenu faux.** « le bâtiment le plus haut de Tokyo » désignait Tokyo Midtown
+  (248 m), exact de 2007 à 2023 ; Azabudai Hills culmine depuis à 330 m. *Un rang est daté même
+  quand il est juste.*
+
+**Trois fiches n'étaient pas traduites** — signature différente de la `095` : non plus des mots
+cassés, mais des **locutions françaises entières** laissées en place (`位于plus grand 购物中心
+du monde`). Dont une, Ritz-Carlton Tokyo, dont la colonne *anglaise* comptait deux mots traduits
+sur seize.
+
+**`098` — et un trou dans mon propre détecteur.** Le test réversible de la `095` exigeait une
+lettre **après** le marqueur (`civandte`) et laissait passer le marqueur en **fin** de mot :
+« Elite Cigar Abidjan » portait `discrand`, `discry`, `discrund` — *discret* substitué — dans
+trois colonnes, et le contrôle était vert. Élargir le motif a d'abord produit du bruit
+(`brand`→`bret`, `land`→`let`) : il a fallu deux gardes, la **correspondance en mot entier** et un
+minimum de cinq lettres. Les vrais cas conservent la racine française et la dépassent tous.
+
+**Ce que le contrôle a vu la première fois qu'il a regardé :**
+
+| trouvé | où |
+|---|---|
+| une **consommation de tabac prêtée** (« Il la fumait quotidiennement ») | `brands`, six colonnes |
+| deux rangs mondiaux | `lounges` |
+| un rang mondial dans **les six langues** | `producer_countries` (Brésil) |
+| **29 rangs mondiaux** sur 12 marques | `brands` — mis au cliquet |
+
+⚠ **La boucle de `brands` ne lisait pas le français.** Elle itérait sur les clés de
+`PRESSE_LANGUES` — en, es, de, zh, ar. La colonne source en portait **dix** rangs mondiaux, jamais
+lus. Le contrôle annonçait « les SIX langues sont balayées » tout en n'en lisant que cinq.
+
+⚠ **Et le motif avait cinq trous**, tous trouvés en le confrontant à de vrais textes : `des plus
+… du monde` (superlatif relatif), `… mondial` par l'adjectif, `uno de los … más … del mundo`,
+`einer der …sten X der Welt`, et les six façons arabes de former un superlatif là où il n'en
+connaissait qu'une.
+
+**Deux faux positifs écartés, sans affaiblir le contrôle** : « إطلالة بزاوية 360 **درجة** » est une
+vue à 360 *degrés* — une note de cigare plafonne à 100, ce qui suffit à trancher. Et « 8 **000
+points** de vente » n'est pas une note : le séparateur de milliers ouvrait une frontière de mot au
+milieu du chiffre.
+
+**Le cliquet, plutôt que le silence.** Les 29 rangs de `brands` demandent de réécrire douze fiches
+en six langues — une campagne. Ils sont **nommés** dans `tools/marques_rangs_baseline.json` : le
+stock ne peut plus grossir, et il est écrit noir sur blanc au lieu d'être invisible. Vérifié
+réfutable : témoin posé → sortie 1, témoin retiré → 0.
+
+### Liga Privada : deux signalements, quatre défauts (`096`)
+
+Un lecteur signale deux choses sur la fiche. Les deux sont justes, et chacune en cachait une autre.
+
+**« les humidores »** est le pluriel *espagnol*. Balayé sur toute la base : le mot apparaît trois
+fois. Les deux autres sont dans `lounges`, colonnes `description_es` et `description_de` — où
+`humidores` et `Humidore` sont les pluriels **corrects** de ces langues. Une seule occurrence est
+fautive. Le réflexe « corriger les trois » aurait cassé deux traductions justes.
+
+**« il livre une douceur paradoxale » — du cigare ou de la feuille ?** Des deux, et c'est le
+défaut. Le sujet précédent était « la cape », féminin ; les adjectifs et le pronom, masculins.
+La phrase décrivait l'aspect de la *feuille* (sombre, huileuse, presque noire) puis l'équilibre en
+bouche du *cigare*, sans jamais nommer le second. Les deux sujets sont maintenant nommés.
+
+**Ce que la relecture a ajouté :**
+
+- **une cape pour deux, alors qu'il y en a deux.** « La cape Connecticut Broadleaf Habano » fond
+  en une seule les capes de deux modules que le texte cite lui-même : No.9 → Connecticut Broadleaf
+  maduro ; T52 → habano de la vallée du Connecticut, récoltée à la tige. *Broadleaf Habano* ne
+  désigne aucune feuille.
+- **une divergence entre les six colonnes.** `fr` et `en` disaient que les boîtes « se vendirent
+  en heures » ; `zh` et `ar`, « 45 minutes chez le premier détaillant ». Deux récits du même
+  épisode, aucun sourçable — le texte ne s'appuie plus sur le chiffre. L'anglais portait en
+  revanche une explication que les cinq autres n'avaient pas (on ne fait pas plus de Liga Privada
+  sans cultiver plus de cape, et il faut trois ans) : elle dit *pourquoi*, et passe dans les six.
+- **un superlatif de marché** — « les cigares "sérieux" les plus recherchés du marché ».
+
+### Le trou de `lounges`, comblé — et le contrôle qui manquait (`095`)
+
+Les deux lots précédents signalaient que `lounges` échappait à tout contrôle d'affirmation. En
+allant y voir, ce n'est pas une affirmation que j'ai trouvée en premier. La colonne **anglaise**
+de la fiche Hô Chi Minh disait :
+
+> « First et seule La Casa del Habano du **Viandnam**, openede le 1er août 2021. »
+
+`Viandnam`, c'est *Vietnam* où « et » a été remplacé par « and » **à l'intérieur du mot**. Cinq
+fiches n'ont jamais été traduites : elles ont subi une substitution de mots posée sans limite de
+mot, et le reste de la phrase est resté en français. Traduites pour de bon, dans les cinq langues.
+
+**Le test qui tranche est réversible.** Chercher « and » collé dans un mot ramène `brands`,
+`Sandton`, `grandfather`, `thousands` — 73 fiches de bruit. On remet « et » à la place, et on
+regarde si le mot obtenu figure dans la colonne *française de la même ligne* :
+`civandte`→`civette` ✓, `grandfather`→`gretfather` ✗. Mesuré ainsi : `brands` 0,
+`producer_countries` 0, `lounges` 5 — les mêmes en en/es/de.
+
+Le détecteur est désormais **dans `i18n_langue_check`**, à tolérance zéro comme les écritures
+étrangères, et vérifié réfutable : témoin posé → code de sortie 1, témoin retiré → 0.
+
+⚠ **Et un oubli qui est le mien.** La migration `093` avait retiré « Cigar Journal Award » et les
+« 270 facings » de la fiche BURN by Rocky Patel — du **français seulement**. Les cinq colonnes
+traduites l'annonçaient toujours. Septième cas du chantier où un même fait, écrit à deux adresses,
+n'est corrigé qu'à une seule ; le premier que je me fais à moi-même.
+
+⚠ **`i18n_fraicheur` affichait 100 % pendant tout ce temps.** Il compare l'empreinte de la source
+à celle scellée — jamais la traduction à son sens. Une fiche entièrement en français dans sa
+colonne anglaise lui paraît fraîche. C'est un contrôle de *synchronisation*, pas de *qualité*, et
+il ne faut pas lui demander autre chose.
+
+**Restent à traiter** : huit rangs mondiaux dans `lounges` (Burj Al Arab, Augusta, Pebble Beach,
+Royal Melbourne, Dubai Mall…). Plusieurs portent sur le **lieu** et non sur le cigare, et
+certains sont factuels — le tri demande un jugement au cas par cas, pas un motif.
+
 ### La divergence de `history` (`086`→`088`)
 
 **La mesure d'abord.** Sur 118 fiches, l'anglais de `history` est bien une traduction pour 75
@@ -1450,6 +1614,25 @@ des proportions attendues. Ce sont des **textes différents**, pas des versions 
 Note de vocabulaire : `MOTS_ANGLAIS`, dans le détecteur de fuite, contient `wrapper`, `filler`,
 `binder` et `blend` — **le français source alimente le vocabulaire qui sert à détecter l'anglais
 résiduel** (témoin à 1/568).
+
+### Le « flottement » des campagnes : cause trouvée
+
+Signalé plusieurs fois dans ce journal comme *« deux transients observés sous exécution
+parallèle, sans cause identifiée »*. La cause est établie : des **processus PHP orphelins**.
+
+`tools/i18n_contenu.php --importer` sur toute la base prend de longues minutes. Lancé en tâche de
+fond puis abandonné faute de patience, le processus **continue** — et continue d'écrire en base.
+Quatre s'étaient accumulés, à 38 % de CPU à eux seuls.
+
+Le symptôme : un test d'animation du globe échouant à **1,4959 deg/s pour un seuil à 1,5** — 0,3 %
+en dessous, et reproductible tant que la machine était chargée. Après arrêt des quatre orphelins,
+le même test passe. Ce sont eux, aussi, qui expliquent les échecs sporadiques des tests de
+téléversement.
+
+**La leçon d'exploitation** : un rescellement complet ne se lance pas en tâche de fond « au cas
+où ». Il faut soit l'attendre, soit le cibler — resceller 20 valeurs prend une seconde, en
+resceller 6 925 prend un quart d'heure. Et vérifier `Get-Process php` avant de conclure qu'un
+test est instable.
 
 ⚠ **Piège d'exploitation** : `tools/i18n_dump.php` écrit sur la **sortie standard**. La bonne
 commande est `php tools/i18n_dump.php > sql/traductions.sql` ; un `> /dev/null` par réflexe ne

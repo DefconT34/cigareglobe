@@ -45,6 +45,7 @@ $autotest = in_array('--autotest', $argv, true);
 $db      = $autotest ? null : getDB();
 $defauts = [];
 $notes = $anecdotes = $marques = 0;
+$rangsBrands = [];
 
 // Les verbes et tournures qui prêtent une parole. Le test porte sur le
 // FRANÇAIS : c'est la colonne source, les autres en dérivent.
@@ -145,10 +146,37 @@ const REVUES_CITEES = '/Cigar\s*Aficionado|Cigar\s*Journal|Cigar\s*Insider|Cigar
 const RANGS_MONDIAUX = '/\bworld\x27s\s+(?:best|finest|most|leading|top)\b'
                      . '|\bthe\s+(?:best|finest|greatest|most\s+\w+)\b[^.]{0,50}\b(?:in the world|ever|of all time|anywhere)\b'
                      . '|\bmany experts consider\b'
-                     . '|\b(?:le|la|les)\s+plus\s+\w+[^.]{0,45}?\b(?:au|du)\s+monde\b'
+// DEUX FORMES FRANÇAISES DE PLUS, trouvées en balayant `lounges`.
+//   « L'UNE DES plus grandes manufactures du monde » — le motif exigeait
+//     un article défini singulier ou pluriel ; « des » lui échappait,
+//     alors que le superlatif relatif affirme le même rang.
+//   « Le plus grand événement MONDIAL du cigare » — dit sans la locution
+//     « du monde », par l'adjectif. Même affirmation, autre grammaire.
+                     . '|\b(?:le|la|les|des)\s+plus\s+\w+[^.]{0,45}?\b(?:au|du)\s+monde\b'
+                     . '|\b(?:le|la|les|des)\s+plus\s+\w+(?:\s+\w+){0,2}\s+mondial(?:e|es|aux)?\b'
                      . '|\b(?:le|la)\s+plus\s+\w+\s+jamais\b|\bpremier\s+\w+\s+mondial\b'
                      . '|\bel\s+m[áa]s\s+\w+\s+del\s+mundo\b|\bder\s+\w+ste\s+der\s+Welt\b'
-                     . '|世界上最|الأكثر\s+\S+\s+في\s+العالم/iu';
+                     . '|世界上最|الأكثر\s+\S+\s+في\s+العالم'
+// ── TROIS TROUS, TROUVÉS EN ÉTENDANT LE BALAYAGE ────────
+//
+// La fiche Brésil dit « l'un des maduros les plus réputés au monde »
+// dans les SIX langues. Le motif n'en voyait que trois : le français,
+// l'anglais et le chinois. Les trois autres formes disaient exactement
+// la même chose et passaient.
+//
+//   es  « uno de los maduros más reputados del mundo »
+//       — le motif exigeait « EL más … del mundo », donc le superlatif
+//         absolu. « uno de los … más … » est un superlatif relatif, et
+//         affirme le même rang.
+//   de  « einer der renommiertesten Maduros der Welt »
+//       — le motif exigeait « der …ste der Welt », sans nom entre les
+//         deux. Un seul mot inséré suffisait à le mettre en défaut.
+//   ar  « من أشهر أنواع المادورو في العالم »
+//       — le motif ne connaissait que « الأكثر », une seule des façons
+//         arabes de former un superlatif.
+                     . '|m[áa]s\s+\w+\s+del\s+mundo\b'
+                     . '|\b\w+ste[nr]?\s+(?:\w+\s+){0,2}der\s+Welt\b'
+                     . '|(?:أشهر|أفضل|أكبر|أعلى|أقدم|أفخم|أغلى)[^.]{0,40}?في\s+العالم/iu';
 
 // LA CONSOMMATION DE TABAC ATTRIBUEE A QUELQU'UN DE NOMME.
 //
@@ -494,6 +522,21 @@ foreach ($db->query("SELECT name, scores, celebrities, gamme, pairings, history$
 // sixième du site.
 // ════════════════════════════════════════════════════════
 
+// Le français n'avait pas de motif de presse ici : `brands` le traite
+// par la colonne `scores` et le sous-tableau `gamme[].scores`, qui
+// n'existent pas dans ces deux tables.
+//
+// DEUX FAUX POSITIFS ÉCARTÉS SUR LA MÊME PHRASE. Romeo y Julieta USA :
+// « présente dans plus de 8 000 points de vente américains ».
+//   — « 000 » est la fin d'un nombre, pas une note : le séparateur de
+//     milliers ouvre une frontière de mot au MILIEU du chiffre. D'où le
+//     (?<!\d\s), qui refuse un nombre précédé d'un chiffre et d'une espace.
+//   — et un « point de vente » n'est pas un point de dégustation. Il s'en
+//     compte par milliers ; une note plafonne à 100.
+const PRESSE_FR = '/(?<!\d\s)\b\d{2,3}\s*points?\b(?!\s+de\s+vente)'
+                . '|\bnote\s+de\s+\d{2,3}\b|Cigare\s+de\s+l\x27[Aa]nn[ée]e'
+                . '|\bTop\s*\d+|\bmeilleur\w*\s+note\b/u';
+
 const PRESSE_LANGUES = [
  'en' => '/\bscored?\s+(?:a\s+|of\s+)?\d{2,3}\b|\b\d{2,3}\s*points?\b|Cigar of the Year'
        . '|\bTop\s*\d+|perfect scores?|most awarded|highest (?:score|rating|ranking)/i',
@@ -513,10 +556,24 @@ foreach (['history', 'gamme', 'celebrities', 'pairings'] as $champ) {
     foreach (array_keys(PRESSE_LANGUES) as $l) {
         if (!isset($colonnesBrands["{$champ}_$l"])) continue 2;
     }
-    $cols = implode(', ', array_map(fn($l) => "`{$champ}_$l`", array_keys(PRESSE_LANGUES)));
+    // LE FRANÇAIS N'ÉTAIT PAS DANS CETTE BOUCLE.
+    //
+    // Elle itère sur les clés de PRESSE_LANGUES — en, es, de, zh, ar. La
+    // colonne française n'y figure pas, et RANGS_MONDIAUX ne l'a donc
+    // JAMAIS lue pour `brands`. Elle y porte dix rangs mondiaux :
+    // « la plus ancienne manufacture encore en activité au monde »
+    // (Partagás), « les plus chers du monde » (Davidoff), « le plus fort
+    // du monde » (Joya de Nicaragua)…
+    //
+    // Le contrôle annonçait la parité des six langues tout en n'en
+    // lisant que cinq. Même faute que la migration 077, un cran plus bas.
+    $langsBrands = array_merge(['fr'], array_keys(PRESSE_LANGUES));
+    $cols = implode(', ', array_map(
+        fn($l) => $l === 'fr' ? "`$champ`" : "`{$champ}_$l`", $langsBrands));
     foreach ($db->query("SELECT name, $cols FROM brands ORDER BY name") as $r) {
-        foreach (PRESSE_LANGUES as $l => $motif) {
-            $brut = (string)$r["{$champ}_$l"];
+        foreach ($langsBrands as $l) {
+            $motif = PRESSE_LANGUES[$l] ?? PRESSE_FR;
+            $brut = (string)$r[$l === 'fr' ? $champ : "{$champ}_$l"];
             if ($brut === '' || $brut === '[]') continue;
             // Ne lire que le TEXTE : la clé JSON `"scores"` faisait passer
             // chaque fiche pour porteuse d'une note. Piège rencontré trois
@@ -533,7 +590,7 @@ foreach (['history', 'gamme', 'celebrities', 'pairings'] as $champ) {
             } else {
                 $t = $brut;
             }
-            if (preg_match($motif, $t, $m)) {
+            if (preg_match($motif, $t, $m) && note_plausible($m[0])) {
                 $defauts[] = sprintf('%s : %s_%s porte une note de presse — « %s »',
                                      $r['name'], $champ, $l, trim($m[0]));
             }
@@ -545,12 +602,101 @@ foreach (['history', 'gamme', 'celebrities', 'pairings'] as $champ) {
             }
             if (preg_match(RANGS_MONDIAUX, $t, $m)
                 && !isset(RANGS_ADMIS["{$r['name']}|$champ"])) {
-                $defauts[] = sprintf('%s : %s_%s porte un rang mondial — « %s »',
-                                     $r['name'], $champ, $l, trim($m[0]));
+                $rangsBrands["{$r['name']}|$champ|$l"] = trim($m[0]);
             }
             if (preg_match(CONSOMMATION_PRETEE, $t, $m)) {
                 $defauts[] = sprintf('%s : %s_%s prete une consommation de tabac — « %s »',
                                      $r['name'], $champ, $l, trim($m[0]));
+            }
+        }
+    }
+}
+
+// ════════════════════════════════════════════════════════
+// ── Les tables que ce contrôle ne regardait pas ─────────
+//
+// Depuis la migration 077, ce fichier balaie les quatre champs
+// narratifs de `brands` dans les six langues. Il s'arrêtait là.
+//
+// `lounges` — cinq cents fiches, écrites en partie par des
+// contributeurs — et `producer_countries` — seize pays, sept colonnes —
+// n'étaient sous AUCUN contrôle d'affirmation. Les migrations 093, 094
+// et 095 l'ont signalé trois fois sans le combler ; la 097 y a trouvé
+// onze rangs mondiaux, dont « l'hôtel le plus luxueux du monde
+// (7 étoiles) » — un classement qui n'existe pas — et « le bâtiment le
+// plus haut de Tokyo », vrai jusqu'en 2023 et faux depuis.
+//
+/**
+ * Une note de cigare vit sur une échelle de 100. Au-delà, ce n'est pas
+ * une note : « إطلالة بزاوية 360 درجة » est une vue à 360 DEGRÉS, et le
+ * motif arabe ne distingue pas « درجة » (degré) de « درجة » (point).
+ * Même piège potentiel ailleurs : un prix, une altitude, une surface.
+ */
+function note_plausible(string $extrait): bool {
+    if (!preg_match_all('/\d+/', $extrait, $m)) return true;
+    foreach ($m[0] as $n) if ((int)$n <= 100) return true;
+    return false;
+}
+
+// Comme REVUES_ADMISES pour les marques : le chinois « 雪茄爱好者 »
+// désigne les AMATEURS de cigares autant que la revue homonyme.
+// Clé « table|nom|champ|langue ».
+const REVUES_ADMISES_HORS_MARQUES = [
+    'lounges|Elite Cigar Abidjan|description|zh'
+        => '雪茄爱好者聚集地 = « lieu de rassemblement des amateurs de cigares », pas la revue',
+];
+
+const TABLES_NARRATIVES = [
+    'lounges'            => ['description'],
+    'producer_countries' => ['notes', 'region', 'production', 'rev_detail',
+                             'harvest', 'climate', 'soil'],
+];
+
+// Même principe que RANGS_ADMIS : une exception se NOMME et se motive.
+// Clé « table|nom|champ ».
+const RANGS_ADMIS_HORS_MARQUES = [
+    'lounges|La Casa del Habano — Seoul (Lotte World Tower)|description'
+        => 'le Lotte World Tower est bien le plus haut batiment de Coree du Sud : rang national, verifiable, sur une structure',
+];
+
+foreach (TABLES_NARRATIVES as $table => $champs) {
+    $presentes = [];
+    try { foreach ($db->query("DESCRIBE `$table`") as $c) $presentes[$c['Field']] = true; }
+    catch (Throwable $e) { continue; }
+
+    foreach ($champs as $champ) {
+        if (!isset($presentes[$champ])) continue;
+        $langs = ['fr'];
+        foreach (array_keys(PRESSE_LANGUES) as $l) {
+            if (isset($presentes["{$champ}_$l"])) $langs[] = $l;
+        }
+        $cols = implode(', ', array_map(
+            fn($l) => $l === 'fr' ? "`$champ`" : "`{$champ}_$l`", $langs));
+
+        foreach ($db->query("SELECT name, $cols FROM `$table` ORDER BY name") as $r) {
+            foreach ($langs as $l) {
+                $t = trim((string)$r[$l === 'fr' ? $champ : "{$champ}_$l"]);
+                if ($t === '' || $t === '[]') continue;
+
+                $presse = $l === 'fr' ? PRESSE_FR : PRESSE_LANGUES[$l];
+                if (preg_match($presse, $t, $m) && note_plausible($m[0])) {
+                    $defauts[] = sprintf('%s.%s (%s) — %s : note de presse — « %s »',
+                                         $table, $champ, $l, $r['name'], trim($m[0]));
+                }
+                if (preg_match(REVUES_CITEES, $t, $m)
+                    && !isset(REVUES_ADMISES_HORS_MARQUES["$table|{$r['name']}|$champ|$l"])) {
+                    $defauts[] = sprintf('%s.%s (%s) — %s : cite une revue — « %s »',
+                                         $table, $champ, $l, $r['name'], trim($m[0]));
+                }
+                if (preg_match(RANGS_MONDIAUX, $t, $m)
+                    && !isset(RANGS_ADMIS_HORS_MARQUES["$table|{$r['name']}|$champ"])) {
+                    $defauts[] = sprintf('%s.%s (%s) — %s : rang mondial — « %s »',
+                                         $table, $champ, $l, $r['name'], trim($m[0]));
+                }
+                if (preg_match(CONSOMMATION_PRETEE, $t, $m)) {
+                    $defauts[] = sprintf('%s.%s (%s) — %s : prete une consommation — « %s »',
+                                         $table, $champ, $l, $r['name'], trim($m[0]));
+                }
             }
         }
     }
@@ -591,6 +737,37 @@ foreach (['celebrities', 'gamme', 'pairings'] as $champ) {
     }
 }
 
+// ── Les rangs mondiaux de `brands` : au cliquet ─────────
+//
+// Étendre le balayage à `producer_countries` et `lounges` a révélé que
+// `brands` en portait 33, sur 12 marques — dont dix en français, que
+// cette boucle ne lisait pas. Les corriger demande de réécrire douze
+// fiches dans six langues : une campagne, pas une passe.
+//
+// On applique donc le procédé du cliquet, déjà employé par
+// `i18n_langue_check` : l'existant est NOMMÉ dans un fichier de
+// référence, et tout ce qui s'y ajoute échoue. Le stock ne peut plus
+// grossir, et il est écrit noir sur blanc au lieu d'être invisible.
+//
+//   php tools/marques_check.php --figer-rangs
+$refRangs = __DIR__ . '/marques_rangs_baseline.json';
+
+if (in_array('--figer-rangs', $argv, true)) {
+    ksort($rangsBrands);
+    file_put_contents($refRangs, json_encode($rangsBrands,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    printf("%d rang(s) mondial(aux) enregistre(s) dans %s\n",
+           count($rangsBrands), basename($refRangs));
+    exit(0);
+}
+
+$rangsConnus   = json_decode((string)@file_get_contents($refRangs), true) ?: [];
+$rangsNouveaux = array_diff_key($rangsBrands, $rangsConnus);
+$rangsRegles   = array_diff_key($rangsConnus, $rangsBrands);
+foreach ($rangsNouveaux as $k => $extrait) {
+    $defauts[] = sprintf('NOUVEAU rang mondial dans brands — %s : « %s »', $k, $extrait);
+}
+
 // ── Rapport ─────────────────────────────────────────────
 
 echo "CigarOdyssey — ce que les fiches de marques affirment\n\n";
@@ -604,6 +781,12 @@ if (!$defauts) {
     printf("  %d note(s) chiffree(s) dans `scores` ET dans `gamme[].scores`,\n", $notes);
     echo   "    toutes accompagnees d'une source consultable, et a parite dans les six langues.\n";
     printf("  %d anecdote(s), aucune parole pretee sans source.\n", $anecdotes);
+    printf("  %d rang(s) mondial(aux) dans `brands`, connus et au cliquet (12 marques)",
+           count($rangsConnus));
+    echo $rangsRegles
+        ? sprintf(" — %d regle(s), penser a --figer-rangs\n", count($rangsRegles))
+        : "\n";
+    echo "  `lounges` et `producer_countries` sont balayes a tolerance zero.\n";
     echo "  Les six colonnes de chaque tableau portent le meme nombre d'entrees.\n";
     echo "  Les quatre champs narratifs sont balayes : gamme, celebrities, pairings, history.\n";
     echo "  Les SIX langues sont balayees, pas seulement le francais.\n";

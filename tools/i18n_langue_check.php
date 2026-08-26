@@ -200,6 +200,88 @@ foreach (plan_contenu() as $table => $champs) {
     }
 }
 
+// ── Les mots abîmés par une substitution sans limite ────
+//
+// La migration 095 a trouvé cinq fiches d'établissement dont la colonne
+// ANGLAISE disait « First et seule La Casa del Habano du Viandnam ».
+// « Viandnam », c'est *Vietnam* où « et » a été remplacé par « and » À
+// L'INTÉRIEUR du mot : une substitution posée sans limite de mot.
+//
+// Aucun contrôle ne pouvait les voir. MOTS_ANGLAIS cherche de l'anglais
+// dans les colonnes traduites — ici c'est l'inverse, du FRANÇAIS dans la
+// colonne anglaise. Les écritures ne regardent que l'alphabet, et le
+// latin est le bon. Et `i18n_fraicheur` affichait 100 % : il compare
+// l'empreinte de la source à celle scellée, jamais la traduction à son
+// sens.
+//
+// ── LE TEST QUI TRANCHE ─────────────────────────────────
+//
+// Chercher « and » collé dans un mot ramène `brands`, `Sandton`,
+// `grandfather`, `thousands` : 73 fiches de bruit. Le test est
+// RÉVERSIBLE — on remet « et » à la place, et on regarde si le mot
+// obtenu figure dans la colonne FRANÇAISE de la même ligne.
+//
+//     civandte  → civette   present en français  ✓ abimé
+//     grandfather → gretfather  absent           ✗ mot légitime
+//
+// Zéro est la seule valeur acceptable : ce n'est pas un défaut de
+// traduction, c'est un texte cassé mécaniquement.
+const SUBSTITUTIONS = ['en' => 'and', 'es' => 'y', 'de' => 'und'];
+
+$abimes = [];
+foreach (plan_contenu() as $table => $champs) {
+    // De quoi nommer la ligne dans le rapport, sans supposer la clé.
+    $cle = null;
+    foreach (['name', 'id'] as $c) {
+        try { $db->query("SELECT `$c` FROM `$table` LIMIT 0"); $cle = $c; break; }
+        catch (Throwable $e) { }
+    }
+    if ($cle === null) continue;
+
+    foreach ($champs as $ch) {
+        foreach (SUBSTITUTIONS as $l => $etranger) {
+            $col = $ch . '_' . $l;
+            try { $q = $db->query("SELECT `$cle` k, `$ch` fr, `$col` tr FROM `$table`
+                                    WHERE `$col` IS NOT NULL AND `$col` <> ''
+                                      AND `$ch` IS NOT NULL AND `$ch` <> ''"); }
+            catch (Throwable $e) { continue; }
+
+            foreach ($q as $r) {
+                $fr = mb_strtolower((string)$r['fr']);
+                // Le marqueur peut être au MILIEU (« civandte ») ou à la FIN
+                // du mot (« discrand », de `discret`). La première version
+                // exigeait une lettre des deux côtés et laissait passer le
+                // second cas : « Elite Cigar Abidjan » est resté vert avec
+                // `discrand`, `discry` et `discrund` dans trois colonnes.
+                // On prend donc tout mot qui CONTIENT le marqueur sans s'y
+                // réduire, et c'est la réversibilité qui trie.
+                if (!preg_match_all('/(?<![\p{L}])\p{L}*' . $etranger . '\p{L}*(?![\p{L}])/u',
+                                    (string)$r['tr'], $m)) continue;
+                foreach ($m[0] as $mot) {
+                    if (mb_strtolower($mot) === $etranger) continue;
+                    $nu = trim($mot, ".,;:()[]{}«»\"'\u{2019}");
+                    $rendu = mb_strtolower(str_replace($etranger, 'et', $nu));
+                    // Deux gardes, sans quoi le test réversible ramène des
+                    // mots parfaitement légitimes de la langue cible :
+                    //   « brand » → « bret », « land » → « let »,
+                    //   « ya » → « eta », « rund » → « ret ».
+                    // 1. La forme rendue doit être un MOT ENTIER du français,
+                    //    pas un fragment : « civette » l'est, « bret » non.
+                    // 2. Elle doit faire au moins cinq lettres. Les vrais cas
+                    //    conservent la racine française et la dépassent tous
+                    //    (civette, raretés, vietnam, racheté, discret,
+                    //    parquet) ; le bruit tient en trois ou quatre.
+                    if (mb_strlen($rendu) < 5) continue;
+                    if (!preg_match('/(?<![\p{L}\p{N}])' . preg_quote($rendu, '/')
+                                    . '(?![\p{L}\p{N}])/u', $fr)) continue;
+                    $abimes[] = sprintf('%s.%s (%s) #%s : « %s » — du français « %s » où « et » est devenu « %s »',
+                                        $table, $ch, $l, $r['k'], $nu, $rendu, $etranger);
+                }
+            }
+        }
+    }
+}
+
 $ref = __DIR__ . '/i18n_langue_baseline.json';
 
 if (in_array('--figer', $argv, true)) {
@@ -222,9 +304,10 @@ echo $temoin > $totalFr * 0.03 ? "  <<< TROP HAUT, le detecteur est suspect\n" :
 printf("  %d element(s) encore en anglais dans une colonne qui ne l'est pas\n", count($fautifs));
 if ($corriges) printf("  %d corrige(s) depuis la derniere reference — penser a --figer\n", count($corriges));
 printf("  %d ecriture(s) etrangere(s) — cyrillique, grec, hebreu, thai, kana...\n", count($ecritures));
+printf("  %d mot(s) abime(s) par une substitution sans limite de mot\n", count($abimes));
 
-if (!$nouveaux && !$ecritures) {
-    echo "\n  Aucun element nouveau, aucune ecriture etrangere.\n";
+if (!$nouveaux && !$ecritures && !$abimes) {
+    echo "\n  Aucun element nouveau, aucune ecriture etrangere, aucun mot abime.\n";
     exit(0);
 }
 
@@ -233,8 +316,9 @@ echo "\n";
 // site n'en emploient que trois, donc toute autre est une faute de
 // saisie. Zero est la seule valeur acceptable, et la base y est.
 foreach ($ecritures as $e) echo "  ECHEC  $e\n";
+foreach ($abimes as $a)    echo "  ECHEC  $a\n";
 foreach ($nouveaux as $k => $_) echo "  ECHEC  nouvel element en anglais : $k\n";
-printf("\n%d element(s) en anglais, %d ecriture(s) etrangere(s).\n",
-       count($nouveaux), count($ecritures));
+printf("\n%d element(s) en anglais, %d ecriture(s) etrangere(s), %d mot(s) abime(s).\n",
+       count($nouveaux), count($ecritures), count($abimes));
 if ($nouveaux) printf("Traduire, ou justifier en mettant a jour %s.\n", basename($ref));
 exit(1);
