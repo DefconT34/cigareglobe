@@ -177,6 +177,25 @@ echo "  rapport median de chaque langue au francais (recalcule) :\n    ";
 foreach ($mediane as $l => $m) printf("%s %.2f   ", $l, $m);
 echo "\n\n";
 printf("  %d ecart(s) de volume au-dela d'un facteur %.0f\n", count($volumes), FACTEUR);
+
+// ── LE DÉTAIL PAR LANGUE, SANS QUOI LA CAMPAGNE EST ILLISIBLE
+//
+// La promotion vers le français (migrations 101 et suivantes) fait
+// MONTER ce total avant de le faire descendre : une fiche promue retire
+// un écart en anglais et en crée quatre, en attente de traduction.
+// -1 + 4 = +3 par fiche. Un total qui grimpe n'est donc pas une
+// régression, et seul le détail par langue permet de le voir :
+// l'anglais doit décroître de 40 vers 0, les quatre autres monter puis
+// redescendre.
+$parLangue = [];
+foreach ($volumes as $id => $k) {
+    $l = substr($id, strrpos($id, '|') + 1);
+    $parLangue[$l] = ($parLangue[$l] ?? 0) + 1;
+}
+ksort($parLangue);
+echo "    dont ";
+foreach ($parLangue as $l => $n) printf("%s %d   ", $l, $n);
+echo "\n";
 printf("  %d traduction(s) portant une annee absente du francais\n", count($faits));
 if ($connu['volumes'] ?? []) {
     printf("  (%d volume(s) et %d fait(s) connus et au cliquet)\n",

@@ -171,9 +171,16 @@ foreach ($parTable as $t => $c) {
 // charabia — c'est le cas de plusieurs centaines d'entre elles. Seul
 // « relue » engage quelqu'un.
 $total = count($inv);
+// ON ARRONDIT VERS LE BAS, PAS AU PLUS PROCHE.
+//
+// Avec round(), 6905 sur 6925 s'affichait « 100 % » alors que vingt
+// traductions etaient perimees. Un compteur qui annonce la perfection
+// tant qu'il reste moins d'un demi-pourcent de defauts est precisement
+// ce que ce depot passe son temps a debusquer ailleurs. 100 % ne doit
+// s'afficher que si le compte est exact.
 printf("\n%d / %d a jour (%d%%) — le francais n'a pas bouge depuis\n",
        $parEtat['a-jour'] + $parEtat['relue'], $total,
-       $total ? round(100 * ($parEtat['a-jour'] + $parEtat['relue']) / $total) : 0);
+       $total ? (int)floor(100 * ($parEtat['a-jour'] + $parEtat['relue']) / $total) : 0);
 printf("%d / %d relues (%d%%) — seul chiffre qui engage quelqu'un\n",
        $parEtat['relue'], $total, $total ? round(100 * $parEtat['relue'] / $total) : 0);
 
@@ -204,5 +211,55 @@ if ($parEtat['manquante']) {
 // n'entre pas dans le verdict : personne n'a jamais relu, et faire
 // echouer la campagne sur ce chiffre la rendrait rouge en permanence —
 // c'est-a-dire inutile.
-$defauts = $parEtat['perimee'] + $parEtat['non-scellee'] + $parEtat['manquante'];
+// ── LES PÉRIMÉES ASSUMÉES : UN CLIQUET, PAS UN SCEAU ────
+//
+// La promotion vers le français (migrations 101 et suivantes) réécrit
+// délibérément la colonne source de 40 fiches. Les quatre traductions
+// deviennent alors périmées — c'est EXACT, et c'est le but : la dette
+// était invisible, elle devient comptée.
+//
+// Deux mauvaises réponses, et une bonne.
+//
+//   Resceller (--sceller) déclarerait ces traductions « à jour » sans
+//   qu'une seule ait été retraduite. C'est le mensonge exact que la
+//   migration 095 a mis au jour : une fiche entièrement en français dans
+//   sa colonne anglaise paraissait fraîche.
+//
+//   Laisser le test rouge en permanence le rendrait inutile — la même
+//   raison pour laquelle le compteur « relue » n'entre pas au verdict.
+//
+//   On NOMME donc les périmées connues dans un fichier de référence.
+//   Elles restent périmées, elles sont comptées et listées, et toute
+//   NOUVELLE péremption échoue. Le stock ne peut que descendre, à mesure
+//   que les traductions sont refaites.
+//
+//   php tools/i18n_fraicheur.php --figer-attente
+$refAttente = __DIR__ . '/i18n_attente_baseline.json';
+$perimees = [];
+foreach (inventaire($db) as $e) {
+    if ($e['etat'] === 'perimee') $perimees["{$e['t']}.{$e['c']}|{$e['k']}|{$e['l']}"] = true;
+}
+ksort($perimees);
+
+if (in_array('--figer-attente', $argv, true)) {
+    file_put_contents($refAttente, json_encode(array_keys($perimees),
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    printf("%d traduction(s) en attente enregistree(s) dans %s\n",
+           count($perimees), basename($refAttente));
+    exit(0);
+}
+
+$attendues = [];
+foreach (json_decode((string)@file_get_contents($refAttente), true) ?: [] as $k) $attendues[$k] = true;
+$nouvellesPerimees = array_diff_key($perimees, $attendues);
+$retraduites       = array_diff_key($attendues, $perimees);
+
+if ($attendues) {
+    printf("\n  %d traduction(s) perimee(s) CONNUES : la source a ete reecrite,\n"
+         . "    la traduction reste a faire. Elles ne sont pas scellees.\n", count($attendues));
+    if ($retraduites) printf("  %d retraduite(s) depuis — penser a --figer-attente\n", count($retraduites));
+}
+foreach ($nouvellesPerimees as $k => $_) echo "  ECHEC  nouvelle perimee : $k\n";
+
+$defauts = count($nouvellesPerimees) + $parEtat['non-scellee'] + $parEtat['manquante'];
 exit($defauts > 0 ? 1 : 0);
