@@ -545,7 +545,23 @@ const PRESSE_LANGUES = [
  'de' => '/\bBewertung\w*|\b\d{2,3}\s*Punkte?\b|Zigarre des Jahres|\bTop\s*\d+'
        . '|\berzielte\s+(?:er\s+)?(?:mit[^.]{0,40})?\s*eine\s+\d{2,3}\b/iu',
  'zh' => '/\d{2,3}\s*分(?!钟)|年度雪茄|年度第一|次第一|前\s*\d+\s*名?|最高评分|满分/u',
- 'ar' => '/\b\d{2,3}\s*(?:نقطة|نقاط|درجة)|\d{2,3}\s*\/\s*100/u',
+// L'ARABE PLACE SOUVENT LE NOMBRE APRÈS LE MOT.
+//
+// La fiche Alec Bradley portait, dans `history_ar` : « عام 2011، نال
+// برينسادو جائزة السيجار رقم 1 من CA بنقاط 96 » — « en 2011, Prensado a
+// reçu le prix du cigare n°1 de CA avec 96 points ». Une note de presse
+// complète : revue nommée, rang, points.
+//
+// Elle a échappé à TROIS motifs d'un cheveu :
+//   — « نقاط 96 » met le nombre APRÈS le mot, quand le motif exigeait
+//     « 96 نقطة » ;
+//   — REVUES_CITEES connaît « في CA », pas « من CA » ;
+//   — et « CA بنقاط 96 » intercale un mot entre la revue et le chiffre.
+//
+// Les deux ordres sont désormais admis, ainsi que le mot « جائزة »
+// (prix) accolé à une année, et « رقم 1 » (n°1).
+ 'ar' => '/\b\d{2,3}\s*(?:نقطة|نقاط|درجة)|(?:نقطة|نقاط|درجة)\s*\d{2,3}\b'
+       . '|\d{2,3}\s*\/\s*100|جائزة[^.]{0,30}\b(?:19|20)\d\d\b|\bرقم\s*1\b/u',
 ];
 
 // L'arabe n'a pas de frontière de mot exploitable par PCRE : « سيجار

@@ -1296,6 +1296,58 @@ sa référence. Deux fiches d'établissement y étaient **entièrement en anglai
 le signale — même angle mort que « moho azul » (`080`), où le français était la seule des six
 langues à ne pas avoir traduit.
 
+### Une traduction dit-elle ce que dit sa source ? (`099`)
+
+Chantiers 5 (divergence de `history`) et 6 (relecture humaine). **Je ne peux pas être le relecteur
+humain** — six langues, 1 518 620 caractères. Ce qui suit ramène 17 heures de lecture aveugle à
+une liste ordonnée.
+
+**La mesure a changé le diagnostic.** La feuille de route parlait de « 43 fiches mal alignées ».
+Comparer des longueurs brutes entre le chinois et l'allemand n'a aucun sens : le chinois écrit la
+même chose en trois fois moins de signes. Rapporté au **rapport médian de chaque langue**
+(`en 0.96 · es 0.95 · de 1.00 · zh 0.30 · ar 0.71`), le tableau réel est :
+
+- **40 fiches où `history_en` n'est pas une traduction** mais un texte autonome — 63 066 caractères
+  d'écart, et **aucune phrase partagée d'une fiche à l'autre** : ce n'est ni du remplissage ni du
+  copié-collé, mais de l'écriture spécifique et bonne. Cinq lecteurs sur six ne la voient jamais.
+- **~30 fiches où es/de/zh/ar font le quart du français** : des traductions d'un français plus
+  ancien, que l'expansion du texte source a laissées sur place.
+
+⚠ **Décision éditoriale en attente, pas technique.** Ces 63 066 caractères font le double du
+format habituel du site (médiane 1 051 caractères par fiche). Soit on les *promeut* — traduction
+vers le français puis les quatre autres, ~315 000 caractères de travail — soit on les *ramène* au
+français et l'on perd de la bonne écriture. Ce n'est pas à moi de trancher.
+
+**`tools/i18n_divergence.php`** pose la question que `i18n_fraicheur` ne pose pas. Celui-ci compare
+l'*empreinte* de la source à celle scellée et affiche 100 % ; il ne compare jamais la traduction à
+son *sens*. Le nouvel outil mesure le volume par rapport à la médiane de chaque langue, et surtout
+les **dates qu'une traduction affirme sans que sa source les contienne** — une date est le fait le
+plus vérifiable d'un texte et le plus comparable entre écritures : 2014 s'écrit 2014 en arabe comme
+en chinois.
+
+**Quinze signalements au premier passage, et un motif net** : quand *plusieurs* langues portent la
+même date, c'est le français qui l'a perdue ; quand *une seule* la porte, elle l'a inventée.
+
+- ⚠ **Une note de presse complète, vivante en arabe.** `history_ar` d'Alec Bradley : « en 2011,
+  Prensado a reçu le prix du cigare **n°1 de CA, 96 points** ». Revue, rang, points — exactement ce
+  que les migrations `057`, `058` et `077` ont passé des semaines à retirer. Elle a échappé à
+  **trois** motifs d'un cheveu : l'arabe place le nombre *après* le mot (`نقاط 96`), `REVUES_CITEES`
+  connaissait « في CA » mais pas « من CA », et un mot s'intercalait entre la revue et le chiffre.
+- **Le même prix dans les cinq anecdotes** — le français disait « quand la maison a percé », les
+  cinq traductions « après le prix 2011 ». Le français avait été corrigé seul.
+- **Un cigare inventé** — Oliva, arabe : « puis vint le Melanio en 2014 ». Aucune autre colonne ne
+  le mentionne, et 2014 est son année de récompense. Le texte arabe fait le *tiers* du français et
+  invente pourtant un fait.
+
+⚠ **Aucun motif de presse ne contient de mot signifiant « récompense »** — ni *award*, ni
+*galardón*, ni *Auszeichnung*, ni 获奖, ni جائزة. Un balayage d'essai en trouve **26** occurrences,
+dont plusieurs vraies. Chantier à ouvrir.
+
+**Le contrôle est au cliquet** (248 écarts de volume, 5 faits bénins connus), câblé dans
+`tests/run.php` — 371 assertions — et vérifié réfutable. Sa première version écartait du contrôle
+des faits *toute* fiche divergente en volume, ce qui masquait la fiche Oliva : une traduction plus
+**courte** qui invente une date est plus suspecte, pas moins.
+
 ### Les affirmations hors `brands` (`097`→`098`)
 
 Deux chantiers annoncés comme « une heure » et « une à deux heures ». Le premier a tenu. Le

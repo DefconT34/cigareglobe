@@ -1951,6 +1951,40 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── Une traduction dit-elle ce que dit sa source ? ──────
+//
+// `i18n_fraicheur` repond a « le francais a-t-il bouge depuis ? » et
+// affiche 100 %. Il ne repond pas a « la traduction dit-elle la meme
+// chose ? », et personne ne le faisait.
+//
+// `i18n_divergence` pose la seconde question par deux mesures qui ne
+// demandent pas de lire les six langues : le VOLUME rapporte a la
+// mediane de chaque langue, et les DATES qu'une traduction affirme sans
+// que sa source les contienne.
+//
+// C'est ainsi qu'ont ete trouvees la note de presse arabe d'Alec Bradley
+// — revue, rang et points, dans une langue seulement — et le « Melanio
+// en 2014 » d'Oliva, un cigare qu'aucune autre colonne ne mentionne.
+//
+// Au CLIQUET lui aussi : 248 ecarts de volume connus, dont les 40 fiches
+// ou `history_en` est un texte autonome. Le compte ne peut que descendre.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/i18n_divergence.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('traductions : aucun fait nouveau affirme hors de la source', 0, $code);
+    } else {
+        check('traductions : controle de divergence lancable', false);
+    }
+}
+
 // ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 
