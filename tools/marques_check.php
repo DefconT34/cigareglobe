@@ -576,7 +576,29 @@ const RECOMPENSES = [
 // « prime » — la classe [ée] contient le e nu. Il faut « primé » avec
 // l'accent exigé, sans quoi le verbe « primer » et la marque de rhum
 // « Prime's » repassent tous les deux.
- 'fr' => '/\br[ée]compens(?:e|ée|es|ées)\b|\bdistinction\b|\bprimée?s?\b|\blaur[ée]at\w*/iu',
+// TROISIÈME PASSE SUR LE FRANÇAIS : LE NOM CONTRE LE VERBE.
+//
+// La migration 100 avait réglé l'accent (« primé » et non « prime »).
+// Restaient deux ambiguïtés, révélées par les textes promus en 105 :
+//
+//   « la Belicosos Finos RÉCOMPENSE la patience du fumeur » — un verbe.
+//   « cette DISTINCTION improbable : avoir contribué à… » — au sens de
+//     singularité, pas de prix.
+//
+// Ces mots sont du français parfaitement légitime. C'est au motif d'être
+// plus fin, pas au texte de s'appauvrir.
+//
+//   « récompense » ne compte que précédée d'un déterminant (une, la,
+//     ses…) ou suivie de « par » : la forme du NOM et du participe.
+//     Le verbe conjugué, lui, suit son sujet sans déterminant.
+//   « distinction » ne compte qu'accompagnée d'un verbe d'attribution —
+//     décernée, remise, obtenue, reçue. Seule, elle est trop ambiguë en
+//     français pour valoir signal.
+ 'fr' => '/(?:une|la|les|des|sa|ses|leur|cette|plusieurs)\s+r[ée]compenses?\b'
+       . '|\br[ée]compens[ée]{1,2}s?\s+par\b'
+       . '|\bdistinctions?\s+(?:d[ée]cern|remis|obtenu|re[çc]u)'
+       . '|(?:d[ée]cern|remis|obtenu|re[çc]u)\w*\s+(?:une|la|cette)\s+distinction'
+       . '|\bprimée?s?\b|\blaur[ée]at\w*/iu',
  'en' => '/\baward\w*|\baccolade\w*/i',
  'es' => '/\bgalard[óo]n\w*|\bpremiad\w*/iu',
  'de' => '/\bAuszeichnung\w*|\bpr[äa]miert\w*|\bpreisgekr[öo]nt\w*/iu',
