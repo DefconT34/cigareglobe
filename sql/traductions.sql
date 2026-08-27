@@ -1,5 +1,5 @@
 -- CigarOdyssey — traductions du contenu
--- Genere par tools/i18n_dump.php le 2026-08-26
+-- Genere par tools/i18n_dump.php le 2026-08-27
 -- Rejouable : chaque instruction ecrase la valeur existante.
 SET NAMES utf8mb4;
 

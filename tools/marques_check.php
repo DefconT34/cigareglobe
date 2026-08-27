@@ -152,7 +152,28 @@ const RANGS_MONDIAUX = '/\bworld\x27s\s+(?:best|finest|most|leading|top)\b'
 //     alors que le superlatif relatif affirme le même rang.
 //   « Le plus grand événement MONDIAL du cigare » — dit sans la locution
 //     « du monde », par l'adjectif. Même affirmation, autre grammaire.
+// UNE PRÉPOSITION MANQUANTE, ET LE RANG PASSE.
+//
+// Le motif connaissait « AU monde » et « DU monde », pas « DANS LE
+// monde ». La fiche La Flor Dominicana disait « le plus grand cigare
+// produit en série DANS LE MONDE » — un rang mondial en toutes lettres,
+// jamais signalé, et donc jamais entré au cliquet. Trouvé en le
+// retirant à la main lors de la promotion (migration 111) : le compteur
+// n'a pas bougé, ce qui ne pouvait s'expliquer que d'une façon.
+//
+// Mais « DANS LE monde » ne se traite pas comme les deux autres. C'est
+// le plus souvent un LOCATIF — « le Cameroun n'existe dans le monde du
+// cigare que par elle » — là où « au monde » et « du monde » suivent
+// directement un superlatif.
+//
+// Posée avec la même latitude que les autres, la préposition a produit
+// aussitôt un faux positif sur la fiche Meerapfel, en enjambant une
+// virgule et deux propositions : « les plus recherchées du métier, et le
+// Cameroun n'existe dans le monde ». Elle exige donc de rester dans la
+// MÊME proposition, sans virgule ni point-virgule entre le superlatif et
+// son complément.
                      . '|\b(?:le|la|les|des)\s+plus\s+\w+[^.]{0,45}?\b(?:au|du)\s+monde\b'
+                     . '|\b(?:le|la|les|des)\s+plus\s+\w+[^.,;]{0,45}?\bdans\s+le\s+monde\b'
                      . '|\b(?:le|la|les|des)\s+plus\s+\w+(?:\s+\w+){0,2}\s+mondial(?:e|es|aux)?\b'
                      . '|\b(?:le|la)\s+plus\s+\w+\s+jamais\b|\bpremier\s+\w+\s+mondial\b'
                      . '|\bel\s+m[áa]s\s+\w+\s+del\s+mundo\b|\bder\s+\w+ste\s+der\s+Welt\b'
