@@ -1335,6 +1335,66 @@ attribuables.
 le caractère 奖 que le motif exigeait. Cinq langues sur six est le symptôme d'un motif incomplet,
 pas d'une base propre : **quatrième fois du chantier**.
 
+### La promotion vers le français, terminée (`101`→`118`)
+
+Les **40 fiches** où `history_en` était un texte autonome sont promues. Le français est redevenu
+la source partout : `history_en` n'est plus, nulle part, un texte que cinq lecteurs sur six ne
+voient pas. Dix-huit migrations, dix lots, **63 066 caractères** portés en français.
+
+**Le compteur monte avant de descendre, et c'est le but.** Promouvoir une fiche retire un écart en
+anglais et en crée quatre, en attente de traduction : `−1 + 4 = +3`. Le détail par langue, ajouté
+au rapport de `i18n_divergence` pour rendre la campagne lisible, dit où l'on en est —
+**`en 1`** (contre 40 au départ, et le dernier n'est pas une marque mais un établissement trop
+court), contre `ar 66 · de 45 · es 45 · zh 95` en attente. **200 traductions sont nommées** dans
+`i18n_attente_baseline.json`, non rescellées : les sceller les déclarerait à jour sans qu'une
+seule ait été refaite.
+
+**Le cliquet des rangs mondiaux passe de 29 à 22.** Sept réglés en passant : Cohiba, Montecristo,
+Davidoff, Joya de Nicaragua, Trinidad, Partagás, Tabacalera.
+
+#### Ce que la promotion a filtré
+
+Faire passer ce texte par le français, c'est le faire passer par les contrôles. Par famille :
+
+- **Cinq notes de presse**, toutes indénombrables et donc invisibles par construction —
+  « scores in the upper 90s », « earn scores between 92 and 96 », « earning scores above 90 from
+  specialist publications ». L'outil détecte le *nom d'une revue* ; aucune ne le donne.
+- **Quatre variantes de « many experts consider »** — « les connaisseurs sérieux s'accordent »
+  (Bolívar), « several serious tasters » (Camacho), « several reviewers described » (Perdomo),
+  « considéré par les connaisseurs » (Montecristo).
+- **Une quinzaine de rangs** : mondiaux, de marché, de catalogue, de ville.
+
+⚠ **Le français affirme plus que l'anglais.** Quatre fois, c'est la version *anglaise* qui était la
+plus rigoureuse : « composa *Strangers in the Night* » contre « contribué à » (Avo) ; la boîte
+Café Crème « blanche » contre « yellow » ; l'étymologie de *pleased as Punch* affirmée contre
+« became, **briefly**, one of the meanings » ; « la plus ancienne manufacture des Amériques »
+(Dannemann) que l'anglais ne dit pas. La colonne source est celle qui affirme le plus — et c'est
+précisément celle que les contrôles lisaient le moins avant `098`.
+
+#### Les erreurs de fait qu'aucun contrôle ne pouvait voir
+
+| fiche | défaut |
+|---|---|
+| Davidoff | « pendant **25 ans** » contre « for **22 years** » — 1968→1990 |
+| Café Crème | la boîte dite **blanche** dans une colonne, **jaune** dans deux autres |
+| Joya de Nicaragua | « the Jalapa **and Jalapa** Valleys » |
+| H. Upmann | « named in tribute to Bolívar's greatest rival for Churchill's affection » |
+| Drew Estate | « Connecticut Broadleaf **Habano** » — la cape que `096` avait corrigée ailleurs |
+| Dannemann | le français taisait le **travail d'esclaves africains** à l'origine de la culture bahianaise |
+
+Une durée n'est pas une date, une couleur n'est pas un nombre : `i18n_divergence` compare les
+années, pas les adjectifs. **C'est la relecture qui les attrape — et la promotion est une
+relecture.**
+
+#### Et le cas le plus persistant
+
+« Macanudo, **la marque la plus vendue aux USA** » : retiré par `070` (une seule de ses deux
+adresses), revenu autrement sur la fiche Macanudo et retiré par `109`, retrouvé sur la fiche
+General Cigar et retiré par `116`. **Trois lots, trois retraits, un seul fait.**
+
+⚠ **Reste à faire** : les 200 traductions en attente. Le français a doublé sur 40 fiches ;
+es/de/zh/ar traduisent encore l'ancien texte court.
+
 ### Une traduction dit-elle ce que dit sa source ? (`099`)
 
 Chantiers 5 (divergence de `history`) et 6 (relecture humaine). **Je ne peux pas être le relecteur

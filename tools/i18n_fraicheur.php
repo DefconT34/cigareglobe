@@ -89,6 +89,27 @@ function inventaire(PDO $db): array {
 }
 
 // ── Sceller : poser l'etat de reference ───────────────────
+// ── SCELLER UNE SEULE LANGUE ────────────────────────────
+//
+// `--sceller` scelle TOUT. Après la campagne de promotion (101→118) et
+// l'alignement de l'anglais (119→121), cela aurait été un mensonge : les
+// 40 colonnes anglaises correspondent bien au français — elles en sont
+// la source, et l'alignement vient de leur retirer ce que le français
+// avait écarté — mais les 160 colonnes es/de/zh/ar traduisent encore
+// l'ancien texte court.
+//
+// Sceller les 200 d'un coup aurait déclaré à jour 160 traductions que
+// personne n'a refaites : exactement le mensonge que la migration 095 a
+// mis au jour et que le cliquet de ce fichier existe pour éviter.
+//
+//   php tools/i18n_fraicheur.php --sceller en
+$langueSeule = null;
+$posSceller = array_search('--sceller', $argv, true);
+if ($posSceller !== false && isset($argv[$posSceller + 1])
+    && preg_match('/^[a-z]{2}$/', $argv[$posSceller + 1])) {
+    $langueSeule = $argv[$posSceller + 1];
+}
+
 if (in_array('--sceller', $argv, true)) {
     $st = $db->prepare(
         'INSERT INTO translation_status
@@ -101,11 +122,13 @@ if (in_array('--sceller', $argv, true)) {
         // On ne scelle QUE ce qui est deja traduit. Une case vide n'a
         // pas d'empreinte a retenir : elle est manquante, point.
         if ($e['etat'] === 'manquante') continue;
+        if ($langueSeule !== null && $e['l'] !== $langueSeule) continue;
         $st->execute([$e['t'], $e['k'], $e['c'], $e['l'],
                       empreinte_source($e['src']), 'machine']);
         $n++;
     }
-    printf("%d traduction(s) scellee(s) sur le francais actuel.\n", $n);
+    printf("%d traduction(s) scellee(s) sur le francais actuel%s.\n", $n,
+           $langueSeule !== null ? " (langue $langueSeule uniquement)" : "");
     echo "Statut « machine » : rien n'est declare relu tant qu'un humain ne l'a pas dit.\n";
     exit(0);
 }
