@@ -172,7 +172,24 @@ const RANGS_MONDIAUX = '/\bworld\x27s\s+(?:best|finest|most|leading|top)\b'
 // Cameroun n'existe dans le monde ». Elle exige donc de rester dans la
 // MÊME proposition, sans virgule ni point-virgule entre le superlatif et
 // son complément.
+// ── « DU MONDE » N'EST PAS TOUJOURS UN RANG ─────────────
+//
+// La fiche Vegueros disait : « l'une des portes d'entrée les plus
+// honnêtes DU MONDE CUBAIN ». Le motif s'arrêtait à « du monde » et ne
+// voyait pas l'adjectif qui suit — or « le monde cubain » est une
+// SPHÈRE, pas la planète. Quatre entrées du cliquet sur vingt-deux
+// étaient ce seul faux positif, compté deux fois en français et deux
+// fois en espagnol.
+//
+// Même chose pour « du monde entier », qui insiste sur l'étendue sans
+// classer quoi que ce soit.
+//
+// Le complément est donc refusé quand « monde » est suivi d'un
+// qualificatif qui le restreint. La liste est explicite plutôt que
+// générique : exclure tout mot suivant écarterait « la plus copiée du
+// monde ET la plus convoitée », qui est bien un rang.
                      . '|\b(?:le|la|les|des)\s+plus\s+\w+[^.]{0,45}?\b(?:au|du)\s+monde\b'
+                     . '(?!\s+(?:cubain|hispanique|arabe|latin|anglo|occidental|oriental|moderne|antique|entier))'
                      . '|\b(?:le|la|les|des)\s+plus\s+\w+[^.,;]{0,45}?\bdans\s+le\s+monde\b'
                      . '|\b(?:le|la|les|des)\s+plus\s+\w+(?:\s+\w+){0,2}\s+mondial(?:e|es|aux)?\b'
                      . '|\b(?:le|la)\s+plus\s+\w+\s+jamais\b|\bpremier\s+\w+\s+mondial\b'
@@ -195,7 +212,10 @@ const RANGS_MONDIAUX = '/\bworld\x27s\s+(?:best|finest|most|leading|top)\b'
 //   ar  « من أشهر أنواع المادورو في العالم »
 //       — le motif ne connaissait que « الأكثر », une seule des façons
 //         arabes de former un superlatif.
+// L'espagnol porte le même piège : « las puertas de entrada más
+// honestas DEL MUNDO CUBANO ». Même garde qu'en français.
                      . '|m[áa]s\s+\w+\s+del\s+mundo\b'
+                     . '(?!\s+(?:cubano|hispano|[áa]rabe|latino|entero|occidental|oriental|moderno|antiguo))'
                      . '|\b\w+ste[nr]?\s+(?:\w+\s+){0,2}der\s+Welt\b'
                      . '|(?:أشهر|أفضل|أكبر|أعلى|أقدم|أفخم|أغلى)[^.]{0,40}?في\s+العالم/iu';
 
