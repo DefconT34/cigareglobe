@@ -217,7 +217,97 @@ const RANGS_MONDIAUX = '/\bworld\x27s\s+(?:best|finest|most|leading|top)\b'
                      . '|m[áa]s\s+\w+\s+del\s+mundo\b'
                      . '(?!\s+(?:cubano|hispano|[áa]rabe|latino|entero|occidental|oriental|moderno|antiguo))'
                      . '|\b\w+ste[nr]?\s+(?:\w+\s+){0,2}der\s+Welt\b'
-                     . '|(?:أشهر|أفضل|أكبر|أعلى|أقدم|أفخم|أغلى)[^.]{0,40}?في\s+العالم/iu';
+                     . '|(?:أشهر|أفضل|أكبر|أعلى|أقدم|أفخم|أغلى)[^.]{0,40}?في\s+العالم'
+// ── UN RANG QUI SURVIT EN CHANGEANT DE LANGUE ───────────
+//
+// La migration 108 a retiré « le cigare le plus vendu du monde » du
+// français et de l'espagnol de Montecristo. La migration 125 l'a
+// retrouvé, INTACT, dans les trois langues restantes :
+//
+//   de  « die meistverkaufte Zigarre der Welt »
+//   zh  « 全球销量最高的雪茄 »
+//   ar  « أكثر السيجار مبيعًا في العالم »
+//
+// Aucune n'était au cliquet, parce qu'aucune ne pouvait y entrer. Le
+// même fait a donc traversé trois migrations en changeant simplement de
+// colonne. Ce n'est pas un oubli de rédaction : c'est le contrôle qui
+// regardait ailleurs.
+//
+// ── ALLEMAND : « ste » N'EST PAS LA SEULE TERMINAISON ───
+//
+// Les deux motifs allemands exigeaient `\w+ste[nr]?`. Or le superlatif
+// allemand ne finit pas toujours ainsi :
+//
+//   « meistverkaufte » se forme sur MEIST-, pas sur -ste ;
+//   « größte », « älteste » s'écrivent avec ß ou une autre lettre juste
+//     avant le -te, que `\w+ste` refuse tout autant.
+//
+// On accepte donc la terminaison -te seule, précédée d'un préfixe
+// superlatif reconnu (meist-, best-, welt-) OU d'un radical quelconque
+// suivi de « der Welt ». Et les composés en Welt- (« Weltmarktführer »,
+// « weltgrößte ») disent le même rang sans jamais écrire « der Welt ».
+// LE MARQUEUR MONDIAL RESTE EXIGÉ, et c'est tout l'enjeu.
+//
+// Premier jet : le préfixe superlatif seul, sans « der Welt ». Il a
+// rapporté quarante entrées dont l'écrasante majorité était du bruit —
+// « bestätigte » (confirmé), « bestimmten » (déterminé), « bestellten »
+// (commandé) sont des verbes ordinaires que « best » attrape ; et
+// « meistzitierten », « meisterwarteten » sont des superlatifs SANS
+// portée mondiale, exactement comme « le plus vendu de Cuba » n'est pas
+// un rang mondial en français.
+//
+// Un superlatif n'est un rang MONDIAL qu'accompagné du monde. Les deux
+// motifs ci-dessous gardent donc « der Welt » ; seule la façon de former
+// le superlatif s'élargit.
+                     . '|\b(?:meist|welt)\w*e[nrms]?\s+(?:\w+\s+){0,2}der\s+Welt\b'
+                     . '|\b\w+[tßs]te[nrms]?\s+(?:\w+\s+){0,2}der\s+Welt\b'
+// Les composés qui affirment le rang sans jamais écrire « der Welt ».
+// « weltberühmt » et « weltbekannt » n'y figurent pas : ils disent la
+// NOTORIÉTÉ, pas le classement, et le français « mondialement connu »
+// ne déclenche rien non plus. Un contrôle plus sévère en allemand qu'en
+// français rendrait les six langues incomparables.
+                     . '|\bWelt(?:marktführer|rekord)\b|\bweltgrößte[nrms]?\b'
+                     . '|\bweltweit\s+(?:führend|größt|best)\w*'
+                     . '|\bNummer\s+eins\s+(?:der\s+Welt|weltweit)\b'
+// ── CHINOIS : LE MONDE NE S'ÉCRIT PAS QU'EN DEUX SIGNES ─
+//
+// Le motif ne connaissait que « 世界上最 » — « le plus … au monde »,
+// dans cette graphie exacte. Le chinois dit tout autant :
+//
+//   全球…最   (全球销量最高 : « le plus vendu au monde »)
+//   世界最     sans 上
+//   世界第一 / 全球第一   (« numéro un mondial »)
+//
+// Le chinois n'ayant pas d'espaces, la latitude se compte en signes et
+// s'arrête à la ponctuation de la phrase : sans cette borne, le motif
+// enjamberait deux propositions et rapporterait n'importe quoi.
+// ET LE « MONDE CUBAIN » SE DIT AUSSI EN CHINOIS.
+//
+// La fiche Vegueros dit « 通往古巴世界最诚实的入口之一 » — « l'une des
+// portes d'entrée les plus honnêtes du MONDE CUBAIN ». C'est le faux
+// positif exact que le motif français garde depuis la migration 123, et
+// il est revenu par la porte chinoise : 世界 précédé d'un qualificatif
+// désigne une SPHÈRE, pas la planète.
+//
+// Le chinois place le qualificatif AVANT — 古巴世界, 雪茄世界 — là où le
+// français le place après. La garde change donc de côté.
+                     . '|(?<!古巴)(?<!雪茄)(?<!烟草)(?:世界|全球)[上]?[^。！？；]{0,12}?最'
+                     . '|(?:世界|全球)第一|世界之最'
+// ── ARABE : UNE FORME DE SUPERLATIF DE PLUS ─────────────
+//
+// La demande portait sur l'allemand et le chinois ; l'arabe présentait
+// exactement le même trou, sur exactement la même phrase, et le laisser
+// aurait été refermer deux portes sur trois.
+//
+// `الأكثر` n'était reconnu qu'avec son article et un seul mot avant
+// « في العالم ». Montecristo disait « أكثر السيجار مبيعًا في العالم » :
+// sans article, deux mots intercalés.
+//
+// La latitude s'arrête à la ponctuation de la proposition — même garde
+// que « dans le monde » en français. Sans elle, la fiche Casa Turrent
+// remontait un faux positif en enjambant un deux-points : « أكثر منهم
+// كصنّاع: فغلافهم يكسو سيجاراً في العالم ».
+                     . '|أكثر[^.,،:؛]{0,40}?في\s+العالم/iu';
 
 // LA CONSOMMATION DE TABAC ATTRIBUEE A QUELQU'UN DE NOMME.
 //
