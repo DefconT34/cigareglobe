@@ -53,9 +53,59 @@ if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 require_once __DIR__ . '/../backend/config.php';
 require_once __DIR__ . '/i18n_contenu_plan.php';
 
-const MOTS_ANGLAIS = '/\b(the|and|with|which|from|this|that|these|those|their|its|was|were|'
-                   . 'have|has|been|launched|wrapper|filler|binder|blend|notes of|aged|years)\b/i';
-const SEUIL = 3;
+// ── LE COMPTEUR MESURAIT AUTRE CHOSE QU'IL NE CROYAIT ───
+//
+// La liste comptait « was » et « has » comme marqueurs anglais. Or
+// « was » est un mot ALLEMAND courant (« ce que ») et « has » un mot
+// ESPAGNOL (« tu as »). Le compteur les additionnait comme des preuves.
+//
+// L'effet était doublement faux, et dans les deux sens :
+//
+//   il pouvait SE DÉCLENCHER sur de l'allemand impeccable, trois « was »
+//     suffisant à franchir le seuil ;
+//   et il LAISSAIT PASSER du vrai anglais. `gamme_es` de Perdomo disait
+//     « Habano blend — Nicaraguan shade-grown wrapper over Nicaraguan
+//     ligero. Notas de café cream, soft especias, cedro. » Deux
+//     marqueurs réels, `blend` et `wrapper` : le seuil de 3 l'a laissé
+//     passer À UN MOT PRÈS, et `i18n_fraicheur` le déclarait à jour.
+//
+// Mesuré : sur 2 017 valeurs es/de, le motif d'origine trouvait 42
+// valeurs « à deux marqueurs ». Débarrassé des deux collisions, il n'en
+// trouve plus que 25 — les 17 autres étaient de l'allemand correct.
+//
+// Chaque langue reçoit donc les marqueurs qui ne sont pas des mots
+// chez elle.
+const MOTS_ANGLAIS_BASE = 'the|and|with|which|from|this|that|these|those|their|its|were'
+                        . '|have|been|launched|filler|binder|notes of|aged|years';
+
+/**
+ * Les marqueurs anglais valables POUR une langue donnée.
+ *
+ * `wrapper` et `blend` méritent un traitement à part en allemand : ce
+ * sont des emprunts courants du métier germanophone, et l'allemand
+ * capitalise ses substantifs. « den brasilianischen Maduro-Wrapper » est
+ * de l'allemand ; « nicaraguan wrapper » n'en est pas. La casse fait
+ * donc la différence, et elle seule.
+ */
+function mots_anglais(string $langue): string {
+    $mots = MOTS_ANGLAIS_BASE;
+    if ($langue !== 'de') $mots .= '|was';
+    if ($langue !== 'es') $mots .= '|has';
+
+    if ($langue === 'de') {
+        // Minuscules exigées : le substantif allemand porte la majuscule.
+        return '/(?:\b(?:' . $mots . ')\b|(?<![\p{L}])(?:wrapper|blend)(?![\p{L}]))/u';
+    }
+    return '/\b(?:' . $mots . '|wrapper|blend)\b/iu';
+}
+
+// DEUX MARQUEURS SUFFISENT.
+//
+// Le seuil était de trois. La fiche Perdomo montre pourquoi c'est un de
+// trop : un texte entièrement anglais peut n'employer que deux mots de
+// la liste. Sur la distribution corrigée — 1 774 valeurs à zéro, 103 à
+// un, 25 à deux, 10 à trois ou plus — le décrochage est net après un.
+const SEUIL = 2;
 
 /** Les champs JSON dont chaque element porte un texte traduit. */
 function champs_items(): array {
@@ -82,7 +132,7 @@ function releve(PDO $db, string $langue): array {
                 // soit — pour le chinois et l'arabe — l'ecriture attendue
                 // en est absente, ce qui suffit a conclure sans compter
                 // un seul mot.
-                $anglais = preg_match_all(MOTS_ANGLAIS, $t, $m) && count($m[0]) >= SEUIL;
+                $anglais = preg_match_all(mots_anglais($langue), $t, $m) && count($m[0]) >= SEUIL;
                 if ($anglais || !ecriture_attendue($langue, $t)) {
                     $out["brands.$champ.$langue#{$r['name']}[$i]"] = true;
                 }
@@ -164,7 +214,7 @@ foreach (champs_items() as $champ => $cle) {
             $t = (string)($item[$cle] ?? '');
             if ($t === '') continue;
             $totalFr++;
-            if (preg_match_all(MOTS_ANGLAIS, $t, $m) && count($m[0]) >= SEUIL) $temoin++;
+            if (preg_match_all(mots_anglais('fr'), $t, $m) && count($m[0]) >= SEUIL) $temoin++;
         }
     }
 }
