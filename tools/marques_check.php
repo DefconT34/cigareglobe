@@ -214,7 +214,19 @@ const RANGS_MONDIAUX = '/\bworld\x27s\s+(?:best|finest|most|leading|top)\b'
 //         arabes de former un superlatif.
 // L'espagnol porte le même piège : « las puertas de entrada más
 // honestas DEL MUNDO CUBANO ». Même garde qu'en français.
-                     . '|m[áa]s\s+\w+\s+del\s+mundo\b'
+// « MÁS ALLÁ DEL MUNDO » N'EST PAS UN SUPERLATIF.
+//
+// La fiche Cohiba dit, en francais, que sa bague est un signe de statut
+// « bien AU-DELA DU MONDE du tabac ». Le motif francais l'ignore : il
+// exige un determinant et « plus ». L'espagnol « más allá del mundo »,
+// lui, tombait pile dans « más + un mot + del mundo » -- et le cliquet
+// le portait donc comme un rang mondial, alors que la phrase dit
+// exactement le contraire d'un classement.
+//
+// C'est le troisieme faux positif de cette famille apres « du monde
+// cubain » (fr, es) et « 古巴世界 » (zh) : « monde » y designe une
+// sphere ou une limite, jamais la planete.
+                     . '|m[áa]s\s+(?!all[áa]\b|ac[áa]\b)\w+\s+del\s+mundo\b'
                      . '(?!\s+(?:cubano|hispano|[áa]rabe|latino|entero|occidental|oriental|moderno|antiguo))'
                      . '|\b\w+ste[nr]?\s+(?:\w+\s+){0,2}der\s+Welt\b'
                      . '|(?:أشهر|أفضل|أكبر|أعلى|أقدم|أفخم|أغلى)[^.]{0,40}?في\s+العالم'
@@ -739,7 +751,22 @@ const RECOMPENSES = [
 // Cinq langues sur six est le symptôme habituel d'un motif incomplet,
 // pas d'une base propre.
  'zh' => '/获奖|奖项|得奖|殊荣|大奖(?!赛)/u',
- 'ar' => '/جائزة(?!\s*الكبرى)|جوائز/u',
+// LE NOBEL EST ECARTE DANS CINQ LANGUES, ET PRIS DANS LA SIXIEME.
+//
+// L'en-tete de ce motif le dit deja : « the Nobel Prize in Literature »
+// — Churchill — est un fait historique verifiable, pas une distinction
+// de cigare. Les cinq autres langues l'ecartent par construction :
+// l'anglais retient `award` et jamais `prize`, l'espagnol `premiado` et
+// jamais `premio`, l'allemand `Auszeichnung` et jamais `Nobelpreis`, le
+// francais ne connait pas « prix », et le chinois ne cherche pas 文学奖.
+//
+// L'arabe, lui, prenait « جائزة نوبل » : le mot y couvre les deux sens.
+// Un controle plus severe dans une langue que dans les cinq autres rend
+// les six incomparables -- c'est le meme defaut que les motifs de rangs
+// avaient cote allemand et chinois.
+//
+// La Grande-Bourse du Grand Prix reste ecartee comme avant.
+ 'ar' => '/جائزة(?!\s*(?:الكبرى|نوبل))|جوائز/u',
 ];
 
 // Clé « table|nom|champ » — la langue n'entre pas : une distinction
