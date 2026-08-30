@@ -1951,6 +1951,38 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── Une phrase anglaise deguisee en traduction ──────────
+//
+// Le controle precedent cherche des MOTS-OUTILS anglais d'une liste
+// fixe. La colonne `gamme_es` de Montecristo disait « One of el más
+// codiciado cigars among European coleccionistas » : pas un seul mot de
+// cette liste, et il y en aura toujours un de plus.
+//
+// `i18n_melange_check` ne cherche plus des mots precis mais un RAPPORT
+// DE FORCE, phrase par phrase : quand les mots-outils anglais tiennent
+// tete a ceux de la langue attendue, la phrase est de l'anglais
+// maquille. Zero est la seule valeur acceptable — ce n'est pas un
+// chantier a etaler, et la base y est depuis la migration 127.
+//
+// Le controle verifie aussi ses propres cas construits a chaque
+// passage : une base propre ne prouve pas qu'un detecteur fonctionne.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/i18n_melange_check.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('traductions : aucune phrase anglaise deguisee', 0, $code);
+    } else {
+        check('traductions : controle de melange lancable', false);
+    }
+}
+
 // ── Une traduction dit-elle ce que dit sa source ? ──────
 //
 // `i18n_fraicheur` repond a « le francais a-t-il bouge depuis ? » et
