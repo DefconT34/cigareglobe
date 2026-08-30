@@ -63,12 +63,9 @@ function jout(array $data, int $code = 200): never {
     exit;
 }
 
-function get_ip(): string {
-    return $_SERVER['HTTP_X_FORWARDED_FOR']
-        ?? $_SERVER['HTTP_X_REAL_IP']
-        ?? $_SERVER['REMOTE_ADDR']
-        ?? '0.0.0.0';
-}
+// Une `get_ip()` vivait ici aussi, et n'y decoupait meme pas la liste :
+// un « X-Forwarded-For: a, b » partait tel quel dans `uploader_ip`.
+// L'adresse se demande maintenant a client_ip() (auth_lib.php).
 
 function is_admin(): bool {
     // Session d'administration, role moderator/admin, ou en-tete X-Admin-Key.
@@ -186,7 +183,7 @@ function action_upload(PDO $db): never {
         $filename,
         $caption ?: null,
         $set_primary ? 1 : 0,
-        get_ip(),
+        client_ip(),
         $sort_order,
     ]);
 

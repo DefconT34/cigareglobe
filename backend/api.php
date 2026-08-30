@@ -38,14 +38,9 @@ function json_out(array $data, int $code = 200): void {
     exit;
 }
 
-function get_ip(): string {
-    foreach (['HTTP_CF_CONNECTING_IP','HTTP_X_FORWARDED_FOR','HTTP_X_REAL_IP','REMOTE_ADDR'] as $key) {
-        if (!empty($_SERVER[$key])) {
-            return trim(explode(',', $_SERVER[$key])[0]);
-        }
-    }
-    return '0.0.0.0';
-}
+// Une fonction `get_ip()` vivait ici, troisieme exemplaire d'une meme
+// idee — et les trois faisaient confiance aux en-tetes du client. Une
+// seule version fait foi desormais : client_ip(), dans auth_lib.php.
 
 function is_admin(): bool {
     // Session d'administration, role moderator/admin, ou en-tete X-Admin-Key.
@@ -102,7 +97,7 @@ function action_list(): void {
     if (!$country) json_out(err('country_required', 'Paramètre country requis'), 400);
 
     $db   = getDB();
-    $ip   = get_ip();
+    $ip   = client_ip();
 
     $stmt = $db->prepare(
         "SELECT id, name, city, type, phone, description, source_url,
@@ -165,7 +160,7 @@ function action_submit(): void {
         }
     }
 
-    $ip = get_ip();
+    $ip = client_ip();
 
     // Anti-spam : quota journalier par compte. Les contributeurs de
     // confiance (ajouts publiés sans modération) bénéficient d'un plafond
@@ -273,7 +268,7 @@ function action_vote(): void {
         json_out(err('params_invalid', 'Paramètres invalides'), 400);
     }
 
-    $ip = get_ip();
+    $ip = client_ip();
     $db = getDB();
 
     // Contribution existe et est en attente ?

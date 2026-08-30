@@ -37,6 +37,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **B3** : nom & domaine unifiés — CigarOdyssey / cigarodyssey.com partout (backend, emails, SEO, manifeste, CI, docs)
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
 - **E1e** : le modérateur — `admin_scope()` (portée `admin` / `moderator`), écran de nomination, journal de modération (migration 130), retrait réversible d'une photo, 51 vérifications
+- **A4** : l'adresse du visiteur ne se déclare plus soi-même — `TRUSTED_PROXIES`, chaîne `X-Forwarded-For` lue depuis la droite, trois exemplaires de la fonction réduits à un, 18 vérifications
 
 ## ⏳ À faire
 
@@ -44,9 +45,44 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**A1** — Clé admin hors URL (session + CSRF)~~ ✅
 - [x] ~~**A2** — CORS restreint au domaine réel (liste d'origines, `*` en local)~~ ✅
 - [x] ~~**A3** — Revue de sécurité (XSS stocké, fuites d'erreurs, CSP, CORS)~~ ✅
+- [x] ~~**A4** — L'adresse du visiteur ne se déclare plus soi-même~~ ✅
+  - `client_ip()` lisait `CF-Connecting-IP`, puis `X-Forwarded-For`, puis `X-Real-IP`, et ne
+    retombait sur `REMOTE_ADDR` qu'en dernier. **Ces trois en-têtes sont écrits par
+    l'appelant.** Servi en direct — le cas sur un mutualisé —, le site retenait donc une
+    adresse choisie par celui qu'il cherchait à brider : un en-tête différent à chaque
+    requête, et plus aucun plafond ne mordait (connexions, contributions, cadences du forum)
+  - Nouvelle règle : `REMOTE_ADDR` par défaut, les en-têtes lus **seulement** si
+    `REMOTE_ADDR` figure dans `TRUSTED_PROXIES` (vide par défaut, et c'est le bon réglage)
+  - La chaîne `X-Forwarded-For` se lit **depuis la droite** en sautant les maillons connus :
+    chaque relais ajoute à droite, donc lire à gauche retenait la valeur forgée **jusque
+    derrière un vrai proxy** — le trou restait ouvert là même où l'en-tête est légitime
+  - **Trois exemplaires** de cette fonction coexistaient (`auth_lib`, `api`, `photos`) et les
+    trois faisaient confiance au client ; celle de `photos.php` ne découpait même pas la
+    liste. Une seule fait foi désormais
+  - 18 vérifications (424 → 442), dont la contre-épreuve : un second serveur lancé avec
+    `TRUSTED_PROXIES=127.0.0.1` doit au contraire **honorer** l'en-tête. Refuser un en-tête ne
+    prouve pas qu'on sait le lire
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, migrations 001→072, cron des rappels) · M
+- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, **migrations 001→130**, cron des rappels) · M
+  - ⚠ Le décompte disait « 001→072 » : il y a **130** migrations.
+- [ ] **B4** — **Le contenu n'existe qu'à un seul endroit** · **bloquant** · M
+  - 500 établissements, 118 marques, 16 fiches pays, 41 zones, 30 feuilles, 20 entrées de
+    lexique, 442 photos (26 Mo) : dans le MySQL local, et nulle part ailleurs. Git suit la
+    structure (`schema.sql`) et les traductions (`traductions.sql`) — **aucune migration
+    n'insère de `lounges`** — et `git remote -v` ne renvoie rien
+  - `sql/README.md` renvoie à « un dump séparé, non versionné » qui n'existe pas
+  - Il faut : un dépôt distant privé, et un dump du contenu versionné ou sauvegardé ailleurs
+- [ ] **B5** — Pages légales et droit à l'effacement · **bloquant** · M
+  - Ni mentions légales, ni CGU, ni politique de confidentialité : ni les fichiers, ni un
+    lien. Site UE, avec comptes, emails, photos téléversées, et un produit du tabac
+  - `auth.php` expose register/login/logout/forgot/reset/resend — **pas de suppression de
+    compte** (RGPD art. 17). On peut s'inscrire, pas s'effacer
+- [ ] **B6** — Deux durcissements courts · P
+  - `Strict-Transport-Security` absent : le `.htaccess` redirige vers https sans le déclarer,
+    donc la toute première visite reste interceptable
+  - `uploads/lounges/.htaccess` **n'est pas suivi par Git** (`.gitignore` ne dés-ignore que
+    `uploads/.htaccess`) : la version corrigée est locale et ne partira pas en production
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 

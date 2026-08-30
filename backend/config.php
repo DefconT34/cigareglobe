@@ -56,6 +56,21 @@ define('TRUSTED_AFTER_APPROVED', (int)env('TRUSTED_AFTER_APPROVED', '5'));
 define('ADMIN_KEY',   env('ADMIN_KEY', ''));
 define('ADMIN_EMAIL', env('ADMIN_EMAIL', 'vous@example.com'));
 
+// ── Proxys de confiance ───────────────────────────────────
+// Adresses ou plages CIDR des machines autorisees a DIRE quelle est
+// l'adresse du visiteur (X-Forwarded-For, X-Real-IP, CF-Connecting-IP).
+// Separees par des virgules.
+//
+// VIDE PAR DEFAUT, ET C'EST LE BON REGLAGE quand le site est servi en
+// direct : sans reverse-proxy devant, ces en-tetes ne peuvent venir que
+// du visiteur lui-meme, donc de quelqu'un qui choisit ce qu'il y ecrit.
+// Voir client_ip() dans auth_lib.php pour ce que cela changeait.
+//
+// A renseigner UNIQUEMENT si un proxy est reellement en place — par
+// exemple les plages de Cloudflare, ou '127.0.0.1' derriere un nginx
+// local. Une valeur trop large rouvre exactement le trou qu'elle ferme.
+define('TRUSTED_PROXIES', (string)env('TRUSTED_PROXIES', ''));
+
 // ── Diagnostic ────────────────────────────────────────────
 // true = les messages d'erreur techniques sont renvoyes au client.
 // A n'activer QU'EN DEVELOPPEMENT.

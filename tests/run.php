@@ -1647,6 +1647,106 @@ foreach (['en', 'es', 'de', 'zh', 'ar'] as $l) {
 eq('chaque code est traduit dans les cinq autres langues', [], $manquantes);
 
 // ════════════════════════════════════════════════════════
+section('L\'adresse du visiteur');
+
+// CE QUE CE BLOC PROUVE
+// client_ip() lisait CF-Connecting-IP, puis X-Forwarded-For, puis
+// X-Real-IP, et ne retombait sur REMOTE_ADDR qu'en dernier. Ces trois
+// en-tetes sont ecrits par l'APPELANT. Servi en direct — ce qui est le
+// cas sur un mutualise —, le site retenait donc une adresse choisie par
+// celui qu'il cherchait a brider. Un en-tete different a chaque requete,
+// et plus aucun plafond ne mordait : ni les connexions, ni les
+// contributions, ni les cadences du forum. Le compteur tournait, sur une
+// colonne qui ne designait personne.
+
+require_once PROJECT_ROOT . '/backend/auth_lib.php';
+
+// ── Les plages, en cas construits ────────────────────────
+// Une comparaison de chaines ferait entrer « 10.0.0.10 » dans
+// « 10.0.0.1 », et laisserait une plage IPv6 contenir une IPv4.
+$plages = [
+    ['192.168.1.42', '192.168.1.0/24', true,  'IPv4 dans son /24'],
+    ['192.168.2.42', '192.168.1.0/24', false, 'IPv4 hors de son /24'],
+    ['10.0.0.1',     '10.0.0.1',       true,  'adresse nue, egalite'],
+    ['10.0.0.10',    '10.0.0.1',       false, 'adresse nue : 10 n\'est pas 1'],
+    ['127.0.0.1',    '127.0.0.0/8',    true,  'boucle locale'],
+    ['128.0.0.1',    '127.0.0.0/8',    false, 'juste au-dela du /8'],
+    ['10.0.0.5',     '10.0.0.0/0',     true,  'un /0 prend tout'],
+    ['192.168.1.1',  '192.168.1.0/33', false, 'masque impossible refuse'],
+    ['2001:db8::1',  '2001:db8::/32',  true,  'IPv6 dans son /32'],
+    ['2001:db9::1',  '2001:db8::/32',  false, 'IPv6 hors de son /32'],
+    ['192.168.1.1',  '2001:db8::/32',  false, 'une plage IPv6 ne contient pas une IPv4'],
+    ['pas-une-ip',   '192.168.1.0/24', false, 'une saisie qui n\'est pas une adresse'],
+];
+foreach ($plages as [$ip, $plage, $attendu, $libelle]) {
+    eq("plage : $libelle", $attendu, ip_dans_plage($ip, $plage));
+}
+
+// ── Servi en direct : l'en-tete forge ne sert a rien ─────
+// Douze tentatives, douze fausses adresses, trois en-tetes a chaque
+// fois. Le plafond des connexions est de 10 par quart d'heure.
+test_pdo()->exec("DELETE FROM auth_attempts");
+$forgeur  = new_client('forgeur');
+$bornee_a = 0;
+for ($i = 1; $i <= 12; $i++) {
+    $r = post_json($base, $forgeur, '/backend/auth.php?action=login',
+        ['email' => 'inconnu@test.local', 'password' => 'mauvais123'],
+        ['X-Forwarded-For: 203.0.113.' . $i,
+         'X-Real-IP: 198.51.100.' . $i,
+         'CF-Connecting-IP: 192.0.2.' . $i]);
+    if ($r['status'] === 429) { $bornee_a = $i; break; }
+}
+eq('adresse : le plafond mord malgre les fausses adresses', 11, $bornee_a);
+eq('adresse : une seule adresse a ete retenue', 1,
+   (int)test_pdo()->query("SELECT COUNT(DISTINCT ip) FROM auth_attempts WHERE action='login'")->fetchColumn());
+eq('adresse : celle que le serveur constate lui-meme', '127.0.0.1',
+   test_pdo()->query("SELECT ip FROM auth_attempts WHERE action='login' LIMIT 1")->fetchColumn());
+
+// ── CONTRE-EPREUVE : derriere un proxy DECLARE ───────────
+// Refuser un en-tete ne prouve pas qu'on sait le lire. Un second
+// serveur, avec TRUSTED_PROXIES=127.0.0.1, doit au contraire l'honorer —
+// sinon un site reellement derriere un reverse-proxy verrait tous ses
+// visiteurs partager un seul et meme compteur.
+test_pdo()->exec("DELETE FROM auth_attempts");
+$derriere = start_server(['TRUSTED_PROXIES' => '127.0.0.1']);
+$relaye   = new_client('relaye');
+for ($i = 1; $i <= 12; $i++) {
+    $r = post_json($derriere, $relaye, '/backend/auth.php?action=login',
+        ['email' => 'inconnu@test.local', 'password' => 'mauvais123'],
+        ['X-Forwarded-For: 203.0.113.' . $i]);
+    if ($r['status'] === 429) break;
+}
+$vues = (int)test_pdo()->query("SELECT COUNT(DISTINCT ip) FROM auth_attempts WHERE action='login'")->fetchColumn();
+check('adresse : derriere un proxy declare, chaque visiteur a son compteur',
+      $vues >= 10, "$vues adresses distinctes retenues");
+
+// La chaine se lit DEPUIS LA DROITE. Chaque relais ajoute a droite :
+// « 1.2.3.4, 198.51.100.77 » se lit « le visiteur pretend venir de
+// 1.2.3.4, et le proxy a constate 198.51.100.77 ». Lire a gauche —
+// l'ancien comportement — retenait la valeur forgee jusque DERRIERE un
+// vrai proxy, ce qui laissait le trou ouvert la meme ou l'en-tete est
+// legitime.
+$derniere = fn() => test_pdo()->query(
+    "SELECT ip FROM auth_attempts WHERE action='login' ORDER BY id DESC LIMIT 1")->fetchColumn();
+
+test_pdo()->exec("DELETE FROM auth_attempts");
+post_json($derriere, $relaye, '/backend/auth.php?action=login',
+    ['email' => 'inconnu@test.local', 'password' => 'mauvais123'],
+    ['X-Forwarded-For: 1.2.3.4, 198.51.100.77']);
+eq('adresse : la valeur forgee a gauche est ignoree', '198.51.100.77', $derniere());
+
+test_pdo()->exec("DELETE FROM auth_attempts");
+post_json($derriere, $relaye, '/backend/auth.php?action=login',
+    ['email' => 'inconnu@test.local', 'password' => 'mauvais123'],
+    ['X-Forwarded-For: 203.0.113.7, 127.0.0.1']);
+eq('adresse : les maillons connus sont sautes', '203.0.113.7', $derniere());
+
+// Le compteur des connexions repart a zero : les sections suivantes
+// s'authentifient depuis la meme adresse que celle qu'on vient de
+// saturer.
+test_pdo()->exec("DELETE FROM auth_attempts");
+
+// ════════════════════════════════════════════════════════
 section('Portee de la moderation');
 
 // CE QUE CE BLOC PROUVE
