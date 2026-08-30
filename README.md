@@ -191,6 +191,19 @@ mysql -u <user> -p <base> < sql/schema.sql
 mysql -u <user> -p <base> < sql/contenu.sql
 ```
 
+**Ce que le dépôt ne portera jamais** — les images d'`uploads/` et les
+tables personnelles (comptes, avis, messages) — se sauvegarde à part :
+
+```bash
+php tools/sauvegarde.php
+```
+
+L'archive est datée, relue aussitôt écrite, et l'outil **refuse** de la
+déposer sous la racine du site ou dans un dépôt : elle contient des
+comptes et des adresses. Restauration : `schema.sql`, `contenu.sql`,
+puis le dump de l'archive — l'ordre compte, les avis référencent des
+établissements qui doivent exister d'abord.
+
 Le reste — hébergement, rotation des secrets, cron des rappels,
 enregistrements DNS des emails (`php tools/mail_doctor.php`) — est
 détaillé dans `docs/roadmap.md`, chantiers **B1** et suivants.

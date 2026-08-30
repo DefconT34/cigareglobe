@@ -39,6 +39,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **E1e** : le modérateur — `admin_scope()` (portée `admin` / `moderator`), écran de nomination, journal de modération (migration 130), retrait réversible d'une photo, 51 vérifications
 - **A4** : l'adresse du visiteur ne se déclare plus soi-même — `TRUSTED_PROXIES`, chaîne `X-Forwarded-For` lue depuis la droite, trois exemplaires de la fonction réduits à un, 18 vérifications
 - **B7** : contrôle d'avant-vol — `php tools/prevol.php` refuse le décollage tant que le `.env` porte des valeurs de développement ; 17 environnements construits en garantissent la justesse
+- **B4b1** : sauvegarde de ce que Git ne porte pas — `tools/sauvegarde.php` (uploads + 20 tables personnelles), **restauration éprouvée** : 9 234 lignes, 0 écart ; le garde-fou de destination vise la racine servie, pas seulement Git
 - **B4a** : le contenu de l'atlas entre dans le dépôt — `sql/contenu.sql` (17 tables, 5 Mo) engendré par `tools/contenu_dump.php`, sans aucune donnée personnelle ; reconstruction vérifiée octet pour octet
 
 ## ⏳ À faire
@@ -103,10 +104,28 @@ Effort : P = Petit · M = Moyen · G = Gros.
     déploiement en silence. `--verifier` tourne à chaque campagne (443 vérifications)
   - Le rejeu des 130 migrations (`tools/rejeu_migrations.php`) a été lancé : ses 29 échecs
     sont le bruit que son propre en-tête annonce — rejeu sur une base qui a déjà tout reçu
-- [ ] **B4b** — **Aucun dépôt distant** · **bloquant** · P
+- [x] ~~**B4b1** — Sauvegarde de ce que Git ne portera jamais~~ ✅
+  - `tools/sauvegarde.php` : archive datée de `uploads/` (4 315 fichiers, 27 Mo) et des
+    **20 tables personnelles** — comptes, avis, messages, contributions, journal. 5,1 Mo
+    compressés, rotation sur 7 jours
+  - **La liste des tables n'est pas recopiée** : elle est lue dans `contenu_dump.php`. Les
+    deux outils se partagent la base par construction — ce que l'un verse dans Git, l'autre
+    le laisse. Une liste recopiée aurait divergé, et cela se serait vu le jour de la
+    restauration, c'est-à-dire le pire jour possible
+  - **Restauration éprouvée pour de bon**, pas seulement l'archive relue : base vierge,
+    `schema.sql` + `contenu.sql` + le dump de l'archive → **9 234 lignes, 0 écart sur les
+    37 tables**, accents intacts, et le site sert des réponses identiques à
+    `data.php?action=globe` et `country`
+  - Le `.env` en est **absent** : une archive faite pour voyager ne transporte pas le mot de
+    passe de la base ni la clé d'administration
+  - **Le garde-fou s'est trompé de critère, et le test l'a montré.** Première version : « pas
+    dans Git, donc sûr ». Mise à l'épreuve en visant `docs/`, elle a écrit 5 Mo de données
+    personnelles dans l'arborescence servie par Apache — le `.gitignore` porte `*.zip`, donc
+    invisible pour Git et **téléchargeable par le Web**. Le critère qui compte d'abord est
+    d'être hors de la racine servie. 5 cas construits (483 vérifications)
+- [ ] **B4b2** — **Aucun dépôt distant** · **bloquant** · P
   - `git remote -v` ne renvoie rien : l'historique et le contenu tiennent sur un seul disque
-  - Reste aussi à sauvegarder `uploads/` (26 Mo) et les tables personnelles, qui par
-    construction ne sont pas dans Git
+  - L'archive de sauvegarde aussi, tant qu'elle reste sur cette machine
 - [x] ~~**B5a** — Le droit à l'effacement (RGPD art. 17)~~ ✅
   - `auth.php` exposait register/login/logout/forgot/reset/resend : **on pouvait s'inscrire
     et pas s'effacer**. La seule porte du site qui n'existait que dans un sens

@@ -2398,6 +2398,40 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── Ou une sauvegarde a-t-elle le droit d'atterrir ? ────
+// L'archive porte des comptes, des adresses et des messages. Deux
+// endroits lui sont interdits, et j'ai failli n'en voir qu'un : un
+// depot (elle y resterait pour toujours) et LA RACINE SERVIE.
+//
+// Le second est celui qui a manque a la premiere version du garde-fou.
+// Mise a l'epreuve en visant docs/, elle a ecrit 5 Mo de donnees
+// personnelles dans l'arborescence d'Apache — telechargeables par
+// quiconque devine le nom. Le .gitignore du projet porte `*.zip` : le
+// fichier etait invisible pour Git, et parfaitement visible pour le Web.
+// « Hors de Git » ne suffit pas.
+{
+    define('SAUVEGARDE_INCLUDE', true);
+    require_once PROJECT_ROOT . '/tools/sauvegarde.php';
+
+    $cas = [
+        [PROJECT_ROOT . '/docs',       true,  'un sous-dossier du site'],
+        [PROJECT_ROOT,                 true,  'la racine du site elle-meme'],
+        [PROJECT_ROOT . '/uploads',    true,  'le dossier meme qu\'elle sauvegarde'],
+        [sys_get_temp_dir(),           false, 'un dossier temporaire, hors du site'],
+        // Un chemin qui COMMENCE comme la racine sans etre dedans. Sans
+        // separateur dans la comparaison, « …/cigareglobe-copie » serait
+        // pris pour « …/cigareglobe » et refuse a tort.
+        [PROJECT_ROOT . '-ailleurs',   false, 'un voisin au nom ressemblant'],
+    ];
+    foreach ($cas as [$dossier, $refuse, $libelle]) {
+        $raison = sauv_destination_risquee(rtrim($dossier, '\\/')
+                  . DIRECTORY_SEPARATOR . 'cigarodyssey-2000-01-01.zip');
+        check('sauvegarde : ' . ($refuse ? 'refuse ' : 'accepte ') . $libelle,
+              $refuse ? $raison !== null : $raison === null,
+              (string)$raison);
+    }
+}
+
 // ── Le controle d'avant-vol se prouve-t-il ? ────────────
 // prevol.php ne peut pas etre lance tel quel ici : sur un poste de
 // developpement il DOIT crier, c'est son travail. On eprouve donc ses
