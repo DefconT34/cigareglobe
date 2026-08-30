@@ -118,11 +118,25 @@ Effort : P = Petit · M = Moyen · G = Gros.
     c'est-à-dire pire qu'absent** — il aurait l'air d'être en règle
   - À décider aussi : outiller le portage des données (RGPD art. 20), ou l'assumer par écrit
   - Une relecture juridique conditionne la traduction des trois documents
-- [ ] **B6** — Deux durcissements courts · P
-  - `Strict-Transport-Security` absent : le `.htaccess` redirige vers https sans le déclarer,
-    donc la toute première visite reste interceptable
-  - `uploads/lounges/.htaccess` **n'est pas suivi par Git** (`.gitignore` ne dés-ignore que
-    `uploads/.htaccess`) : la version corrigée est locale et ne partira pas en production
+- [x] ~~**B6** — HSTS, et les fichiers qui protègent la production~~ ✅
+  - **HSTS** : la redirection http→https ne protégeait pas la **première** visite — la
+    requête en clair part avant de savoir qu'il fallait chiffrer, et c'est celle-là qu'on
+    intercepte. `max-age=31536000`, émis sur TLS seulement
+  - **`<If "%{HTTPS} == 'on'">` plutôt que `env=HTTPS`, pour une raison mesurée** : `SetEnvIf`
+    ne peut pas définir `HTTPS`, que mod_ssl se réserve. La forme `env=` était donc
+    **inéprouvable** — une faute de frappe dans le nom de la variable aurait donné, en local,
+    exactement le même silence qu'une directive correcte. L'expression, elle, se vérifie :
+    condition inversée à `'off'`, l'en-tête apparaît en clair ; remise à `'on'`, il disparaît
+  - **Ni `includeSubDomains` ni `preload`** : la première engage des sous-domaines qui
+    n'existent pas encore, la seconde s'inscrit dans les navigateurs eux-mêmes et se retire
+    en des mois. Un contrôle **casse** si on les ajoute — pour que ce soit une décision
+  - **`uploads/lounges/.htaccess` entre dans le dépôt.** Une exception ne suffisait pas :
+    `uploads/*` exclut le dossier, et Git ne descend pas dans un dossier exclu. Il faut
+    réadmettre le dossier, réexclure son contenu, puis rouvrir le seul fichier voulu
+  - Garde-fou : la campagne vérifie que sept fichiers de production sont suivis — **et
+    qu'aucune image de membre ne l'est**. Une exception trop large les ferait entrer par
+    milliers, sans que personne le voie avant le premier clone
+  - 12 vérifications (465 → 477)
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
 

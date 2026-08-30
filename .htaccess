@@ -35,6 +35,44 @@
   Header always set Referrer-Policy         "strict-origin-when-cross-origin"
   Header always set Permissions-Policy      "geolocation=(self), camera=(), microphone=(), payment=()"
 
+  # ── HSTS ───────────────────────────────────────────────
+  # La redirection plus bas envoie http vers https. Elle ne protege pas
+  # la PREMIERE visite : la requete en clair part avant de savoir qu il
+  # fallait chiffrer, et c est celle-la qu on intercepte. Cet en-tete
+  # dit au navigateur de ne plus jamais essayer en clair.
+  #
+  # Emis uniquement sur une reponse deja chiffree. Un navigateur
+  # l ignore de toute facon en clair, mais l emettre laisserait croire
+  # a une protection qui n existe pas.
+  #
+  # CE QU IL ENGAGE, ET QUI NE SE REPREND PAS. Pendant un an, ce
+  # domaine ne repondra plus en clair pour quiconque l a visite une
+  # fois. Un certificat expire devient un site inaccessible, sans
+  # contournement possible par le visiteur. C est le but. C est aussi
+  # pourquoi les deux options qu on ajoute d ordinaire par reflexe sont
+  # ABSENTES ici :
+  #
+  #   includeSubDomains  engage tous les sous-domaines, y compris ceux
+  #                      qui n existent pas encore. A n ajouter qu apres
+  #                      avoir verifie qu aucun ne repond en clair.
+  #   preload            inscrit le domaine dans les navigateurs
+  #                      eux-memes ; le retrait prend des mois. Jamais
+  #                      « pour voir ».
+  #
+  # POURQUOI « <If> » ET NON « env=HTTPS ». Les deux formes marchent,
+  # mais la seconde ne s eprouve pas : `SetEnvIf` ne peut PAS definir
+  # `HTTPS`, que mod_ssl se reserve. Une faute de frappe dans le nom de
+  # la variable aurait donc donne, en local, exactement le meme silence
+  # qu une directive correcte — et personne n aurait su avant la mise en
+  # ligne. Ici, l expression se verifie : en inversant la condition, on
+  # voit l en-tete apparaitre en clair. Fait, et l inverse retire.
+  #
+  # A REVERIFIER APRES LA MISE EN LIGNE, ou seul le vrai TLS repond :
+  #   curl -sI https://cigarodyssey.com | grep -i strict-transport
+  <If "%{HTTPS} == 'on'">
+    Header always set Strict-Transport-Security "max-age=31536000"
+  </If>
+
   # NB : le CORS est géré par les endpoints PHP (cors_headers()). Ne pas
   # le forcer ici : un « Header set » écraserait leur logique et
   # renverrait « * » y compris sur les réponses authentifiées.

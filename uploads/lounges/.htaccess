@@ -1,0 +1,34 @@
+# CigarOdyssey — uploads/lounges/.htaccess
+# Force le Content-Type correct pour les images
+# Nécessaire pour Safari qui vérifie strictement le Content-Type
+
+<IfModule mod_mime.c>
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png  .png
+    AddType image/webp .webp
+</IfModule>
+
+# Désactiver le cache navigateur sur les images de lounges
+# pour éviter l'affichage d'anciennes versions après upload
+<IfModule mod_headers.c>
+    Header set Cache-Control "no-cache, must-revalidate"
+    Header set Pragma "no-cache"
+</IfModule>
+
+# Sécurité : interdire l'exécution de scripts dans ce dossier
+#
+# « Order Deny,Allow » + « Deny from all » est la syntaxe d'Apache 2.2.
+# Sous 2.4 sans mod_access_compat, ce n'est pas une règle plus permissive :
+# c'est une DIRECTIVE INCONNUE, donc une erreur 500 sur chaque requête
+# visant ce dossier, et le journal se remplit de « Invalid command
+# 'Order' ». Le fichier ne protégeait donc rien, et cassait le service des
+# images par la même occasion.
+#
+# Le vrai rempart reste ailleurs : uploads/.htaccess coupe le moteur de
+# script pour toute l'arborescence, et image_lib.php ré-encode chaque
+# image en forçant l'extension. Ceci est la troisième ligne.
+<FilesMatch "\.(php[0-9]?|phtml|phps|pl|py|cgi|sh)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes

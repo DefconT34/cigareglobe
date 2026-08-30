@@ -23,6 +23,17 @@ uploads/*
 # il ne partirait jamais en ligne — la protection n'existerait que sur
 # le poste de développement, là où elle ne sert à rien.
 !uploads/.htaccess
+# Le second .htaccess, celui du sous-dossier, était dans ce cas exact :
+# corrigé sur ce poste, jamais suivi, donc absent de toute mise en ligne.
+#
+# Une exception ne suffit PAS à le rattraper. `uploads/*` exclut le
+# dossier `lounges` lui-même, et Git ne descend pas dans un dossier
+# exclu : `!uploads/lounges/.htaccess` seul ne serait jamais consulté.
+# Il faut d'abord réadmettre le dossier, puis en réexclure le contenu,
+# puis rouvrir le seul fichier voulu.
+!uploads/lounges/
+uploads/lounges/*
+!uploads/lounges/.htaccess
 
 # OS / éditeurs
 .DS_Store

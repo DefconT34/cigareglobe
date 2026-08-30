@@ -2372,6 +2372,54 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── Ce qui protege la production part-il avec le code ? ─
+// Un fichier de protection qui n'est pas dans le depot ne protege que
+// le poste ou il a ete ecrit. C'est arrive : `uploads/lounges/.htaccess`
+// a ete corrige ici, et `.gitignore` l'excluait — la version reparee
+// n'aurait jamais atteint la production, et rien ne l'aurait dit.
+{
+    $suivis = [];
+    $code = 0;
+    exec('git -C ' . escapeshellarg(PROJECT_ROOT) . ' ls-files 2>&1', $suivis, $code);
+    if ($code !== 0) {
+        check('depot : git interrogeable', false, implode(' ', array_slice($suivis, 0, 2)));
+    } else {
+        foreach (['.htaccess', 'uploads/.htaccess', 'uploads/lounges/.htaccess',
+                  'robots.txt', 'legal.php', 'sql/schema.sql', 'sql/contenu.sql'] as $f) {
+            check("depot : $f est suivi", in_array($f, $suivis, true));
+        }
+        // Le pendant : les images des membres n'ont RIEN a faire dans le
+        // depot. Une exception trop large les y ferait entrer par
+        // milliers, sans que personne s'en apercoive avant le premier
+        // clone.
+        $images = array_filter($suivis, fn($f) => str_starts_with($f, 'uploads/lounges/')
+                                              && !str_ends_with($f, '.htaccess'));
+        eq('depot : aucune image de membre versionnee', [], array_values($images));
+    }
+}
+
+// ── L'en-tete qui engage un an ──────────────────────────
+{
+    $ht = (string)file_get_contents(PROJECT_ROOT . '/.htaccess');
+    check('production : HSTS declare', str_contains($ht, 'Strict-Transport-Security'));
+    check('production : HSTS conditionne au TLS',
+          preg_match('/%\{HTTPS\}\s*==\s*\'on\'/', $ht) === 1);
+    // Ces deux options ne se retirent pas : includeSubDomains engage des
+    // sous-domaines qui n'existent pas encore, preload s'inscrit dans
+    // les navigateurs eux-memes. Les ajouter doit CASSER ce controle,
+    // pour que ce soit une decision et non un reflexe.
+    //
+    // On lit la DIRECTIVE, pas le fichier : le commentaire au-dessus
+    // nomme justement ces deux options pour dire pourquoi elles sont
+    // absentes, et un simple str_contains() sur le tout accusait donc
+    // l'explication elle-meme.
+    preg_match_all('/^[^#\n]*Strict-Transport-Security[^\n]*$/m', $ht, $m);
+    $directive = implode("\n", $m[0]);
+    check('production : la directive HSTS est bien la', $directive !== '');
+    check('production : ni includeSubDomains ni preload sans decision explicite',
+          !str_contains($directive, 'includeSubDomains') && !str_contains($directive, 'preload'));
+}
+
 // Le detecteur de paroles pretees a echoue CINQ fois : verbe apres la
 // citation, incise, citation courte, apostrophe d'elision prise pour un
 // guillemet, verbe absent de la liste. Un passage vert sur le corpus du
