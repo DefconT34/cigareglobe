@@ -38,6 +38,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
 - **E1e** : le modérateur — `admin_scope()` (portée `admin` / `moderator`), écran de nomination, journal de modération (migration 130), retrait réversible d'une photo, 51 vérifications
 - **A4** : l'adresse du visiteur ne se déclare plus soi-même — `TRUSTED_PROXIES`, chaîne `X-Forwarded-For` lue depuis la droite, trois exemplaires de la fonction réduits à un, 18 vérifications
+- **B7** : contrôle d'avant-vol — `php tools/prevol.php` refuse le décollage tant que le `.env` porte des valeurs de développement ; 17 environnements construits en garantissent la justesse
 - **B4a** : le contenu de l'atlas entre dans le dépôt — `sql/contenu.sql` (17 tables, 5 Mo) engendré par `tools/contenu_dump.php`, sans aucune donnée personnelle ; reconstruction vérifiée octet pour octet
 
 ## ⏳ À faire
@@ -67,6 +68,23 @@ Effort : P = Petit · M = Moyen · G = Gros.
 ### B. Déploiement
 - [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, **migrations 001→130**, cron des rappels) · M
   - ⚠ Le décompte disait « 001→072 » : il y a **130** migrations.
+  - **`php tools/prevol.php` décide.** Il sort en 1 tant qu'un point bloque.
+- [x] ~~**B7** — Le contrôle d'avant-vol~~ ✅
+  - **Rien n'empêchait de mettre en ligne avec le `.env` du poste de développement.** Relevé
+    ici : `MAIL_LOG_ONLY=true`, `SITE_URL=http://127.0.0.1:8099`, `ALLOWED_ORIGIN=*`,
+    `ADMIN_EMAIL=dev@example.com`
+  - Le premier suffit à **tuer le site sans rien casser de visible** : sans email de
+    vérification, personne ne confirme son adresse — donc aucun avis, aucune contribution,
+    aucun message. La page s'affiche, le globe tourne, l'espace communautaire est mort-né.
+    On l'apprendrait par le message d'un visiteur, comme pour les tuiles CARTO
+  - 13 contrôles bloquants, 1 avertissement, 3 rappels (cron, sauvegarde, DNS) — ces derniers
+    ne se lisant dans aucun fichier, les taire laisserait croire que le contrôle couvre tout
+  - **`legal.php` devient un bloqueur mécanique** : tant qu'il porte « À COMPLÉTER », le
+    décollage est refusé. B5c ne peut plus s'oublier
+  - **Un contrôle qui ne se prouve pas ne vaut rien.** Lancé ici, il DOIT crier : il ne peut
+    donc pas se vérifier en passant au vert. `--autotest` le confronte à 17 environnements
+    construits — un propre, seize piégés — et vérifie les deux échecs possibles : ne pas voir
+    un défaut, **et** crier sur un réglage sain. Lancé par la campagne (478 vérifications)
 - [x] ~~**B4a** — Le contenu de l'atlas entre dans le dépôt~~ ✅
   - **Mesuré avant d'agir** : base vierge construite depuis le seul dépôt → **29 des 31
     tables peuplées revenaient vides**. `data.php?action=globe` renvoyait cinq tableaux

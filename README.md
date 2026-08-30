@@ -171,6 +171,26 @@ php tools/mail_doctor.php --to=vous@exemple.com   # + envoi de test
 
 ## Déploiement
 
-Non couvert ici pour l'instant — étapes détaillées dans `docs/roadmap.md`
-(chantier B1 : `.env` serveur, rotation des secrets, migrations 001→018,
-enregistrements DNS des emails).
+**Une commande décide si le site est en état de partir :**
+
+```bash
+php tools/prevol.php
+```
+
+Elle sort en 1 tant qu'il reste un point bloquant, et dit lequel avec son
+remède. Elle existe parce que le défaut le plus dangereux ne casse rien
+de visible : avec `MAIL_LOG_ONLY=true`, la page s'affiche, le globe
+tourne, et **aucun email ne part** — personne ne peut donc vérifier son
+adresse, ni écrire un avis, ni poster un message. On l'apprendrait par
+le message d'un visiteur, des semaines plus tard.
+
+La base se pose en deux fichiers, puis on copie `uploads/` :
+
+```bash
+mysql -u <user> -p <base> < sql/schema.sql
+mysql -u <user> -p <base> < sql/contenu.sql
+```
+
+Le reste — hébergement, rotation des secrets, cron des rappels,
+enregistrements DNS des emails (`php tools/mail_doctor.php`) — est
+détaillé dans `docs/roadmap.md`, chantiers **B1** et suivants.

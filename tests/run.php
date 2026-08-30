@@ -2398,6 +2398,29 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── Le controle d'avant-vol se prouve-t-il ? ────────────
+// prevol.php ne peut pas etre lance tel quel ici : sur un poste de
+// developpement il DOIT crier, c'est son travail. On eprouve donc ses
+// controles sur des environnements construits — un propre, et un piege
+// par defaut connu. Deux echecs possibles, et le second compte autant
+// que le premier : ne pas voir un defaut, ou crier sur un reglage sain.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s --autotest',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/prevol.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('avant-vol : les 17 cas construits restent conformes', 0, $code);
+    } else {
+        check('avant-vol : autotest lancable', false);
+    }
+}
+
 // ── L'en-tete qui engage un an ──────────────────────────
 {
     $ht = (string)file_get_contents(PROJECT_ROOT . '/.htaccess');
