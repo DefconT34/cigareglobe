@@ -49,9 +49,14 @@
   # n'autorisent donc plus aucune origine tierce : unpkg est sorti avec
   # l'auto-hebergement de Leaflet 1.9.4.
   #
-  # Ce qui reste hors du site :
+  # Ce qui reste hors du site — verifie a l'ecran, requetes comptees par
+  # origine sur une page complete : 44 vers le site, 16 tuiles, 6 polices.
   #   tile.openstreetmap : tuiles de la carte (couvert par img-src https:)
-  #   fonts.googleapis   : polices de l'administration
+  #   fonts.googleapis   : polices du SITE, importees par assets/css/themes.css
+  #                        (et non de la seule administration, comme le
+  #                        disait ce commentaire depuis la migration A3)
+  #   fonts.gstatic      : les fichiers de police que la feuille ci-dessus
+  #                        appelle a son tour
   Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 </IfModule>
 
