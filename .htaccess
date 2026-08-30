@@ -44,12 +44,15 @@
   # l'application utilise encore des scripts et styles en ligne
   # (service worker, interface d'administration). Le durcissement par
   # nonces suppose de les externaliser au préalable.
-  # topojson et la carte du monde sont desormais servis localement
-  # (assets/vendor, assets/data), ce qui restreint d'autant les origines.
-  #   unpkg              : Leaflet (vue Explorer)
-  #   basemaps.cartocdn  : tuiles de la carte (couvert par img-src https:)
+  # topojson, la carte du monde ET LEAFLET sont desormais servis
+  # localement (assets/vendor, assets/data). `script-src` et `style-src`
+  # n'autorisent donc plus aucune origine tierce : unpkg est sorti avec
+  # l'auto-hebergement de Leaflet 1.9.4.
+  #
+  # Ce qui reste hors du site :
+  #   tile.openstreetmap : tuiles de la carte (couvert par img-src https:)
   #   fonts.googleapis   : polices de l'administration
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 </IfModule>
 
 # ── Blocage des fichiers cachés (.env, .git, .htaccess…) ──

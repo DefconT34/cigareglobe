@@ -25,6 +25,12 @@
 //    chaque chargement : ~2 s en temps normal, 7 s au pire releve. Ce
 //    delai entre dans « load », donc dans page.goto().
 //
+//    DEPUIS L'AUTO-HEBERGEMENT DE LEAFLET, unpkg n'est plus demande par
+//    l'application. Le motif le garde : il ne coute rien, et il
+//    signalerait un retour en arriere — une dependance tierce qui
+//    reviendrait par une autre porte serait interceptee, donc visible
+//    dans .cache-tiers plutot que silencieuse.
+//
 // Les deux fabriquaient des expirations de page.goto() qui ne disaient
 // rien de l'application.
 //

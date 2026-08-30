@@ -558,14 +558,27 @@ window.addEventListener('DOMContentLoaded', function() {
   `;
   document.head.appendChild(style);
 
-  // Charger Leaflet (CSS + JS)
+  // ── LEAFLET EST SERVI D'ICI, PLUS D'UNPKG ───────────────
+  //
+  // Même raison qu'à la migration E2 pour topojson et la carte du
+  // monde, et la démonstration vient d'être faite par les tuiles : un
+  // service tiers gratuit peut se fermer ou se dégrader sans rien
+  // casser. Leaflet est figé en 1.9.4 et pèse 145 Ko — le garder chez
+  // un tiers ne rapportait rien et coûtait une dépendance.
+  //
+  // Les fichiers viennent du paquet npm `leaflet@1.9.4` (devDependency),
+  // copiés tels quels dans assets/vendor/leaflet : leur empreinte
+  // SHA-256 est celle de la distribution officielle. `leaflet.css`
+  // référence images/*.png en relatif, d'où le sous-dossier.
+  var VERSION = '1.9.4';
+
   var leafletCSS = document.createElement('link');
   leafletCSS.rel  = 'stylesheet';
-  leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  leafletCSS.href = 'assets/vendor/leaflet/leaflet.css?v=' + VERSION;
   document.head.appendChild(leafletCSS);
 
   var leafletJS = document.createElement('script');
-  leafletJS.src  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  leafletJS.src  = 'assets/vendor/leaflet/leaflet.js?v=' + VERSION;
   document.head.appendChild(leafletJS);
 
   // Bouton Explorer (dans la colonne gauche, au-dessus de la recherche)
