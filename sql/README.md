@@ -83,14 +83,54 @@ réglages du site (`site_languages`).
 
 ## Installer / recréer la base
 
-Nouvelle base (tout d'un coup) :
+**Deux fichiers, dans cet ordre.** Le premier crée les tables, le second
+les remplit :
+
 ```bash
 mysql -u <user> -p <base> < sql/schema.sql
+mysql -u <user> -p <base> < sql/contenu.sql
 ```
-Puis importer les données (dump séparé, non versionné — voir plus bas).
+
+Puis copier le dossier `uploads/` : `lounge_photos` porte les **noms**
+des images, pas leurs octets. Sans lui, les fiches montrent des cadres
+vides sans qu'aucune erreur ne le signale.
+
+Vérifié : reconstruite ainsi depuis le seul dépôt, la base rend des
+réponses **identiques octet pour octet** à celles de la base réelle sur
+`data.php?action=globe`, `country` et `brand`.
+
+### Pourquoi `contenu.sql` existe
+
+Cette section disait, jusqu'à la mise en ligne : « puis importer les
+données (dump séparé, non versionné) ». **Ce dump n'existait pas.**
+Mesuré en construisant une base vierge à partir du dépôt : 29 des 31
+tables peuplées revenaient vides, `action=globe` renvoyait cinq
+tableaux vides, et la page d'accueil répondait quand même `200`. Un site
+en ligne, mis en page, et creux.
+
+Aucune migration n'insère de `lounges` ni de `brands` : ces tables sont
+antérieures au dépôt. Les 500 établissements et les 118 marques
+n'existaient donc qu'à un seul endroit — le MySQL du poste de
+développement.
+
+`sql/contenu.sql` est engendré par `tools/contenu_dump.php`, qui verse
+le contenu **éditorial et de référence** (17 tables) et laisse dehors
+tout ce qui appartient aux gens — comptes, avis, favoris, messages,
+contributions, journal de modération. Ces tables-là se **sauvegardent** ;
+elles ne se versionnent pas.
+
+```bash
+php tools/contenu_dump.php              # régénère sql/contenu.sql
+php tools/contenu_dump.php --verifier   # sort en 1 s'il a pris du retard
+```
+
+La campagne de tests lance `--verifier` à chaque passage : un fichier en
+retard ne se verrait sinon que le jour du déploiement suivant. Et si une
+table apparaît sans être classée dans l'une des deux listes de l'outil,
+il **refuse de tourner** plutôt que de la laisser disparaître en silence.
 
 Base existante à mettre à niveau : appliquer les migrations manquantes
-dans l'ordre (`001` → `027`).
+dans l'ordre (`001` → `130`).
 
 ## Régénérer `schema.sql`
 
@@ -104,6 +144,21 @@ mysqldump --no-data --skip-comments --no-tablespaces \
   --default-character-set=utf8mb4 <base> \
   | sed -E 's/ AUTO_INCREMENT=[0-9]+//g' > sql/schema.sql
 ```
+
+⚠ **Sous PowerShell, `>` écrit en UTF-16** et le fichier devient
+illisible par `mysql`. Passer par `cmd /c "… > fichier"`, ou par
+`--result-file`. C'est pour cette raison que `tools/contenu_dump.php`
+n'utilise aucune redirection.
+
+## Régénérer `contenu.sql`
+
+**À faire après chaque changement de contenu** — migration de données,
+lot de traductions, ajout d'établissements :
+```bash
+php tools/contenu_dump.php
+```
+La campagne de tests le vérifie ; inutile d'y penser, il suffit de ne pas
+ignorer l'échec.
 
 **Sous Windows, ne pas rediriger depuis PowerShell** : `>` écrit des
 fins de ligne CRLF. `tests/bootstrap.php` découpe le dump instruction

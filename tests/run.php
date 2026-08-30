@@ -2227,6 +2227,30 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
 // colonnes de chaque tableau portent le meme nombre d'entrees — c'est ce
 // dernier point qui avait trouve deux anecdotes invisibles hors du
 // francais, la ou le controle du contenu avait echoue.
+// ── Le contenu versé dans Git décrit-il encore la base ? ─
+// `sql/contenu.sql` est ce qu'un déploiement neuf trouvera. S'il prend
+// du retard, l'écart ne se voit nulle part : la base de développement a
+// tout, et le fichier n'est lu que le jour de la mise en ligne. Ce
+// contrôle le compare a la base a chaque campagne.
+//
+// Il LIT la base applicative (mysqldump), il ne l'écrit pas.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s --verifier',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/contenu_dump.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('deploiement : sql/contenu.sql decrit toujours la base', 0, $code);
+    } else {
+        check('deploiement : contenu_dump lancable', false);
+    }
+}
+
 // Le detecteur de paroles pretees a echoue CINQ fois : verbe apres la
 // citation, incise, citation courte, apostrophe d'elision prise pour un
 // guillemet, verbe absent de la liste. Un passage vert sur le corpus du

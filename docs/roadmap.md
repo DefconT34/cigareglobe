@@ -38,6 +38,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
 - **E1e** : le modérateur — `admin_scope()` (portée `admin` / `moderator`), écran de nomination, journal de modération (migration 130), retrait réversible d'une photo, 51 vérifications
 - **A4** : l'adresse du visiteur ne se déclare plus soi-même — `TRUSTED_PROXIES`, chaîne `X-Forwarded-For` lue depuis la droite, trois exemplaires de la fonction réduits à un, 18 vérifications
+- **B4a** : le contenu de l'atlas entre dans le dépôt — `sql/contenu.sql` (17 tables, 5 Mo) engendré par `tools/contenu_dump.php`, sans aucune donnée personnelle ; reconstruction vérifiée octet pour octet
 
 ## ⏳ À faire
 
@@ -66,13 +67,28 @@ Effort : P = Petit · M = Moyen · G = Gros.
 ### B. Déploiement
 - [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, **migrations 001→130**, cron des rappels) · M
   - ⚠ Le décompte disait « 001→072 » : il y a **130** migrations.
-- [ ] **B4** — **Le contenu n'existe qu'à un seul endroit** · **bloquant** · M
-  - 500 établissements, 118 marques, 16 fiches pays, 41 zones, 30 feuilles, 20 entrées de
-    lexique, 442 photos (26 Mo) : dans le MySQL local, et nulle part ailleurs. Git suit la
-    structure (`schema.sql`) et les traductions (`traductions.sql`) — **aucune migration
-    n'insère de `lounges`** — et `git remote -v` ne renvoie rien
-  - `sql/README.md` renvoie à « un dump séparé, non versionné » qui n'existe pas
-  - Il faut : un dépôt distant privé, et un dump du contenu versionné ou sauvegardé ailleurs
+- [x] ~~**B4a** — Le contenu de l'atlas entre dans le dépôt~~ ✅
+  - **Mesuré avant d'agir** : base vierge construite depuis le seul dépôt → **29 des 31
+    tables peuplées revenaient vides**. `data.php?action=globe` renvoyait cinq tableaux
+    vides, et la page d'accueil répondait quand même `200`. Un site en ligne, mis en page,
+    et creux. `sql/README.md` renvoyait à « un dump séparé, non versionné » **qui n'existait
+    pas**, et aucune migration n'insère de `lounges` ni de `brands` — ces tables sont
+    antérieures au dépôt
+  - `tools/contenu_dump.php` → `sql/contenu.sql` (5,0 Mo, 17 tables). Verse l'éditorial et la
+    référence ; laisse dehors **tout ce qui appartient aux gens** — comptes, avis, favoris,
+    messages, contributions, journal. Ces tables se sauvegardent, elles ne se versionnent pas
+  - **Épreuve** : reconstruite depuis `schema.sql` + `contenu.sql`, la base rend des réponses
+    **identiques octet pour octet** sur `globe`, `country` et `brand` — et ne contient
+    aucune donnée personnelle
+  - L'outil **refuse de tourner** si une table de la base n'est classée ni dans la liste
+    versée ni dans la liste exclue : une table ajoutée demain ne peut plus sortir du
+    déploiement en silence. `--verifier` tourne à chaque campagne (443 vérifications)
+  - Le rejeu des 130 migrations (`tools/rejeu_migrations.php`) a été lancé : ses 29 échecs
+    sont le bruit que son propre en-tête annonce — rejeu sur une base qui a déjà tout reçu
+- [ ] **B4b** — **Aucun dépôt distant** · **bloquant** · P
+  - `git remote -v` ne renvoie rien : l'historique et le contenu tiennent sur un seul disque
+  - Reste aussi à sauvegarder `uploads/` (26 Mo) et les tables personnelles, qui par
+    construction ne sont pas dans Git
 - [ ] **B5** — Pages légales et droit à l'effacement · **bloquant** · M
   - Ni mentions légales, ni CGU, ni politique de confidentialité : ni les fichiers, ni un
     lien. Site UE, avec comptes, emails, photos téléversées, et un produit du tabac
