@@ -22,6 +22,47 @@ function is_trusted_role(?string $role): bool {
 }
 
 /**
+ * Inscrit une décision au journal de modération (migration 130).
+ *
+ * L'AUTEUR N'EST PAS UN PARAMÈTRE : il est lu de la session courante.
+ * Un appelant ne peut donc pas signer au nom d'un autre, et c'est cette
+ * impossibilité qui fait la valeur d'un journal d'audit. Le nom est
+ * copié dans la ligne, pas seulement référencé : voir le pourquoi dans
+ * l'en-tête de la migration.
+ *
+ * Sans session d'administration, la ligne est attribuée au système :
+ * c'est le cas des chemins automatiques — vote communautaire atteignant
+ * le seuil, publication directe d'un contributeur de confiance. Le
+ * compte connecté, s'il y en a un, est tout de même nommé : « publié
+ * directement par Alice » est plus utile que « publié ».
+ *
+ * Un échec d'écriture ne fait JAMAIS échouer la décision. Mieux vaut
+ * une décision non journalisée qu'une modération bloquée par une table
+ * absente ; l'échec part dans error_log, où il reste visible.
+ */
+function journaliser(PDO $db, string $action, string $cible_type, int $cible_id, string $detail = ''): void {
+    $scope = admin_scope($db);
+    $u     = current_user($db);
+
+    $acteur_id  = $u ? (int)$u['id'] : null;
+    $acteur_nom = $u ? (string)$u['display_name']
+                     : ($scope === 'admin' ? "clé d'administration" : 'automatique');
+
+    try {
+        $db->prepare(
+            "INSERT INTO moderation_log
+               (acteur_id, acteur_nom, portee, action, cible_type, cible_id, detail)
+             VALUES (?,?,?,?,?,?,?)"
+        )->execute([$acteur_id, mb_substr($acteur_nom, 0, 80), $scope ?? 'systeme',
+                    $action, $cible_type, $cible_id,
+                    $detail === '' ? null : mb_substr($detail, 0, 255)]);
+    } catch (Throwable $e) {
+        error_log('[moderation] journal non ecrit (' . $action . ' ' . $cible_type
+                  . '#' . $cible_id . ') : ' . $e->getMessage());
+    }
+}
+
+/**
  * Promeut un membre en « contributeur de confiance » dès qu'il atteint
  * TRUSTED_AFTER_APPROVED contributions approuvées. Ses ajouts suivants
  * sont publiés sans passer par la file de modération.
@@ -106,7 +147,39 @@ function approve_contribution(PDO $db, int $id, bool $notifier = true): bool {
 
     if ($notifier && $transition) notifier_contributeur($db, $row);
 
+    // Journalisé sur la TRANSITION seulement, comme la notification : une
+    // approbation rejouée ne doit pas laisser croire à deux décisions.
+    // `$notifier` distingue les deux chemins sans auteur humain — la
+    // publication directe d'un contributeur de confiance ne notifie pas.
+    if ($transition) {
+        journaliser($db, $notifier ? 'contribution_approuver' : 'contribution_publication_directe',
+            'contribution', $id, $row['name'] . ' — ' . $row['city']);
+    }
+
     if (!empty($row['user_id'])) maybe_promote_contributor($db, (int)$row['user_id']);
+    return true;
+}
+
+/**
+ * Rejette une contribution. Point de passage unique : admin.php et
+ * api.php écrivaient chacun leur UPDATE, et aucun des deux ne laissait
+ * de trace. Un rejet est pourtant la décision la plus contestable de
+ * toutes — c'est celle dont on voudra relire l'auteur.
+ *
+ * Le garde `status <> 'rejected'` évite de journaliser un rejet rejoué.
+ */
+function reject_contribution(PDO $db, int $id, string $motif = ''): bool {
+    $n = $db->prepare("SELECT name, city FROM contributions WHERE id = ?");
+    $n->execute([$id]);
+    $row = $n->fetch();
+    if (!$row) return false;
+
+    $st = $db->prepare("UPDATE contributions SET status='rejected' WHERE id=? AND status<>'rejected'");
+    $st->execute([$id]);
+    if ($st->rowCount() > 0) {
+        journaliser($db, 'contribution_rejeter', 'contribution', $id,
+            trim($row['name'] . ' — ' . $row['city'] . ($motif !== '' ? ' · ' . $motif : '')));
+    }
     return true;
 }
 
@@ -170,6 +243,67 @@ function notifier_contributeur(PDO $db, array $row): void {
     }
 }
 
+/** Rôles attribuables depuis l'écran des membres, et leur libellé. */
+const ROLES_ATTRIBUABLES = [
+    'member'    => 'Membre',
+    'trusted'   => 'Contributeur de confiance',
+    'moderator' => 'Modérateur',
+];
+
+/**
+ * Attribue un rôle à un compte. Jusqu'ici, nommer un modérateur
+ * demandait un UPDATE à la main dans la base — ce qui revenait à ne
+ * jamais en nommer.
+ *
+ * Trois refus, et chacun protège une chose différente :
+ *
+ *  - `admin` NE S'ATTRIBUE PAS ici. Le rôle admin vaut la clé ; le
+ *    donner par un formulaire ferait de l'écran de modération un chemin
+ *    vers l'administration complète. La clé reste la seule porte, et
+ *    elle se confie en connaissance de cause.
+ *  - un compte DÉJÀ admin ne se modifie pas ici — la même règle lue à
+ *    l'envers : cette page ne sert pas à retirer ses droits à
+ *    l'administrateur en titre.
+ *  - « La Régie » (hachage de mot de passe « * », donc inconnectable)
+ *    signe les messages épinglés du forum. Lui changer de rôle ne
+ *    donnerait de pouvoir à personne, mais modifierait l'affichage de
+ *    ses messages sans que quiconque l'ait voulu.
+ *
+ * @return array{type:string,text:string} message prêt pour l'écran.
+ */
+function changer_role(PDO $db, int $user_id, string $role): array {
+    if (!isset(ROLES_ATTRIBUABLES[$role])) {
+        return ['type' => 'err', 'text' => 'Rôle inconnu : ' . htmlspecialchars($role)
+            . ' — le rôle « admin » ne s’attribue pas depuis cet écran.'];
+    }
+
+    $q = $db->prepare("SELECT display_name, role, password_hash FROM users WHERE id = ?");
+    $q->execute([$user_id]);
+    $u = $q->fetch();
+    if (!$u) return ['type' => 'err', 'text' => "Compte #{$user_id} introuvable."];
+
+    if ($u['role'] === 'admin') {
+        return ['type' => 'err', 'text' => $u['display_name']
+            . ' est administrateur : son rôle ne se change pas depuis cet écran.'];
+    }
+    if ($u['password_hash'] === '*') {
+        return ['type' => 'err', 'text' => $u['display_name']
+            . ' est un compte de signature, sans connexion possible. Son rôle est figé.'];
+    }
+    if ($u['role'] === $role) {
+        return ['type' => 'warn', 'text' => $u['display_name'] . ' est déjà '
+            . mb_strtolower(ROLES_ATTRIBUABLES[$role]) . '.'];
+    }
+
+    $db->prepare("UPDATE users SET role = ? WHERE id = ? AND role <> 'admin'")
+       ->execute([$role, $user_id]);
+    journaliser($db, 'role_attribuer', 'compte', $user_id,
+        $u['display_name'] . ' : ' . $u['role'] . ' → ' . $role);
+
+    return ['type' => 'ok', 'text' => $u['display_name'] . ' est désormais '
+        . mb_strtolower(ROLES_ATTRIBUABLES[$role]) . '.'];
+}
+
 /**
  * Recalcule la note moyenne d'un lounge depuis les avis retenus.
  * Les avis retirés par la modération sont exclus ; les avis signalés
@@ -197,12 +331,21 @@ function recompute_lounge_rating(PDO $db, int $lounge_id): array {
  */
 function set_review_status(PDO $db, int $review_id, string $status): bool {
     if (!in_array($status, ['published', 'flagged', 'removed'], true)) return false;
-    $r = $db->prepare("SELECT lounge_id FROM reviews WHERE id = ?");
+    $r = $db->prepare("SELECT lounge_id, status FROM reviews WHERE id = ?");
     $r->execute([$review_id]);
-    $lounge_id = $r->fetchColumn();
-    if ($lounge_id === false) return false;
+    $avis = $r->fetch();
+    if (!$avis) return false;
+    $lounge_id = (int)$avis['lounge_id'];
 
     $db->prepare("UPDATE reviews SET status = ? WHERE id = ?")->execute([$status, $review_id]);
-    recompute_lounge_rating($db, (int)$lounge_id);
+    recompute_lounge_rating($db, $lounge_id);
+
+    // Le passage à 'flagged' vient des lecteurs, pas d'un modérateur :
+    // il est déjà compté dans review_flags et n'est pas une décision.
+    // Seuls le retrait et le rétablissement en sont.
+    if ($avis['status'] !== $status && $status !== 'flagged') {
+        journaliser($db, $status === 'removed' ? 'avis_retirer' : 'avis_retablir',
+            'avis', $review_id, 'était : ' . $avis['status']);
+    }
     return true;
 }

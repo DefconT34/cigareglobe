@@ -13,10 +13,22 @@ require_once __DIR__ . '/forum_lib.php';
 
 auth_session_start();   // meme session que le reste du site (cookie CGSESS)
 
+// La base est ouverte AVANT la porte : c'est elle qui sait qu'un compte
+// connecté porte le rôle de modérateur. Sans elle, la porte ne connaît
+// que la clé — et c'est exactement ce qui rendait le rôle inutilisable.
+// L'echec est tolere : la page de connexion doit rester affichable
+// quand la base ne repond pas.
+try { $db = getDB(); } catch (Throwable $e) { $db = null; }
+
 // ── Deconnexion ───────────────────────────────────────────
 if (isset($_GET['logout'])) {
     unset($_SESSION['admin'], $_SESSION['admin_csrf']);
-    header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+    // Un modérateur tient ses droits de son COMPTE, pas de la clé :
+    // effacer la session d'administration ne le déconnecte de rien, et
+    // le renvoyer ici le ferait rentrer aussitôt — « Déconnexion »
+    // aurait l'air en panne. On le ramène au site, où se trouve la
+    // déconnexion qui le concerne.
+    header('Location: ' . (admin_scope($db) !== null ? '/' : strtok($_SERVER['REQUEST_URI'], '?')));
     exit;
 }
 
@@ -34,7 +46,10 @@ if (isset($_POST['login_key'])) {
     $login_error = true;
 }
 
-$authed = is_admin_request();
+// Portée, et non plus simple oui/non : 'admin' (clé, ou compte de rôle
+// admin) ou 'moderator' (compte de rôle moderator). Voir auth_lib.php.
+$scope  = admin_scope($db);
+$authed = $scope !== null;
 
 // ── Page de connexion ─────────────────────────────────────
 if (!$authed) { ?><!DOCTYPE html>
@@ -74,8 +89,16 @@ button:hover{background:#E8C040}
 </body></html><?php exit; }
 
 // ── Auth OK — initialisation ──────────────────────────────
-$db  = getDB();
-$msg = ['type'=>'','text'=>''];
+$msg  = ['type'=>'','text'=>''];
+$moi  = current_user($db);   // null si l'accès vient de la clé
+
+// Domaine requis par chaque action et par chaque onglet. UNE seule
+// liste, lue par la garde des POST et par le menu : sans cela, les deux
+// finissent par diverger et le menu propose ce que la garde refuse.
+// Tout ce qui n'y figure pas relève de la modération courante, ouverte
+// aux deux portées.
+$DOMAINE_ACTION = ['langues_save' => 'langues', 'role_set' => 'membres'];
+$DOMAINE_ONGLET = ['langues' => 'langues', 'membres' => 'membres'];
 
 // Actions POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -85,6 +108,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
     $id     = (int)($_POST['id'] ?? 0);
     $action = $_POST['action'];
+
+    // Le menu MASQUE ce qu'une portée ne peut pas faire ; cette garde le
+    // REFUSE. Un menu n'est pas une serrure — une requête POST se forge
+    // à la main en trois secondes, et c'est ici qu'elle bute.
+    $domaine = $DOMAINE_ACTION[$action] ?? 'moderation';
+    if (!portee_autorise($scope, $domaine)) {
+        http_response_code(403);
+        exit('Refusé : ' . (PORTEE_ADMIN_SEULEMENT[$domaine] ?? $domaine)
+             . " n'est pas ouvert à la modération.");
+    }
 
     if ($action === 'langues_save') {
         // Pas de $id : le réglage porte sur le site, pas sur une ligne.
@@ -120,13 +153,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
            ->execute([$action === 'forum_lock' ? 'locked' : 'open', $id]);
         $msg = ['type'=>'ok','text'=>"Sujet #{$id} " . ($action === 'forum_lock' ? 'fermé' : 'rouvert') . "."];
     } elseif ($id && $action === 'reject') {
-        $db->prepare("UPDATE contributions SET status='rejected' WHERE id=?")->execute([$id]);
+        // Traitement partagé avec api.php, et journalisé : un rejet est
+        // la décision la plus contestable de toutes.
+        reject_contribution($db, $id);
         $msg = ['type'=>'warn','text'=>"Contribution #{$id} rejetée."];
+    } elseif ($id && $action === 'role_set') {
+        $msg = changer_role($db, $id, (string)($_POST['role'] ?? ''));
     }
 }
 
 // Données
 $tab  = $_GET['tab'] ?? 'dashboard';
+
+// Un onglet fermé à la portée ne renvoie pas une page vide : il ramène
+// au tableau de bord en DISANT pourquoi. Un refus muet se lit comme une
+// panne, et c'est ainsi qu'on finit par distribuer la clé.
+if (isset($DOMAINE_ONGLET[$tab]) && !portee_autorise($scope, $DOMAINE_ONGLET[$tab])) {
+    $msg = ['type' => 'warn',
+            'text' => 'Réservé à l’administration : ' . PORTEE_ADMIN_SEULEMENT[$DOMAINE_ONGLET[$tab]] . '.'];
+    $tab = 'dashboard';
+}
+
 $filter_status = in_array($tab, ['pending','approved','rejected','all']) ? $tab : 'pending';
 
 $where_contrib = match($filter_status) {
@@ -213,6 +260,39 @@ if ($tab === 'langues') {
             $lang_stats['topics'][(string)$r['lang']] = (int)$r['n'];
         }
     } catch (Throwable $e) {}
+}
+
+// Membres — les comptes et leurs rôles (portée « admin » uniquement,
+// l'onglet a déjà été refusé plus haut à la modération).
+$membres_rows = [];
+if ($tab === 'membres') {
+    try {
+        $membres_rows = $db->query(
+            "SELECT u.id, u.display_name, u.email, u.role, u.status, u.lang,
+                    u.email_verified, u.created_at, u.last_login_at, u.password_hash,
+                    (SELECT COUNT(*) FROM contributions c
+                      WHERE c.user_id = u.id AND c.status = 'approved') AS contribs,
+                    (SELECT COUNT(*) FROM forum_posts p
+                      WHERE p.user_id = u.id AND p.status = 'published') AS messages
+             FROM users u
+             ORDER BY FIELD(u.role,'admin','moderator','trusted','member'), u.created_at
+             LIMIT 500"
+        )->fetchAll();
+    } catch (Throwable $e) { $membres_rows = []; }
+}
+
+// Journal — lisible par les DEUX portées, délibérément. Un journal que
+// le modérateur ne verrait pas serait une surveillance ; celui-ci est un
+// registre, et il vaut mieux qu'il sache qu'il est tenu.
+$journal_rows = [];
+$journal_n    = 0;
+if ($tab === 'journal') {
+    try {
+        $journal_rows = $db->query(
+            "SELECT * FROM moderation_log ORDER BY created_at DESC, id DESC LIMIT 200"
+        )->fetchAll();
+        $journal_n = (int)$db->query("SELECT COUNT(*) FROM moderation_log")->fetchColumn();
+    } catch (Throwable $e) { $journal_rows = []; }   // migration 130 non jouée
 }
 
 // Photos
@@ -692,9 +772,18 @@ html{transition:background .25s,color .25s}
       <button class="theme-btn" data-t="emerald"  title="Emerald"  onclick="setTheme('emerald')"></button>
       <button class="theme-btn" data-t="bordeaux" title="Bordeaux" onclick="setTheme('bordeaux')"></button>
     </div>
+    <?php if (portee_autorise($scope, 'export')): ?>
     <a href="api.php?action=export" class="btn-export">⬇ Exporter</a>
-    <span class="admin-badge">Admin</span>
-    <a href="?logout=1" class="admin-badge" style="text-decoration:none">Déconnexion</a>
+    <?php endif; ?>
+    <span class="admin-badge" title="<?= $scope === 'admin'
+          ? 'Portée complète' : 'Portée de modération : ' . implode(', ', PORTEE_ADMIN_SEULEMENT) . ' restent fermés' ?>">
+      <?= $scope === 'admin' ? 'Admin' : 'Modérateur' ?><?php
+      // Le nom À CÔTÉ du rôle : un journal d'audit n'a de sens que si
+      // chacun sait sous quelle identité il agit au moment où il agit.
+      if ($moi): ?> · <?= htmlspecialchars($moi['display_name']) ?><?php endif; ?>
+    </span>
+    <a href="?logout=1" class="admin-badge" style="text-decoration:none">
+      <?= $moi ? 'Retour au site' : 'Déconnexion' ?></a>
   </div>
 </header>
 
@@ -775,15 +864,43 @@ html{transition:background .25s,color .25s}
     <?php endif; ?>
   </a>
 
+  <div class="divider"></div>
+  <div class="nav-section">Registre</div>
+
+  <!-- Ouvert aux deux portées : voir le commentaire du chargement. -->
+  <a class="nav-item <?= $tab==='journal' ? 'active' : '' ?>"
+     href="?tab=journal">
+    <span class="ni-icon">&#9998;</span>
+    <span class="ni-label">Journal</span>
+  </a>
+
+  <?php if (portee_autorise($scope, 'membres')): ?>
+  <a class="nav-item <?= $tab==='membres' ? 'active' : '' ?>"
+     href="?tab=membres">
+    <span class="ni-icon">&#128100;</span>
+    <span class="ni-label">Membres</span>
+  </a>
+  <?php endif; ?>
+
+  <?php if (portee_autorise($scope, 'langues')): ?>
   <a class="nav-item <?= $tab==='langues' ? 'active' : '' ?>"
      href="?tab=langues">
     <span class="ni-icon">&#127760;</span>
     <span class="ni-label">Langues</span>
     <span class="nav-badge"><?= count($lang_actives) ?>/<?= count(langues_connues()) ?></span>
   </a>
+  <?php endif; ?>
 
   <div class="sidebar-footer">
-    <div class="sf-key">Session administrateur active · <a href="?logout=1" style="color:inherit">Se déconnecter</a></div>
+    <div class="sf-key">
+      <?php if ($moi): ?>
+        Connecté comme <?= htmlspecialchars($moi['display_name']) ?> ·
+        <?= $scope === 'admin' ? 'portée complète' : 'portée de modération' ?> ·
+        <a href="/" style="color:inherit">retour au site</a>
+      <?php else: ?>
+        Session administrateur active · <a href="?logout=1" style="color:inherit">Se déconnecter</a>
+      <?php endif; ?>
+    </div>
   </div>
 </nav>
 
@@ -1119,8 +1236,15 @@ html{transition:background .25s,color .25s}
           <?php endif; ?>
           <?php if (!$p['is_approved']): ?>
           <button class="pca-btn" onclick="photoAction(<?= $p['id'] ?>,'approve')" title="Approuver">✓</button>
+          <?php else: ?>
+          <!-- Le retrait réversible : la photo quitte le site, le
+               fichier reste. C'est le geste proportionné, et le seul
+               dont dispose un modérateur. -->
+          <button class="pca-btn" onclick="photoAction(<?= $p['id'] ?>,'hide')" title="Masquer — retire du site sans supprimer le fichier">◎</button>
           <?php endif; ?>
-          <button class="pca-btn pca-del" onclick="photoDelete(<?= $p['id'] ?>,<?= $selected_lounge_id ?>)" title="Supprimer">🗑</button>
+          <?php if (portee_autorise($scope, 'photo_supprimer')): ?>
+          <button class="pca-btn pca-del" onclick="photoDelete(<?= $p['id'] ?>,<?= $selected_lounge_id ?>)" title="Supprimer définitivement le fichier">🗑</button>
+          <?php endif; ?>
         </div>
       </div>
       <?php endforeach; ?>
@@ -1303,6 +1427,168 @@ html{transition:background .25s,color .25s}
 <?php endif; ?>
 
 <!-- ── LANGUES ──────────────────────────────────────── -->
+<!-- ── MEMBRES ────────────────────────────────────────── -->
+<?php elseif ($tab === 'membres'): ?>
+<div class="page-header">
+  <div>
+    <div class="page-title">Membres</div>
+    <div class="page-subtitle">
+      <?= count($membres_rows) ?> comptes · « contributeur de confiance » s’obtient tout seul
+      après <?= defined('TRUSTED_AFTER_APPROVED') ? (int)TRUSTED_AFTER_APPROVED : 'N' ?>
+      contributions approuvées — c’est « modérateur » qui se décide ici.
+      Le rôle <strong>admin</strong> ne s’attribue pas depuis cet écran : il vaut la clé.
+    </div>
+  </div>
+</div>
+
+<?php if (empty($membres_rows)): ?>
+<div class="empty-state">
+  <div class="empty-icon">◈</div>
+  <div class="empty-text">Aucun compte</div>
+</div>
+<?php else: ?>
+<div class="table-scroll"><table class="contrib-table">
+  <thead>
+    <tr>
+      <th>Compte</th>
+      <th>Rôle</th>
+      <th style="text-align:center">Contributions</th>
+      <th style="text-align:center">Messages</th>
+      <th>Dernière visite</th>
+      <th>Attribuer</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($membres_rows as $m):
+        // Deux comptes ne se modifient pas — voir changer_role() pour
+        // le pourquoi de chacun. L'écran le dit plutôt que de proposer
+        // un bouton qui serait refusé.
+        $fige = $m['role'] === 'admin' || $m['password_hash'] === '*';
+  ?>
+  <tr>
+    <td>
+      <div class="ct-name"><?= htmlspecialchars($m['display_name']) ?></div>
+      <div class="ct-city">
+        <?= htmlspecialchars($m['email']) ?>
+        <?= $m['email_verified'] ? '' : ' · <span style="color:var(--amber)">email non vérifié</span>' ?>
+      </div>
+    </td>
+    <td style="white-space:nowrap">
+      <span class="status-pill stp-<?= in_array($m['role'], ['admin','moderator'], true) ? 'approved'
+            : ($m['role'] === 'trusted' ? 'pending' : 'rejected') ?>">
+        <?= ROLES_ATTRIBUABLES[$m['role']] ?? 'Administrateur' ?>
+      </span>
+      <?php if ($m['status'] !== 'active'): ?>
+      <div class="ct-city" style="color:var(--red)">compte suspendu</div>
+      <?php endif; ?>
+    </td>
+    <td style="text-align:center"><span class="ct-city"><?= (int)$m['contribs'] ?></span></td>
+    <td style="text-align:center"><span class="ct-city"><?= (int)$m['messages'] ?></span></td>
+    <td>
+      <div class="ct-city">
+        <?= $m['last_login_at'] ? date('d/m/y', strtotime($m['last_login_at'])) : 'jamais' ?>
+        · inscrit le <?= date('d/m/y', strtotime($m['created_at'])) ?>
+      </div>
+    </td>
+    <td>
+      <?php if ($fige): ?>
+        <span class="ct-city"><?= $m['role'] === 'admin'
+          ? 'administrateur — se change avec la clé'
+          : 'compte de signature — rôle figé' ?></span>
+      <?php else: ?>
+      <form method="POST" class="action-row" style="gap:6px">
+        <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
+        <input type="hidden" name="id"   value="<?= (int)$m['id'] ?>">
+        <select name="role" style="padding:5px 8px;background:var(--bg3);border:1px solid var(--border);
+                       border-radius:5px;color:var(--text);font-size:11px">
+          <?php foreach (ROLES_ATTRIBUABLES as $cle => $lib): ?>
+          <option value="<?= $cle ?>" <?= $m['role'] === $cle ? 'selected' : '' ?>><?= $lib ?></option>
+          <?php endforeach; ?>
+        </select>
+        <button class="action-btn ab-approve" name="action" value="role_set">Appliquer</button>
+      </form>
+      <?php endif; ?>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+  </tbody>
+</table></div>
+
+<div class="ct-city" style="margin-top:18px;line-height:1.7;max-width:62em">
+  <strong>Ce que « modérateur » ouvre — et ce qu'il n'ouvre pas.</strong><br>
+  · Ouvert : contributions, avis, photos et messages de la communauté — approuver,
+    rejeter, retirer, masquer. Ce sont les gestes réversibles.<br>
+  · Fermé : <?= htmlspecialchars(implode(' · ', PORTEE_ADMIN_SEULEMENT)) ?>.<br>
+  · Chaque décision est inscrite au <a href="?tab=journal" style="color:var(--gold)">journal</a>,
+    sous le nom du compte. C'est ce qui permet de confier le rôle sans le regretter.
+</div>
+<?php endif; ?>
+
+<!-- ── JOURNAL ────────────────────────────────────────── -->
+<?php elseif ($tab === 'journal'): ?>
+<?php
+  $ACT = [
+    'contribution_approuver'           => 'Contribution approuvée',
+    'contribution_rejeter'             => 'Contribution rejetée',
+    'contribution_publication_directe' => 'Publication directe',
+    'avis_retirer'    => 'Avis retiré',      'avis_retablir'   => 'Avis rétabli',
+    'message_retirer' => 'Message retiré',   'message_retablir'=> 'Message rétabli',
+    'photo_approuver' => 'Photo approuvée',  'photo_masquer'   => 'Photo masquée',
+    'photo_supprimer' => 'Photo supprimée',  'role_attribuer'  => 'Rôle attribué',
+  ];
+?>
+<div class="page-header">
+  <div>
+    <div class="page-title">Journal de modération</div>
+    <div class="page-subtitle">
+      <?= $journal_n ?> décision<?= $journal_n > 1 ? 's' : '' ?> · les 200 dernières ·
+      le nom est figé au moment de l’acte, il survit au renommage du compte
+    </div>
+  </div>
+</div>
+
+<?php if (empty($journal_rows)): ?>
+<div class="empty-state">
+  <div class="empty-icon">◈</div>
+  <div class="empty-text">Aucune décision journalisée</div>
+  <div class="ct-city" style="margin-top:8px">
+    Le journal part de la migration 130 : les décisions antérieures n’y sont pas.
+  </div>
+</div>
+<?php else: ?>
+<div class="table-scroll"><table class="contrib-table">
+  <thead>
+    <tr>
+      <th>Quand</th>
+      <th>Qui</th>
+      <th>Quoi</th>
+      <th>Sur</th>
+      <th>Détail</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($journal_rows as $j): ?>
+  <tr>
+    <td style="white-space:nowrap">
+      <div class="ct-name"><?= date('d/m/y', strtotime($j['created_at'])) ?></div>
+      <div class="ct-city"><?= date('H:i', strtotime($j['created_at'])) ?></div>
+    </td>
+    <td style="white-space:nowrap">
+      <div class="ct-name"><?= htmlspecialchars($j['acteur_nom']) ?></div>
+      <div class="ct-city"><?= match($j['portee']){
+        'admin' => 'administration', 'moderator' => 'modération', default => 'automatique' } ?></div>
+    </td>
+    <td><span class="ct-name"><?= htmlspecialchars($ACT[$j['action']] ?? $j['action']) ?></span></td>
+    <td style="white-space:nowrap">
+      <span class="ct-city"><?= htmlspecialchars($j['cible_type']) ?> #<?= (int)$j['cible_id'] ?></span>
+    </td>
+    <td><span class="ct-city" style="white-space:normal"><?= htmlspecialchars((string)($j['detail'] ?? '—')) ?></span></td>
+  </tr>
+  <?php endforeach; ?>
+  </tbody>
+</table></div>
+<?php endif; ?>
+
 <?php elseif ($tab === 'langues'): ?>
 <?php
   $LANG_NOMS = ['fr' => 'Français', 'en' => 'English', 'es' => 'Español',

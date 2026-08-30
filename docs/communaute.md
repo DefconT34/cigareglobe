@@ -221,6 +221,43 @@ on la réemploie plutôt que d'en écrire une seconde.
 - **Traçabilité** : toute décision est journalisée avec son auteur et son motif.
   Un modérateur doit pouvoir être audité.
 
+### Ce qui est construit — et ce que ça a appris
+
+La V3 (jalon `E1e`) a rendu le rôle utilisable. Le point de départ mérite d'être
+retenu : **le rôle `moderator` existait depuis la V1 et personne ne pouvait le
+porter.** Il était câblé à six endroits et valait `admin` partout, mais
+`admin.php` interrogeait la porte sans passer la base — le chemin du rôle
+n'était donc jamais emprunté. Un rôle qui donne du pouvoir sans visage n'est pas
+une fonctionnalité en attente : c'est un risque qui dort.
+
+- **`admin_scope()`** (`auth_lib.php`) répond « jusqu'où », là où
+  `is_admin_request()` ne répondait que « oui/non ». Deux portées : `admin`
+  (clé, ou compte de rôle admin) et `moderator`.
+- **Fermé à la modération** — `PORTEE_ADMIN_SEULEMENT` : les langues servies,
+  l'écran des membres, l'export complet, la suppression définitive d'une photo.
+  Le critère : l'irréversible, le global, le méta. Approuver, rejeter, retirer,
+  masquer restent ouverts — c'est le métier.
+- **Le menu n'est pas la serrure.** Une seule liste nourrit l'affichage et la
+  garde des `POST` ; le contrôle vérifie qu'une requête forgée à la main, avec
+  un jeton CSRF valide, reçoit un 403 — et que rien n'a été écrit.
+- **`photos.php?action=hide`** : le retrait réversible manquait. Sans lui, un
+  modérateur n'avait le choix qu'entre laisser une image déplacée en ligne et
+  effacer un fichier pour toujours. Fermer une porte oblige à en ouvrir une.
+- **Nommer** se fait dans l'onglet *Membres*. Auparavant : un `UPDATE` à la
+  main, ce qui revient à ne jamais nommer personne. Le rôle `admin` ne s'y
+  attribue pas — il vaut la clé, et la clé se confie en connaissance de cause.
+- **Le journal** (`moderation_log`, migration 130) tient enfin la promesse
+  ci-dessus. `acteur_nom` est **figé** au moment de l'acte et aucune clé
+  étrangère ne pointe `users` : une cascade effacerait les décisions de celui
+  qu'on audite. La portée `systeme` couvre les chemins sans auteur humain, et
+  répond à la question qu'on se pose le plus souvent — *pourquoi cette fiche
+  est-elle en ligne ?*
+- Le journal est **lisible par les deux portées**. Un registre que le modérateur
+  ne verrait pas serait une surveillance.
+
+Reste à faire : les **sanctions graduées** ci-dessus. `users.status` ne connaît
+qu'`active` / `suspended`, et n'est lu qu'à la connexion.
+
 ### Anti-abus, dès la première version
 
 - Email **vérifié** obligatoire pour écrire.

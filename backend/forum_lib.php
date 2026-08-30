@@ -12,6 +12,10 @@
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/auth_lib.php';
+// journaliser() : une décision de modération du forum s'inscrit au même
+// journal que les avis et les contributions. Un modérateur ne s'audite
+// pas rubrique par rubrique.
+require_once __DIR__ . '/moderation_lib.php';
 
 // ── Plafonds ────────────────────────────────────────────
 // Les valeurs viennent du §8 du cahier des charges. Un contributeur de
@@ -348,11 +352,24 @@ function forum_signaler(PDO $db, int $post_id, int $user_id, string $reason, str
  */
 function forum_moderer(PDO $db, int $post_id, string $decision, int $moderator_id): bool {
     $statut = $decision === 'retirer' ? 'removed' : 'published';
+
+    // Statut d'avant, lu avant l'écriture : sans lui, une décision
+    // rejouée sur un message déjà retiré s'inscrirait une seconde fois
+    // au journal et ferait croire à deux modérateurs successifs.
+    $av = $db->prepare("SELECT status FROM forum_posts WHERE id = ?");
+    $av->execute([$post_id]);
+    $avant = $av->fetchColumn();
+
     $ok = $db->prepare("UPDATE forum_posts SET status = ? WHERE id = ?")
              ->execute([$statut, $post_id]);
     $db->prepare("UPDATE forum_flags SET resolved_at = NOW(), resolved_by = ?
                   WHERE post_id = ? AND resolved_at IS NULL")
        ->execute([$moderator_id, $post_id]);
+
+    if ($avant !== false && $avant !== $statut) {
+        journaliser($db, $decision === 'retirer' ? 'message_retirer' : 'message_retablir',
+            'message', $post_id, 'était : ' . $avant);
+    }
 
     $q = $db->prepare("SELECT topic_id FROM forum_posts WHERE id = ?");
     $q->execute([$post_id]);

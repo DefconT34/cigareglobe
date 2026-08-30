@@ -83,25 +83,72 @@ function require_auth(PDO $db): array {
 }
 
 /**
- * Droits d'administration de la requête courante. Trois voies :
- *  - session admin ouverte depuis admin.php ;
- *  - compte connecté ayant le rôle moderator/admin ;
- *  - clé d'administration transmise par EN-TÊTE (X-Admin-Key).
+ * Portée d'administration de la requête : 'admin', 'moderator', ou null.
+ *
+ * Trois voies mènent à l'administration, et elles ne donnent pas les
+ * mêmes droits :
+ *  - session ouverte avec ADMIN_KEY depuis admin.php ......... 'admin'
+ *  - clé transmise par EN-TÊTE X-Admin-Key .................... 'admin'
+ *  - compte connecté de rôle admin ............................ 'admin'
+ *  - compte connecté de rôle moderator .................... 'moderator'
+ *
  * La clé n'est jamais acceptée depuis l'URL : elle fuirait dans les logs
  * du serveur, l'historique du navigateur et l'en-tête Referer.
+ *
+ * POURQUOI DISTINGUER. Jusqu'ici `moderator` valait `admin` partout :
+ * le rôle ouvrait la suppression définitive des photos, l'export complet
+ * et le réglage des langues. Un rôle aussi large ne se confie à
+ * personne — et de fait personne ne le portait, le seul compte qui
+ * l'avait étant « La Régie », dont le hachage de mot de passe est « * »
+ * et ne peut donc jamais valider. Séparer la portée est précisément ce
+ * qui rend le rôle donnable.
  */
-function is_admin_request(?PDO $db = null): bool {
-    if (!empty($_SESSION['admin'])) return true;
+function admin_scope(?PDO $db = null): ?string {
+    if (!empty($_SESSION['admin'])) return 'admin';
 
     $hdr = $_SERVER['HTTP_X_ADMIN_KEY'] ?? '';
     if ($hdr !== '' && defined('ADMIN_KEY') && ADMIN_KEY !== '' && hash_equals(ADMIN_KEY, $hdr)) {
-        return true;
+        return 'admin';
     }
     if ($db) {
         $u = current_user($db);
-        if ($u && in_array($u['role'], ['moderator', 'admin'], true)) return true;
+        if ($u && $u['role'] === 'admin')     return 'admin';
+        if ($u && $u['role'] === 'moderator') return 'moderator';
     }
-    return false;
+    return null;
+}
+
+/**
+ * Domaines fermés à la portée « moderator ». La valeur sert de motif
+ * dans le refus : un modérateur qui bute sur une porte doit lire
+ * pourquoi, pas un 403 muet.
+ *
+ * Ce qui est ici a un point commun : l'irréversible (suppression d'un
+ * fichier), le global (les langues servies, l'export de toute la base)
+ * et le méta (donner des droits). La modération courante — approuver,
+ * rejeter, retirer, masquer — n'y figure pas : c'est le métier.
+ */
+const PORTEE_ADMIN_SEULEMENT = [
+    'langues'         => 'le réglage des langues servies',
+    'membres'         => 'la liste des comptes et l’attribution des rôles',
+    'export'          => 'l’export de tous les établissements',
+    'photo_supprimer' => 'la suppression définitive d’une photo',
+];
+
+/** Cette portée peut-elle agir sur ce domaine ? */
+function portee_autorise(?string $scope, string $domaine): bool {
+    if ($scope === null)    return false;
+    if ($scope === 'admin') return true;
+    return !isset(PORTEE_ADMIN_SEULEMENT[$domaine]);
+}
+
+/**
+ * La requête peut-elle modérer ? Réponse par oui ou non, pour les
+ * endroits qui n'ont pas besoin de savoir jusqu'où — admin_scope()
+ * répond à cette seconde question.
+ */
+function is_admin_request(?PDO $db = null): bool {
+    return admin_scope($db) !== null;
 }
 
 /** Jeton CSRF dédié aux formulaires de l'interface d'administration. */

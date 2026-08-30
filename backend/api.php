@@ -359,7 +359,9 @@ function action_reject(): void {
     if (!is_admin()) json_out(err('forbidden', 'Accès refusé'), 403);
     $id = (int)($_GET['id'] ?? 0);
     if (!$id) json_out(err('id_required', 'id manquant'), 400);
-    getDB()->prepare("UPDATE contributions SET status='rejected' WHERE id=?")->execute([$id]);
+    // Passe par moderation_lib : l'UPDATE était écrit ici ET dans
+    // admin.php, et ni l'un ni l'autre ne laissait de trace.
+    reject_contribution(getDB(), $id);
     json_out(['success' => true]);
 }
 
@@ -377,7 +379,11 @@ function action_stats(): void {
 // GET export — générer le JS des approuvés (admin)
 // ════════════════════════════════════════════════════════
 function action_export(): void {
-    if (!is_admin()) json_out(err('forbidden', 'Accès refusé'), 403);
+    // Portée « admin » : l'export sort toute la base d'établissements en
+    // un fichier. C'est la copie du fonds, pas un geste de modération.
+    if (!portee_autorise(admin_scope(getDB()), 'export')) {
+        json_out(err('forbidden', "L'export complet est réservé à l'administration"), 403);
+    }
 
     $db   = getDB();
     $rows = $db->query(

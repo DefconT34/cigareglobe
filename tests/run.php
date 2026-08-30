@@ -1647,6 +1647,249 @@ foreach (['en', 'es', 'de', 'zh', 'ar'] as $l) {
 eq('chaque code est traduit dans les cinq autres langues', [], $manquantes);
 
 // ════════════════════════════════════════════════════════
+section('Portee de la moderation');
+
+// CE QUE CE BLOC PROUVE
+// Le role `moderator` existait dans le code depuis l'espace
+// communautaire, et il etait INUTILISABLE : admin.php interrogeait la
+// porte sans passer la base, donc le chemin du role n'etait jamais
+// emprunte, et aucun ecran ne savait nommer un moderateur. Le seul
+// compte qui portait le role — « La Regie » — a « * » pour hachage de
+// mot de passe et ne peut pas se connecter. Zero test mentionnait ce
+// role. Les verifications qui suivent tiennent les deux bouts : la
+// porte s'ouvre, et elle ne s'ouvre pas trop grand.
+
+// Un compte DEDIE : promouvoir Alice ou Bob ferait porter leurs
+// plafonds et leurs signalements par un moderateur, et les sections
+// suivantes liraient des chiffres qu'elles n'ont pas ecrits.
+test_pdo()->exec("DELETE FROM auth_attempts");
+$mireille = new_client('mireille');
+$r = post_json($base, $mireille, '/backend/auth.php?action=register',
+               ['email' => 'mireille@test.local', 'password' => 'motdepasse8',
+                'display_name' => 'Mireille']);
+eq('moderation : compte cree', 201, $r['status']);
+force_verified('mireille@test.local');
+$r = post_json($base, $mireille, '/backend/auth.php?action=login',
+               ['email' => 'mireille@test.local', 'password' => 'motdepasse8']);
+eq('moderation : compte connecte', 200, $r['status']);
+$mid = (int)test_pdo()->query("SELECT id FROM users WHERE email='mireille@test.local'")->fetchColumn();
+
+// Deux comptes que l'ecran des membres doit refuser de toucher.
+test_pdo()->exec(
+    "INSERT INTO users (email, password_hash, display_name, role, email_verified)
+     VALUES ('regie@test.local', '*', 'La Regie', 'moderator', 1),
+            ('patron@test.local', 'x', 'Le Patron', 'admin', 1)"
+);
+$rid = (int)test_pdo()->query("SELECT id FROM users WHERE email='regie@test.local'")->fetchColumn();
+$pid = (int)test_pdo()->query("SELECT id FROM users WHERE email='patron@test.local'")->fetchColumn();
+
+// Une contribution en attente : elle sert de cible, et sa presence fait
+// rendre a l'onglet « En attente » un formulaire dont on lit le jeton.
+test_pdo()->exec(
+    "INSERT INTO contributions (id, country_id, country_name, name, city, description, status)
+     VALUES (900, 'testland', 'Testland', 'Le Fumoir du Test', 'Ville',
+             'Une description assez longue pour tenir lieu de contribution.', 'pending'),
+            (901, 'testland', 'Testland', 'Le Faux Fumoir', 'Ville',
+             'Une seconde contribution, celle qui sera rejetee.', 'pending')"
+);
+
+// ── Avant nomination : la porte est fermee ───────────────
+$r = http('GET', $base . '/backend/admin.php', ['jar' => $mireille]);
+check('moderation : un simple membre ne voit que le formulaire de cle',
+      str_contains($r['body'], 'name="login_key"'));
+
+// ── Nommer, depuis l'ecran des membres ───────────────────
+// Par HTTP et non par un UPDATE : c'est justement le chemin qui
+// n'existait pas.
+$admincli = new_client('admincli');
+$CLE = ['X-Admin-Key: test-admin-key'];
+$r = http('GET', $base . '/backend/admin.php?tab=membres', ['jar' => $admincli, 'headers' => $CLE]);
+eq('moderation : l\'ecran des membres s\'ouvre a l\'administration', 200, $r['status']);
+preg_match('/name="csrf" value="([a-f0-9]{64})"/', $r['body'], $m);
+$acsrf = $m[1] ?? '';
+check('moderation : jeton d\'administration obtenu', $acsrf !== '');
+
+$poste_admin = fn(array $f) => http('POST', $base . '/backend/admin.php',
+    ['jar' => $admincli, 'headers' => $CLE, 'form' => array_merge(['csrf' => $acsrf], $f)]);
+
+$r = $poste_admin(['id' => $mid, 'action' => 'role_set', 'role' => 'moderator']);
+eq('moderation : nomination acceptee', 200, $r['status']);
+eq('moderation : le role est ecrit en base', 'moderator',
+   test_pdo()->query("SELECT role FROM users WHERE id = $mid")->fetchColumn());
+
+// Les trois refus de changer_role(), chacun protegeant autre chose.
+$r = $poste_admin(['id' => $mid, 'action' => 'role_set', 'role' => 'admin']);
+check('moderation : le role admin ne s\'attribue pas depuis l\'ecran',
+      str_contains($r['body'], 'ne s') && str_contains($r['body'], 'attribue pas'));
+eq('moderation : et le compte n\'a pas bouge', 'moderator',
+   test_pdo()->query("SELECT role FROM users WHERE id = $mid")->fetchColumn());
+
+$r = $poste_admin(['id' => $pid, 'action' => 'role_set', 'role' => 'member']);
+eq('moderation : un administrateur ne se retrograde pas ici', 'admin',
+   test_pdo()->query("SELECT role FROM users WHERE id = $pid")->fetchColumn());
+
+$r = $poste_admin(['id' => $rid, 'action' => 'role_set', 'role' => 'member']);
+eq('moderation : le compte de signature garde son role', 'moderator',
+   test_pdo()->query("SELECT role FROM users WHERE id = $rid")->fetchColumn());
+
+// ── La porte s'ouvre, et pas plus grand ──────────────────
+$r = http('GET', $base . '/backend/admin.php', ['jar' => $mireille]);
+check('moderation : la moderatrice entre dans l\'ecran',
+      !str_contains($r['body'], 'name="login_key"'));
+check('moderation : elle agit sous son nom', str_contains($r['body'], 'Mireille'));
+check('moderation : le menu ne propose pas les langues',
+      !str_contains($r['body'], 'tab=langues'));
+check('moderation : ni l\'ecran des membres',
+      !str_contains($r['body'], 'tab=membres'));
+check('moderation : le journal, lui, est propose',
+      str_contains($r['body'], 'tab=journal'));
+check('moderation : pas de bouton d\'export',
+      !str_contains($r['body'], 'action=export'));
+
+// Contre-epreuve : la cle voit ce que la moderation ne voit pas.
+$r = http('GET', $base . '/backend/admin.php', ['jar' => $admincli, 'headers' => $CLE]);
+check('administration : le menu propose bien les langues',
+      str_contains($r['body'], 'tab=langues'));
+check('administration : et l\'ecran des membres',
+      str_contains($r['body'], 'tab=membres'));
+
+// ── UN MENU N'EST PAS UNE SERRURE ────────────────────────
+// Le cas construit : la requete est forgee a la main, avec un jeton
+// CSRF parfaitement valide. C'est exactement ce que ferait quelqu'un
+// qui a lu le code — et c'est la seule verification qui compte.
+$r = http('GET', $base . '/backend/admin.php?tab=pending', ['jar' => $mireille]);
+preg_match('/name="csrf" value="([a-f0-9]{64})"/', $r['body'], $m);
+$mcsrf = $m[1] ?? '';
+check('moderation : jeton de moderation obtenu', $mcsrf !== '');
+
+$poste_mod = fn(array $f) => http('POST', $base . '/backend/admin.php',
+    ['jar' => $mireille, 'form' => array_merge(['csrf' => $mcsrf], $f)]);
+
+$avant_langues = (int)test_pdo()->query("SELECT COUNT(*) FROM site_languages WHERE is_active = 1")->fetchColumn();
+$r = $poste_mod(['action' => 'langues_save', 'langues' => ['fr']]);
+eq('moderation : le reglage des langues est refuse malgre un jeton valide', 403, $r['status']);
+eq('moderation : et rien n\'a ete ecrit', $avant_langues,
+   (int)test_pdo()->query("SELECT COUNT(*) FROM site_languages WHERE is_active = 1")->fetchColumn());
+
+$r = $poste_mod(['id' => $mid, 'action' => 'role_set', 'role' => 'member']);
+eq('moderation : un moderateur ne se donne pas de droits', 403, $r['status']);
+eq('moderation : son role est intact', 'moderator',
+   test_pdo()->query("SELECT role FROM users WHERE id = $mid")->fetchColumn());
+
+// Un onglet ferme ramene au tableau de bord EN LE DISANT : un refus
+// muet se lit comme une panne, et c'est ainsi qu'on finit par
+// distribuer la cle.
+$r = http('GET', $base . '/backend/admin.php?tab=langues', ['jar' => $mireille]);
+check('moderation : l\'onglet ferme explique le refus',
+      str_contains($r['body'], 'le r&eacute;glage des langues servies')
+   || str_contains($r['body'], 'le réglage des langues servies'));
+
+// ── L'irreversible reste a l'administration ──────────────
+test_pdo()->exec(
+    "INSERT INTO lounge_photos (id, lounge_id, filename, is_approved, is_primary)
+     VALUES (900, 1, 'photo-de-test.jpg', 1, 1)"
+);
+$photo = fn(string $jar, string $act, array $h = []) => http('POST',
+    $base . '/backend/photos.php?action=' . $act,
+    ['jar' => $jar, 'headers' => $h, 'form' => ['photo_id' => 900]]);
+
+$r = $photo($mireille, 'delete');
+eq('moderation : la suppression definitive est refusee', 403, $r['status']);
+eq('moderation : la ligne est toujours la', 1,
+   (int)test_pdo()->query("SELECT COUNT(*) FROM lounge_photos WHERE id = 900")->fetchColumn());
+
+// Le geste proportionne existe, sinon le refus ci-dessus laisserait un
+// moderateur sans reponse devant une image deplacee.
+$r = $photo($mireille, 'hide');
+eq('moderation : le masquage est permis', 200, $r['status']);
+$ph = test_pdo()->query("SELECT is_approved, is_primary FROM lounge_photos WHERE id = 900")->fetch(PDO::FETCH_ASSOC);
+eq('moderation : la photo quitte le site', 0, (int)$ph['is_approved']);
+eq('moderation : et cesse d\'etre la principale', 0, (int)$ph['is_primary']);
+
+$r = $photo($admincli, 'delete', $CLE);
+eq('administration : la suppression definitive, elle, passe', 200, $r['status']);
+
+$r = http('GET', $base . '/backend/api.php?action=export', ['jar' => $mireille]);
+eq('moderation : l\'export complet est refuse', 403, $r['status']);
+$r = http('GET', $base . '/backend/api.php?action=export', ['jar' => $admincli, 'headers' => $CLE]);
+eq('administration : l\'export est autorise', 200, $r['status']);
+
+// ════════════════════════════════════════════════════════
+section('Journal de moderation');
+
+// « Toute decision est journalisee avec son auteur et son motif. Un
+// moderateur doit pouvoir etre audite » — docs/communaute.md §8. Une
+// seule trace existait jusqu'ici : forum_flags.resolved_by.
+
+/** Lignes du journal pour une cible. */
+$journal = function (string $type, int $id): array {
+    $q = test_pdo()->prepare(
+        "SELECT * FROM moderation_log WHERE cible_type = ? AND cible_id = ? ORDER BY id"
+    );
+    $q->execute([$type, $id]);
+    return $q->fetchAll(PDO::FETCH_ASSOC);
+};
+
+$r = $poste_mod(['id' => 900, 'action' => 'approve']);
+eq('journal : la contribution est approuvee', 200, $r['status']);
+$lignes = $journal('contribution', 900);
+eq('journal : une ligne, une seule', 1, count($lignes));
+eq('journal : signee du nom de la moderatrice', 'Mireille', $lignes[0]['acteur_nom'] ?? '');
+eq('journal : avec sa portee', 'moderator', $lignes[0]['portee'] ?? '');
+eq('journal : et l\'acte', 'contribution_approuver', $lignes[0]['action'] ?? '');
+check('journal : le detail nomme l\'etablissement',
+      str_contains((string)($lignes[0]['detail'] ?? ''), 'Le Fumoir du Test'));
+
+// Rejouee, la decision ne s'inscrit pas deux fois : sinon le journal
+// ferait croire a deux moderateurs successifs sur le meme dossier.
+$poste_mod(['id' => 900, 'action' => 'approve']);
+eq('journal : une approbation rejouee n\'ajoute rien', 1, count($journal('contribution', 900)));
+
+$r = $poste_mod(['id' => 901, 'action' => 'reject']);
+eq('journal : le rejet aussi laisse une trace', 'contribution_rejeter',
+   $journal('contribution', 901)[0]['action'] ?? '');
+$poste_mod(['id' => 901, 'action' => 'reject']);
+eq('journal : un rejet rejoue n\'ajoute rien', 1, count($journal('contribution', 901)));
+
+eq('journal : la nomination est inscrite', 'role_attribuer',
+   $journal('compte', $mid)[0]['action'] ?? '');
+eq('journal : les refus, non', 1, count($journal('compte', $mid)));
+eq('journal : la photo masquee est inscrite', 'photo_masquer',
+   $journal('photo', 900)[0]['action'] ?? '');
+eq('journal : sa suppression aussi', 'photo_supprimer',
+   $journal('photo', 900)[1]['action'] ?? '');
+
+// LE CHEMIN SANS MODERATEUR. Un contributeur de confiance publie
+// directement : personne ne decide, et le journal doit le dire — c'est
+// la reponse a « pourquoi cette fiche est-elle en ligne ? ».
+test_pdo()->exec("UPDATE users SET role = 'trusted' WHERE email = 'alice@test.local'");
+$r = post_json($base, $alice, '/backend/api.php?action=submit', [
+    'country_id' => 'testland', 'country_name' => 'Testland',
+    'name' => 'La Cave Directe', 'city' => 'Ville',
+    'description' => 'Publiee sans passer par la file de moderation.',
+]);
+check('journal : la contribution de confiance est acceptee', in_array($r['status'], [200, 201], true));
+$cid = (int)test_pdo()->query(
+    "SELECT id FROM contributions WHERE name = 'La Cave Directe'")->fetchColumn();
+$l = $journal('contribution', $cid)[0] ?? [];
+eq('journal : l\'acte dit qu\'aucun moderateur n\'est passe',
+   'contribution_publication_directe', $l['action'] ?? '');
+eq('journal : la portee est celle du systeme', 'systeme', $l['portee'] ?? '');
+eq('journal : mais l\'auteur est nomme', 'Alice', $l['acteur_nom'] ?? '');
+test_pdo()->exec("UPDATE users SET role = 'member' WHERE email = 'alice@test.local'");
+
+// Le journal se lit depuis les deux portees : le cacher au moderateur
+// en ferait une surveillance plutot qu'un registre.
+$r = http('GET', $base . '/backend/admin.php?tab=journal', ['jar' => $mireille]);
+check('journal : la moderatrice lit le registre ou elle figure',
+      str_contains($r['body'], 'Mireille') && str_contains($r['body'], 'Journal'));
+
+// Menage : les fiches nees des approbations ci-dessus ne doivent pas
+// fausser les comptes d'etablissements des sections suivantes.
+test_pdo()->exec("DELETE FROM lounges WHERE contribution_id IN (900, 901, $cid)");
+test_pdo()->exec("DELETE FROM approved_lounges WHERE contribution_id IN (900, 901, $cid)");
+
+// ════════════════════════════════════════════════════════
 // ════════════════════════════════════════════════════════
 section('Le lieu d\'un rendez-vous');
 

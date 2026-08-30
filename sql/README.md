@@ -1,9 +1,10 @@
 # Base de données CigarOdyssey
 
-Base MySQL (`utf8mb4` / `utf8mb4_unicode_ci`). **33 tables** : atlas
+Base MySQL (`utf8mb4` / `utf8mb4_unicode_ci`). **37 tables** : atlas
 (pays producteurs, marchés, lounges, marques, photos, Habanos…) +
 espace client (users, email_tokens, auth_attempts, reviews, favorites) +
-espace communautaire (`forum_*`) + réglages du site (`site_languages`).
+espace communautaire (`forum_*`) + modération (`moderation_log`) +
+réglages du site (`site_languages`).
 
 ## Fichiers
 

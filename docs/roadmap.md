@@ -36,6 +36,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **A2** : CORS restreint — liste d'origines comparées exactement, `photos.php` rallié, 11 vérifications
 - **B3** : nom & domaine unifiés — CigarOdyssey / cigarodyssey.com partout (backend, emails, SEO, manifeste, CI, docs)
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
+- **E1e** : le modérateur — `admin_scope()` (portée `admin` / `moderator`), écran de nomination, journal de modération (migration 130), retrait réversible d'une photo, 51 vérifications
 
 ## ⏳ À faire
 
@@ -466,6 +467,33 @@ Effort : P = Petit · M = Moyen · G = Gros.
     laisserait un agenda plein de rendez-vous d'avant-hier annoncés comme « à venir »
   - 35 vérifications d'API et 6 parcours Playwright
   - ⚠ Avis juridique nécessaire avant ouverture publique (produit du tabac, promotion, âge)
+- [x] ~~**E1e** — Espace communautaire, **V3 : le modérateur**~~ ✅
+  - **Le rôle existait et personne ne pouvait le porter.** `moderator` était câblé à six
+    endroits et valait `admin` partout, mais `admin.php` interrogeait la porte *sans passer
+    la base* : le chemin du rôle n'était jamais emprunté. Le seul compte qui l'avait —
+    « La Régie » — a `*` pour hachage et ne peut pas se connecter. Zéro test le mentionnait
+  - **`admin_scope()` remplace le oui/non par un jusqu'où** : `admin` (clé, ou compte de rôle
+    admin) et `moderator`. Fermé à la modération : les langues, l'écran des membres, l'export
+    complet, la suppression définitive d'une photo — l'irréversible, le global et le méta
+  - **Un menu n'est pas une serrure.** Une seule liste `$DOMAINE_ACTION` / `$DOMAINE_ONGLET`
+    nourrit l'affichage *et* la garde des POST ; le test forge la requête à la main avec un
+    jeton CSRF valide et vérifie le 403 — puis que rien n'a été écrit
+  - **`photos.php?action=hide`** : le retrait réversible n'existait pas. Un modérateur avait
+    le choix entre laisser une image déplacée et effacer un fichier pour toujours
+  - **Onglet Membres** : nommer un modérateur demandait un `UPDATE` à la main, ce qui revient
+    à n'en jamais nommer. Trois refus — `admin` ne s'attribue pas ici (il vaut la clé), un
+    administrateur ne se rétrograde pas ici, un compte de signature garde son rôle
+  - **Journal de modération** (migration `130`) — §8 du cahier des charges, jusqu'ici non
+    tenu : seul `forum_flags.resolved_by` traçait quoi que ce soit. `acteur_nom` est **figé**
+    au moment de l'acte et **aucune** clé étrangère ne pointe `users` : une cascade effacerait
+    les décisions de celui qu'on audite. La portée `systeme` couvre les chemins sans auteur
+    humain — « publié directement par Alice, aucun modérateur n'est passé »
+  - Le journal est **lisible par les deux portées** : le cacher au modérateur en ferait une
+    surveillance plutôt qu'un registre
+  - 51 vérifications d'API (373 → 424)
+  - Reste ouvert : les **sanctions graduées** (avertissement → lecture seule 7/30 j →
+    suspension). `users.status` ne connaît qu'`active`/`suspended`, lu au seul login. À faire
+    quand il y aura du monde à sanctionner
 - [x] ~~**D1** — Modération des avis (signalement + écran admin)~~ ✅
 - [x] ~~**D2** — Contributeur de confiance (promotion + publication directe)~~ ✅
 - [x] ~~**D3** — Retirer le champ email redondant du modal contribution~~ ✅

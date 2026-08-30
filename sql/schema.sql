@@ -862,3 +862,27 @@ CREATE TABLE `lexique` (
   `definition_ar` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── Journal de moderation (migration 130) ────────────────
+-- Qui a decide quoi, et quand. `acteur_nom` est fige au moment de
+-- l acte : le journal doit survivre au renommage, a la retrogradation
+-- et a la suppression du compte qu on audite. C est pourquoi il n y a
+-- volontairement AUCUNE cle etrangere vers `users` — une cascade
+-- effacerait les decisions de celui dont on cherche justement la trace.
+-- La portee « systeme » couvre les chemins sans auteur humain : seuil
+-- de votes atteint, publication directe d un contributeur de confiance.
+CREATE TABLE `moderation_log` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `acteur_id` int unsigned DEFAULT NULL COMMENT 'NULL = cle d administration ou chemin automatique',
+  `acteur_nom` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Fige au moment de l acte : le journal survit au compte',
+  `portee` enum('admin','moderator','systeme') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `action` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cible_type` varchar(24) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cible_id` int unsigned NOT NULL,
+  `detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_ml_cible` (`cible_type`,`cible_id`),
+  KEY `idx_ml_acteur` (`acteur_id`,`created_at`),
+  KEY `idx_ml_date` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

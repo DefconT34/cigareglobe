@@ -25,6 +25,9 @@ set_exception_handler(function($e) {
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/image_lib.php';
 require_once __DIR__ . '/auth_lib.php';
+// journaliser() : approuver, masquer et supprimer une photo sont des
+// décisions de modération, et s'inscrivent au journal commun.
+require_once __DIR__ . '/moderation_lib.php';
 
 auth_session_start();   // reconnait la session d'administration
 
@@ -85,6 +88,7 @@ try {
         case 'delete':  action_delete($db); break;
         case 'primary': action_primary($db); break;
         case 'approve': action_approve($db); break;
+        case 'hide':    action_hide($db);    break;
         default: jout(['error' => 'Action inconnue: ' . $action], 404);
     }
 } catch (PDOException $e) {
@@ -241,7 +245,14 @@ function action_list(PDO $db): never {
 // DELETE
 // ════════════════════════════════════════════════════════
 function action_delete(PDO $db): never {
-    if (!is_admin()) jout(err('forbidden', 'Non autorisé'), 403);
+    // Portée « admin » exigée : la suppression efface les fichiers du
+    // disque, et rien ne les ramène. Un modérateur dispose de `hide`,
+    // qui retire la photo du site sans la détruire — c'est le geste
+    // proportionné pour une image déplacée. Voir PORTEE_ADMIN_SEULEMENT.
+    if (!portee_autorise(admin_scope($db), 'photo_supprimer')) {
+        jout(err('forbidden', 'La suppression définitive est réservée à '
+            . "l'administration. Utilisez « masquer »."), 403);
+    }
 
     $photo_id = (int)($_POST['photo_id'] ?? 0);
     if (!$photo_id) jout(err('id_required', 'photo_id requis'), 400);
@@ -258,6 +269,10 @@ function action_delete(PDO $db): never {
     }
 
     $db->prepare("DELETE FROM lounge_photos WHERE id = ?")->execute([$photo_id]);
+    // Journalisé APRÈS coup, avec le nom de fichier : la ligne détruite
+    // ne peut plus rien dire d'elle-même.
+    journaliser($db, 'photo_supprimer', 'photo', $photo_id,
+        'lounge #' . $photo['lounge_id'] . ' · ' . $photo['filename']);
     jout(['success' => true]);
 }
 
@@ -290,5 +305,30 @@ function action_approve(PDO $db): never {
     if (!$photo_id) jout(err('id_required', 'photo_id requis'), 400);
 
     $db->prepare("UPDATE lounge_photos SET is_approved = 1 WHERE id = ?")->execute([$photo_id]);
+    journaliser($db, 'photo_approuver', 'photo', $photo_id);
+    jout(['success' => true]);
+}
+
+// ════════════════════════════════════════════════════════
+// HIDE — le retrait réversible
+// ────────────────────────────────────────────────────────
+// Le pendant d'`approve`, qui n'existait pas : une photo approuvée ne
+// pouvait que rester ou être détruite. Un modérateur avait donc le
+// choix entre laisser une image déplacée en ligne et effacer un fichier
+// pour toujours. `hide` la retire du site en la gardant sur le disque —
+// une décision qu'on peut relire, discuter, et annuler d'un clic.
+// ════════════════════════════════════════════════════════
+function action_hide(PDO $db): never {
+    if (!is_admin()) jout(err('forbidden', 'Non autorisé'), 403);
+
+    $photo_id = (int)($_POST['photo_id'] ?? 0);
+    if (!$photo_id) jout(err('id_required', 'photo_id requis'), 400);
+
+    // is_primary retombe avec l'approbation : une photo masquée qui
+    // resterait « principale » laisserait la fiche pointer une image que
+    // le site ne sert plus.
+    $db->prepare("UPDATE lounge_photos SET is_approved = 0, is_primary = 0 WHERE id = ?")
+       ->execute([$photo_id]);
+    journaliser($db, 'photo_masquer', 'photo', $photo_id);
     jout(['success' => true]);
 }
