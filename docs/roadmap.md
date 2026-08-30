@@ -89,11 +89,35 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - `git remote -v` ne renvoie rien : l'historique et le contenu tiennent sur un seul disque
   - Reste aussi à sauvegarder `uploads/` (26 Mo) et les tables personnelles, qui par
     construction ne sont pas dans Git
-- [ ] **B5** — Pages légales et droit à l'effacement · **bloquant** · M
-  - Ni mentions légales, ni CGU, ni politique de confidentialité : ni les fichiers, ni un
-    lien. Site UE, avec comptes, emails, photos téléversées, et un produit du tabac
-  - `auth.php` expose register/login/logout/forgot/reset/resend — **pas de suppression de
-    compte** (RGPD art. 17). On peut s'inscrire, pas s'effacer
+- [x] ~~**B5a** — Le droit à l'effacement (RGPD art. 17)~~ ✅
+  - `auth.php` exposait register/login/logout/forgot/reset/resend : **on pouvait s'inscrire
+    et pas s'effacer**. La seule porte du site qui n'existait que dans un sens
+  - **Le piège** : onze tables portent une clé étrangère qui suit le `DELETE`, mais
+    `contributions` n'en porte **aucune** — et garde `contributor_email` et
+    `contributor_ip`. Un effacement qui laisse derrière lui l'adresse de celui qui demandait
+    à être oublié est pire qu'un effacement absent : il donne la conscience tranquille
+  - Le mot de passe est **redemandé** : aucun autre geste du site n'est irréversible
+  - Les messages du forum **restent**, signés « Membre supprimé » (`ON DELETE SET NULL`) —
+    la règle posée avec le forum, et elle vaut toujours
+  - Un administrateur est refusé : il se retrouverait dehors sans que personne le fasse
+    rentrer. Arbitrage assumé et écrit : les décisions prises **au titre d'un rôle** gardent
+    leur signature au journal ; le reste est anonymisé
+  - Email d'adieu envoyé **avant** l'effacement — seule seconde où l'adresse existe encore —
+    et qui dit à qui n'a rien demandé que quelqu'un avait accès à sa session
+  - 22 vérifications (443 → 465), effacement éprouvé **à l'écran** de bout en bout
+- [x] ~~**B5b** — Mentions légales, confidentialité, conditions~~ ✅ *(partiel — voir B5c)*
+  - `legal.php` : trois documents, trois ancres, un fichier. Lien dans l'écran d'âge, le seul
+    que tout visiteur traverse — ce site n'a pas de pied de page
+  - **En français seulement, délibérément** : un texte juridique traduit par la même main que
+    la prose de l'atlas engagerait sans que personne n'ait relu ce qu'il engage
+  - La politique de confidentialité est **dérivée du schéma réel**, table par table — pas un
+    modèle recopié. Elle nomme ce qui reste après une suppression, et pourquoi
+- [ ] **B5c** — Les faits que seul l'éditeur connaît · **bloquant** · P
+  - 8 blocs `[[ À COMPLÉTER ]]` dans `legal.php` : identité, statut, adresse, SIRET,
+    directeur de la publication, hébergeur. **Les inventer produirait un document faux,
+    c'est-à-dire pire qu'absent** — il aurait l'air d'être en règle
+  - À décider aussi : outiller le portage des données (RGPD art. 20), ou l'assumer par écrit
+  - Une relecture juridique conditionne la traduction des trois documents
 - [ ] **B6** — Deux durcissements courts · P
   - `Strict-Transport-Security` absent : le `.htaccess` redirige vers https sans le déclarer,
     donc la toute première visite reste interceptable

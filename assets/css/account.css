@@ -201,6 +201,33 @@ body.mobile-mode .account-btn { padding: 6px; }
 .cg-prof-save { background: var(--gold); color: #fff; border-color: var(--gold); }
 .cg-prof-save:disabled { opacity: .5; cursor: default; }
 
+/* ── Suppression du compte ──
+   Séparée du reste par un trait et de l'air : un geste irréversible ne
+   se met pas dans la même rangée que « Enregistrer ». Le rouge ne
+   remplace pas l'explication au-dessus, il la souligne. */
+.cg-prof-danger {
+  margin-top: 26px; padding-top: 18px;
+  border-top: 1px solid var(--panel-border);
+}
+.cg-prof-danger-title {
+  font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  color: #CF5E5E; margin-bottom: 6px;
+}
+.cg-prof-danger .cg-hint { margin-bottom: 12px; line-height: 1.55; }
+.cg-prof-delete, .cg-prof-delete-go {
+  padding: 9px 16px; font-size: 12px; border-radius: 8px; cursor: pointer;
+  background: transparent; color: #CF5E5E; border: 1px solid rgba(207, 94, 94, .45);
+}
+.cg-prof-delete:hover, .cg-prof-delete-go:hover { background: rgba(207, 94, 94, .12); }
+.cg-prof-delete-go { background: #CF5E5E; color: #fff; border-color: #CF5E5E; }
+.cg-prof-delete-go:hover { background: #B94E4E; }
+.cg-prof-delete-go:disabled { opacity: .5; cursor: default; }
+.cg-prof-delete-cancel {
+  padding: 9px 16px; font-size: 12px; border-radius: 8px; cursor: pointer;
+  background: transparent; color: var(--text2); border: 1px solid var(--panel-border);
+}
+.cg-prof-delete-confirm { margin-top: 12px; }
+
 /* ── Favoris & listes (favorites.js) ── */
 .lc-fav { margin-top: 8px; }
 .lc-fav-row { display: flex; flex-wrap: wrap; gap: 6px; }

@@ -31,7 +31,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $db     = getDB();
 
 // Les POST modifiant l'état exigent un CSRF valide
-$POST_ACTIONS = ['register','login','logout','forgot','reset','resend'];
+$POST_ACTIONS = ['register','login','logout','forgot','reset','resend','delete_account'];
 if (in_array($action, $POST_ACTIONS, true)) {
     if ($method !== 'POST') respond(err('method_not_allowed', 'Méthode non autorisée'), 405);
     csrf_verify();
@@ -47,6 +47,7 @@ try {
         case 'forgot':   action_forgot($db);   break;
         case 'reset':    action_reset($db);    break;
         case 'resend':   action_resend($db);   break;
+        case 'delete_account': action_delete_account($db); break;
         default:         respond(err('unknown_action', 'Action inconnue'), 404);
     }
 } catch (Throwable $e) {
@@ -178,6 +179,118 @@ function action_logout(): void {
     }
     session_destroy();
     respond(['success' => true]);
+}
+
+// ════════════════════════════════════════════════════════
+// POST delete_account — le droit à l'effacement (RGPD art. 17)
+// ────────────────────────────────────────────────────────
+// On pouvait s'inscrire et pas s'effacer. C'était la seule porte du
+// site qui n'existait que dans un sens.
+//
+// CE QUI DISPARAÎT, CE QUI RESTE
+// Le compte, ses jetons, ses favoris, ses avis, ses notes, ses
+// signalements, ses inscriptions et réactions : effacés par les clés
+// étrangères (ON DELETE CASCADE), sans une ligne de code ici.
+//
+// Ses messages, sujets et images RESTENT, sous « Membre supprimé »
+// (ON DELETE SET NULL) : effacer au milieu d'un échange rend la suite
+// incompréhensible pour ceux qui y ont répondu. C'est la règle posée
+// avec le forum, et elle vaut toujours.
+//
+// Deux tables demandent du travail à la main, et c'est là qu'était le
+// piège : `contributions` ne porte AUCUNE clé étrangère vers `users`.
+// Un simple DELETE aurait donc laissé derrière lui `contributor_email`
+// et `contributor_ip` — l'adresse électronique et l'adresse IP de
+// quelqu'un qui vient précisément de demander à être oublié.
+// ════════════════════════════════════════════════════════
+function action_delete_account(PDO $db): void {
+    $u = require_auth($db);
+    rate_limit($db, 'delete_account', 5, 3600);
+
+    $body = json_decode((string)file_get_contents('php://input'), true) ?? [];
+    $mdp  = (string)($body['password'] ?? '');
+
+    // LE MOT DE PASSE EST REDEMANDÉ. Une session volée — ou simplement
+    // laissée ouverte sur un poste partagé — ne doit pas pouvoir
+    // effacer un compte. Aucun autre geste du site n'est irréversible ;
+    // celui-ci l'est.
+    $h = $db->prepare('SELECT password_hash FROM users WHERE id = ?');
+    $h->execute([(int)$u['id']]);
+    $hash = (string)$h->fetchColumn();
+    if ($mdp === '' || !password_verify($mdp, $hash)) {
+        respond(err('credentials_invalid', 'Mot de passe incorrect.'), 403);
+    }
+
+    // Un administrateur ne s'efface pas par ce chemin : il se
+    // retrouverait dehors sans que personne puisse le faire rentrer, et
+    // le site perdrait son dernier accès. Sa demande passe par la clé
+    // d'administration, en connaissance de cause.
+    if (($u['role'] ?? '') === 'admin') {
+        respond(err('admin_undeletable',
+            "Un compte administrateur ne se supprime pas depuis cet écran."), 403);
+    }
+
+    // Prévenir AVANT d'effacer : dans une seconde, l'adresse n'existera
+    // plus. Et si quelqu'un d'autre était derrière ce geste, le message
+    // arrive chez la personne concernée.
+    $adieu = $u['email'];
+    $nom   = $u['display_name'];
+    $lang  = (string)($u['lang'] ?: 'fr');
+
+    $db->beginTransaction();
+    try {
+        // 1. Les contributions : aucune clé étrangère ne les suivrait.
+        // On garde l'établissement proposé — ce n'est pas une donnée
+        // personnelle, et une fiche approuvée vit dans l'atlas — mais
+        // on retire tout ce qui désigne son auteur.
+        $db->prepare(
+            "UPDATE contributions
+                SET user_id = NULL, contributor_email = NULL, contributor_ip = NULL
+              WHERE user_id = ?"
+        )->execute([(int)$u['id']]);
+
+        // 2. Le journal de modération. Ses lignes ne portent pas de clé
+        // étrangère, à dessein : un journal d'audit doit survivre au
+        // compte qu'il documente.
+        //
+        // D'où l'arbitrage, qui n'est pas évident et mérite d'être écrit :
+        // les décisions prises AU TITRE D'UN RÔLE (portée `admin` ou
+        // `moderator`) gardent leur signature — on ne confie pas un
+        // pouvoir qu'on ne peut plus relire, et quitter le site
+        // n'efface pas ce qu'on y a décidé pour les autres. Le reste,
+        // qu'aucune responsabilité n'accompagne — la publication
+        // directe d'un contributeur de confiance —, est anonymisé.
+        $db->prepare(
+            "UPDATE moderation_log
+                SET acteur_id = NULL, acteur_nom = 'compte supprimé'
+              WHERE acteur_id = ? AND portee = 'systeme'"
+        )->execute([(int)$u['id']]);
+        $db->prepare("UPDATE moderation_log SET acteur_id = NULL WHERE acteur_id = ?")
+           ->execute([(int)$u['id']]);
+
+        // 3. Le compte. Les clés étrangères font le reste — et c'est
+        // pour cela qu'on ne les recopie pas ici : une liste recopiée
+        // finit toujours par diverger du schéma.
+        $db->prepare('DELETE FROM users WHERE id = ?')->execute([(int)$u['id']]);
+        $db->commit();
+    } catch (Throwable $e) {
+        $db->rollBack();
+        error_log('[auth] suppression de compte #' . $u['id'] . ' : ' . $e->getMessage());
+        respond(err('server_error', 'La suppression a échoué. Rien n’a été modifié.'), 500);
+    }
+
+    // L'échec d'un envoi ne rattrape pas une suppression déjà faite.
+    try {
+        send_email($adieu, mail_t('adieu_sujet', $lang),
+            email_template(
+                mail_t('adieu_titre', $lang, ['nom' => $nom]),
+                mail_t('adieu_corps', $lang),
+                '', '', mail_t('adieu_pied', $lang)));
+    } catch (Throwable $e) {
+        error_log('[auth] adieu non envoye : ' . $e->getMessage());
+    }
+
+    action_logout();   // détruit la session et répond success
 }
 
 // ════════════════════════════════════════════════════════

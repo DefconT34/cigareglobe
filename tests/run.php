@@ -1647,6 +1647,127 @@ foreach (['en', 'es', 'de', 'zh', 'ar'] as $l) {
 eq('chaque code est traduit dans les cinq autres langues', [], $manquantes);
 
 // ════════════════════════════════════════════════════════
+section('Le droit a l\'effacement');
+
+// On pouvait s'inscrire et pas s'effacer : auth.php exposait register,
+// login, logout, forgot, reset, resend — et rien pour partir.
+//
+// CE QUE CE BLOC SURVEILLE VRAIMENT. Un DELETE sur `users` a l'air de
+// suffire : onze tables portent une cle etrangere qui suit. Mais
+// `contributions` n'en porte AUCUNE, et garde `contributor_email` et
+// `contributor_ip`. Un effacement qui laisse derriere lui l'adresse
+// electronique de celui qui demandait a etre oublie est pire qu'un
+// effacement absent : il donne la conscience tranquille.
+
+test_pdo()->exec("DELETE FROM auth_attempts");
+$partant = new_client('partant');
+$r = post_json($base, $partant, '/backend/auth.php?action=register',
+               ['email' => 'partant@test.local', 'password' => 'motdepasse8',
+                'display_name' => 'Le Partant']);
+eq('effacement : compte cree', 201, $r['status']);
+force_verified('partant@test.local');
+$r = post_json($base, $partant, '/backend/auth.php?action=login',
+               ['email' => 'partant@test.local', 'password' => 'motdepasse8']);
+eq('effacement : compte connecte', 200, $r['status']);
+$pid = (int)test_pdo()->query("SELECT id FROM users WHERE email='partant@test.local'")->fetchColumn();
+
+// On lui donne quelque chose a laisser derriere lui, dans chacune des
+// trois categories : ce qui doit disparaitre, ce qui doit rester
+// anonymise, et ce que rien ne suivrait tout seul.
+test_pdo()->exec("INSERT INTO reviews (user_id, lounge_id, rating, title, body, status)
+                  VALUES ($pid, 1, 4, 'Un avis', 'Le corps de l avis.', 'published')");
+test_pdo()->exec("INSERT INTO favorites (user_id, target_type, target_id, list)
+                  VALUES ($pid, 'lounge', 1, 'wishlist')");
+test_pdo()->exec("INSERT INTO contributions
+                  (id, user_id, country_id, country_name, name, city, description,
+                   contributor_email, contributor_ip, status)
+                  VALUES (950, $pid, 'testland', 'Testland', 'Le Legs', 'Ville',
+                          'Une contribution que son auteur laisse derriere lui.',
+                          'partant@test.local', '203.0.113.55', 'pending')");
+$t_id = (int)test_pdo()->query("SELECT id FROM forum_topics ORDER BY id LIMIT 1")->fetchColumn();
+test_pdo()->exec("INSERT INTO forum_posts (topic_id, user_id, body, status)
+                  VALUES ($t_id, $pid, 'Un message qui doit survivre au depart.', 'published')");
+$msg_id = (int)test_pdo()->lastInsertId();
+
+// ── Le mot de passe est redemande ────────────────────────
+// Une session ouverte sur un poste partage ne doit pas suffire : aucun
+// autre geste du site n'est irreversible, celui-ci l'est.
+$r = post_json($base, $partant, '/backend/auth.php?action=delete_account', []);
+eq('effacement : refuse sans mot de passe', 403, $r['status']);
+$r = post_json($base, $partant, '/backend/auth.php?action=delete_account',
+               ['password' => 'ce-n-est-pas-le-bon']);
+eq('effacement : refuse avec un mauvais mot de passe', 403, $r['status']);
+eq('effacement : le code est stable', 'credentials_invalid', $r['json']['code'] ?? null);
+eq('effacement : et le compte est toujours la', 1,
+   (int)test_pdo()->query("SELECT COUNT(*) FROM users WHERE id = $pid")->fetchColumn());
+
+// Un visiteur non connecte ne supprime le compte de personne.
+$r = post_json($base, $anon, '/backend/auth.php?action=delete_account',
+               ['password' => 'motdepasse8']);
+eq('effacement : un visiteur anonyme est econduit', 401, $r['status']);
+
+// ── L'effacement lui-meme ────────────────────────────────
+$r = post_json($base, $partant, '/backend/auth.php?action=delete_account',
+               ['password' => 'motdepasse8']);
+eq('effacement : accepte avec le bon mot de passe', 200, $r['status']);
+
+$compte = fn(string $sql) => (int)test_pdo()->query($sql)->fetchColumn();
+
+eq('effacement : le compte a disparu', 0, $compte("SELECT COUNT(*) FROM users WHERE id = $pid"));
+eq('effacement : ses avis avec lui',   0, $compte("SELECT COUNT(*) FROM reviews WHERE user_id = $pid"));
+eq('effacement : ses listes aussi',    0, $compte("SELECT COUNT(*) FROM favorites WHERE user_id = $pid"));
+eq('effacement : et ses jetons',       0, $compte("SELECT COUNT(*) FROM email_tokens WHERE user_id = $pid"));
+
+// Le message RESTE, sans auteur : l'effacer rendrait incomprehensibles
+// les reponses qu'il a recues. C'est la regle posee avec le forum.
+eq('effacement : son message reste lisible', 1,
+   $compte("SELECT COUNT(*) FROM forum_posts WHERE id = $msg_id"));
+eq('effacement : mais il n\'a plus d\'auteur', 1,
+   $compte("SELECT COUNT(*) FROM forum_posts WHERE id = $msg_id AND user_id IS NULL"));
+
+// LE CAS QUI COMPTE. `contributions` ne porte aucune cle etrangere : un
+// DELETE seul aurait laisse l'adresse electronique et l'adresse IP.
+$c = test_pdo()->query("SELECT user_id, contributor_email, contributor_ip, name
+                        FROM contributions WHERE id = 950")->fetch(PDO::FETCH_ASSOC);
+check('effacement : la contribution survit — ce n\'est pas une donnee personnelle',
+      $c && $c['name'] === 'Le Legs');
+// Lecture directe, sans `??` : l'operateur de coalescence traite null
+// comme une absence et rendrait donc la valeur de repli au moment
+// PRECIS ou l'effacement a fonctionne. Le test aurait echoue sur un
+// code juste — et, pire, serait passe sur un code qui n'efface rien.
+eq('effacement : son auteur est detache',   null, $c['user_id']);
+eq('effacement : son email est efface',     null, $c['contributor_email']);
+eq('effacement : son adresse IP aussi',     null, $c['contributor_ip']);
+
+// Rien ne doit plus designer ce compte, nulle part.
+$restes = [];
+foreach (['reviews', 'favorites', 'email_tokens', 'review_flags', 'forum_follows',
+          'forum_reactions', 'forum_attendance', 'contributions'] as $t) {
+    $n = $compte("SELECT COUNT(*) FROM `$t` WHERE user_id = $pid");
+    if ($n > 0) $restes[] = "$t ($n)";
+}
+eq('effacement : plus une seule ligne ne le designe', [], $restes);
+
+// ── L'administrateur ne se supprime pas ainsi ────────────
+// Il se retrouverait dehors sans que personne puisse le faire rentrer.
+test_pdo()->exec("DELETE FROM auth_attempts");
+$chef = new_client('chef');
+post_json($base, $chef, '/backend/auth.php?action=register',
+          ['email' => 'chef@test.local', 'password' => 'motdepasse8', 'display_name' => 'Le Chef']);
+force_verified('chef@test.local');
+test_pdo()->exec("UPDATE users SET role = 'admin' WHERE email = 'chef@test.local'");
+post_json($base, $chef, '/backend/auth.php?action=login',
+          ['email' => 'chef@test.local', 'password' => 'motdepasse8']);
+$r = post_json($base, $chef, '/backend/auth.php?action=delete_account',
+               ['password' => 'motdepasse8']);
+eq('effacement : un administrateur est refuse', 403, $r['status']);
+eq('effacement : avec un code qui le dit', 'admin_undeletable', $r['json']['code'] ?? null);
+eq('effacement : et il est toujours la', 1,
+   $compte("SELECT COUNT(*) FROM users WHERE email = 'chef@test.local'"));
+test_pdo()->exec("DELETE FROM users WHERE email = 'chef@test.local'");
+test_pdo()->exec("DELETE FROM auth_attempts");
+
+// ════════════════════════════════════════════════════════
 section('L\'adresse du visiteur');
 
 // CE QUE CE BLOC PROUVE

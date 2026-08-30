@@ -112,7 +112,15 @@
       // traduction supplementaire n'est donc necessaire.
       '<div class="cg-field"><label>' + t('language') + '</label>' +
         '<select id="pf-lang" class="cg-select">' +
-          Object.keys(window.I18N || {}).map(function (code) {
+          // `I18N` sans `window.` : i18n.js le declare en `const`, qui
+          // cree une liaison de portee script et NON une propriete de
+          // `window`. `window.I18N` valait donc toujours undefined, le
+          // repli `|| {}` s'appliquait, et la liste des langues sortait
+          // VIDE — depuis la migration 014, personne n'a jamais pu
+          // choisir sa langue de correspondance depuis son profil.
+          // Le repli echouait en silence : c'est ce qui l'a rendu
+          // invisible si longtemps.
+          Object.keys(I18N || {}).map(function (code) {
             var sel = (p.lang || window.currentLang || 'fr') === code ? ' selected' : '';
             return '<option value="' + code + '"' + sel + '>' + esc(I18N[code].lang_name) + '</option>';
           }).join('') +
@@ -132,9 +140,61 @@
       '<div class="cg-prof-edit-actions">' +
         '<button type="button" class="cg-prof-cancel">' + t('ui_cancel') + '</button>' +
         '<button type="button" class="cg-prof-save">Enregistrer</button>' +
+      '</div>' +
+      // ── Le droit a l'effacement (RGPD art. 17) ───────
+      // En bas, separe, et derriere deux gestes : on ne supprime pas un
+      // compte par un bouton qu'on frole. L'ecran DIT ce qui disparait
+      // et ce qui reste avant de demander le mot de passe — un
+      // avertissement qui arrive apres le clic n'en est plus un.
+      '<div class="cg-prof-danger">' +
+        '<div class="cg-prof-danger-title">' + esc(t('prof_delete_title')) + '</div>' +
+        '<div class="cg-hint">' + esc(t('prof_delete_what')) + '</div>' +
+        '<button type="button" class="cg-prof-delete">' + esc(t('prof_delete_btn')) + '</button>' +
+        '<div class="cg-prof-delete-confirm hidden">' +
+          '<div class="cg-field"><label>' + esc(t('prof_delete_password')) + '</label>' +
+            '<input type="password" id="pf-del-pass" autocomplete="current-password"></div>' +
+          '<div class="cg-prof-edit-actions">' +
+            '<button type="button" class="cg-prof-delete-cancel">' + t('ui_cancel') + '</button>' +
+            '<button type="button" class="cg-prof-delete-go">' + esc(t('prof_delete_final')) + '</button>' +
+          '</div>' +
+        '</div>' +
       '</div>';
 
     box.querySelector('.cg-prof-cancel').addEventListener('click', function () { load(); });
+
+    var zone    = box.querySelector('.cg-prof-danger');
+    var confirm = zone.querySelector('.cg-prof-delete-confirm');
+    zone.querySelector('.cg-prof-delete').addEventListener('click', function () {
+      confirm.classList.remove('hidden');
+      this.classList.add('hidden');
+      document.getElementById('pf-del-pass').focus();
+    });
+    zone.querySelector('.cg-prof-delete-cancel').addEventListener('click', function () {
+      confirm.classList.add('hidden');
+      zone.querySelector('.cg-prof-delete').classList.remove('hidden');
+      document.getElementById('pf-del-pass').value = '';
+    });
+    zone.querySelector('.cg-prof-delete-go').addEventListener('click', function () {
+      var A    = window.CGAccount;
+      var msg  = document.getElementById('cgProfMsg');
+      var pass = document.getElementById('pf-del-pass').value;
+      if (!pass) { msg.className = 'cg-msg err'; msg.textContent = t('prof_delete_password'); return; }
+      var btn = this; btn.disabled = true;
+      fetch((window.CG_BACKEND_BASE || '/backend') + '/auth.php?action=delete_account', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (A ? A.csrf : '') },
+        body: JSON.stringify({ password: pass })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          btn.disabled = false;
+          if (d.error) { msg.className = 'cg-msg err'; msg.textContent = tErr(d); return; }
+          // Le compte n'existe plus : on repart d'une page propre
+          // plutot que de laisser une interface qui parle encore de lui.
+          window.location.href = '/';
+        })
+        .catch(function () { btn.disabled = false; msg.className = 'cg-msg err'; msg.textContent = t('acc_net_error'); });
+    });
     box.querySelector('.cg-prof-save').addEventListener('click', function () {
       var A = window.CGAccount;
       var name = document.getElementById('pf-name').value.trim();

@@ -284,12 +284,16 @@ function email_template(string $title, string $intro, string $btnLabel, string $
          . '</div>'
          . '<h1 style="font-size:18px;color:#E8C040;font-weight:normal">' . $safe($title) . '</h1>'
          . '<p style="font-size:14px;line-height:1.6;color:#C9B27A">' . $safe($intro) . '</p>'
-         . '<div style="text-align:center;margin:28px 0">'
-         . '<a href="' . $safe($btnUrl) . '" style="display:inline-block;background:#C9A227;color:#0A0603;'
-         . 'text-decoration:none;padding:13px 28px;border-radius:6px;font-weight:bold;font-size:13px;letter-spacing:.05em">'
-         . $safe($btnLabel) . '</a></div>'
-         . '<p style="font-size:11px;color:#6B5030;line-height:1.5;word-break:break-all">'
-         . 'Si le bouton ne fonctionne pas, copiez ce lien :<br>' . $safe($btnUrl) . '</p>'
+         // Sans adresse, pas de bouton — et pas davantage la phrase de
+         // secours qui l'accompagne. Un email d'adieu n'a nulle part ou
+         // envoyer : le compte auquel il se rapporte n'existe plus.
+         . ($btnUrl === '' ? ''
+            : '<div style="text-align:center;margin:28px 0">'
+            . '<a href="' . $safe($btnUrl) . '" style="display:inline-block;background:#C9A227;color:#0A0603;'
+            . 'text-decoration:none;padding:13px 28px;border-radius:6px;font-weight:bold;font-size:13px;letter-spacing:.05em">'
+            . $safe($btnLabel) . '</a></div>'
+            . '<p style="font-size:11px;color:#6B5030;line-height:1.5;word-break:break-all">'
+            . 'Si le bouton ne fonctionne pas, copiez ce lien :<br>' . $safe($btnUrl) . '</p>')
          . ($footer ? '<p style="font-size:11px;color:#6B5030;margin-top:20px">' . $safe($footer) . '</p>' : '')
          . '</div>';
 }
@@ -312,6 +316,58 @@ function email_template(string $title, string $intro, string $btnLabel, string $
 /** Textes des emails, par clé puis par langue. */
 function mail_i18n(): array {
     return [
+        // ── Adieu : le compte vient d'être effacé ────────
+        // Envoyé AVANT la suppression, seule seconde où l'adresse
+        // existe encore. Ne promet aucune récupération : il n'y en a
+        // pas, et le dire serait mentir pour adoucir.
+        'adieu_sujet' => [
+            'fr' => 'Votre compte CigarOdyssey a été supprimé',
+            'en' => 'Your CigarOdyssey account has been deleted',
+            'es' => 'Su cuenta de CigarOdyssey ha sido eliminada',
+            'de' => 'Ihr CigarOdyssey-Konto wurde gelöscht',
+            'zh' => '您的 CigarOdyssey 账户已删除',
+            'ar' => 'تم حذف حسابك في CigarOdyssey',
+        ],
+        'adieu_titre' => [
+            'fr' => 'Au revoir, {nom}',
+            'en' => 'Goodbye, {nom}',
+            'es' => 'Hasta pronto, {nom}',
+            'de' => 'Auf Wiedersehen, {nom}',
+            'zh' => '再见，{nom}',
+            'ar' => 'إلى اللقاء يا {nom}',
+        ],
+        'adieu_corps' => [
+            'fr' => 'Votre compte, votre adresse électronique, vos avis, vos notes et vos '
+                  . 'listes ont été effacés. Vos messages du forum restent lisibles, signés '
+                  . '« Membre supprimé » : les effacer rendrait incompréhensibles les '
+                  . 'réponses qu\'ils ont reçues. Cette suppression est définitive.',
+            'en' => 'Your account, email address, reviews, ratings and lists have been '
+                  . 'erased. Your forum messages remain readable, signed “Deleted member”: '
+                  . 'removing them would make the replies they received impossible to '
+                  . 'follow. This deletion is permanent.',
+            'es' => 'Su cuenta, su dirección de correo, sus reseñas, sus valoraciones y sus '
+                  . 'listas han sido borradas. Sus mensajes del foro siguen siendo legibles, '
+                  . 'firmados «Miembro eliminado»: borrarlos volvería incomprensibles las '
+                  . 'respuestas que recibieron. Esta eliminación es definitiva.',
+            'de' => 'Ihr Konto, Ihre E-Mail-Adresse, Ihre Bewertungen, Ihre Noten und Ihre '
+                  . 'Listen wurden gelöscht. Ihre Forenbeiträge bleiben lesbar, gezeichnet '
+                  . '„Gelöschtes Mitglied“: sie zu entfernen würde die Antworten darauf '
+                  . 'unverständlich machen. Diese Löschung ist endgültig.',
+            'zh' => '您的账户、电子邮箱、评价、评分与收藏列表均已删除。您在论坛的发言仍然可读，'
+                  . '署名为「已删除的成员」——删掉它们会让别人当初的回复变得无从理解。'
+                  . '此次删除不可撤销。',
+            'ar' => 'حُذف حسابك وعنوان بريدك وتقييماتك وعلاماتك وقوائمك. أما رسائلك في المنتدى '
+                  . 'فتبقى مقروءة، موقّعة بـ«عضو محذوف»: حذفها يجعل الردود التي تلقّتها غير '
+                  . 'مفهومة. هذا الحذف نهائي.',
+        ],
+        'adieu_pied' => [
+            'fr' => 'Vous n\'avez rien demandé ? Écrivez-nous : quelqu\'un a eu accès à votre session.',
+            'en' => 'Did not request this? Write to us — someone had access to your session.',
+            'es' => '¿No lo solicitó? Escríbanos: alguien tuvo acceso a su sesión.',
+            'de' => 'Nicht von Ihnen veranlasst? Schreiben Sie uns — jemand hatte Zugriff auf Ihre Sitzung.',
+            'zh' => '这不是您本人的操作？请与我们联系：有人进入过您的会话。',
+            'ar' => 'لم تطلب ذلك؟ راسلنا — فقد وصل أحدهم إلى جلستك.',
+        ],
         'appr_sujet' => [
             'fr' => 'Votre établissement est en ligne',
             'en' => 'Your venue is now live',
