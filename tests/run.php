@@ -1983,6 +1983,37 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── Une traduction affirme-t-elle un rang que sa source ne fait pas ?
+//
+// La fiche Atabey disait, du Cohiba Behike : « le cigare dont le prix a
+// marque une RUPTURE pour l'industrie cubaine » en francais, et « el
+// cigarro MAS CARO JAMAS LANZADO » en espagnol. Quatre langues sur six
+// affirmaient un classement que la source ne fait pas.
+//
+// Le detecteur de rangs de `marques_check` ne pouvait pas le voir : il
+// cherche le MONDE, et la borne etait ici l'industrie cubaine — la forme
+// meme qu'il tient pour inoffensive quand la SOURCE l'assume.
+//
+// `i18n_superlatif_check` compare donc les superlatifs d'une traduction
+// a ceux de son francais, et ne regarde que l'ECART. Cliquet : il echoue
+// si un ecart NOUVEAU apparait.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/i18n_superlatif_check.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('traductions : aucun rang que la source ne fait pas', 0, $code);
+    } else {
+        check('traductions : controle des superlatifs lancable', false);
+    }
+}
+
 // ── Une traduction dit-elle ce que dit sa source ? ──────
 //
 // `i18n_fraicheur` repond a « le francais a-t-il bouge depuis ? » et
