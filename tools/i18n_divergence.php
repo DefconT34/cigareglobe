@@ -87,8 +87,27 @@ const FACTEUR = 2.0;
  *
  * Les délimiteurs sont désormais des assertions sur le CHIFFRE lui-même,
  * qui ne dépendent d'aucune écriture.
+ *
+ * ── UNE ALTITUDE N'EST PAS UNE ANNÉE ────────────────────
+ *
+ * La fiche Carlos Toraño Panama situe les hauteurs de Boquete « entre
+ * 1 200 et 1 800 mètres ». L'arabe écrit ces nombres sans séparateur —
+ * « بين 1200 و1800 متر » — et le motif y lisait l'année 1800, absente
+ * du français.
+ *
+ * Le français n'échappait au signalement que par sa TYPOGRAPHIE :
+ * l'espace de « 1 800 » coupe le nombre en deux, et « 800 » n'a que
+ * trois chiffres. Un texte français écrivant « 1800 m » serait tombé
+ * dans le même piège. Ce n'est donc pas une faute de traduction, c'est
+ * une lacune du contrôle — et elle vaut pour les six langues.
+ *
+ * Un nombre suivi d'une unité de longueur est écarté. La liste couvre
+ * les six écritures ; elle est explicite plutôt que générique, pour ne
+ * pas écarter par mégarde « 1959 m'a coûté » ou une année suivie d'un
+ * mot commençant par m.
  */
-const ANNEES = '/(?<!\d)(1[5-9]\d\d|20[0-2]\d)(?!\d)/u';
+const ANNEES = '/(?<!\d)(1[5-9]\d\d|20[0-2]\d)(?!\d)'
+             . '(?!\s*(?:m\b|mm\b|m[eè]tres?\b|[Mm]eter\b|metros?\b|متر|مترًا|مم|米|毫米))/u';
 
 /** Texte utile d'une valeur, JSON compris. */
 function texte_utile(string $brut): string {
