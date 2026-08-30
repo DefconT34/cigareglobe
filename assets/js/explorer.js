@@ -189,12 +189,30 @@ function initMap() {
     maxZoom: 12,
   });
 
-  // Tuiles sombres compatibles avec le thème
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap © CARTO',
-    subdomains: 'abcd',
+  // ── LES TUILES SOMBRES DE CARTO SONT PASSÉES SOUS CLÉ ──
+  //
+  // `basemaps.cartocdn.com/dark_all` répondait sans authentification.
+  // CARTO a fermé l'accès public : le service renvoie désormais une
+  // tuile où « API KEY REQUIRED — carto.com/basemaps/apikey » est INCRUSTÉ
+  // dans l'image. Rien ne casse, rien ne tombe en erreur — la carte
+  // s'affiche, couverte d'un filigrane. C'est le pire mode de panne :
+  // aucune console, aucun 4xx, juste un site qui a l'air négligé.
+  //
+  // On repasse donc sur les tuiles OpenStreetMap, qui ne demandent pas
+  // de clé. Elles sont claires ; le thème est sombre. Plutôt que de
+  // renoncer à l'un ou à l'autre, la couche est inversée en CSS
+  // (voir `.leaflet-tile-pane` plus bas) : c'est la recette usuelle, et
+  // elle rend des étiquettes lisibles.
+  //
+  // POUR REVENIR À CARTO : prendre une clé sur carto.com/basemaps/apikey
+  // et remplacer TUILES ci-dessous par
+  //   https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=…
+  // en retirant la classe `exp-map--inverse` du conteneur.
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
     maxZoom: 19
   }).addTo(_map);
+  document.getElementById('exp-map').classList.add('exp-map--inverse');
 
   updateMapMarkers();
 }
@@ -481,6 +499,13 @@ window.addEventListener('DOMContentLoaded', function() {
     /* Carte */
     #exp-map {
       flex:1; background:var(--bg3);
+    }
+    /* Les tuiles OpenStreetMap sont claires, le thème est sombre.
+       L'inversion + rotation de teinte rend un fond sombre dont les
+       étiquettes restent lisibles ; les marqueurs, eux, sont dessinés
+       par Leaflet DANS un autre calque et ne sont pas touchés. */
+    .exp-map--inverse .leaflet-tile-pane {
+      filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.92) saturate(.7);
     }
     .exp-popup .leaflet-popup-content-wrapper {
       background:var(--bg2,#1A1410);
