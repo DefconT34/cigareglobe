@@ -2398,6 +2398,52 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── Rien de personnel dans ce qui part en depot ─────────
+// `sql/contenu.sql` est destine a un depot public ou partage, donc a
+// etre lu par des gens qu'on ne choisit pas — et un depot garde tout,
+// pour toujours.
+//
+// Le cas qui a motive ce controle n'etait pas theorique : une adresse IP
+// publique reelle y a dormi depuis la creation du fichier, dans
+// `lounge_photos.uploader_ip`. Le classement se faisait par TABLE, alors
+// que c'est la COLONNE qui decide. Trouve en relisant avant le premier
+// `push`, pas en ecrivant.
+{
+    $contenu = (string)@file_get_contents(PROJECT_ROOT . '/sql/contenu.sql');
+    check('depot : sql/contenu.sql existe', $contenu !== '');
+
+    // La liste des tables exclues est LUE dans l'outil, jamais recopiee :
+    // recopiee, elle cesserait un jour de decrire ce que l'outil fait.
+    defined('CONTENU_DUMP_INCLUDE') || define('CONTENU_DUMP_INCLUDE', true);
+    require_once PROJECT_ROOT . '/tools/contenu_dump.php';
+    define('CONTENU_EXCLUES_POUR_TEST', CONTENU_EXCLUES);
+
+    // Adresses IPv4 entre quotes SQL. Les nombres nus (coordonnees,
+    // annees, dimensions) ne ressemblent pas a cela.
+    preg_match_all("/'((?:[0-9]{1,3}\.){3}[0-9]{1,3})'/", $contenu, $ip);
+    eq('depot : aucune adresse IP dans le contenu verse', [], array_unique($ip[1]));
+
+    // Les adresses electroniques, elles, ne se jugent PAS a leur forme.
+    // La premiere version de ce controle refusait tout ce qui n'etait
+    // pas du domaine du site, et accusait « bali@lacasadelhabano.id » —
+    // le contact de La Casa del Habano a Legian. C'est precisement le
+    // contenu qu'un atlas d'etablissements existe pour porter.
+    //
+    // Ce qui se verifie n'est donc pas le texte mais la PROVENANCE :
+    // aucune table exclue ne doit apparaitre dans le fichier. Les
+    // adresses de membres vivent dans `users` et `contributions` ; si
+    // ces tables n'y sont pas, aucune ne peut s'y trouver.
+    $intruses = [];
+    foreach (array_keys(CONTENU_EXCLUES_POUR_TEST) as $t) {
+        if (str_contains($contenu, "INSERT INTO `$t`")) $intruses[] = $t;
+    }
+    eq('depot : aucune table personnelle dans le contenu verse', [], $intruses);
+
+    // Et aucun haché de mot de passe : `users` est hors du fichier, mais
+    // une table ajoutee demain pourrait en porter un.
+    check('depot : aucun hache de mot de passe', !str_contains($contenu, '$2y$'));
+}
+
 // ── Ou une sauvegarde a-t-elle le droit d'atterrir ? ────
 // L'archive porte des comptes, des adresses et des messages. Deux
 // endroits lui sont interdits, et j'ai failli n'en voir qu'un : un

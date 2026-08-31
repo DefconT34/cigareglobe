@@ -90,6 +90,28 @@ const CONTENU_EXCLUES = [
     'forum_topic_tags' => 'étiquettes posées sur les discussions',
 ];
 
+/**
+ * Colonnes qui désignent une personne DANS une table par ailleurs
+ * éditoriale. Elles sont versées à NULL.
+ *
+ * `lounge_photos` décrit des images du site — nom de fichier, légende,
+ * ordre : du contenu. Mais elle porte aussi `uploader_ip`, et une
+ * adresse IP identifie quelqu'un.
+ *
+ * Trouvé en relisant `sql/contenu.sql` avant le tout premier `push`,
+ * pas en l'écrivant : une adresse publique réelle y dormait depuis la
+ * création du fichier. Le classement se faisait par TABLE, or c'est la
+ * COLONNE qui décide. Un dépôt garde tout, pour toujours ; l'erreur
+ * aurait survécu à toute correction ultérieure de la base.
+ *
+ * La valeur reste dans la base vivante. Elle ne sert à aucun contrôle —
+ * rien ne la relit — et la perdre lors d'une reconstruction depuis Git
+ * est un moindre mal que de la publier.
+ */
+const CONTENU_COLONNES_NULLES = [
+    'lounge_photos' => ['uploader_ip'],
+];
+
 const CONTENU_FICHIER = __DIR__ . '/../sql/contenu.sql';
 
 /**
@@ -131,6 +153,31 @@ function contenu_entete(): string {
     return $e . "-- ════════════════════════════════════════════════════════\n\n";
 }
 
+/**
+ * Écrit les lignes d'une table dont certaines colonnes doivent partir à
+ * NULL. mysqldump ne sait pas retirer une colonne : on fabrique donc ces
+ * INSERT nous-mêmes, dans le même style que lui (`--complete-insert`,
+ * une instruction par ligne), pour que le fichier reste homogène.
+ */
+function contenu_table_expurgee(PDO $db, string $table, array $nulles): string {
+    $cols = $db->query("SHOW COLUMNS FROM `$table`")->fetchAll(PDO::FETCH_COLUMN);
+    $liste = implode(', ', array_map(fn($c) => "`$c`", $cols));
+
+    $sql = "\n-- `$table` : " . implode(', ', $nulles) . " verse(s) a NULL"
+         . " (voir CONTENU_COLONNES_NULLES)\n";
+
+    foreach ($db->query("SELECT * FROM `$table`")->fetchAll(PDO::FETCH_ASSOC) as $ligne) {
+        $valeurs = [];
+        foreach ($cols as $c) {
+            $v = in_array($c, $nulles, true) ? null : $ligne[$c];
+            $valeurs[] = $v === null ? 'NULL'
+                       : (is_int($v) || ctype_digit((string)$v) ? (string)(int)$v : $db->quote((string)$v));
+        }
+        $sql .= "INSERT INTO `$table` ($liste) VALUES (" . implode(',', $valeurs) . ");\n";
+    }
+    return $sql;
+}
+
 /** Engendre le contenu du fichier. Renvoie la chaîne, n'écrit rien. */
 function contenu_engendrer(): string {
     $tmp = tempnam(sys_get_temp_dir(), 'cgdump');
@@ -149,7 +196,10 @@ function contenu_engendrer(): string {
         DB_PASS !== '' ? '--password=' . escapeshellarg(DB_PASS) : '',
         escapeshellarg($tmp),
         escapeshellarg(DB_NAME),
-        implode(' ', array_map('escapeshellarg', CONTENU_TABLES))
+        // Les tables à colonnes expurgées sortent de la liste de
+        // mysqldump : elles sont fabriquées à la main juste après.
+        implode(' ', array_map('escapeshellarg',
+            array_diff(CONTENU_TABLES, array_keys(CONTENU_COLONNES_NULLES))))
     );
 
     $sortie = [];
@@ -163,6 +213,13 @@ function contenu_engendrer(): string {
 
     $corps = (string)file_get_contents($tmp);
     @unlink($tmp);
+
+    // Les tables dont une colonne part à NULL, ajoutées après : elles
+    // viennent donc APRÈS `lounges`, qu'elles référencent.
+    $db = getDB();
+    foreach (CONTENU_COLONNES_NULLES as $table => $nulles) {
+        $corps .= contenu_table_expurgee($db, $table, $nulles);
+    }
 
     // Les directives de session du dump (/*!40101 …*/) sont conservées :
     // elles posent le jeu de caractères, et un contenu à accents importé
