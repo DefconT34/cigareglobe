@@ -64,6 +64,55 @@ Points d'attention :
   qui garantit qu'aucun email ne part depuis un poste de développement
   ou depuis la suite de tests.
 
+### ⚠ Sous WAMP : PHP n'a pas de magasin d'autorités
+
+Le premier envoi réel a échoué ainsi :
+
+```
+brevo — HTTP 0 : SSL certificate problem: unable to get local issuer certificate
+```
+
+Ce n'est **pas** un problème de clé, de DNS ni de prestataire. Sur une
+installation WAMP, `curl.cainfo` et `openssl.cafile` sont vides dans
+`php.ini` : PHP ne peut vérifier **aucun** certificat TLS, et tous les
+pilotes HTTP échouent donc au même endroit. Le `curl` en ligne de
+commande, lui, passe — il a son propre magasin, d'où la confusion.
+
+Le remède, dans `php.ini` (un magasin est livré avec phpMyAdmin) :
+
+```ini
+curl.cainfo = "C:/wamp64/apps/phpmyadmin5.2.1/vendor/composer/ca-bundle/res/cacert.pem"
+```
+
+**Ne jamais désactiver la vérification TLS pour contourner ceci.** Ce
+serait transformer un test de délivrabilité en test de rien du tout, et
+la ligne survivrait au déploiement.
+
+Le défaut est propre à Windows : un hébergement Linux a le magasin du
+système, et n'y est pas exposé.
+
+## Ce qui a été vérifié en production
+
+Configuration retenue : **Brevo**, domaine authentifié par CNAME
+(`brevo1._domainkey`, `brevo2._domainkey`), code de vérification en TXT.
+
+Deux pièges rencontrés à la pose, tous deux du même genre — **un
+enregistrement existait déjà** :
+
+- **DMARC** : l'hébergeur en avait posé un (`v=DMARC1; p=none;`). Deux
+  enregistrements `_dmarc` rendent les deux invalides : il faut
+  **modifier** l'existant, pas en ajouter un second.
+- **SPF** : idem, un seul est permis par domaine. Celui de l'hébergeur
+  reste tel quel — l'authentification par CNAME n'en a pas besoin, c'est
+  DKIM qui fait passer DMARC.
+
+Résultat mesuré, message reçu chez Gmail : `dkim=pass` avec
+`domain=thecigarodyssey.com`, `dmarc=pass`, **boîte principale**.
+
+Un diagnostic vert ne prouve que la configuration. Seul l'en-tête d'un
+message réellement reçu prouve la délivrabilité — `mail_doctor.php`
+lit le DNS, il ne lit pas la boîte du destinataire.
+
 ## Les trois enregistrements DNS
 
 C'est ici que se joue la délivrabilité, bien plus que dans le choix du

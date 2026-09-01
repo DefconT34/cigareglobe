@@ -175,7 +175,21 @@ Effort : P = Petit · M = Moyen · G = Gros.
     qu'aucune image de membre ne l'est**. Une exception trop large les ferait entrer par
     milliers, sans que personne le voie avant le premier clone
   - 12 vérifications (465 → 477)
-- [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
+- [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅
+- [x] ~~**B9** — La chaîne email éprouvée pour de bon~~ ✅
+  - Brevo souscrit, domaine authentifié par CNAME (`brevo1/2._domainkey`), clé posée
+  - **Deux enregistrements existaient déjà** et ne devaient pas être dupliqués : le `_dmarc`
+    de l'hébergeur (modifié, pas ajouté) et son SPF (laissé intact — l'authentification par
+    CNAME n'en a pas besoin, c'est DKIM qui fait passer DMARC). Deux `_dmarc` ou deux SPF
+    rendent les deux invalides
+  - **Mesuré, pas supposé** : message reçu chez Gmail avec `dkim=pass`
+    (`domain=thecigarodyssey.com`), `dmarc=pass`, **boîte principale**
+  - Le premier envoi avait échoué sur `unable to get local issuer certificate` — défaut
+    **local** : WAMP laisse `curl.cainfo` vide, donc PHP ne vérifie aucun certificat TLS et
+    tous les pilotes HTTP tombent au même endroit. Contourné par un magasin d'autorités
+    explicite, **jamais** en désactivant la vérification. Documenté dans `docs/emails.md`
+  - Rappel tiré de là : un diagnostic vert ne prouve que la configuration. `mail_doctor.php`
+    lit le DNS ; il ne lit pas la boîte du destinataire
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
   - ⚠ Le domaine visé alors n'était **pas disponible** — vérifié auprès du registre : déposé
     depuis 2016. Remplacé par `thecigarodyssey.com` en **B8**. L'entrée est laissée telle
