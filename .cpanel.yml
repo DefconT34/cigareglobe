@@ -1,0 +1,59 @@
+---
+# ════════════════════════════════════════════════════════
+# .cpanel.yml — Déploiement depuis cPanel Git™ Version Control
+# ────────────────────────────────────────────────────────
+# Le dépôt est cloné HORS de la racine web
+# (/home2/koko6788/repositories/cigareglobe) et ce fichier dit à cPanel
+# quoi recopier vers le site. C'est le bon découpage : `.git` ne se
+# trouve jamais dans l'arborescence servie, et ne peut donc pas être
+# téléchargé — l'accident mesuré valait 200 sur /.git/config.
+#
+# DEPLOYPATH est la RACINE DU DOCUMENT, pas le dossier du dépôt. Les
+# deux se ressemblent et ne servent pas à la même chose :
+#
+#   /home2/koko6788/repositories/cigareglobe   le clone, hors du Web
+#   /home2/koko6788/thecigarodyssey.com        ce qu'Apache sert
+#
+# Confondre les deux ferait recopier le dépôt sur lui-même : le site ne
+# recevrait jamais rien, et l'on chercherait longtemps pourquoi la page
+# ne change pas. Vérifié le 1er septembre 2026 — le domaine ne servait
+# alors qu'un listage de dossier vide, ce qui l'a prouvé.
+#
+# LES EXCLUSIONS NE SONT PAS DÉCORATIVES
+#
+#   uploads/  4 507 fichiers, 28 Mo, absents du dépôt. Sans l'exclusion,
+#             `--delete` les EFFACERAIT à chaque déploiement — les photos
+#             de tous les établissements, à chaque `git push`.
+#   .env      Créé sur le serveur, jamais versionné. Même raison : il
+#             disparaîtrait au premier déploiement, et le site avec.
+#   .git      L'historique complet. C'est précisément ce qu'on ne veut
+#             pas voir dans la racine web.
+#   tests/    Nécessite Playwright et une base dédiée ; rien à y faire en
+#   node_modules/, .github/   production.
+#
+# `tools/` RESTE déployé : `prevol.php`, `cle.php`, `deployer.php`,
+# `sauvegarde.php` et `forum_rappels.php` (le cron) s'exécutent sur le
+# serveur. Le dossier porte son propre .htaccess, qui interdit l'accès
+# par le Web.
+#
+# `sql/` reste aussi : la première pose de la base en a besoin. Le
+# .htaccess de la racine le ferme au Web.
+# ════════════════════════════════════════════════════════
+
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home2/koko6788/thecigarodyssey.com/
+    - /bin/mkdir -p $DEPLOYPATH
+    - >
+      /usr/bin/rsync -a --delete
+      --exclude='.git/'
+      --exclude='.github/'
+      --exclude='node_modules/'
+      --exclude='tests/'
+      --exclude='uploads/'
+      --exclude='.env'
+      --exclude='.cpanel.yml'
+      ./ $DEPLOYPATH
+    - /bin/echo "Deploiement termine. Verifier :"
+    - /bin/echo "  php $DEPLOYPATH/tools/prevol.php"
+    - /bin/echo "  curl -sI https://thecigarodyssey.com/.git/config   (doit repondre 404)"
