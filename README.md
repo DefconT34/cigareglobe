@@ -215,6 +215,9 @@ comptes et des adresses. Restauration : `schema.sql`, `contenu.sql`,
 puis le dump de l'archive — l'ordre compte, les avis référencent des
 établissements qui doivent exister d'abord.
 
+**La procédure complète est dans [docs/deploiement.md](docs/deploiement.md)** —
+étape par étape, avec les pièges rencontrés.
+
 Le reste — hébergement, rotation des secrets, cron des rappels,
 enregistrements DNS des emails (`php tools/mail_doctor.php`) — est
 détaillé dans `docs/roadmap.md`, chantiers **B1** et suivants.
