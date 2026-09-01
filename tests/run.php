@@ -2759,20 +2759,24 @@ report_and_exit();
 
 /**
  * Pilote retenu pour un environnement donne. Les constantes de
- * configuration etant figees a la premiere inclusion, chaque variante
- * se mesure dans un processus separe ; l'environnement est transmis a
- * proc_open plutot qu'a travers le shell, dont la syntaxe differe
- * entre Windows et POSIX.
+ * configuration etant figees a la premiere inclusion, chaque variante se
+ * mesure dans un processus separe.
+ *
+ * LES VALEURS PASSENT PAR LES ARGUMENTS, PAS PAR L'ENVIRONNEMENT.
+ * Une variable d'environnement VIDE ne traverse pas proc_open de facon
+ * fiable sous Windows : la sonde retombait alors sur le `.env` du poste
+ * et mesurait la configuration du developpeur au lieu du cas construit.
+ * Le defaut est reste invisible tant que ce `.env` portait une
+ * MAIL_API_KEY vide — c'est-a-dire tant que le hasard donnait la bonne
+ * reponse. Il s'est revele le jour ou une vraie cle y a ete posee.
  */
 function probe_mail_driver(array $vars): string {
-    $env = array_merge([
-        'MAIL_LOG_ONLY' => 'false',
-        'SystemRoot'    => getenv('SystemRoot') ?: '',
-        'PATH'          => getenv('PATH') ?: '',
-    ], $vars);
-    $cmd = sprintf('%s -d xdebug.mode=off %s',
+    $cmd = sprintf('%s -d xdebug.mode=off %s %s %s',
                    escapeshellarg(PHP_BINARY),
-                   escapeshellarg(PROJECT_ROOT . '/tests/probe_mail_driver.php'));
+                   escapeshellarg(PROJECT_ROOT . '/tests/probe_mail_driver.php'),
+                   escapeshellarg((string)($vars['MAIL_DRIVER']  ?? '')),
+                   escapeshellarg((string)($vars['MAIL_API_KEY'] ?? '')));
+    $env = ['SystemRoot' => getenv('SystemRoot') ?: '', 'PATH' => getenv('PATH') ?: ''];
     $pipes = [];
     $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT, $env);
     if (!is_resource($proc)) return '';
