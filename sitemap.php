@@ -20,7 +20,7 @@ $LANGUES_PLAN = langues_actives();
 $base = defined('SITE_URL') && SITE_URL
       ? rtrim(SITE_URL, '/')
       : ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http')
-        . '://' . ($_SERVER['HTTP_HOST'] ?? 'cigarodyssey.com');
+        . '://' . ($_SERVER['HTTP_HOST'] ?? 'thecigarodyssey.com');
 
 $url = fn(string $l): string => $base . ($l === 'fr' ? '/' : '/' . $l . '/');
 

@@ -49,7 +49,7 @@ $pretty = !empty($_SERVER['PRETTY']) || !empty($_SERVER['REDIRECT_PRETTY']);
 function racine(): string {
     if (defined('SITE_URL') && SITE_URL) return rtrim(SITE_URL, '/');
     $s = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    return $s . '://' . ($_SERVER['HTTP_HOST'] ?? 'cigarodyssey.com');
+    return $s . '://' . ($_SERVER['HTTP_HOST'] ?? 'thecigarodyssey.com');
 }
 
 /**
@@ -334,11 +334,11 @@ $remplacements = [
         => '<title>' . $e($titre) . '</title>',
     '<meta name="description" content="CigarOdyssey — The World\'s Premium Cigar Atlas">'
         => '<meta name="description" content="' . $e($desc) . '">',
-    '<link rel="canonical" href="https://cigarodyssey.com/">'
+    '<link rel="canonical" href="https://thecigarodyssey.com/">'
         => '<link rel="canonical" href="' . $e($urlIci) . "\">\n" . $alternates,
     '<meta property="og:locale" content="fr_FR">'
         => '<meta property="og:locale" content="' . LOCALES[$lang] . '">',
-    '<meta property="og:url" content="https://cigarodyssey.com/">'
+    '<meta property="og:url" content="https://thecigarodyssey.com/">'
         => '<meta property="og:url" content="' . $e($urlIci) . '">',
     // Une discussion est un ÉCRIT daté, signé, qui ne change plus :
     // « article » le dit, « website » désigne le site entier. Les

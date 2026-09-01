@@ -1157,28 +1157,28 @@ $r = http('GET', $base . '/backend/data.php?action=globe',
 eq('developpement : toute origine est acceptee', '*', entete($r['headers'], 'Access-Control-Allow-Origin'));
 
 // Second serveur, CORS restreint : c'est la configuration de production.
-$PERMIS  = 'https://cigarodyssey.com,https://www.cigarodyssey.com';
+$PERMIS  = 'https://thecigarodyssey.com,https://www.thecigarodyssey.com';
 $restr   = start_server(['ALLOWED_ORIGIN' => $PERMIS]);
 
 $r = http('GET', $restr . '/backend/data.php?action=globe',
-          ['jar' => $anon, 'headers' => ['Origin: https://cigarodyssey.com']]);
+          ['jar' => $anon, 'headers' => ['Origin: https://thecigarodyssey.com']]);
 eq('production : le domaine declare est autorise',
-   'https://cigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
+   'https://thecigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
 check('production : la reponse varie selon l\'origine',
       stripos(entete($r['headers'], 'Vary'), 'origin') !== false);
 
 $r = http('GET', $restr . '/backend/data.php?action=globe',
-          ['jar' => $anon, 'headers' => ['Origin: https://www.cigarodyssey.com']]);
+          ['jar' => $anon, 'headers' => ['Origin: https://www.thecigarodyssey.com']]);
 eq('production : le sous-domaine www est autorise separement',
-   'https://www.cigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
+   'https://www.thecigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
 
 $r = http('GET', $restr . '/backend/data.php?action=globe',
-          ['jar' => $anon, 'headers' => ['Origin: https://cigarodyssey.com.attaquant.test']]);
+          ['jar' => $anon, 'headers' => ['Origin: https://thecigarodyssey.com.attaquant.test']]);
 eq('production : une origine qui prefixe le domaine est refusee',
    '', entete($r['headers'], 'Access-Control-Allow-Origin'));
 
 $r = http('GET', $restr . '/backend/data.php?action=globe',
-          ['jar' => $anon, 'headers' => ['Origin: http://cigarodyssey.com']]);
+          ['jar' => $anon, 'headers' => ['Origin: http://thecigarodyssey.com']]);
 eq('production : le meme domaine en clair est refuse',
    '', entete($r['headers'], 'Access-Control-Allow-Origin'));
 
@@ -1189,11 +1189,11 @@ eq('production : une origine tierce repart sans autorisation',
 
 // Requetes authentifiees : « * » et les cookies sont incompatibles.
 $r = http('GET', $restr . '/backend/auth.php?action=me',
-          ['jar' => $anon, 'headers' => ['Origin: https://cigarodyssey.com']]);
+          ['jar' => $anon, 'headers' => ['Origin: https://thecigarodyssey.com']]);
 eq('production : credentials autorises pour le domaine declare',
    'true', entete($r['headers'], 'Access-Control-Allow-Credentials'));
 eq('production : jamais « * » avec des credentials',
-   'https://cigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
+   'https://thecigarodyssey.com', entete($r['headers'], 'Access-Control-Allow-Origin'));
 
 $r = http('GET', $restr . '/backend/auth.php?action=me',
           ['jar' => $anon, 'headers' => ['Origin: https://exemple-tiers.test']]);

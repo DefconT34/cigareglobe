@@ -34,7 +34,8 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - **F1** : interface entièrement traduite — 102 clés dans 6 langues, 12 modules câblés, 3 modules qui ne se retraduisaient jamais corrigés
 - **F7** : garde-fous multilingues — parité des clés, couverture du contenu en base, balayage des 6 langues à cliquet, RTL `#side-fabs` corrigé
 - **A2** : CORS restreint — liste d'origines comparées exactement, `photos.php` rallié, 11 vérifications
-- **B3** : nom & domaine unifiés — CigarOdyssey / cigarodyssey.com partout (backend, emails, SEO, manifeste, CI, docs)
+- **B3** : nom & domaine unifiés — CigarOdyssey partout (backend, emails, SEO, manifeste, CI, docs) · *domaine revu en B8*
+- **B8** : domaine acheté — `thecigarodyssey.com`, posé dans 14 fichiers + migration `131` (La Régie et 60 `lounges.source`) ; la marque, elle, ne bouge pas
 - **B2** : email transactionnel — pilotes Brevo/Mailgun/Resend derrière `send_email()`, alternative texte, multipart, diagnostic SPF/DKIM/DMARC (`tools/mail_doctor.php`), `docs/emails.md`
 - **E1e** : le modérateur — `admin_scope()` (portée `admin` / `moderator`), écran de nomination, journal de modération (migration 130), retrait réversible d'une photo, 51 vérifications
 - **A4** : l'adresse du visiteur ne se déclare plus soi-même — `TRUSTED_PROXIES`, chaîne `X-Forwarded-For` lue depuis la droite, trois exemplaires de la fonction réduits à un, 18 vérifications
@@ -176,6 +177,25 @@ Effort : P = Petit · M = Moyen · G = Gros.
   - 12 vérifications (465 → 477)
 - [x] ~~**B2** — Délivrabilité email (pilotes transactionnels + diagnostic DNS)~~ ✅ · reste à souscrire chez un prestataire au moment de B1
 - [x] ~~**B3** — Nom & domaine unifiés (CigarOdyssey / cigarodyssey.com)~~ ✅ · *débloque A2*
+  - ⚠ Le domaine visé alors n'était **pas disponible** — vérifié auprès du registre : déposé
+    depuis 2016. Remplacé par `thecigarodyssey.com` en **B8**. L'entrée est laissée telle
+    quelle : elle dit ce qui a été fait ce jour-là, pas ce qui est vrai aujourd'hui
+- [x] ~~**B8** — Le domaine acheté : `thecigarodyssey.com`~~ ✅
+  - **La marque ne change pas.** « CigarOdyssey » reste partout ; seule l'adresse bouge.
+    C'est pourquoi 14 fichiers ont suffi là où un rebaptême en aurait touché 65
+  - `cigarodyssey.com` est déposé depuis 2016-12-07, **jamais servi** (parking Dotster), et
+    en statut `clientHold` — le registrar demande au registre de ne pas le publier dans le
+    DNS. C'est ce qui m'avait fait conclure à tort qu'il était libre : l'absence de DNS n'est
+    pas l'absence de dépôt, et seul le registre fait foi
+  - Le préfixe « the » ne coûte presque rien **ici précisément** : la version canonique ne
+    résout vers rien, donc celui qui tape de mémoire tombe sur une erreur, pas sur un
+    concurrent. C'est ce qui distingue ce choix d'un tiret ou d'un `.co`
+  - **Deux valeurs vivaient en base** (migration `131`) : l'adresse de « La Régie », et
+    `lounges.source` de **60 établissements** où le domaine signifie « relevé par nos soins ».
+    Y laisser l'ancien nom aurait renvoyé le lecteur vers un site qui n'est pas le nôtre —
+    une attribution fausse, pas une coquille
+  - `sql/contenu.sql` et `tests/fixtures/atlas.sql` sont **réengendrés**, jamais édités : leur
+    en-tête le dit, et une retouche à la main aurait été effacée à la génération suivante
 
 ### C. Qualité & structure
 - [x] ~~**C1** — Externalisation du front (CSS + 23 modules JS hors index.html)~~ ✅

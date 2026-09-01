@@ -359,5 +359,5 @@ function langue_demandee(?string $souhaitee = null): string {
 function site_url(): string {
     if (defined('SITE_URL') && SITE_URL) return rtrim(SITE_URL, '/');
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    return $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'cigarodyssey.com');
+    return $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'thecigarodyssey.com');
 }

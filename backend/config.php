@@ -151,7 +151,7 @@ function cors_headers(bool $with_credentials = false): void {
 
 // ── Espace client / emails ────────────────────────────────
 if (env('SITE_URL') !== null)       define('SITE_URL',       env('SITE_URL'));
-define('MAIL_FROM',      env('MAIL_FROM', 'noreply@cigarodyssey.com'));
+define('MAIL_FROM',      env('MAIL_FROM', 'noreply@thecigarodyssey.com'));
 define('MAIL_FROM_NAME', env('MAIL_FROM_NAME', 'CigarOdyssey'));
 if (strtolower((string)env('MAIL_LOG_ONLY', 'false')) === 'true') define('MAIL_LOG_ONLY', true);
 if (strtolower((string)env('MAIL_DEBUG',    'false')) === 'true') define('MAIL_DEBUG', true);

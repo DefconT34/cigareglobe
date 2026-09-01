@@ -68,7 +68,7 @@
   # voit l en-tete apparaitre en clair. Fait, et l inverse retire.
   #
   # A REVERIFIER APRES LA MISE EN LIGNE, ou seul le vrai TLS repond :
-  #   curl -sI https://cigarodyssey.com | grep -i strict-transport
+  #   curl -sI https://thecigarodyssey.com | grep -i strict-transport
   <If "%{HTTPS} == 'on'">
     Header always set Strict-Transport-Security "max-age=31536000"
   </If>

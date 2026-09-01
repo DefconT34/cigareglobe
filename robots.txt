@@ -12,4 +12,4 @@ Disallow: /tests/
 Disallow: /tools/
 Disallow: /uploads/
 
-Sitemap: https://cigarodyssey.com/sitemap.xml
+Sitemap: https://thecigarodyssey.com/sitemap.xml

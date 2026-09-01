@@ -118,13 +118,13 @@ Voir `sql/README.md` (schéma de référence, migrations, régénération, seed)
 l'API depuis un navigateur, séparées par des virgules :
 
 ```
-ALLOWED_ORIGIN=https://cigarodyssey.com,https://www.cigarodyssey.com   # production
+ALLOWED_ORIGIN=https://thecigarodyssey.com,https://www.thecigarodyssey.com   # production
 ALLOWED_ORIGIN=*                                                        # local
 ```
 
 Le domaine nu et le sous-domaine `www` sont **deux origines
 distinctes** : déclarer les deux si les deux répondent. La comparaison
-est exacte, jamais un préfixe — `https://cigarodyssey.com.exemple.net`
+est exacte, jamais un préfixe — `https://thecigarodyssey.com.exemple.net`
 est refusé.
 
 À savoir : CORS n'empêche que la lecture *par un navigateur* depuis un

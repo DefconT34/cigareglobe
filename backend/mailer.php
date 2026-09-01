@@ -75,7 +75,7 @@ function _mail_log(string $to, string $subject, string $body, string $status): v
 function _mail_from(): array {
     $addr = defined('MAIL_FROM') && MAIL_FROM !== ''
           ? MAIL_FROM
-          : ('noreply@' . ($_SERVER['HTTP_HOST'] ?? 'cigarodyssey.com'));
+          : ('noreply@' . ($_SERVER['HTTP_HOST'] ?? 'thecigarodyssey.com'));
     $name = defined('MAIL_FROM_NAME') && MAIL_FROM_NAME !== '' ? MAIL_FROM_NAME : 'CigarOdyssey';
     return [$addr, $name];
 }

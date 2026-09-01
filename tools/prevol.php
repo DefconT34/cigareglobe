@@ -209,14 +209,14 @@ function prevol_controles(array $e): array {
 // ════════════════════════════════════════════════════════
 function prevol_env_propre(): array {
     return [
-        'site_url'        => 'https://cigarodyssey.com',
-        'allowed_origin'  => 'https://cigarodyssey.com,https://www.cigarodyssey.com',
+        'site_url'        => 'https://thecigarodyssey.com',
+        'allowed_origin'  => 'https://thecigarodyssey.com,https://www.thecigarodyssey.com',
         'app_debug'       => false,
         'mail_log_only'   => false,
         'mail_driver'     => 'brevo',
         'mail_api_key'    => 'xkeysib-quelque-chose',
-        'mail_from'       => 'noreply@cigarodyssey.com',
-        'admin_email'     => 'contact@cigarodyssey.com',
+        'mail_from'       => 'noreply@thecigarodyssey.com',
+        'admin_email'     => 'contact@thecigarodyssey.com',
         'admin_key'       => str_repeat('a', 40),
         'db_pass'         => 'un-mot-de-passe',
         'db_user'         => 'cigar',
@@ -231,7 +231,7 @@ function prevol_autotest(): int {
         ['propre',          [],                                        null],
         ['emails muets',    ['mail_log_only' => true],                 'MAIL_LOG_ONLY'],
         ['url locale',      ['site_url' => 'http://127.0.0.1:8099'],   'SITE_URL'],
-        ['url en clair',    ['site_url' => 'http://cigarodyssey.com'], 'SITE_URL'],
+        ['url en clair',    ['site_url' => 'http://thecigarodyssey.com'], 'SITE_URL'],
         ['url absente',     ['site_url' => ''],                        'SITE_URL'],
         ['debug ouvert',    ['app_debug' => true],                     'APP_DEBUG'],
         ['cors ouvert',     ['allowed_origin' => '*'],                 'ALLOWED_ORIGIN'],

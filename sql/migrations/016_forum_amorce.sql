@@ -33,9 +33,9 @@
 -- ═══════════════════════════════════════════════════════════════════
 
 INSERT IGNORE INTO users (email, password_hash, display_name, role, email_verified, lang)
-VALUES ('regie@cigarodyssey.com', '*', 'La Régie', 'moderator', 1, 'fr');
+VALUES ('regie@thecigarodyssey.com', '*', 'La Régie', 'moderator', 1, 'fr');
 
-SET @uid = (SELECT id FROM users WHERE email = 'regie@cigarodyssey.com');
+SET @uid = (SELECT id FROM users WHERE email = 'regie@thecigarodyssey.com');
 
 -- ── La Régie : le mode d'emploi, épinglé ───────────────────────────
 INSERT INTO forum_topics (section_id, user_id, title, slug, lang, is_pinned, posts_count, last_post_at)
@@ -55,7 +55,7 @@ SELECT t.id, @uid,
 
 **Les langues.** Chaque sujet porte la sienne. Par défaut vous voyez la vôtre et l''anglais ; le sélecteur en haut de rubrique ouvre les six.
 
-**La mise en forme.** `**gras**`, `*italique*`, `> citation`, `- liste`, et [texte](https://cigarodyssey.com) pour un lien. Les liens externes s''ouvrent après quelques messages — c''est ce qui tient le spam à distance.
+**La mise en forme.** `**gras**`, `*italique*`, `> citation`, `- liste`, et [texte](https://thecigarodyssey.com) pour un lien. Les liens externes s''ouvrent après quelques messages — c''est ce qui tient le spam à distance.
 
 **Un problème ?** Le drapeau sous chaque message. Trois signalements suffisent à le masquer le temps qu''un modérateur regarde.'
 FROM forum_topics t WHERE t.slug = 'bienvenue-comment-fonctionne-cet-espace'
