@@ -2521,6 +2521,28 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     check('cle : un fichier absent est refuse, pas cree', $ko === false, $msg);
 }
 
+// ── Le deploiement ne doit pas pouvoir effacer la base ──
+// `sql/schema.sql` commence par des DROP TABLE. Rejoue par reflexe sur
+// une base qui vit, il emporte les comptes, les avis, les messages et
+// le journal — c est-a-dire tout ce que le depot ne porte pas, et donc
+// tout ce qu un `git pull` ne rendra jamais.
+{
+    $cmd = sprintf('%s -d xdebug.mode=off %s --autotest',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/deployer.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('deploiement : les 8 cas construits du garde-fou tiennent', 0, $code);
+    } else {
+        check('deploiement : autotest lancable', false);
+    }
+}
+
 // ── Le controle d'avant-vol se prouve-t-il ? ────────────
 // prevol.php ne peut pas etre lance tel quel ici : sur un poste de
 // developpement il DOIT crier, c'est son travail. On eprouve donc ses

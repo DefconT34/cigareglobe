@@ -25,6 +25,33 @@ curl -sI https://thecigarodyssey.com | head -1        # 200, pas d'erreur TLS
 
 ---
 
+## En une commande, une fois le code sur place
+
+Une clé SSH du serveur vers GitHub étant posée, tout se ramène à ceci —
+**exécuté sur le serveur**, jamais depuis le poste :
+
+```bash
+git clone git@github.com:DefconT34/cigareglobe.git    # la première fois
+cd cigareglobe
+# créer le .env (section 4), transférer uploads/ (section 2), puis :
+php tools/deployer.php --installer                    # pose la base
+```
+
+Et pour chaque mise à jour ensuite :
+
+```bash
+php tools/deployer.php                                # git pull + contrôles
+```
+
+`deployer.php` **refuse d'installer sur une base non vide**.
+`sql/schema.sql` commence par des `DROP TABLE` : rejoué par réflexe à six
+mois d'intervalle, il effacerait les comptes, les avis, les messages et
+le journal — tout ce que le dépôt ne porte pas, et donc tout ce qu'un
+`git pull` ne rendra jamais.
+
+Les sections qui suivent détaillent chaque étape, pour le cas où l'outil
+signale un manque.
+
 ## 1. Le code
 
 Deux voies. La première est préférable : elle rend les mises à jour
