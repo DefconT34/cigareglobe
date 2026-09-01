@@ -15,16 +15,25 @@
 // applicable est français ; le texte fait foi en français. Traduire
 // viendra avec une relecture juridique, pas avant.
 //
-// ⚠ LES MENTIONS LÉGALES SONT INCOMPLÈTES À DESSEIN.
-// Les blocs marqués « À COMPLÉTER » demandent des faits que seul
-// l'éditeur connaît : identité, statut, adresse, hébergeur. Les
-// inventer produirait un document faux — c'est-à-dire pire qu'absent,
-// parce qu'il aurait l'air d'être en règle.
+// LE RÉGIME RETENU : ÉDITEUR PARTICULIER
+// L'article 6-III-2 de la LCEN dispense la personne physique qui édite
+// à titre NON PROFESSIONNEL d'afficher son nom et son adresse, à
+// condition de les avoir communiqués à son hébergeur. C'est le régime
+// des sites personnels, et c'est celui déclaré ici.
+//
+// Il ne couvre que la LCEN. Le RGPD, lui, ne connaît pas cette
+// dispense : le responsable du traitement doit rester joignable et
+// répondre des droits d'accès et d'effacement. D'où la section qui le
+// dit explicitement plutôt que de laisser croire que le masquage
+// s'étend aux données personnelles.
+//
+// Les coordonnées de l'hébergeur sont relevées sur son propre site, et
+// non écrites de mémoire.
 // ════════════════════════════════════════════════════════
 
 require_once __DIR__ . '/backend/config.php';
 
-$maj = '30 août 2026';
+$maj = '31 août 2026';
 $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 ?><!DOCTYPE html>
 <html lang="fr">
@@ -94,32 +103,54 @@ $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
   <!-- ══════════════════════════════════════════════════ -->
   <h2 id="mentions">1. Mentions légales</h2>
 
-  <div class="lg-todo">
-    <strong>À COMPLÉTER AVANT LA MISE EN LIGNE</strong>
-    <p>Les informations ci-dessous ne peuvent pas être devinées : elles
-    doivent être renseignées par l'éditeur du site. Un document
-    d'apparence complète mais faux vaut moins que pas de document.</p>
-  </div>
-
   <h3>Éditeur</h3>
+  <p>Ce site est édité à titre <strong>non professionnel, par une
+  personne physique</strong>. Il ne vend rien et ne tire aucun revenu de
+  son contenu.</p>
+  <p>À ce titre, et conformément à l'article 6-III-2 de la loi n°2004-575
+  du 21 juin 2004 pour la confiance dans l'économie numérique, l'éditeur
+  a choisi de ne pas rendre publiques son identité et son adresse. Il les
+  a <strong>communiquées à son hébergeur</strong>, qui les conserve et
+  peut les transmettre sur réquisition de l'autorité judiciaire.</p>
+  <p>Cette réserve ne vaut pas anonymat : l'éditeur reste identifiable et
+  responsable de ce qui est publié ici.</p>
   <p>
-    Dénomination ou nom : <code>[[ À COMPLÉTER ]]</code><br>
-    Statut juridique : <code>[[ À COMPLÉTER — entreprise individuelle, SAS, association… ]]</code><br>
-    Adresse du siège : <code>[[ À COMPLÉTER ]]</code><br>
-    Numéro SIREN/SIRET : <code>[[ À COMPLÉTER, si immatriculé ]]</code><br>
     Contact : <?= ADMIN_EMAIL !== '' && ADMIN_EMAIL !== 'vous@example.com'
                  ? '<a href="mailto:' . $h(ADMIN_EMAIL) . '">' . $h(ADMIN_EMAIL) . '</a>'
-                 : '<code>[[ À COMPLÉTER — ADMIN_EMAIL n\'est pas renseigné ]]</code>' ?>
+                 // Ce repli ne porte PAS le marqueur « À COMPLÉTER » : le
+                 // contrôle d'avant-vol lit le fichier SOURCE, pas la page
+                 // rendue. Le marqueur y resterait donc à jamais et
+                 // bloquerait le décollage même une fois l'adresse
+                 // renseignée. ADMIN_EMAIL a déjà son propre contrôle.
+                 : '<code>adresse non renseignée (ADMIN_EMAIL)</code>' ?><br>
+    Toute demande — droit d'accès ou d'effacement, signalement d'un
+    contenu, réclamation — se traite à cette adresse.
   </p>
 
-  <h3>Directeur de la publication</h3>
-  <p><code>[[ À COMPLÉTER ]]</code></p>
+  <h3>Responsable du traitement des données</h3>
+  <p>La même personne physique, joignable à l'adresse ci-dessus. Le
+  masquage prévu par la loi de 2004 vaut à l'égard du public ; il ne
+  dispense d'aucune des obligations du règlement général sur la
+  protection des données, détaillées au chapitre 2.</p>
 
   <h3>Hébergeur</h3>
   <p>
-    Nom : <code>[[ À COMPLÉTER — o2switch, selon la feuille de route ]]</code><br>
-    Adresse et téléphone : <code>[[ À COMPLÉTER ]]</code>
+    <strong>o2switch</strong><br>
+    Chemin des Pardiaux, 63000 Clermont-Ferrand, France<br>
+    Téléphone : 04 44 44 60 40<br>
+    SIRET 510 909 807 00032
   </p>
+
+  <div class="lg-todo">
+    <strong>DEUX POINTS À CONFIRMER</strong>
+    <p><strong>1. L'identité déposée chez l'hébergeur.</strong> Le régime
+    ci-dessus ne tient que si l'éditeur a bien communiqué ses nom, prénom
+    et adresse à o2switch — ce sont les informations du compte client.
+    Sans elles, la dispense d'affichage tombe.</p>
+    <p><strong>2. L'hébergeur.</strong> Les coordonnées ci-dessus sont
+    celles d'o2switch, relevées sur son propre site. À corriger si le
+    site est hébergé ailleurs.</p>
+  </div>
 
   <h3>Propriété intellectuelle</h3>
   <p>Les textes de l'atlas — fiches pays, articles de marque, notices de

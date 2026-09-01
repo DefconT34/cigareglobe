@@ -72,11 +72,30 @@ function prevol_environnement(): array {
         'db_pass'        => (string)DB_PASS,
         'db_user'        => (string)DB_USER,
         // Ce qui ne vient pas du .env mais décide autant.
-        'legal_a_trous'  => str_contains(
-            (string)@file_get_contents(PREVOL_RACINE . '/legal.php'), 'À COMPLÉTER'),
+        'legal_a_trous'  => prevol_legal_a_trous(),
         'contenu_present'=> is_file(PREVOL_RACINE . '/sql/contenu.sql'),
         'env_ignore'     => prevol_env_hors_depot(),
     ];
+}
+
+/**
+ * Les mentions légales portent-elles encore un trou ?
+ *
+ * On lit le CONTENU, pas les commentaires. La première version prenait
+ * le fichier entier — et s'est mise à bloquer sur la ligne de
+ * commentaire qui explique justement pourquoi le marqueur ne doit pas
+ * figurer dans le texte servi. Un contrôle qui accuse sa propre
+ * explication crie sans rien dire, et c'est le second exemplaire de
+ * cette erreur dans ce projet (voir le contrôle HSTS, qui lit la
+ * directive et non le fichier).
+ */
+function prevol_legal_a_trous(): bool {
+    $src = (string)@file_get_contents(PREVOL_RACINE . '/legal.php');
+    $utiles = array_filter(
+        explode("\n", $src),
+        fn($l) => !str_starts_with(ltrim($l), '//') && !str_starts_with(ltrim($l), '*')
+    );
+    return str_contains(implode("\n", $utiles), 'À COMPLÉTER');
 }
 
 /** Le `.env` est-il tenu hors du dépôt ? Un secret versionné est un secret perdu. */
