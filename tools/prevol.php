@@ -173,10 +173,25 @@ function prevol_controles(array $e): array {
     // ── Ce qui trahit un réglage non repris ──────────────
     foreach ([['admin_email', 'ADMIN_EMAIL'], ['mail_from', 'MAIL_FROM']] as [$cle, $nom]) {
         $v = strtolower(trim($e[$cle]));
-        if ($v === '' || str_contains($v, 'example.com') || str_contains($v, 'votre')
-            || str_contains($v, 'dev@') || str_contains($v, 'test.local')) {
+
+        // Domaines RÉSERVÉS par la RFC 2606 et la RFC 6761 : ils ne
+        // s'achètent pas et ne résolvent nulle part. Une adresse qui s'y
+        // termine n'atteindra jamais personne.
+        //
+        // Ce contrôle manquait, et le poste portait `noreply@…​.local` :
+        // la première rédaction cherchait des CHAÎNES d'exemple
+        // (« example.com », « dev@ ») au lieu de se demander si le
+        // domaine peut exister. Chercher les fautes qu'on a déjà vues ne
+        // trouve que celles-là.
+        $reserve = (bool)preg_match('/@[^@]*\.(local|localhost|test|invalid|example|internal|lan|home)$/', $v);
+
+        if ($v === '' || $reserve || str_contains($v, 'example.com')
+            || str_contains($v, 'votre') || str_contains($v, 'dev@')) {
             $c[] = prevol_constat('bloquant', $nom,
-                'Valeur d’exemple ou de développement (' . ($e[$cle] ?: 'vide') . ').',
+                $reserve
+                    ? 'Domaine réservé, qui ne résout nulle part (' . $e[$cle] . ') : '
+                      . 'aucun email n’en partirait ni n’y arriverait.'
+                    : 'Valeur d’exemple ou de développement (' . ($e[$cle] ?: 'vide') . ').',
                 $nom . '=une adresse réelle du domaine');
         }
     }
@@ -261,6 +276,12 @@ function prevol_autotest(): int {
         ['email d exemple', ['admin_email' => 'vous@example.com'],     'ADMIN_EMAIL'],
         ['email de dev',    ['admin_email' => 'dev@example.com'],      'ADMIN_EMAIL'],
         ['expediteur faux', ['mail_from' => 'noreply@votre-domaine'],  'MAIL_FROM'],
+        ['domaine .local',  ['mail_from' => 'noreply@cigar.local'],    'MAIL_FROM'],
+        ['domaine .test',   ['admin_email' => 'moi@atlas.test'],       'ADMIN_EMAIL'],
+        // Contre-epreuve : un domaine qui CONTIENT « local » sans s y
+        // terminer est parfaitement valide. Sans l'ancre de fin, on
+        // refuserait « contact@localhost-solutions.com ».
+        ['local au milieu', ['admin_email' => 'contact@localhost-solutions.com'], null],
         ['pilote sans cle', ['mail_api_key' => ''],                    'MAIL_API_KEY'],
         ['mentions a trous',['legal_a_trous' => true],                 'legal.php'],
         ['contenu absent',  ['contenu_present' => false],              'sql/contenu.sql'],
