@@ -2478,6 +2478,49 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── La cle d'administration ─────────────────────────────
+// Elle ouvre TOUT : langues, membres, roles, export, suppression
+// definitive. Elle n'a ni second facteur ni journal d'echecs. Ce qui la
+// fabrique merite donc d'etre eprouve — sur un fichier temporaire, et
+// non sur le .env du poste.
+{
+    define('CLE_INCLUDE', true);
+    require_once PROJECT_ROOT . '/tools/cle.php';
+
+    $a = cle_engendrer();
+    $b = cle_engendrer();
+    eq('cle : 48 caracteres hexadecimaux', 48, strlen($a));
+    check('cle : rien que du 0-9a-f', (bool)preg_match('/^[0-9a-f]{48}$/', $a));
+    check('cle : deux tirages differents', $a !== $b);
+    check('cle : l\'empreinte ne revele pas la cle',
+          !str_contains(cle_empreinte($a), substr($a, 0, 6)));
+
+    // Poser la cle ne doit RIEN abimer d'autre. Un .env reengendre
+    // perdrait les commentaires qui disent pourquoi telle valeur est la.
+    $tmp = tempnam(sys_get_temp_dir(), 'cgenv');
+    file_put_contents($tmp, "# un commentaire\nDB_NAME=base\nADMIN_KEY=courte\nSITE_URL=https://exemple\n");
+    [$ok, ] = cle_poser($tmp, $a);
+    $apres = (string)file_get_contents($tmp);
+    check('cle : la pose reussit', $ok);
+    check('cle : la nouvelle valeur est ecrite', str_contains($apres, 'ADMIN_KEY=' . $a));
+    check('cle : l\'ancienne a disparu',        !str_contains($apres, 'ADMIN_KEY=courte'));
+    check('cle : le commentaire survit',         str_contains($apres, '# un commentaire'));
+    check('cle : les voisines survivent',
+          str_contains($apres, 'DB_NAME=base') && str_contains($apres, 'SITE_URL=https://exemple'));
+    eq('cle : une seule ligne ADMIN_KEY', 1, substr_count($apres, 'ADMIN_KEY='));
+
+    // Absente du fichier, elle doit etre AJOUTEE et non perdue en
+    // silence : un .env sans ADMIN_KEY ferme l'administration.
+    file_put_contents($tmp, "DB_NAME=base\n");
+    cle_poser($tmp, $b);
+    check('cle : ajoutee si le fichier n\'en portait pas',
+          str_contains((string)file_get_contents($tmp), 'ADMIN_KEY=' . $b));
+    @unlink($tmp);
+
+    [$ko, $msg] = cle_poser(sys_get_temp_dir() . '/cg-inexistant-' . mt_rand() . '.env', $a);
+    check('cle : un fichier absent est refuse, pas cree', $ko === false, $msg);
+}
+
 // ── Le controle d'avant-vol se prouve-t-il ? ────────────
 // prevol.php ne peut pas etre lance tel quel ici : sur un poste de
 // developpement il DOIT crier, c'est son travail. On eprouve donc ses

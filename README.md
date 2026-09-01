@@ -191,6 +191,17 @@ mysql -u <user> -p <base> < sql/schema.sql
 mysql -u <user> -p <base> < sql/contenu.sql
 ```
 
+**La clé d'administration** se fabrique, elle ne se choisit pas :
+
+```bash
+php tools/cle.php
+```
+
+48 caractères tirés du générateur cryptographique du système. Elle ouvre
+tout et n'a pas de second facteur — à ranger dans un gestionnaire de
+mots de passe avant de la coller dans le `.env`. `--poser` l'écrit
+directement dans le `.env` local sans jamais l'afficher.
+
 **Ce que le dépôt ne portera jamais** — les images d'`uploads/` et les
 tables personnelles (comptes, avis, messages) — se sauvegarde à part :
 
