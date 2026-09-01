@@ -98,12 +98,55 @@
   Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 </IfModule>
 
-# ── Blocage des fichiers cachés (.env, .git, .htaccess…) ──
+# ── Blocage des fichiers cachés (.env, .htaccess…) ────────
 <FilesMatch "^\.">
   Require all denied
 </FilesMatch>
 # Bloquer aussi les sauvegardes de config
 <FilesMatch "\.(bak|prod\.bak)$">
+  Require all denied
+</FilesMatch>
+
+# ── Les DOSSIERS cachés — .git en premier ─────────────────
+# `<FilesMatch "^\.">` ci-dessus ne couvre que les NOMS DE FICHIERS.
+# Dans « /.git/config », le nom est « config » : la règle ne s'applique
+# pas, et Apache servait le fichier. Mesuré, pas supposé :
+#
+#   /.git/config      200
+#   /.git/HEAD        200
+#   /.git/logs/HEAD   200
+#
+# Or `.git` contient l'historique complet — donc tout le code, et tout ce
+# qui y a jamais figuré. Le trou ne s'ouvre qu'au moment où l'on déploie
+# par `git clone` dans la racine web, ce qui est justement la méthode
+# la plus commode.
+#
+# `.well-known` est EXEMPTÉ : Let's Encrypt y dépose sa preuve à chaque
+# renouvellement. Bloquer ce chemin ferait expirer le certificat au bout
+# de quatre-vingt-dix jours, sans que rien ne le signale d'ici là.
+#
+# POURQUOI mod_rewrite ET NON RedirectMatch. La première rédaction
+# utilisait `RedirectMatch`, de mod_alias. Résultat mesuré : erreur 500
+# sur TOUT le site, page d'accueil comprise — le module n'était pas
+# chargé, et Apache rejette le fichier entier plutôt que la seule ligne
+# fautive. mod_rewrite, lui, est déjà employé plus bas pour les URL par
+# langue : il est donc chargé, et la règle s'éprouve au lieu de se
+# supposer.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Les dossiers cachés, sauf .well-known.
+  RewriteRule "(^|/)\.(?!well-known/)" - [R=404,L]
+
+  # Ce qui sert au développement, pas aux visiteurs. Aucune page
+  # n'appelle ces chemins. Servis, ils donnent le contenu entier de la
+  # base en un fichier (`sql/contenu.sql`, 5 Mo), le schéma, les
+  # migrations, et une documentation qui décrit la configuration.
+  # `tests/` et `tools/` portent déjà leur propre .htaccess.
+  RewriteRule "^(sql|docs)/" - [R=404,L]
+</IfModule>
+
+<FilesMatch "^(package(-lock)?\.json|composer\.(json|lock)|playwright\.config\.js)$">
   Require all denied
 </FilesMatch>
 

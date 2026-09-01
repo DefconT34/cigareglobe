@@ -2566,6 +2566,59 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     }
 }
 
+// ── Ce que la racine web ne doit pas servir ─────────────
+// Ces regles ne s'eprouvent que sous Apache — `php -S` ignore le
+// .htaccess. Le controle lit donc le FICHIER, et verifie que les regles
+// qui ont ete mesurees a l'ecran y sont toujours.
+//
+// Ce qu'elles ferment, et pourquoi ca comptait : `<FilesMatch "^\.">`
+// ne filtre que les NOMS DE FICHIERS. Dans « /.git/config » le nom est
+// « config » — Apache servait donc l'historique complet du depot des
+// lors qu'on deployait par `git clone` dans la racine web, ce qui est
+// justement la methode la plus commode.
+{
+    /**
+     * Le contenu d'un fichier de configuration, SANS ses commentaires.
+     *
+     * Troisieme occurrence du meme piege dans ce projet : un controle
+     * qui cherche un marqueur dans tout un fichier finit par le trouver
+     * dans le commentaire qui explique pourquoi il ne doit pas y etre.
+     * Deja vu avec `includeSubDomains` (HSTS) et « A COMPLETER »
+     * (legal.php). Un fichier bien commente contient necessairement les
+     * mots de ce qu'il refuse.
+     */
+    $sans_commentaires = function (string $chemin): string {
+        $lignes = array_filter(
+            explode("\n", (string)@file_get_contents($chemin)),
+            fn($l) => !str_starts_with(ltrim($l), '#')
+        );
+        return implode("\n", $lignes);
+    };
+
+    $ht = $sans_commentaires(PROJECT_ROOT . '/.htaccess');
+
+    check('racine web : les dossiers caches sont fermes',
+          (bool)preg_match('/RewriteRule\s+"\(\^\|\/\)\\\\\.\(\?!well-known/', $ht));
+    check('racine web : .well-known reste ouvert au renouvellement TLS',
+          str_contains($ht, 'well-known'));
+    check('racine web : sql/ et docs/ sont fermes',
+          (bool)preg_match('/RewriteRule\s+"\^\(sql\|docs\)\//', $ht));
+
+    // mod_alias n'est pas charge partout : `RedirectMatch` faisait
+    // repondre 500 a TOUT le site, page d'accueil comprise — Apache
+    // rejette le fichier entier, pas la seule ligne fautive. La regle
+    // doit donc passer par mod_rewrite, deja employe pour les langues.
+    check('racine web : la regle passe par mod_rewrite, eprouvable',
+          !str_contains($ht, 'RedirectMatch'));
+
+    // Les deux dossiers qui portent leur propre .htaccess : sans eux,
+    // tools/cle.php et tests/run.php seraient servis en clair.
+    foreach (['tests', 'tools', 'uploads', 'uploads/lounges'] as $d) {
+        check("racine web : $d/.htaccess est present",
+              is_file(PROJECT_ROOT . '/' . $d . '/.htaccess'));
+    }
+}
+
 // ── L'en-tete qui engage un an ──────────────────────────
 {
     $ht = (string)file_get_contents(PROJECT_ROOT . '/.htaccess');
