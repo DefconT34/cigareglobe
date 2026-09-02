@@ -169,7 +169,35 @@ function current_user(PDO $db): ?array {
     );
     $stmt->execute([(int)$_SESSION['uid']]);
     $u = $stmt->fetch();
+    if ($u) marquer_visite($db, $u);
     return $u ?: null;
+}
+
+/**
+ * Rafraîchit `last_login_at`, au plus une fois par jour et par compte.
+ *
+ * POURQUOI PAS SEULEMENT À LA CONNEXION. Une session dure tant qu'on ne
+ * se déconnecte pas. Quelqu'un qui reste connecté trois mois n'aurait
+ * qu'une seule « dernière visite », celle du premier jour — et passerait
+ * pour inactif alors qu'il vient tous les matins. Le mot « actif »
+ * doit vouloir dire ce qu'il dit.
+ *
+ * UNE FOIS PAR JOUR, PAS À CHAQUE REQUÊTE. Écrire à chaque appel
+ * coûterait un UPDATE sur toute la navigation, pour une précision dont
+ * personne n'a l'usage : la colonne sert à répondre « actif cette
+ * semaine ? », pas « à quelle minute ».
+ *
+ * L'échec est ignoré : une visite non horodatée ne doit jamais empêcher
+ * quelqu'un d'utiliser le site.
+ */
+function marquer_visite(PDO $db, array $u): void {
+    $dernier = $u['last_login_at'] ?? null;
+    if ($dernier !== null && strtotime($dernier) > time() - 86400) return;
+
+    try {
+        $db->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')
+           ->execute([(int)$u['id']]);
+    } catch (Throwable $e) { /* horodater n'est pas critique */ }
 }
 
 /** Renvoie l'utilisateur ou coupe avec 401. */

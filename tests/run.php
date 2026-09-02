@@ -63,6 +63,15 @@ $r = post_json($base, $alice, '/backend/auth.php?action=register',
 eq('inscription : creation du compte', 201, $r['status']);
 eq('inscription : email non verifie au depart', false, $r['json']['user']['email_verified']);
 
+// « Derniere visite » doit valoir quelque chose des l'inscription : la
+// personne EST connectee. Sans cela, elle restait « jamais venue » tant
+// qu'elle ne se deconnectait pas pour se reconnecter — et le compte des
+// membres actifs ignorait justement les nouveaux venus, c'est-a-dire
+// les plus actifs. Constate a l'ecran sur un compte connecte.
+check('inscription : la derniere visite est horodatee',
+      test_pdo()->query("SELECT last_login_at FROM users WHERE email='alice@test.local'")
+                ->fetchColumn() !== null);
+
 // La reponse DIT si l'email est reellement parti. Sans ce drapeau,
 // l'interface annoncait « verifiez vos emails » meme quand l'envoi
 // avait echoue — une cle d'API invalide, et la personne cherchait dans
@@ -2549,6 +2558,29 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     } else {
         check('deploiement : autotest lancable', false);
     }
+}
+
+// ── La visite se rafraichit, mais pas a chaque requete ──
+// Une session dure tant qu'on ne se deconnecte pas : sans
+// rafraichissement, quelqu'un connecte depuis trois mois n'aurait
+// qu'une seule « derniere visite » et passerait pour inactif. Mais
+// ecrire a CHAQUE appel couterait un UPDATE sur toute la navigation.
+{
+    // Antidatee de deux jours : la prochaine requete doit la rafraichir.
+    test_pdo()->exec("UPDATE users SET last_login_at = NOW() - INTERVAL 2 DAY
+                       WHERE email = 'alice@test.local'");
+    http('GET', $base . '/backend/auth.php?action=me', ['jar' => $alice]);
+    $apres = test_pdo()->query("SELECT last_login_at FROM users WHERE email='alice@test.local'")->fetchColumn();
+    check('visite : une session ancienne est rafraichie',
+          strtotime((string)$apres) > time() - 300, (string)$apres);
+
+    // Fraiche : la requete suivante ne doit RIEN reecrire.
+    $fige = date('Y-m-d H:i:s', time() - 3600);
+    test_pdo()->prepare("UPDATE users SET last_login_at = ? WHERE email = 'alice@test.local'")
+              ->execute([$fige]);
+    http('GET', $base . '/backend/auth.php?action=me', ['jar' => $alice]);
+    eq('visite : une visite du jour n\'est pas reecrite', $fige,
+       test_pdo()->query("SELECT last_login_at FROM users WHERE email='alice@test.local'")->fetchColumn());
 }
 
 // ── Un envoi rate laisse-t-il une trace ? ───────────────

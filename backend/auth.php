@@ -103,6 +103,13 @@ function action_register(PDO $db): void {
     session_regenerate_id(true);
     $_SESSION['uid'] = $uid;
 
+    // `last_login_at` dès l'inscription : la personne EST connectée, et
+    // c'est bien sa dernière visite. Sans cette ligne, elle restait
+    // « jamais venue » tant qu'elle ne se déconnectait pas pour se
+    // reconnecter — et le compte « membres actifs » ignorait justement
+    // les nouveaux venus, c'est-à-dire les plus actifs.
+    $db->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')->execute([$uid]);
+
     $email_parti = send_verification_email($db, $uid, $email, $name);
 
     $u = current_user($db);
