@@ -2098,3 +2098,55 @@ modifié `lounges`, qui est une table **versionnée** (`sql/contenu.sql`). Seul
 `php tools/contenu_dump.php --verifier` l'a signalé — et une restauration faite
 de mémoire plutôt que lue dans le fichier a réintroduit un mauvais numéro de
 téléphone. Le fichier versionné fait foi ; on le relit, on ne s'en souvient pas.
+
+### Les sources citées existent-elles ? (découvert en faisant le point 2)
+
+En cherchant le site officiel de trois établissements d'Abidjan, deux des
+domaines cités dans leur colonne `source` se sont révélés ne pas exister :
+`golfabidjan.ci` ne résout pas, `bocachicaabidjan.com` rend 404.
+
+Le contrôle systématique des **156 domaines** cités par les 498 fiches sourcées :
+
+| | |
+|---|---|
+| domaines qui n'existent pas (DNS) | **29** |
+| fiches concernées | **76 sur 498** |
+| dont `lcdh-locator.com` | **48 fiches** à lui seul |
+
+Plusieurs ressemblent à des domaines écrits de mémoire : `hotelgrnadospark.com.py`
+(pour *granados*), `dubaicreak.com` (pour *creek*), `arturo-fuente.com` (le vrai
+est `arturofuente.com`), `sautterscigars.co.uk` (le vrai est `sautter.co.uk`).
+
+⚠ **Ce que cela ne dit pas.** Qu'un domaine n'existe pas ne prouve pas que
+l'établissement n'existe pas — une Casa del Habano est bien réelle, même citée
+depuis un domaine inventé. Ce qui est mesuré est la **traçabilité**, pas la
+véracité. Mais la doctrine du projet est « aucune note sans source », et une
+source qui n'existe pas est **pire** qu'une source absente : elle donne
+l'apparence de la vérification.
+
+**Deux erreurs factuelles trouvées au passage**, sur des fiches que je croyais
+les mieux documentées :
+
+- **#1189 « Le Radisson Blu — Sky Bar Cigares »** la place au *Plateau, avenue
+  Franchet d'Esperey*. Il n'y a qu'un Radisson Blu à Abidjan, et il est à
+  **l'aéroport (Port-Bouët)**. Le téléphone de la fiche ne correspond pas non
+  plus à celui de l'hôtel.
+- **#1191 « Sofitel Abidjan Hotel Ivoire — Fumoir »** : l'adresse est bonne,
+  mais la page officielle Accor déclare l'établissement **« 100% Non Smoking
+  Property »** et ne mentionne aucun fumoir. Le téléphone diffère d'un chiffre.
+
+### L'outil et le cliquet
+
+`tools/sources.php` — l'état, `--figer` (sceau versionné dans
+`sql/sources_domaines.json`), `--verifier`, `--autotest`.
+
+⚠ **Le contrôle se fait au DNS, pas en HTTP.** Mesuré : depuis la machine de
+développement, `ethiopianairlines.com`, `thebreakers.com` et `serenahotels.com`
+rendent tous `000` en HTTPS, y compris avec un en-tête de navigateur — ils sont
+pourtant bien réels. Un contrôle HTTP aurait accusé **46** domaines au lieu de
+29, et l'accusation aurait été fausse une fois sur trois.
+
+La campagne, elle, **n'interroge pas le réseau** : elle compare la base au sceau.
+Tout domaine cité doit y figurer — une source qui apparaît sans que personne ne
+l'ait regardée fait échouer la campagne. Le nombre de fiches non traçables est
+une **dette dont on interdit la croissance**, pas un objectif de qualité.

@@ -1,0 +1,629 @@
+{
+    "fige_le": "2026-09-02",
+    "domaines": {
+        "21club.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "abenoharukas.jp": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "aberdeenmarinaclub.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "abports.co.uk": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "adriaticluxuryhotels.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "alacivette.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "altadis.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "arturo-fuente.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "baab.ci": {
+            "dns": "resout",
+            "fiches": 4
+        },
+        "barcelona.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "bellemontfarm.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "beyondthemagazine.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "bocachicaabidjan.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "boodles.org": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "boquete.org": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "burningtree.org": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "caffeflorian.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "caletahotel.gi": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "casadecampo.com.do": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "casinomadrid.es": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "casinomontecarlo.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cgars.co.uk": {
+            "dns": "resout",
+            "fiches": 3
+        },
+        "cigarcitybrewing.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarclub.it": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "cigare-attitude.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "cigarjournal.com": {
+            "dns": "resout",
+            "fiches": 27
+        },
+        "cigarmuseum.do": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "cigaroa.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "cigars-connect.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarworld.com": {
+            "dns": "resout",
+            "fiches": 3
+        },
+        "cigarworld.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "circolodellunione.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "claridges.co.uk": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "clubmacanudo.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "cohiba-atmosphere.com": {
+            "dns": "resout",
+            "fiches": 5
+        },
+        "davidoff.com": {
+            "dns": "resout",
+            "fiches": 36
+        },
+        "drewestate.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "dubaicreak.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "elbulli.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "elfumadorexperto.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "enthusiastreport.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "espinashotel.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "ethiopianairlines.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "fairmont.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "finetobacconyc.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "flavoredtimes.com": {
+            "dns": "resout",
+            "fiches": 5
+        },
+        "foodconfidential.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "fourseasons.com": {
+            "dns": "resout",
+            "fiches": 3
+        },
+        "fullertonhotels.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "gc-eichenried.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "gcbc.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "georgetowntobacco.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "goafricaonline.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "golf-national.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "golfabidjan.ci": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "grand-vefour.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "grandhavana.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "grandlisboa.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "grandlisboapalace.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "habanos.com": {
+            "dns": "resout",
+            "fiches": 15
+        },
+        "hajenius.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hamburger-yc.de": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "havanaclubottawa.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "havanasocialdallas.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "hilton.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hkclub.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hotel-lutetia.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hotelgrnadospark.com.py": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "hotelnacionaldecuba.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hotelpalacebarcelona.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hyatt.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "iconiclife.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "ismeralda.it": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "itchotels.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "iwanries.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "jjfox.co.uk": {
+            "dns": "resout",
+            "fiches": 3
+        },
+        "jumeirah.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "kempinski.com": {
+            "dns": "resout",
+            "fiches": 3
+        },
+        "kgc.jp": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "la-reserve.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "labodeguita.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lacasadelhabano.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lacasadelhabano.kn": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lacasadelhabanoandorra.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lacaveducigare.fr": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "lcdh-locator.com": {
+            "dns": "inexistant",
+            "fiches": 48
+        },
+        "le-diplomate.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "leroyal.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "leroyalmonceau.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "levinsmanchestercigars.co.uk": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "lheritage105.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "ljperetti.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lombardiasecrets.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "londoncigarsmoker.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "maisondelatruffe.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "mamillahotel.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "mamounia.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "manchebo.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "marbella-cigars.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "marketcigars.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "marriott.com": {
+            "dns": "resout",
+            "fiches": 4
+        },
+        "masasquare.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "masters.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "merivale.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "metropole.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "mitchellscigar.co.uk": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "montecarlosbm.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "montecristo.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "natsherman.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "nyc.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "oetkercollection.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "olivosgolf.it": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "one15marina.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "oneandonlyresorts.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "pacificcigar.ca": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "padron.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "parisyachtmarina.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "pebblebeach.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "procigar.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "puertobanus.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "radissonblu.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "raffles.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "royalgolfmarrakech.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "royalmelbourne.com.au": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sacher.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sandylane.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sautterscigars.co.uk": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "seafireresortandspa.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sentosagolf.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "serenahotels.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sheraton.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sofitel-legend-metropole-hanoi.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sofitel.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "steenberghotel.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sushi-jiro.jp": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "taillevent.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "tajhotels.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "thearushahotel.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "thebreakers.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "thebristol.com.pa": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "thecigarodyssey.com": {
+            "dns": "resout",
+            "fiches": 60
+        },
+        "thefleming.com.hk": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "theritzlondon.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "thesavoylondon.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "thewheatbaker.com": {
+            "dns": "inexistant",
+            "fiches": 1
+        },
+        "timeout.com": {
+            "dns": "resout",
+            "fiches": 3
+        },
+        "tipplingclub.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "tokyoamericanclub.org": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "tokyuhotels.co.jp": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "tripadvisor.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "union-interalliee.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "wentworthclub.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "westin.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "ycm.org": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "yelp.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "zirahotel.com": {
+            "dns": "resout",
+            "fiches": 1
+        }
+    }
+}

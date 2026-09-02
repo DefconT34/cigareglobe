@@ -3012,6 +3012,94 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
 }
 
 // ════════════════════════════════════════════════════════
+section('Les sources citees');
+
+// CE QUI A OUVERT CE BLOC. En cherchant le site officiel de trois
+// etablissements d'Abidjan, deux des domaines cites dans leur colonne
+// `source` se sont reveles ne pas exister : golfabidjan.ci ne resout
+// pas, bocachicaabidjan.com rend 404. Le controle systematique a trouve
+// VINGT-NEUF domaines inexistants, cites par SOIXANTE-SEIZE fiches sur
+// 498 — dont quarante-huit pour le seul lcdh-locator.com.
+//
+// La doctrine du projet est « aucune note sans source ». Une source qui
+// n'existe pas est PIRE qu'une source absente : elle donne l'apparence
+// de la verification.
+//
+// CE BLOC N'INTERROGE PAS LE RESEAU. Un test qui resout des noms de
+// domaine echoue le jour ou le reseau tousse, et n'aurait alors rien
+// mesure du code. Le DNS est interroge par l'outil, au moment ou l'on
+// FIGE ; la campagne, elle, compare la base au sceau versionne.
+define('SOURCES_INCLUDE', true);
+require_once PROJECT_ROOT . '/tools/sources.php';
+{
+    $sceauFichier = PROJECT_ROOT . '/sql/sources_domaines.json';
+    check('sources : le sceau est versionne', is_file($sceauFichier));
+    $sceau = json_decode((string)@file_get_contents($sceauFichier), true);
+    check('sources : et lisible', is_array($sceau) && isset($sceau['domaines']));
+
+    if (is_array($sceau) && isset($sceau['domaines'])) {
+        // ── L'extraction ────────────────────────────────
+        // Le champ `source` est du TEXTE LIBRE. « PDF officiel Habanos
+        // S.A. » ressemble a un domaine et n'en est pas : c'est le faux
+        // positif qui aurait sali l'inventaire de 107 fiches.
+        eq('sources : un domaine est reconnu', ['cigarjournal.com'],
+           sources_domaines_du_champ('cigarjournal.com Golden Band Awards 2021'));
+        eq('sources : deux domaines aussi', ['baab.ci', 'bocachicaabidjan.com'],
+           sources_domaines_du_champ('baab.ci, bocachicaabidjan.com'));
+        eq('sources : « Habanos S.A. » n\'est pas un domaine', [],
+           sources_domaines_du_champ('PDF officiel Habanos S.A.'));
+        eq('sources : une source non electronique non plus', [],
+           sources_domaines_du_champ('fourni par l\'etablissement'));
+        eq('sources : la casse ne fait pas deux domaines', ['davidoff.com'],
+           sources_domaines_du_champ('Davidoff.com et DAVIDOFF.COM'));
+
+        // ── La comparaison au sceau ─────────────────────
+        // CONTRE-EPREUVE : un controle qui vient d'etre fige rend
+        // toujours « rien a signaler », et c'est le moment ou il
+        // ressemble le plus a un controle qui ne controle rien.
+        $sceauFactice = ['domaines' => [
+            'connu-vivant.test' => ['dns' => 'resout',     'fiches' => 2],
+            'connu-mort.test'   => ['dns' => 'inexistant', 'fiches' => 1],
+            'plus-cite.test'    => ['dns' => 'resout',     'fiches' => 1],
+        ]];
+        $invFactice = [
+            'connu-vivant.test' => [10, 11],
+            'connu-mort.test'   => [12],
+            'apparu.test'       => [13],
+        ];
+        $e = sources_ecarts($invFactice, $sceauFactice);
+        eq('sources : un domaine apparu hors sceau est repere', ['apparu.test'], $e['nouveaux']);
+        eq('sources : un domaine qui n\'est plus cite est vu', ['plus-cite.test'], $e['plus_cites']);
+        eq('sources : seule la fiche citant un domaine mort est comptee', [12],
+           sources_fiches_sans_source($invFactice, $sceauFactice));
+
+        // ── LE CLIQUET ──────────────────────────────────
+        // Il ne peut que descendre. Ajouter une fiche qui cite un
+        // domaine deja connu comme inexistant fera echouer la campagne —
+        // c'est le but. Le nombre n'est pas un objectif de qualite, c'est
+        // une dette dont on interdit la croissance.
+        $morts = array_keys(array_filter($sceau['domaines'],
+                            fn($x) => ($x['dns'] ?? '') === 'inexistant'));
+        check('sources : le sceau connait des domaines inexistants',
+              count($morts) > 0, count($morts) . ' domaine(s)');
+
+        $inv = sources_inventaire(test_pdo());
+        $sans = sources_fiches_sans_source($inv, $sceau);
+        // Le decor de test ne porte qu'un etablissement, sans source :
+        // le cliquet se mesure donc sur la base de DEVELOPPEMENT, seule a
+        // porter le corpus. On verifie ici la propriete qui compte et qui
+        // vaut partout : aucune fiche NOUVELLE ne cite un domaine mort.
+        eq('sources : le decor de test ne cite aucun domaine mort', [], $sans);
+
+        // Tout domaine cite doit etre au sceau : une source qui apparait
+        // sans que personne ne l'ait regardee est exactement ce qu'on
+        // veut attraper.
+        $hors = array_values(array_diff(array_keys($inv), array_keys($sceau['domaines'])));
+        eq('sources : aucun domaine cite n\'echappe au sceau', [], $hors);
+    }
+}
+
+// ════════════════════════════════════════════════════════
 section('La completude des fiches');
 
 // CE QUE CE BLOC SURVEILLE. Cinq cents etablissements, et sur les cinq
