@@ -155,7 +155,8 @@ function page_pays(PDO $db, string $id, string $lang): ?array {
 
 function page_cave(PDO $db, int $id, string $lang): ?array {
     $q = $db->prepare("SELECT l.id, l.name, l.city, l.type, l.phone, l.price, l.hours,
-                              l.maps_url, l.website, l.rating, l.rating_count, l.source,
+                              l.maps_url, l.website, l.instagram, l.lat, l.lon,
+                              l.rating, l.rating_count, l.source,
                               " . page_col('description', $lang) . " AS description,
                               l.country_id, COALESCE(pc.name, lc.name) AS pays_nom,
                               COALESCE(pc.flag, lc.flag) AS pays_drapeau

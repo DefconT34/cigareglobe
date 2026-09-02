@@ -2028,3 +2028,73 @@ European Café » pour Café Crème.
 
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → **B1** → F3/F4/F6 → D6/C1b (optionnels)
+
+## Approfondir les fiches plutôt que d'en ajouter (point 2)
+
+**L'état mesuré au 2 septembre 2026**, sur 500 établissements :
+
+| | |
+|---|---|
+| horaires | **0 / 500** |
+| coordonnées | **0 / 500** |
+| site web | **0 / 500** |
+| photo réelle | **1 / 442** |
+| description ≥ 200 car. | 43 / 500 (médiane : 95 caractères) |
+| téléphone | 465 / 500 |
+| **complétude moyenne** | **6 %** — 0 fiche complète |
+
+### On a d'abord cherché à extraire, pas à saisir
+
+Avant d'écrire une ligne : les **419 `maps_url` sont des liens de recherche**
+Google fabriqués depuis le nom et la ville — aucune coordonnée dedans, et
+aucune garantie que le lieu existe sur Maps. Les descriptions ne portaient que
+**5 comptes Instagram** et **4 horaires**.
+
+Il n'y avait rien à extraire. La saisie est humaine, et le code ne peut que la
+rendre rapide et mesurable.
+
+### Ce qui a été livré
+
+1. **Un barème, en un seul endroit** (`backend/completude_lib.php`). Les poids
+   suivent les questions qu'un visiteur se pose, dans l'ordre : horaires 25,
+   coordonnées 20, description 20, photo 15, site 15, téléphone 5. Le téléphone
+   pèse peu parce qu'il est déjà là sur 465 fiches — lui donner du poids aurait
+   gonflé le score sans rien apprendre.
+2. **`tools/completude.php`** — l'état général, le détail par pays
+   (`--pays=france`), le plan de travail, et `--autotest`.
+3. **L'onglet Adresses** dans l'administration. Il n'existait *aucun* moyen de
+   remplir un horaire : la donnée manquait faute d'endroit où la mettre.
+
+### Deux décisions à connaître
+
+**L'ordre de travail est par nombre d'adresses, pas par score.** Une page de
+pays qui porte 24 fiches complètes vaut mieux que 24 pays qui en portent une.
+On finit un pays avant de passer au suivant, et le plan ne coupe jamais un pays
+en deux.
+
+⚠ **L'écran ne touche pas aux descriptions.** `lounges.description` porte
+**2 500 traductions scellées** (`translation_status`) : les modifier depuis
+l'administration les périmerait toutes en silence. L'écran ne saisit que ce qui
+n'a pas de langue — horaires, site, Instagram, coordonnées, téléphone, soit
+**65 des 100 points**, et ceux qui sont à zéro. Les descriptions passent par la
+chaîne de traduction, qui sait resceller.
+
+### Le rendu attendait déjà les données
+
+L'application affiche horaires, site, Instagram, distance et itinéraire depuis
+longtemps (`app.js`) ; `page.php` les affiche désormais aussi, et déclare la
+position en `GeoCoordinates` **uniquement quand elle existe** — un `geo` à zéro
+placerait l'établissement dans le golfe de Guinée, et Google le croirait.
+
+### Ce que ce chantier ne fait pas
+
+Il ne remplit aucune fiche. Il dit ce qui manque, où, dans quel ordre, et donne
+l'écran pour le saisir. Les 50 premières fiches sont un travail de bureau — une
+heure pour une dizaine d'adresses, en croisant le site de l'établissement et sa
+page Maps.
+
+⚠ **Un piège rencontré pendant le développement** : les essais de saisie ont
+modifié `lounges`, qui est une table **versionnée** (`sql/contenu.sql`). Seul
+`php tools/contenu_dump.php --verifier` l'a signalé — et une restauration faite
+de mémoire plutôt que lue dans le fichier a réintroduit un mauvais numéro de
+téléphone. Le fichier versionné fait foi ; on le relit, on ne s'en souvient pas.

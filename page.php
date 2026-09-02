@@ -277,9 +277,27 @@ if ($db === null) {
         if (trim((string)$c['description']) !== '') {
             $corps .= '<section class="pg-bloc"><p class="pg-chapo">' . nl2br(e($c['description'])) . '</p></section>';
         }
-        if ($c['maps_url']) {
-            $corps .= '<p class="pg-lien-ext"><a href="' . e($c['maps_url']) . '" rel="nofollow noopener" target="_blank">Google Maps ↗</a></p>';
+        // Les liens sortants. Le lien de carte est construit depuis les
+        // COORDONNÉES quand elles existent : `maps_url` n'est qu'une
+        // RECHERCHE Google fabriquée depuis le nom et la ville, qui peut
+        // tomber à côté — une position, elle, désigne le lieu.
+        $liens = [];
+        if (trim((string)$c['website']) !== '') {
+            $liens[] = '<a href="' . e($c['website']) . '" rel="nofollow noopener" target="_blank">'
+                     . e(preg_replace('#^https?://(www\.)?#i', '', $c['website'])) . ' ↗</a>';
         }
+        if (trim((string)$c['instagram']) !== '') {
+            $liens[] = '<a href="https://instagram.com/' . e(ltrim((string)$c['instagram'], '@'))
+                     . '" rel="nofollow noopener" target="_blank">@' . e(ltrim((string)$c['instagram'], '@')) . ' ↗</a>';
+        }
+        if ($c['lat'] !== null && $c['lon'] !== null) {
+            $liens[] = '<a href="https://www.google.com/maps/search/?api=1&query='
+                     . e($c['lat'] . ',' . $c['lon'])
+                     . '" rel="nofollow noopener" target="_blank">Google Maps ↗</a>';
+        } elseif ($c['maps_url']) {
+            $liens[] = '<a href="' . e($c['maps_url']) . '" rel="nofollow noopener" target="_blank">Google Maps ↗</a>';
+        }
+        if ($liens) $corps .= '<p class="pg-lien-ext">' . implode(' · ', $liens) . '</p>';
         $corps .= '<p class="pg-retour"><a href="' . e(page_url('pays', $c['country_id'], $lang)) . '">'
                 . e($c['pays_drapeau'] . ' ' . L('lounge_section_of') . ' ' . $c['pays_nom']) . ' →</a></p>';
 
@@ -291,6 +309,14 @@ if ($db === null) {
             'telephone' => $c['phone'] ?: null,
             'address' => array_filter(['@type' => 'PostalAddress',
                 'addressLocality' => $c['city'] ?: null, 'addressCountry' => $c['pays_nom']]),
+            // La position n'est declaree QUE si elle existe : un geo a
+            // zero placerait l'etablissement dans le golfe de Guinee, et
+            // Google le croirait.
+            'geo' => ($c['lat'] !== null && $c['lon'] !== null)
+                ? ['@type' => 'GeoCoordinates', 'latitude' => (float)$c['lat'], 'longitude' => (float)$c['lon']]
+                : null,
+            'openingHours' => $c['hours'] ?: null,
+            'sameAs' => trim((string)$c['website']) !== '' ? [$c['website']] : null,
             'url' => page_url('cave', $slug, $lang),
         ]);
     }

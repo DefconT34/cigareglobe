@@ -119,6 +119,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
              . " n'est pas ouvert à la modération.");
     }
 
+    // ── Compléter une adresse ────────────────────────────
+    // CE QUE CET ÉCRAN NE TOUCHE PAS : la description. Elle porte 2 500
+    // traductions scellées (translation_status), et la modifier ici les
+    // rendrait toutes périmées en silence. Les descriptions passent par
+    // la chaîne de traduction, qui sait resceller. Ici, uniquement ce
+    // qui n'a pas de langue — horaires, site, Instagram, coordonnées,
+    // téléphone : 65 des 100 points du barème, et ceux qui sont à zéro.
+    if ($action === 'adresse_save') {
+        require_once __DIR__ . '/completude_lib.php';
+        $champs = [];
+        foreach (['hours', 'website', 'instagram', 'phone'] as $c) {
+            $champs[$c] = trim((string)($_POST[$c] ?? '')) ?: null;
+        }
+        // Un site sans schéma est un lien mort : « exemple.com » dans un
+        // href mène à /admin/exemple.com. On complète plutôt que de
+        // refuser — la personne a tapé ce qu'elle voulait dire.
+        if ($champs['website'] !== null && !preg_match('#^https?://#i', $champs['website'])) {
+            $champs['website'] = 'https://' . ltrim($champs['website'], '/');
+        }
+        if ($champs['website'] !== null && !filter_var($champs['website'], FILTER_VALIDATE_URL)) {
+            $champs['website'] = null;
+        }
+        // L'arobase est du décor : on stocke le compte, le front fabrique
+        // l'adresse. Le garder produisait instagram.com/@nom, qui est 404.
+        if ($champs['instagram'] !== null) {
+            $champs['instagram'] = ltrim($champs['instagram'], '@');
+            if (!preg_match('/^[A-Za-z0-9._]{1,30}$/', $champs['instagram'])) $champs['instagram'] = null;
+        }
+
+        $lat = trim((string)($_POST['lat'] ?? ''));
+        $lon = trim((string)($_POST['lon'] ?? ''));
+        // Les deux, ou aucune. Et jamais (0,0) : voir completude_lib.
+        $coordsOk = completude_coord_valide($lat, $lon);
+        $champs['lat'] = $coordsOk ? (float)$lat : null;
+        $champs['lon'] = $coordsOk ? (float)$lon : null;
+
+        $sql = 'UPDATE lounges SET ' . implode(', ', array_map(fn($c) => "`$c` = ?", array_keys($champs)))
+             . ', updated_at = NOW() WHERE id = ?';
+        $db->prepare($sql)->execute([...array_values($champs), $id]);
+
+        $rempli = array_keys(array_filter($champs, fn($v) => $v !== null && $v !== ''));
+        journaliser($db, 'adresse_completee', 'lounge', $id, implode(',', $rempli));
+        $refus = ($lat !== '' || $lon !== '') && !$coordsOk;
+        $msg = $refus
+            ? ['type' => 'warn', 'text' => 'Adresse enregistrée, mais les coordonnées ont été écartées : '
+                . 'il faut les deux, dans les bornes, et (0,0) n’est pas une position.']
+            : ['type' => 'ok', 'text' => 'Adresse #' . $id . ' enregistrée.'];
+    }
+
     if ($action === 'langues_save') {
         // Pas de $id : le réglage porte sur le site, pas sur une ligne.
         // Les cases décochées n'arrivent pas dans $_POST — c'est bien la
@@ -329,6 +378,25 @@ $sugg_neuves = 0;
 try {
     $sugg_neuves = (int)$db->query("SELECT COUNT(*) FROM suggestions WHERE traite = 0")->fetchColumn();
 } catch (Throwable $e) {}
+// ── Adresses : ce qui manque, et par où commencer ────────
+// Le tri par NOMBRE d'adresses n'est pas un détail d'affichage : une
+// page de pays qui porte vingt-quatre fiches complètes vaut mieux que
+// vingt-quatre pays qui en portent une. On finit un pays avant le
+// suivant. Voir backend/completude_lib.php pour le barème.
+$adr_rows = []; $adr_pays = []; $adr_global = null; $adr_sel = null;
+if ($tab === 'adresses') {
+    require_once __DIR__ . '/completude_lib.php';
+    try {
+        $adr_global = completude_globale($db);
+        $adr_pays   = completude_par_pays($db);
+        $adr_sel    = trim((string)($_GET['pays'] ?? ''));
+        if ($adr_sel === '' || !isset($adr_pays[$adr_sel])) {
+            $adr_sel = $adr_pays ? array_key_first($adr_pays) : null;
+        }
+        if ($adr_sel !== null) $adr_rows = completude_fiches($db, $adr_sel);
+    } catch (Throwable $e) { $adr_rows = []; }
+}
+
 if ($tab === 'suggestions') {
     try {
         $sugg_rows = $db->query(
@@ -786,6 +854,35 @@ html{transition:background .25s,color .25s}
   background:var(--bg3);color:var(--text2);font-size:9px;padding:2px 6px;border-radius:3px;
   white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;letter-spacing:.05em}
 .theme-btn:hover::after{opacity:1}
+
+/* ── Adresses : l'ecran de saisie ──
+   Une ligne = un formulaire. On remplit, on enregistre, on passe a la
+   suivante — c'est le geste qu'on repete cinquante fois, et tout le
+   reste de cet ecran lui est subordonne. */
+.adr-jauge{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:5px}
+.adr-jauge i{display:block;height:100%;background:var(--gold)}
+.adr-champs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:6px}
+.adr-pays{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.adr-pays a{padding:5px 11px;border:1px solid var(--border);border-radius:14px;font-size:11px;
+  color:var(--text2);text-decoration:none;white-space:nowrap}
+.adr-pays a:hover{border-color:var(--gold);color:var(--gold)}
+.adr-pays a.on{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.adr-pays a b{font-weight:400;opacity:.6;margin-left:5px}
+.adr-ligne{border-bottom:1px solid var(--border);padding:13px 0}
+.adr-tete{display:flex;align-items:baseline;gap:10px;margin-bottom:9px}
+.adr-tete .adr-nom{font-weight:600;color:var(--text);flex:1}
+.adr-note{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);white-space:nowrap}
+.adr-manque{font-size:10.5px;color:var(--text2)}
+.adr-ligne input{width:100%;box-sizing:border-box;padding:7px 9px;font-size:12px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);outline:none}
+.adr-ligne input:focus{border-color:var(--gold)}
+.adr-ligne label{font-size:9px;letter-spacing:.1em;margin-bottom:3px}
+.adr-ligne button{width:auto;padding:7px 16px;font-size:11px}
+.adr-bilan{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.adr-bilan div{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 12px}
+.adr-bilan b{display:block;font-family:'Cinzel',serif;font-size:17px;color:var(--gold)}
+.adr-bilan span{font-size:10.5px;color:var(--text2)}
+@media(max-width:900px){.adr-champs{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -896,6 +993,15 @@ html{transition:background .25s,color .25s}
 
   <div class="divider"></div>
   <div class="nav-section">Contenu</div>
+
+  <a class="nav-item <?= $tab==='adresses' ? 'active' : '' ?>"
+     href="?tab=adresses">
+    <span class="ni-icon">◉</span>
+    <span class="ni-label">Adresses</span>
+    <?php if (($adr_global['moyenne'] ?? null) !== null): ?>
+    <span class="nav-badge nb-dim"><?= (int)$adr_global['moyenne'] ?>%</span>
+    <?php endif; ?>
+  </a>
 
   <a class="nav-item <?= $tab==='photos' ? 'active' : '' ?>"
      href="?tab=photos">
@@ -1206,6 +1312,88 @@ html{transition:background .25s,color .25s}
 
 </div>
 <!-- ── PHOTOS ───────────────────────────────────────── -->
+<!-- ── ADRESSES ─────────────────────────────────────── -->
+<?php elseif ($tab === 'adresses'): ?>
+<div class="page-header">
+  <div>
+    <div class="page-title">Adresses</div>
+    <div class="page-subtitle">
+      Ce qui manque aux fiches, et par où commencer. Les descriptions ne sont
+      <strong>pas</strong> modifiables ici : elles portent 2 500 traductions scellées,
+      et les changer d’ici les périmerait en silence.
+    </div>
+  </div>
+</div>
+
+<?php if (!$adr_global || !$adr_global['n']): ?>
+<div class="empty-state">
+  <div class="empty-icon">◉</div>
+  <div class="empty-text">Aucune adresse en base</div>
+</div>
+<?php else: ?>
+
+<div class="adr-bilan">
+  <div><b><?= (int)$adr_global['moyenne'] ?>%</b><span>complétude moyenne · <?= (int)$adr_global['n'] ?> adresses</span></div>
+  <div><b><?= (int)$adr_global['completes'] ?></b><span>fiches complètes</span></div>
+  <?php foreach (COMPLETUDE_BAREME as $ch => $poids):
+        $n = $adr_global['champs'][$ch] ?? 0; ?>
+  <div>
+    <b><?= (int)round($n * 100 / max(1, $adr_global['n'])) ?>%</b>
+    <span><?= htmlspecialchars(COMPLETUDE_NOMS[$ch]) ?> · pèse <?= $poids ?></span>
+    <div class="adr-jauge"><i style="width:<?= (int)round($n * 100 / max(1, $adr_global['n'])) ?>%"></i></div>
+  </div>
+  <?php endforeach; ?>
+</div>
+
+<!-- Par NOMBRE d'adresses decroissant : on finit un pays avant le
+     suivant. Une page de pays qui porte vingt-quatre fiches completes
+     vaut mieux que vingt-quatre pays qui en portent une. -->
+<div class="adr-pays">
+  <?php foreach ($adr_pays as $p): ?>
+  <a href="?tab=adresses&amp;pays=<?= urlencode($p['pays']) ?>"
+     class="<?= $p['pays'] === $adr_sel ? 'on' : '' ?>">
+    <?= htmlspecialchars($p['pays']) ?><b><?= (int)$p['n'] ?> · <?= (int)$p['moyenne'] ?>%</b>
+  </a>
+  <?php endforeach; ?>
+</div>
+
+<?php foreach ($adr_rows as $f): ?>
+<form method="post" class="adr-ligne">
+  <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
+  <input type="hidden" name="action" value="adresse_save">
+  <input type="hidden" name="id" value="<?= (int)$f['id'] ?>">
+  <div class="adr-tete">
+    <span class="adr-nom"><?= htmlspecialchars($f['name']) ?></span>
+    <span class="ct-city"><?= htmlspecialchars((string)$f['city']) ?></span>
+    <span class="adr-note"><?= (int)$f['score'] ?>%</span>
+  </div>
+  <?php if ($f['manque']): ?>
+  <div class="adr-manque">à compléter :
+    <?= htmlspecialchars(implode(', ', array_map(fn($c) => COMPLETUDE_NOMS[$c], $f['manque']))) ?></div>
+  <?php endif; ?>
+  <div class="adr-champs" style="margin-top:8px">
+    <div><label>Horaires</label>
+      <input name="hours" value="<?= htmlspecialchars((string)$f['hours']) ?>" placeholder="10h–22h, fermé dim."></div>
+    <div><label>Site web</label>
+      <input name="website" value="<?= htmlspecialchars((string)$f['website']) ?>" placeholder="exemple.com"></div>
+    <div><label>Instagram</label>
+      <input name="instagram" value="<?= htmlspecialchars((string)$f['instagram']) ?>" placeholder="sans @"></div>
+    <div><label>Téléphone</label>
+      <input name="phone" value="<?= htmlspecialchars((string)$f['phone']) ?>"></div>
+    <div><label>Latitude</label>
+      <input name="lat" value="<?= htmlspecialchars((string)$f['lat']) ?>" placeholder="5.3200"></div>
+    <div><label>Longitude</label>
+      <input name="lon" value="<?= htmlspecialchars((string)$f['lon']) ?>" placeholder="-4.0200"></div>
+  </div>
+  <button type="submit">Enregistrer</button>
+  <span class="adr-manque" style="margin-left:10px">
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=<?= urlencode($f['name'] . ', ' . $f['city']) ?>"
+       target="_blank" rel="noopener noreferrer" style="color:var(--text2)">chercher sur Maps ↗</a>
+  </span>
+</form>
+<?php endforeach; ?>
+<?php endif; ?>
+
 <?php elseif ($tab === 'photos'): ?>
 <div class="photos-layout">
 

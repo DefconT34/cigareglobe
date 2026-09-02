@@ -3012,6 +3012,145 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
 }
 
 // ════════════════════════════════════════════════════════
+section('La completude des fiches');
+
+// CE QUE CE BLOC SURVEILLE. Cinq cents etablissements, et sur les cinq
+// cents : zero horaire, zero site web, zero coordonnee, une seule photo
+// reelle sur 442, et 95 caracteres de description en mediane. Le point
+// n'est pas d'en ajouter cinq cents autres — c'est d'approfondir ceux
+// qu'on a. Encore faut-il MESURER, sans quoi « approfondir » n'a pas de
+// fin et le progres ne se voit pas.
+//
+// On a d'abord cherche a extraire ce qui manquait : les 419 `maps_url`
+// sont des liens de RECHERCHE fabriques depuis le nom et la ville, sans
+// coordonnee dedans, et les descriptions ne portaient que cinq comptes
+// Instagram. Il n'y avait rien a deviner. Le bareme mesure donc une
+// absence reelle, et la saisie est humaine.
+require_once PROJECT_ROOT . '/backend/completude_lib.php';
+{
+    // ── Le bareme ───────────────────────────────────────
+    // Il vit dans UN fichier, lu par le tableau de bord, par l'outil en
+    // ligne de commande et par ce bloc. Trois baremes auraient fini par
+    // diverger, et « 62 % » n'aurait plus voulu dire la meme chose selon
+    // l'ecran qui l'affiche.
+    eq('completude : le bareme totalise cent', 100, array_sum(COMPLETUDE_BAREME));
+    eq('completude : chaque critere a son libelle', [],
+       array_values(array_diff(array_keys(COMPLETUDE_BAREME), array_keys(COMPLETUDE_NOMS))));
+
+    eq('completude : une fiche vide vaut zero', 0, completude_fiche([])['score']);
+    eq('completude : une fiche pleine vaut cent', 100, completude_fiche([
+        'hours' => '10h-22h', 'website' => 'https://x.test', 'phone' => '+225 00',
+        'lat' => '5.32', 'lon' => '-4.02',
+        'description' => str_repeat('a', COMPLETUDE_DESC_MIN), 'photos_reelles' => 1,
+    ])['score']);
+
+    // UNE LATITUDE SEULE NE PLACE RIEN sur une carte. Compter une
+    // demi-position pour un demi-point ferait passer pour a moitie faite
+    // une fiche inutilisable.
+    eq('completude : une latitude seule ne compte pas', 0,
+       completude_fiche(['lat' => '5.32'])['score']);
+
+    // Le seul SEUIL du bareme, donc le seul endroit ou une inegalite mal
+    // ecrite passerait inapercue.
+    eq('completude : description un caractere trop courte', 0,
+       completude_fiche(['description' => str_repeat('a', COMPLETUDE_DESC_MIN - 1)])['score']);
+    eq('completude : description tout juste suffisante', 20,
+       completude_fiche(['description' => str_repeat('a', COMPLETUDE_DESC_MIN)])['score']);
+
+    // Des espaces ne sont pas du contenu.
+    eq('completude : des espaces ne remplissent rien', 0,
+       completude_fiche(['hours' => '   ', 'website' => "\t", 'phone' => ' '])['score']);
+
+    // ── Les coordonnees ─────────────────────────────────
+    // Le zero exact est le piege : c'est ce que rend un champ vide mal
+    // converti, et (0,0) tombe dans le golfe de Guinee. Une fiche s'y
+    // retrouverait SITUEE alors qu'elle ne l'est pas — pire qu'une fiche
+    // sans coordonnees, qui se voit.
+    $coords = [
+        ['5.3200', '-4.0200', true,  'Abidjan'],
+        ['-90',    '0',       true,  'pole sud'],
+        ['0',      '0',       false, 'zero exact'],
+        ['0.00001','0.00002', false, 'zero approche'],
+        ['91',     '10',      false, 'latitude hors bornes'],
+        ['10',     '181',     false, 'longitude hors bornes'],
+        ['',       '',        false, 'vides'],
+        ['nord',   'ouest',   false, 'texte'],
+        [null,     null,      false, 'nulles'],
+    ];
+    $ratés = [];
+    foreach ($coords as [$la, $lo, $att, $nom]) {
+        if (completude_coord_valide($la, $lo) !== $att) $ratés[] = $nom;
+    }
+    eq('completude : les coordonnees acceptent et refusent ce qu\'il faut', [], $ratés);
+
+    // ── L'ecran de saisie ───────────────────────────────
+    // Il n'existait AUCUN moyen de remplir un horaire : ni ecran, ni
+    // action. La donnee manquait faute d'endroit ou la mettre.
+    $adminSrc = file_get_contents(PROJECT_ROOT . '/backend/admin.php');
+    check('saisie : l\'onglet Adresses existe', str_contains($adminSrc, "\$tab === 'adresses'"));
+    check('saisie : et son action d\'enregistrement',
+          str_contains($adminSrc, "\$action === 'adresse_save'"));
+    check('saisie : le formulaire porte un jeton CSRF valide',
+          str_contains($adminSrc, 'value="adresse_save"')
+          && !preg_match('/name="csrf" value="<\?= htmlspecialchars\(\$csrf\)/', $adminSrc));
+    check('saisie : chaque modification est journalisee',
+          str_contains($adminSrc, "journaliser(\$db, 'adresse_completee'"));
+
+    // CE QUE L'ECRAN NE DOIT PAS TOUCHER. `lounges.description` porte
+    // 2 500 traductions scellees : la modifier depuis l'administration
+    // les perimerait toutes en silence, sans que rien ne le dise. Les
+    // descriptions passent par la chaine de traduction, qui sait
+    // resceller.
+    check('saisie : elle ne touche pas aux descriptions traduites',
+          !preg_match("/'adresse_save'.*?description/s",
+                      substr($adminSrc, (int)strpos($adminSrc, "'adresse_save'"), 2200)));
+
+    // ── L'outil ─────────────────────────────────────────
+    check('completude : l\'outil existe', is_file(PROJECT_ROOT . '/tools/completude.php'));
+    $out = [];
+    exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(PROJECT_ROOT . '/tools/completude.php')
+         . ' --autotest 2>&1', $out, $code);
+    eq('completude : les cas construits de l\'outil passent', 0, $code, implode("\n", array_slice($out, -3)));
+
+    // ── Le plan de travail ──────────────────────────────
+    // Il classe par NOMBRE d'adresses, et non par score : une page de
+    // pays qui porte vingt-quatre fiches completes vaut mieux que
+    // vingt-quatre pays qui en portent une. Le decor de test n'a qu'un
+    // pays, on verifie donc la propriete sur la fonction de tri.
+    $parPays = completude_par_pays(test_pdo());
+    check('completude : l\'etat par pays est calcule', count($parPays) > 0);
+    $ns = array_column($parPays, 'n');
+    $trie = $ns; rsort($trie);
+    eq('completude : les pays sont classes par nombre d\'adresses', $trie, $ns);
+
+    // Le plan ne coupe pas un pays en deux : faire dix-huit fiches sur
+    // vingt-quatre laisse une page a moitie faite, ce qu'on cherche
+    // justement a eviter.
+    $plan = completude_plan(test_pdo(), 1);
+    check('completude : le plan prend un pays entier, pas une part',
+          $plan['adresses'] === 0 || $plan['adresses'] >= (int)($plan['pays'][0]['n'] ?? 0));
+
+    // ── La restitution ──────────────────────────────────
+    // L'application SAIT DEJA afficher horaires, site, Instagram et
+    // distance ; c'est la donnee qui manque, pas le code. On le verifie,
+    // sinon on remplirait des colonnes que rien ne montre.
+    $appSrc = file_get_contents(PROJECT_ROOT . '/assets/js/app.js');
+    $sansRendu = [];
+    foreach (['hours', 'website', 'instagram'] as $c) {
+        if (!str_contains($appSrc, 'l.' . $c)) $sansRendu[] = $c;
+    }
+    eq('restitution : l\'application affiche deja ces champs', [], $sansRendu);
+    $pageSrc = file_get_contents(PROJECT_ROOT . '/page.php');
+    check('restitution : la page servie aussi',
+          str_contains($pageSrc, "\$c['website']") && str_contains($pageSrc, "\$c['instagram']"));
+    // Une position declaree a Google doit exister : un geo a zero
+    // placerait l'etablissement dans le golfe de Guinee, et il le
+    // croirait.
+    check('restitution : la position n\'est declaree que si elle existe',
+          str_contains($pageSrc, "'geo' => (\$c['lat'] !== null && \$c['lon'] !== null)"));
+}
+
+// ════════════════════════════════════════════════════════
 section('La politique de cache');
 
 // CE QUE CE BLOC SURVEILLE. `mod_expires`, dans le .htaccess, pose sa
