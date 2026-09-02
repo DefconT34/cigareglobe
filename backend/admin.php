@@ -262,6 +262,34 @@ if ($tab === 'langues') {
     } catch (Throwable $e) {}
 }
 
+// ── La vie du site ───────────────────────────────────────
+// Combien de monde, et depuis quand. Tout se lit dans des colonnes qui
+// existent déjà — `users.created_at`, `email_verified`, `last_login_at`.
+// AUCUNE ÉCRITURE NOUVELLE, aucun suivi de présence : compter les
+// visiteurs « en ligne » supposerait d'écrire en base à chaque requête,
+// ce qui coûte cher pour un chiffre qu'on regarde une fois par semaine.
+// Les actifs sur sept jours en disent davantage, et ne coûtent rien.
+//
+// `verifies_en_attente` n'est pas décoratif : un compte qui reste non
+// vérifié plus de 24 h est le symptôme d'un email de confirmation qui
+// n'arrive pas — la panne exacte qui a laissé un membre inerte sans que
+// rien ne le signale.
+$vie = ['membres' => 0, 'verifies' => 0, 'attente' => 0, 'semaine' => 0,
+        'actifs_7j' => 0, 'avis' => 0, 'messages' => 0];
+try {
+    $vie = array_merge($vie, (array)$db->query(
+        "SELECT COUNT(*) AS membres,
+                SUM(email_verified = 1) AS verifies,
+                SUM(email_verified = 0 AND created_at < NOW() - INTERVAL 1 DAY) AS attente,
+                SUM(created_at > NOW() - INTERVAL 7 DAY) AS semaine,
+                SUM(last_login_at > NOW() - INTERVAL 7 DAY) AS actifs_7j
+           FROM users"
+    )->fetch(PDO::FETCH_ASSOC));
+    $vie['avis']     = (int)$db->query("SELECT COUNT(*) FROM reviews WHERE status <> 'removed'")->fetchColumn();
+    $vie['messages'] = (int)$db->query("SELECT COUNT(*) FROM forum_posts WHERE status = 'published'")->fetchColumn();
+} catch (Throwable $e) {}
+$vie = array_map('intval', $vie);
+
 // Membres — les comptes et leurs rôles (portée « admin » uniquement,
 // l'onglet a déjà été refusé plus haut à la modération).
 $membres_rows = [];
@@ -759,6 +787,10 @@ html{transition:background .25s,color .25s}
       <div class="hstat-l">Photos</div>
     </div>
     <div class="hstat">
+      <div class="hstat-n"><?= $vie['membres'] ?></div>
+      <div class="hstat-l">Membres</div>
+    </div>
+    <div class="hstat">
       <div class="hstat-n"><?= (int)($stats['pending'] ?? 0) ?></div>
       <div class="hstat-l">En attente</div>
     </div>
@@ -940,6 +972,38 @@ html{transition:background .25s,color .25s}
       <div class="kpi-value"><?= array_sum($stats) ?></div>
       <div class="kpi-sub"><?= ($stats['approved']??0) ?> approuvées · <?= ($stats['pending']??0) ?> en attente</div>
     </div>
+    <!-- La vie du site. Les deux tuiles qui manquaient : on savait
+         combien d'etablissements, pas combien de monde. -->
+    <div class="kpi">
+      <div class="kpi-label">Membres</div>
+      <div class="kpi-value"><?= $vie['membres'] ?></div>
+      <div class="kpi-sub">
+        <?= $vie['verifies'] ?> vérifié<?= $vie['verifies'] > 1 ? 's' : '' ?>
+        <?php if ($vie['semaine']): ?> · <?= $vie['semaine'] ?> cette semaine<?php endif; ?>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Actifs</div>
+      <div class="kpi-value"><?= $vie['actifs_7j'] ?></div>
+      <div class="kpi-sub">Connectés ces 7 jours</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Ils ont écrit</div>
+      <div class="kpi-value"><?= $vie['avis'] + $vie['messages'] ?></div>
+      <div class="kpi-sub"><?= $vie['avis'] ?> avis · <?= $vie['messages'] ?> messages</div>
+    </div>
+    <?php if ($vie['attente'] > 0): ?>
+    <!-- Ne s'affiche QUE s'il y a lieu. Un compte non verifie apres 24 h
+         n'est pas forcement un abandon : c'est le symptome d'un email de
+         confirmation qui n'arrive pas — la panne qui a laisse un membre
+         inerte sans que rien ne le signale. -->
+    <div class="kpi">
+      <div class="kpi-label">Inscriptions bloquées</div>
+      <div class="kpi-value" style="color:var(--amber)"><?= $vie['attente'] ?></div>
+      <div class="kpi-sub">Non vérifiées après 24 h — l’email arrive-t-il ?</div>
+    </div>
+    <?php endif; ?>
+
     <div class="kpi">
       <div class="kpi-label">À modérer</div>
       <div class="kpi-value" style="color:<?= ($stats['pending']??0) > 0 ? 'var(--amber)' : 'var(--green)' ?>">
