@@ -98,11 +98,33 @@ function prevol_legal_a_trous(): bool {
     return str_contains(implode("\n", $utiles), 'À COMPLÉTER');
 }
 
+/**
+ * Ce que le code de sortie de `git check-ignore` veut dire.
+ *
+ *   0    ignoré par Git .................................. sûr
+ *   1    suivi, ou suivable ............................. DANGER
+ *   128  pas un dépôt du tout ............................. sûr
+ *
+ * LA TROISIÈME ISSUE MANQUAIT, et c'est la plus fréquente en
+ * production. Le déploiement recommandé clone HORS de la racine servie
+ * (`~/repositories/…` vers `~/public_html`) : le dossier du site n'est
+ * donc pas un dépôt, `git` sort en 128, et la première rédaction lisait
+ * cette erreur comme « fichier non ignoré ».
+ *
+ * Le contrôle bloquait ainsi sur la configuration LA PLUS SÛRE — celle
+ * où le `.env` ne peut, par construction, être commité nulle part.
+ * Relevé au premier lancement réel sur le serveur ; aucun test ne
+ * pouvait le voir, tous tournant dans un dépôt.
+ */
+function prevol_env_hors_depot_selon(int $code): bool {
+    return $code !== 1;
+}
+
 /** Le `.env` est-il tenu hors du dépôt ? Un secret versionné est un secret perdu. */
 function prevol_env_hors_depot(): bool {
     $code = 0; $sortie = [];
     exec('git -C ' . escapeshellarg(PREVOL_RACINE) . ' check-ignore -q .env 2>&1', $sortie, $code);
-    return $code === 0;   // 0 = ignoré, donc hors du dépôt
+    return prevol_env_hors_depot_selon($code);
 }
 
 /**
@@ -315,7 +337,24 @@ function prevol_autotest(): int {
         }
     }
 
-    printf("prevol --autotest : %d cas, %d echec(s)\n", count($cas), $echecs);
+    // ── Les trois issues de `git check-ignore` ───────────
+    // La troisieme — « pas un depot » — manquait, et c'est celle du
+    // serveur : le deploiement clone hors de la racine servie, donc le
+    // dossier du site n'est pas un depot. Le controle bloquait sur la
+    // configuration la plus sure. Aucun cas construit ne pouvait le
+    // voir : ils tournaient tous DANS un depot.
+    $issues = [[0, true, 'ignore par Git'], [1, false, 'suivable par Git'],
+               [128, true, 'pas un depot du tout']];
+    foreach ($issues as [$code, $sur, $libelle]) {
+        if (prevol_env_hors_depot_selon($code) !== $sur) {
+            printf("  ECHEC  git check-ignore code %-3d (%s) : attendu %s\n",
+                   $code, $libelle, $sur ? 'sur' : 'dangereux');
+            $echecs++;
+        }
+    }
+
+    printf("prevol --autotest : %d cas, %d echec(s)\n",
+           count($cas) + count($issues) + 3, $echecs);
     return $echecs === 0 ? 0 : 1;
 }
 
