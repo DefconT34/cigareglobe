@@ -55,7 +55,7 @@ function jout(mixed $d): void {
     //
     // « no-cache » n'interdit pas la mise en cache : il impose la
     // revalidation a chaque usage, ce qui est exactement le besoin ici.
-    header('Cache-Control: no-cache');
+    cache_revalider();
     // Second argument a false : header() REMPLACE par defaut, ce qui
     // effacait le « Vary: Origin » pose par cors_headers() — un cache
     // aurait pu servir la reponse d'une origine a une autre.
@@ -308,7 +308,7 @@ function action_lounges_all(PDO $db): void {
         // Table approved_lounges absente ou colonnes manquantes — ignorer
     }
 
-    header('Cache-Control: public, max-age=120');
+    cache_public(120);
     jout(['lounges' => $grouped, 'total' => count($rows)]);
 }
 

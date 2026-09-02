@@ -33,6 +33,12 @@
 
 require_once __DIR__ . '/backend/config.php';
 
+// Cette page ne changeait de cache que par accident : c'est mod_expires
+// qui lui donnait une heure, faute d'avis de sa part. Elle le dit
+// désormais elle-même — même durée, mais décidée ici (et l'Expires
+// qu'emporte cache_public empêche Apache d'en ajouter un second).
+cache_public(3600);
+
 $maj = '31 août 2026';
 $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 ?><!DOCTYPE html>

@@ -352,10 +352,15 @@ $racine = page_racine();
 // (ExpiresByType text/html). Pour ces pages c'est trop : une fiche
 // corrigée resterait invisible une heure à qui vient de la lire, et une
 // erreur 404 resterait mémorisée alors que la page peut naître dans la
-// minute. On reprend la main, comme le fait index.php.
+// minute.
+//
+// Reprendre la main demande de poser Cache-Control ET Expires :
+// mod_expires n'écrase pas le premier, il AJOUTE le sien à côté — d'où
+// « max-age=300,max-age=3600 », deux directives contradictoires dans un
+// même en-tête. Il s'abstient en revanche lorsqu'un Expires est déjà
+// là. Voir cache_public() dans backend/config.php.
 header('Content-Type: text/html; charset=utf-8');
-header(empty($noindex) ? 'Cache-Control: public, max-age=300'
-                       : 'Cache-Control: no-store');
+if (empty($noindex)) { cache_public(300); } else { cache_jamais(); }
 
 // Le bloc `<h1>` du portail d'age est devenu un `<p>` dans index.html :
 // le seul titre de niveau 1 de chaque page etait « Avez-vous 18 ans ou

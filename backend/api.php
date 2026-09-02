@@ -578,7 +578,7 @@ function action_my_ratings(): void {
             $ratings[(int)$row['lounge_id']] = (int)$row['rating'];
         }
     }
-    header('Cache-Control: no-store'); // personnel → jamais mis en cache
+    cache_jamais();   // personnel → jamais mis en cache
     json_out(['ratings' => $ratings]);
 }
 
@@ -593,7 +593,7 @@ function action_my_contributions(): void {
          FROM contributions WHERE user_id = ? ORDER BY created_at DESC LIMIT 200"
     );
     $stmt->execute([$u['id']]);
-    header('Cache-Control: no-store');
+    cache_jamais();
     json_out(['contributions' => $stmt->fetchAll()]);
 }
 
@@ -646,7 +646,7 @@ function action_fav_states(): void {
         }
         $out = ['lounge' => $acc['lounge'] ?: (object)[], 'country' => $acc['country'] ?: (object)[]];
     }
-    header('Cache-Control: no-store');
+    cache_jamais();
     json_out(['favorites' => $out]);
 }
 
@@ -663,7 +663,7 @@ function action_fav_list(): void {
          ORDER BY f.list, f.created_at DESC"
     );
     $q->execute([$u['id']]);
-    header('Cache-Control: no-store');
+    cache_jamais();
     json_out(['items' => $q->fetchAll()]);
 }
 

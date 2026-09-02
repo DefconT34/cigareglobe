@@ -311,7 +311,7 @@ $pageCache = __DIR__ . '/backend/cache/page_' . $lang . '_'
 
 if (is_file($pageCache) && filemtime($pageCache) >= $empreinte) {
     header('Content-Type: text/html; charset=utf-8');
-    header('Cache-Control: public, max-age=300');
+    cache_public(300);
     readfile($pageCache);
     exit;
 }
@@ -430,5 +430,5 @@ if (!is_dir(dirname($pageCache))) @mkdir(dirname($pageCache), 0755, true);
 header('Content-Type: text/html; charset=utf-8');
 // La langue dépend de l'URL, pas d'un cookie : les caches peuvent servir
 // la même réponse à tout le monde pour une URL donnée.
-header('Cache-Control: public, max-age=300');
+cache_public(300);
 echo $html;

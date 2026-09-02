@@ -209,3 +209,61 @@ function getDB(): PDO {
 
     return $pdo;
 }
+
+/* ════════════════════════════════════════════════════════
+ * La politique de cache d'une réponse
+ * ────────────────────────────────────────────────────────
+ * CE QUE CES TROIS FONCTIONS RÉPARENT. `mod_expires`, dans le
+ * `.htaccess`, pose sa propre durée par type de contenu. Il ne REMPLACE
+ * pas celle de l'application : il AJOUTE la sienne. Mesuré en
+ * production, une page servie par PHP répondait
+ *
+ *     Cache-Control: public, max-age=300,max-age=3600
+ *
+ * deux directives contradictoires dans un même en-tête, où la seconde
+ * vient d'Apache et la première de l'intention du code. Selon le cache
+ * qui la lit, une correction restait invisible cinq minutes ou une
+ * heure. Le JSON du globe portait de même « no-cache, max-age=300 ».
+ *
+ * LA SORTIE N'EST PAS DE RETIRER LA RÈGLE D'APACHE — elle sert aux
+ * fichiers statiques, qui n'ont personne pour parler à leur place, et
+ * `.htaccess` a déjà mis ce site à terre une fois. C'est que
+ * `mod_expires` S'ABSTIENT lorsque la réponse porte déjà un `Expires`.
+ * Vérifié plutôt que supposé : `admin.php`, qui ouvre une session PHP
+ * (laquelle pose `Expires: Thu, 19 Nov 1981`), n'a jamais reçu de
+ * `max-age` surnuméraire. Les points authentifiés étaient donc déjà
+ * protégés ; seules les réponses publiques ne l'étaient pas.
+ *
+ * Poser les deux en-têtes ensemble est donc la condition pour que le
+ * code garde la main. D'où ces fonctions : pour qu'on ne puisse plus
+ * poser l'un en oubliant l'autre.
+ * ════════════════════════════════════════════════════════ */
+
+/** Une date HTTP, telle que la veut la RFC 9110 (toujours en GMT). */
+function cache_date(int $horodatage): string {
+    return gmdate('D, d M Y H:i:s', $horodatage) . ' GMT';
+}
+
+/** Réponse publique, réutilisable telle quelle pendant N secondes. */
+function cache_public(int $secondes): void {
+    header('Cache-Control: public, max-age=' . $secondes);
+    header('Expires: ' . cache_date(time() + $secondes));
+}
+
+/**
+ * Réponse mise en cache mais revalidée à chaque usage.
+ *
+ * « no-cache » n'interdit pas de garder : il impose de redemander. Le
+ * bon réglage pour une réponse qui dépend d'un paramètre (la langue) et
+ * qu'on veut voir changer dès qu'elle change.
+ */
+function cache_revalider(): void {
+    header('Cache-Control: no-cache');
+    header('Expires: ' . cache_date(0));
+}
+
+/** Réponse qu'aucun cache ne doit garder. */
+function cache_jamais(): void {
+    header('Cache-Control: no-store');
+    header('Expires: ' . cache_date(0));
+}

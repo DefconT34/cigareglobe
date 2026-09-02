@@ -3012,6 +3012,106 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
 }
 
 // ════════════════════════════════════════════════════════
+section('La politique de cache');
+
+// CE QUE CE BLOC SURVEILLE. `mod_expires`, dans le .htaccess, pose sa
+// propre duree par type de contenu. Il ne REMPLACE pas celle de
+// l'application : il AJOUTE la sienne. Mesure en production, une page
+// servie par PHP repondait
+//
+//     Cache-Control: public, max-age=300,max-age=3600
+//
+// deux directives contradictoires dans un meme en-tete, dont la seconde
+// vient d'Apache. Selon le cache qui la lit, une correction restait
+// invisible cinq minutes ou une heure. Le JSON du globe portait de meme
+// « no-cache, max-age=300 ».
+//
+// La sortie n'est pas de retirer la regle d'Apache — elle sert aux
+// fichiers statiques, et .htaccess a deja mis ce site a terre une fois.
+// C'est que mod_expires S'ABSTIENT quand la reponse porte deja un
+// Expires. Verifie plutot que suppose : admin.php, qui ouvre une
+// session PHP (laquelle pose un Expires de 1981), n'a jamais recu de
+// max-age surnumeraire.
+//
+// CE QUE LA CAMPAGNE PEUT EPROUVER. `php -S` n'a pas mod_expires : la
+// duplication ne s'y reproduit pas. On y verifie donc l'INVARIANT qui
+// la previent — toute reponse qui pose un Cache-Control pose aussi un
+// Expires — et, statiquement, que plus personne ne pose l'un sans
+// l'autre.
+{
+    $srv3 = start_server();
+    $cli3 = new_client('cache');
+    $entetes = function (string $chemin) use ($srv3, $cli3): array {
+        $r = http('GET', $srv3 . $chemin, ['jar' => $cli3]);
+        $cc = preg_match('/^Cache-Control:\s*(.+)$/mi', $r['headers'], $m) ? trim($m[1]) : null;
+        $ex = preg_match('/^Expires:\s*(.+)$/mi', $r['headers'], $m2) ? trim($m2[1]) : null;
+        return ['statut' => $r['status'], 'cc' => $cc, 'expires' => $ex];
+    };
+
+    $publiques = [
+        '/index.php?lang=fr'                      => 'public, max-age=300',
+        '/page.php?type=atlas&lang=fr'            => 'public, max-age=300',
+        '/page.php?type=pays&id=testland&lang=fr' => 'public, max-age=300',
+        '/legal.php'                              => 'public, max-age=3600',
+    ];
+    foreach ($publiques as $chemin => $attendu) {
+        $h = $entetes($chemin);
+        eq("cache : $chemin annonce sa duree", $attendu, $h['cc']);
+        // L'Expires est la CONDITION pour que mod_expires s'abstienne.
+        // Sans lui, Apache ajoute le sien et l'en-tete se contredit.
+        check("cache : $chemin porte aussi un Expires", $h['expires'] !== null,
+              'Expires : ' . var_export($h['expires'], true));
+    }
+
+    // Une seule duree par en-tete, jamais deux. C'est la formulation
+    // exacte du defaut : « max-age=300,max-age=3600 » aurait passe le
+    // controle precedent.
+    $doubles = [];
+    foreach (array_keys($publiques) as $chemin) {
+        $cc = (string)$entetes($chemin)['cc'];
+        if (preg_match_all('/max-age=/', $cc) > 1) $doubles[] = $chemin . ' : ' . $cc;
+    }
+    eq('cache : aucun en-tete ne porte deux durees', [], $doubles);
+
+    // CONTRE-EPREUVE. Ce qui ne doit pas etre garde ne doit porter
+    // AUCUNE duree : un 404 mis en cache survit a la naissance de la
+    // page qu'il niait.
+    $h = $entetes('/page.php?type=pays&id=nexistepas');
+    eq('cache : une page introuvable rend 404', 404, $h['statut']);
+    eq('cache : et ne se garde pas', 'no-store', $h['cc']);
+    check('cache : sans aucune duree', !str_contains((string)$h['cc'], 'max-age'));
+
+    // Le JSON dependait de la langue et portait « no-cache, max-age=300 ».
+    $h = $entetes('/backend/data.php?action=globe&lang=fr');
+    eq('cache : le JSON du globe se revalide', 'no-cache', $h['cc']);
+    check('cache : sans duree ajoutee', !str_contains((string)$h['cc'], 'max-age'));
+
+    // LE RATCHET. Poser un Cache-Control sans son Expires fait revenir
+    // le defaut, sans que rien ne le signale — c'est ainsi qu'il est
+    // arrive. La regle vit desormais dans trois fonctions de
+    // backend/config.php, et nulle part ailleurs.
+    $bruts = [];
+    foreach ([...glob(PROJECT_ROOT . '/*.php'),
+              ...glob(PROJECT_ROOT . '/backend/*.php'),
+              ...glob(PROJECT_ROOT . '/tools/*.php')] as $f) {
+        if (basename($f) === 'config.php') continue;
+        if (str_contains((string)file_get_contents($f), "header('Cache-Control")) {
+            $bruts[] = basename($f);
+        }
+    }
+    eq('cache : personne ne pose un Cache-Control a la main', [], $bruts);
+
+    // Contre-epreuve du ratchet : il doit savoir dire oui quelque part,
+    // sinon il ne mesure rien. Les trois fonctions existent bien.
+    $conf = file_get_contents(PROJECT_ROOT . '/backend/config.php');
+    foreach (['cache_public', 'cache_revalider', 'cache_jamais'] as $fn) {
+        check("cache : $fn() est definie", str_contains($conf, "function $fn("));
+        check("cache : $fn() pose un Expires", (bool)preg_match(
+            '/function ' . $fn . '\([^)]*\): void \{[^}]*Expires/s', $conf));
+    }
+}
+
+// ════════════════════════════════════════════════════════
 section('Les onglets sans pays choisi');
 
 // CE QUE CE BLOC SURVEILLE. Sur mobile, Infos / Marques / Lounges se

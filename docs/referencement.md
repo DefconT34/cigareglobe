@@ -129,3 +129,49 @@ leur contenu reste ce qu'il est. Cinq cents établissements sans horaires,
 sans site web et sans coordonnées, décrits en 112 caractères en moyenne,
 donnent cinq cents pages minces. L'indexation les rendra visibles — elle ne
 les rendra pas bonnes. Voir le point 2 de la feuille de route.
+
+## Le cache des pages
+
+Mesuré en production après la mise en ligne, une page servie par PHP répondait :
+
+```
+Cache-Control: public, max-age=300,max-age=3600
+```
+
+Deux durées contradictoires dans un même en-tête. `mod_expires`, dans le
+`.htaccess`, ne **remplace** pas le `Cache-Control` de l'application : il
+**ajoute** le sien. Selon le cache qui lit cette ligne, une correction restait
+invisible cinq minutes ou une heure. Le JSON du globe portait de même
+`no-cache, max-age=300`.
+
+**Le défaut était antérieur à ce chantier** : la page d'accueil l'avait déjà.
+
+### La sortie n'était pas de retirer la règle d'Apache
+
+Elle sert aux fichiers statiques, qui n'ont personne pour parler à leur place,
+et `.htaccess` a déjà mis ce site à terre une fois.
+
+`mod_expires` **s'abstient lorsque la réponse porte déjà un `Expires`**.
+Vérifié plutôt que supposé : `backend/admin.php`, qui ouvre une session PHP
+(laquelle pose `Expires: Thu, 19 Nov 1981`), n'a jamais reçu de `max-age`
+surnuméraire. **Les points authentifiés étaient donc déjà protégés** — aucune
+réponse portant des données personnelles n'a été concernée.
+
+### Trois fonctions, dans `backend/config.php`
+
+| | |
+|---|---|
+| `cache_public(int $s)` | réutilisable tel quel pendant *s* secondes |
+| `cache_revalider()` | gardé, mais redemandé à chaque usage (`no-cache`) |
+| `cache_jamais()` | qu'aucun cache ne doit garder (`no-store`) |
+
+Chacune pose **les deux en-têtes ensemble**. C'est là tout l'objet : pour qu'on
+ne puisse plus poser l'un en oubliant l'autre.
+
+La campagne interdit désormais tout `header('Cache-Control…')` écrit à la main
+ailleurs que dans `config.php` — c'est ainsi que le défaut était arrivé.
+
+⚠ `php -S`, employé par la campagne, n'a pas `mod_expires` : **la duplication ne
+s'y reproduit pas**. Ce qui est éprouvé est l'invariant qui la prévient — toute
+réponse qui pose un `Cache-Control` pose aussi un `Expires` — et le fait
+qu'aucun en-tête ne porte deux `max-age`.
