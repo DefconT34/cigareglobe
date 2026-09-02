@@ -22,6 +22,12 @@
 # La réponse fiable vient du serveur lui-même :
 #   uapi DomainInfo single_domain_data domain=<domaine> | grep -i documentroot
 #
+# --chmod=D755,F644 : rsync -a applique les permissions du dossier SOURCE
+# au dossier destination. Le clone de cPanel est en 700 ; sans ce
+# forçage, `public_html` héritait de 700 et Apache répondait 403 sur
+# TOUT le site — fichiers parfaitement en place, contenant fermé.
+# Mesuré : seul le dossier racine était fautif, son contenu était juste.
+#
 # `cgi-bin/` est exclu de la suppression : il appartient à cPanel, pas au
 # dépôt, et `--delete` l'emporterait.
 #
@@ -51,7 +57,7 @@ deployment:
     - export DEPLOYPATH=/home2/koko6788/public_html/
     - /bin/mkdir -p $DEPLOYPATH
     - >
-      /usr/bin/rsync -a --delete
+      /usr/bin/rsync -a --delete --chmod=D755,F644
       --exclude='.git/'
       --exclude='.github/'
       --exclude='node_modules/'
