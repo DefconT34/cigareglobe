@@ -8,16 +8,22 @@
 # trouve jamais dans l'arborescence servie, et ne peut donc pas être
 # téléchargé — l'accident mesuré valait 200 sur /.git/config.
 #
-# DEPLOYPATH est la RACINE DU DOCUMENT, pas le dossier du dépôt. Les
-# deux se ressemblent et ne servent pas à la même chose :
+# DEPLOYPATH est la RACINE DU DOCUMENT. Elle ne se devine pas, et deux
+# chemins vraisemblables se sont révélés faux avant le bon :
 #
 #   /home2/koko6788/repositories/cigareglobe   le clone, hors du Web
-#   /home2/koko6788/thecigarodyssey.com        ce qu'Apache sert
+#   /home2/koko6788/thecigarodyssey.com        existe, mais N'EST PAS servi
+#   /home2/koko6788/public_html                ← ce qu'Apache sert
 #
-# Confondre les deux ferait recopier le dépôt sur lui-même : le site ne
-# recevrait jamais rien, et l'on chercherait longtemps pourquoi la page
-# ne change pas. Vérifié le 1er septembre 2026 — le domaine ne servait
-# alors qu'un listage de dossier vide, ce qui l'a prouvé.
+# Le deuxième portait le nom du domaine et contenait déjà `cgi-bin/` :
+# tout invitait à le croire. La preuve du contraire n'est venue que d'une
+# mesure — les fichiers copiés là, et le site inchangé.
+#
+# La réponse fiable vient du serveur lui-même :
+#   uapi DomainInfo single_domain_data domain=<domaine> | grep -i documentroot
+#
+# `cgi-bin/` est exclu de la suppression : il appartient à cPanel, pas au
+# dépôt, et `--delete` l'emporterait.
 #
 # LES EXCLUSIONS NE SONT PAS DÉCORATIVES
 #
@@ -42,7 +48,7 @@
 
 deployment:
   tasks:
-    - export DEPLOYPATH=/home2/koko6788/thecigarodyssey.com/
+    - export DEPLOYPATH=/home2/koko6788/public_html/
     - /bin/mkdir -p $DEPLOYPATH
     - >
       /usr/bin/rsync -a --delete
@@ -52,6 +58,7 @@ deployment:
       --exclude='tests/'
       --exclude='uploads/'
       --exclude='.env'
+      --exclude='cgi-bin/'
       --exclude='.cpanel.yml'
       ./ $DEPLOYPATH
     - /bin/echo "Deploiement termine. Verifier :"
