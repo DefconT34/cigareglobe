@@ -17,6 +17,9 @@
 
 require_once __DIR__ . '/auth_lib.php';
 require_once __DIR__ . '/mailer.php';
+// journaliser() : un email de vérification qui ne part pas est un fait
+// qui doit se relire, pas un silence.
+require_once __DIR__ . '/moderation_lib.php';
 
 auth_session_start();
 
@@ -100,10 +103,16 @@ function action_register(PDO $db): void {
     session_regenerate_id(true);
     $_SESSION['uid'] = $uid;
 
-    send_verification_email($db, $uid, $email, $name);
+    $email_parti = send_verification_email($db, $uid, $email, $name);
 
     $u = current_user($db);
-    respond(['success' => true, 'user' => user_public($u), 'csrf' => csrf_get()], 201);
+    // `email_envoye` DIT LA VÉRITÉ au front. Sans lui, l'interface
+    // annonçait « vérifiez vos emails » même quand aucun n'était parti :
+    // un message faux, qui envoie la personne fouiller ses indésirables
+    // pendant que le vrai problème est chez nous. Le compte est bien
+    // créé — d'où le 201 — mais il faut le dire autrement.
+    respond(['success' => true, 'user' => user_public($u),
+             'email_envoye' => $email_parti, 'csrf' => csrf_get()], 201);
 }
 
 // ════════════════════════════════════════════════════════
@@ -376,13 +385,41 @@ function create_token(PDO $db, int $uid, string $type, int $ttlSec): string {
     return $token;
 }
 
-function send_verification_email(PDO $db, int $uid, string $email, string $name): void {
+/**
+ * Envoie l'email de confirmation. Renvoie FAUX si l'envoi a échoué.
+ *
+ * CE QUE CE `bool` A COÛTÉ AVANT D'EXISTER. La fonction ne renvoyait
+ * rien, et personne ne regardait. Le jour où la clé d'API de Brevo est
+ * devenue invalide, l'envoi a échoué en silence : le compte était créé,
+ * l'interface annonçait « vérifiez vos emails », et il n'y avait pas
+ * d'email. Ni le membre, ni l'administration ne pouvaient le savoir.
+ *
+ * Découvert parce que l'inscription était la nôtre et qu'on attendait
+ * le message. Un visiteur, lui, aurait conclu que le site est cassé —
+ * et serait parti sans rien dire.
+ *
+ * L'échec est désormais journalisé avec la réponse exacte du
+ * prestataire, et rendu à l'appelant, qui en informe la personne.
+ */
+function send_verification_email(PDO $db, int $uid, string $email, string $name): bool {
     $token = create_token($db, $uid, 'verify', 86400); // 24h
     $url   = site_url() . '/backend/auth.php?action=verify&token=' . $token;
-    send_email($email, 'Confirmez votre adresse email',
+    $ok = send_email($email, 'Confirmez votre adresse email',
         email_template(
             'Bienvenue, ' . $name . ' !',
             'Merci de rejoindre CigarOdyssey. Confirmez votre adresse email pour pouvoir contribuer et noter les établissements. Ce lien expire dans 24 heures.',
             'Confirmer mon email', $url
         ));
+
+    if (!$ok) {
+        // Au journal de modération : c'est là qu'on relit ce qui s'est
+        // passé sur le site, et l'écran d'administration le montre.
+        // `mail_last_error()` porte la réponse du prestataire — « HTTP
+        // 401 : Key not found » aurait suffi à trouver la cause en une
+        // minute au lieu d'une heure.
+        journaliser($db, 'email_verification_echoue', 'compte', $uid,
+            mail_last_error() ?: 'raison inconnue');
+        error_log('[auth] email de verification non envoye (#' . $uid . ') : ' . mail_last_error());
+    }
+    return $ok;
 }

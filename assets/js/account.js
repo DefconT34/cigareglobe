@@ -265,7 +265,17 @@
         closeModal();
         if (menu) { menu.remove(); menu = null; }
         if (kind === 'register') {
-          toast('Compte créé ! Vérifiez votre email pour confirmer votre adresse.', 'ok');
+          // Le serveur dit si l'email est REELLEMENT parti. Sans cette
+          // reponse, on annoncait « verifiez vos emails » meme quand
+          // aucun n'etait envoye : la personne fouillait ses
+          // indesirables pendant que la panne etait chez nous. Arrive
+          // pour de bon le 2 septembre 2026, sur une cle d'API devenue
+          // invalide — le compte cree, et rien pour le confirmer.
+          if (res.data.email_envoye === false) {
+            toast(t('acc_created_no_mail'), 'warn');
+          } else {
+            toast(t('acc_created_check_mail'), 'ok');
+          }
         } else {
           toast('Bienvenue, ' + user.display_name + ' !', 'ok');
         }

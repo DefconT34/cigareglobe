@@ -76,6 +76,8 @@ function prevol_environnement(): array {
         'contenu_present'=> is_file(PREVOL_RACINE . '/sql/contenu.sql'),
         'env_ignore'     => prevol_env_hors_depot(),
         'cron_dernier'   => prevol_cron_dernier(),
+        ...(function () { [$t, $a] = prevol_inscriptions();
+              return ['inscriptions' => $t, 'inscriptions_attente' => $a]; })(),
     ];
 }
 
@@ -109,6 +111,56 @@ function prevol_cron_dernier(): ?string {
     } catch (Throwable $e) {
         return null;   // base ou table absente : comme s'il n'avait jamais tourne
     }
+}
+
+/**
+ * Combien d'inscriptions de la semaine restent non vérifiées ?
+ * @return array{0:int,1:int} [total, en attente depuis plus de 24 h]
+ */
+function prevol_inscriptions(): array {
+    try {
+        $r = getDB()->query(
+            "SELECT COUNT(*) AS total,
+                    SUM(email_verified = 0 AND created_at < NOW() - INTERVAL 1 DAY) AS attente
+               FROM users
+              WHERE created_at > NOW() - INTERVAL 7 DAY"
+        )->fetch(PDO::FETCH_ASSOC);
+        return [(int)($r['total'] ?? 0), (int)($r['attente'] ?? 0)];
+    } catch (Throwable $e) {
+        return [0, 0];
+    }
+}
+
+/**
+ * Les inscriptions aboutissent-elles ?
+ *
+ * POURQUOI CE CONTRÔLE EXISTE. Un email de vérification qui ne part pas
+ * laisse un compte INERTE : la personne s'est inscrite, ne peut rien
+ * écrire, et n'a aucun moyen de comprendre pourquoi. Le site, lui, ne
+ * remarque rien — il a bien créé le compte.
+ *
+ * C'est arrivé pour de bon : une clé d'API devenue invalide, et il a
+ * fallu qu'une inscription soit la nôtre, et qu'on attende l'email,
+ * pour s'en apercevoir. Ce contrôle l'aurait dit sans qu'on cherche.
+ *
+ * ON REGARDE UNE PROPORTION, PAS UN COMPTE. Abandonner une inscription
+ * est banal ; deux comptes en attente ne prouvent rien. C'est quand la
+ * MAJORITÉ reste bloquée que la cause est chez nous.
+ *
+ * Et sous trois inscriptions, on ne conclut pas : une proportion
+ * calculée sur deux valeurs n'est pas une proportion, c'est du bruit.
+ *
+ * Fonction PURE : les cas s'éprouvent sans peupler une base.
+ */
+function prevol_constat_inscriptions(int $total, int $en_attente): ?array {
+    if ($total < 3)                 return null;   // trop peu pour conclure
+    if ($en_attente * 2 <= $total)  return null;   // la moitié ou moins : normal
+
+    return prevol_constat('avertissement', 'inscriptions',
+        $en_attente . ' des ' . $total . ' inscriptions de la semaine restent non '
+      . 'vérifiées après 24 h. Quand la majorité reste bloquée, ce n’est pas '
+      . 'l’abandon : l’email de vérification n’arrive pas.',
+        'php tools/mail_doctor.php --to=<votre adresse>, puis le journal de modération.');
 }
 
 /**
@@ -299,6 +351,11 @@ function prevol_controles(array $e): array {
     // donc pas, mais les taire reviendrait à laisser croire que le
     // contrôle couvre tout.
     $c[] = prevol_constat_cron($e['cron_dernier']);
+
+    // Rien à dire quand tout va bien : un contrôle qui parle chaque fois
+    // finit par ne plus être lu.
+    $insc = prevol_constat_inscriptions($e['inscriptions'], $e['inscriptions_attente']);
+    if ($insc !== null) $c[] = $insc;
     $c[] = prevol_constat('rappel', 'sauvegarde',
         'uploads/ et les tables personnelles ne sont dans aucun dépôt, par construction.',
         'Une copie hors de cette machine, avant la première visite.');
@@ -334,6 +391,8 @@ function prevol_env_propre(): array {
         'contenu_present' => true,
         'env_ignore'      => true,
         'cron_dernier'    => date('Y-m-d H:i:s'),
+        'inscriptions'         => 0,
+        'inscriptions_attente' => 0,
     ];
 }
 
@@ -427,6 +486,26 @@ function prevol_autotest(): int {
             $echecs++;
         }
     }
+    // ── Les inscriptions qui n'aboutissent pas ───────────
+    // Une PROPORTION, pas un compte : abandonner une inscription est
+    // banal, et deux comptes en attente ne prouvent rien.
+    $inscr = [
+        [0,  0, false, 'aucune inscription'],
+        [2,  2, false, 'deux sur deux : trop peu pour conclure'],
+        [10, 3, false, 'trois sur dix : des abandons ordinaires'],
+        [10, 5, false, 'la moitie exactement : pas encore un signal'],
+        [10, 6, true,  'six sur dix : l email n arrive plus'],
+        [3,  3, true,  'trois sur trois, le plus petit cas concluant'],
+    ];
+    foreach ($inscr as [$t2, $a, $doit, $libelle]) {
+        $obtenu = prevol_constat_inscriptions($t2, $a) !== null;
+        if ($obtenu !== $doit) {
+            printf("  ECHEC  inscriptions %-42s attendu %s\n", $libelle,
+                   $doit ? 'un avertissement' : 'aucun constat');
+            $echecs++;
+        }
+    }
+
     // Un cron muet depuis deux jours doit DIRE depuis quand : « il ne
     // repond plus » sans date n'aide personne a chercher la cause.
     $muet = prevol_constat_cron('2026-09-08 09:00:00', $t);
@@ -436,7 +515,7 @@ function prevol_autotest(): int {
     }
 
     printf("prevol --autotest : %d cas, %d echec(s)\n",
-           count($cas) + count($issues) + count($ages) + 4, $echecs);
+           count($cas) + count($issues) + count($ages) + count($inscr) + 4, $echecs);
     return $echecs === 0 ? 0 : 1;
 }
 

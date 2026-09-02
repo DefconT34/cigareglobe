@@ -63,6 +63,14 @@ $r = post_json($base, $alice, '/backend/auth.php?action=register',
 eq('inscription : creation du compte', 201, $r['status']);
 eq('inscription : email non verifie au depart', false, $r['json']['user']['email_verified']);
 
+// La reponse DIT si l'email est reellement parti. Sans ce drapeau,
+// l'interface annoncait « verifiez vos emails » meme quand l'envoi
+// avait echoue — une cle d'API invalide, et la personne cherchait dans
+// ses indesirables un message qui n'existait pas.
+check('inscription : la reponse dit si l\'email est parti',
+      array_key_exists('email_envoye', $r['json'] ?? []));
+eq('inscription : ici il part (pilote « log »)', true, $r['json']['email_envoye'] ?? null);
+
 $r = post_json($base, $bob, '/backend/auth.php?action=register',
                ['email' => 'alice@test.local', 'password' => 'motdepasse8', 'display_name' => 'Sosie']);
 eq('inscription : email deja utilise refuse', 409, $r['status']);
@@ -2541,6 +2549,39 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
     } else {
         check('deploiement : autotest lancable', false);
     }
+}
+
+// ── Un envoi rate laisse-t-il une trace ? ───────────────
+// Le cas construit : on force un pilote HTTP avec une cle invalide, et
+// on verifie que l'echec est DIT — au journal, et a la personne. C'est
+// exactement ce qui s'est produit en production, et que rien ne
+// signalait : compte cree, « verifiez vos emails », aucun email.
+{
+    $srv = start_server(['MAIL_LOG_ONLY' => 'false', 'MAIL_DRIVER' => 'brevo',
+                         'MAIL_API_KEY' => 'xkeysib-invalide-pour-le-test']);
+    test_pdo()->exec("DELETE FROM auth_attempts");
+    $cli = new_client('mailrate');
+    $r = post_json($srv, $cli, '/backend/auth.php?action=register',
+                   ['email' => 'sansmail@test.local', 'password' => 'motdepasse8',
+                    'display_name' => 'Sans Mail']);
+
+    eq('envoi rate : le compte est quand meme cree', 201, $r['status']);
+    eq('envoi rate : et la reponse ne le cache pas', false, $r['json']['email_envoye'] ?? null);
+
+    $uid = (int)test_pdo()->query("SELECT id FROM users WHERE email='sansmail@test.local'")->fetchColumn();
+    $j = test_pdo()->query("SELECT action, detail FROM moderation_log
+                            WHERE cible_type='compte' AND cible_id=$uid
+                              AND action='email_verification_echoue'")->fetch(PDO::FETCH_ASSOC);
+    check('envoi rate : le journal le retient', (bool)$j);
+    // Le detail doit porter la REPONSE DU PRESTATAIRE. « echec » tout
+    // court aurait laisse chercher une heure ; « HTTP 401 » designe la
+    // cause en une minute.
+    check('envoi rate : avec la raison, pas juste « echec »',
+          $j && (str_contains($j['detail'], 'brevo') || str_contains($j['detail'], 'HTTP')),
+          (string)($j['detail'] ?? ''));
+
+    test_pdo()->exec("DELETE FROM users WHERE email='sansmail@test.local'");
+    test_pdo()->exec("DELETE FROM auth_attempts");
 }
 
 // ── Le controle d'avant-vol se prouve-t-il ? ────────────
