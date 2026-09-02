@@ -3397,7 +3397,8 @@ section('Les onglets sans pays choisi');
     // UN ECRAN QUI EXPLIQUE SANS OFFRIR DE SORTIE laisse exactement ou
     // l'on etait. Le bouton doit ramener au globe, la ou le choix se fait.
     check('onglets vides : l\'ecran offre le geste qui repare',
-          str_contains($vide, "switchMobileTab('globe')"));
+          str_contains($vide, 'switchMobileTab('),
+          'sans pays choisi il ramene au globe ; avec un pays, aux lounges');
 
     // Trois messages distincts : on ne cherche pas un lounge comme on
     // cherche une manufacture. Un texte unique aurait suffi a « ne pas
@@ -3410,9 +3411,13 @@ section('Les onglets sans pays choisi');
     eq('onglets vides : les cinq libelles sont traduits', [], $manque);
     // Le panneau reste ouvert pendant qu'on change de langue depuis le
     // menu : sans data-i18n, son texte resterait dans l'ancienne.
+    // Les attributs sont desormais CONSTRUITS : la cle depend de la
+    // situation (« aucun pays » ou « pas producteur »). On verifie donc
+    // que chaque libelle affiche porte bien un data-i18n, sans exiger une
+    // chaine litterale que le code ne contient plus.
     check('onglets vides : le texte suit un changement de langue',
-          str_contains($vide, 'data-i18n="vide_titre"') &&
-          str_contains($vide, 'data-i18n="vide_action"'));
+          substr_count($vide, 'data-i18n=') >= 3,
+          substr_count($vide, 'data-i18n=') . ' attribut(s)');
     check('onglets vides : les trois messages different',
           count(array_unique([$trad['fr']['vide_lex'], $trad['fr']['vide_panel'],
                               $trad['fr']['vide_lounge']])) === 3);
@@ -3422,6 +3427,87 @@ section('Les onglets sans pays choisi');
     // compris la barre du bas.
     $css = file_get_contents(PROJECT_ROOT . '/assets/css/components.css');
     check('onglets vides : le bandeau se replie', str_contains($css, '.est-vide .lex-banner'));
+    // ── LA REMISE A ZERO A CHAQUE SELECTION ─────────────
+    // LE DEFAUT, MESURE AU NAVIGATEUR. Quatre chemins menent a un pays —
+    // le globe, la recherche, l'explorateur, un lien partage — et chacun
+    // remplissait les panneaux qui le concernent SANS toucher aux
+    // autres. Choisir Cuba puis la France laissait donc, sous les
+    // onglets Infos et Marques, la fiche de CUBA : ses coordonnees, sa
+    // production, ses 827 M$, et jusqu'a son nom dans le bandeau.
+    //
+    // Le visiteur ne voyait pas un panneau perime : il lisait les
+    // donnees d'un pays sous le nom d'un autre.
+    $vide = file_get_contents(PROJECT_ROOT . '/assets/js/panneau-vide.js');
+    check('remise a zero : la fonction existe et est exposee',
+          str_contains($vide, 'window.reinitialiserPanneaux = reinitialiser'));
+    check('remise a zero : elle vide les bandeaux aussi',
+          str_contains($vide, '.banner-name') && str_contains($vide, '.lex-country-name'),
+          'un corps vide sous un bandeau qui annonce encore Cuba deplace le mensonge');
+
+    // LE RATCHET. Un cinquieme chemin ajoute demain sans cet appel
+    // ferait revenir le defaut en silence. On exige donc que TOUT
+    // fichier qui affecte la selection appelle aussi la remise a zero.
+    // On CAPTURE la valeur affectee au lieu de la nier par un lookahead :
+    // `\s*` peut revenir en arriere et faire echouer un `(?!null)`, ce qui
+    // classait « selMarket = null » parmi les selections. Le premier jet
+    // accusait ainsi animation.js, app.js et markets.js, qui ne font que
+    // REMETTRE A ZERO.
+    $affecteVraiment = function (string $src): bool {
+        if (!preg_match_all('/\bsel(?:Country|LoungeCountry|Market)\s*=\s*([A-Za-z_$][\w.$\[\]]*)/',
+                            $src, $m)) return false;
+        foreach ($m[1] as $v) if ($v !== 'null') return true;
+        return false;
+    };
+    $sansAppel = [];
+    foreach (glob(PROJECT_ROOT . '/assets/js/*.js') as $f) {
+        $src = (string)file_get_contents($f);
+        if (basename($f) === 'globe.js') continue;         // declarations initiales
+        if ($affecteVraiment($src) && !str_contains($src, 'reinitialiserPanneaux')) {
+            $sansAppel[] = basename($f);
+        }
+    }
+    eq('remise a zero : tout chemin de selection l\'appelle', [], $sansAppel);
+
+    // LES TROIS VARIABLES SONT EXCLUSIVES. explorer.js posait
+    // `selLoungeCountry` sans remettre les deux autres a null :
+    // `selCountry` restait sur le pays PRECEDENT, le globe continuait de
+    // le surligner, et l'ecran « ce pays n'est pas producteur » nommait
+    // l'ancien. Trouve parce que le nouvel ecran, lui, lit la selection.
+    $exclusifs = [];
+    foreach (['interactions.js', 'search.js', 'explorer.js'] as $nom) {
+        $src = (string)file_get_contents(PROJECT_ROOT . '/assets/js/' . $nom);
+        // Chaque affectation de selLoungeCountry doit s'accompagner, sur
+        // la meme ligne, de la mise a null des deux autres.
+        if (preg_match_all('/^(.*\bselLoungeCountry\s*=\s*([A-Za-z_$][\w.$]*).*)$/m', $src, $m,
+                           PREG_SET_ORDER)) {
+            foreach ($m as $x) {
+                if ($x[2] === 'null') continue;            // c'est une remise a zero
+                if (!str_contains($x[1], 'selCountry = null')) $exclusifs[] = $nom;
+            }
+        }
+    }
+    eq('remise a zero : choisir un pays a lounges oublie le producteur', [], array_unique($exclusifs));
+
+    // Deux ecrans, parce qu'il y a deux situations. « Aucun pays
+    // selectionne » serait FAUX quand la France est choisie et qu'on
+    // ouvre l'onglet Marques : un pays l'est bel et bien, il n'est
+    // simplement pas producteur.
+    check('remise a zero : l\'ecran distingue « rien choisi » de « pas producteur »',
+          str_contains($vide, 'vide_non_producteur') && str_contains($vide, 'paysChoisi'));
+    check('remise a zero : et renvoie alors vers les lounges, pas vers le globe',
+          str_contains($vide, "switchMobileTab(pays && onglet !== 'lounge' ? 'lounge' : 'globe')"));
+
+    // Le nom du pays vient de la base et s'injecte en HTML.
+    check('remise a zero : le nom du pays est echappe',
+          str_contains($vide, 'escapeHtml(titre)'));
+
+    $trad2 = i18n_parse(PROJECT_ROOT . '/assets/js/i18n.js');
+    $manque2 = [];
+    foreach (['vide_non_producteur', 'vide_voir_lounges'] as $k) {
+        if (empty($trad2['fr'][$k])) $manque2[] = $k;
+    }
+    eq('remise a zero : les deux libelles sont traduits', [], $manque2);
+
     check('onglets vides : la croix de fermeture n\'est pas masquee',
           !preg_match('/\.est-vide[^{]*\.(lex-close|panel-close)/', $css) &&
           !str_contains($css, '.est-vide #lexClose'));

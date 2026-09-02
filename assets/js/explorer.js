@@ -299,11 +299,20 @@ window.expSelectCard = function(uid) {
 
 window.expFlyToCountry = function(cid) {
   closeExplorer();
+  // Une nouvelle selection commence : on vide les trois panneaux avant
+  // d'en remplir certains (voir reinitialiser() dans panneau-vide.js).
+  if (typeof window.reinitialiserPanneaux === 'function') window.reinitialiserPanneaux();
   var lc = (LOUNGE_COUNTRIES||[]).find(function(x){ return x.id===cid; })
         || (COUNTRIES||[]).find(function(x){ return x.id===cid; });
   if (lc) {
     flyToCountry(lc);
-    selLoungeCountry = lc;
+    // LES TROIS ENSEMBLE, comme le font le globe et la recherche
+    // (interactions.js, search.js). Ce chemin-ci ne posait que
+    // `selLoungeCountry` : `selCountry` restait sur le pays PRÉCÉDENT,
+    // si bien que le globe continuait de le surligner et que tout ce
+    // qui lit la sélection — l'adresse écrite dans la barre, l'écran
+    // « ce pays n'est pas producteur » — nommait l'ancien.
+    selLoungeCountry = lc; selCountry = null; selMarket = null;
     if (typeof openLoungePanelForCountry === 'function') openLoungePanelForCountry(lc);
   }
 };

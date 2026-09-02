@@ -106,6 +106,9 @@ function search(query, maxResults) {
 // ── Action au clic sur un résultat ───────────────────────
 function executeResult(result) {
   closeSearch();
+  // Une nouvelle selection commence : on vide les trois panneaux avant
+  // d'en remplir certains (voir reinitialiser() dans panneau-vide.js).
+  if (typeof window.reinitialiserPanneaux === 'function') window.reinitialiserPanneaux();
   switch(result.type) {
     case 'country':
       selCountry = result.data; selMarket = null; selLoungeCountry = null;

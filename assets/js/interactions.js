@@ -124,6 +124,11 @@ function selectEntity(type, data) {
   const _openLex   = window._mobileOpenLex   || openLex;
   const _flyTo     = window._mobileFlyTo     || flyToCountry;
 
+  // Une nouvelle selection commence : on vide les trois panneaux avant
+  // d'en remplir certains. Sans cela, choisir Cuba puis la France
+  // laissait la fiche de CUBA sous les onglets Infos et Marques.
+  if (typeof window.reinitialiserPanneaux === 'function') window.reinitialiserPanneaux();
+
   if (hit.type === 'country') {
     var c = hit.data;
     var isProducer = !!c.tier; // tier défini = pays producteur (major/notable/emerging)

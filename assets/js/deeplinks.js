@@ -25,6 +25,9 @@
  */
 function ouvrirCible(type, id, delai) {
   var apres = function (fn) { if (delai) setTimeout(fn, delai); else fn(); };
+  // Une nouvelle selection commence : on vide les trois panneaux avant
+  // d'en remplir certains (voir reinitialiser() dans panneau-vide.js).
+  if (typeof window.reinitialiserPanneaux === 'function') window.reinitialiserPanneaux();
 
   if (type === 'country') {
     var c = (COUNTRIES||[]).find(function(x){ return x.id===id; });
