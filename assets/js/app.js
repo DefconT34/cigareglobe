@@ -93,6 +93,10 @@ function switchMobileTab(tab) {
   if (tab !== 'globe') {
     var el = document.getElementById(target);
     if (el) { el.classList.add('open'); el.setAttribute('aria-hidden', 'false'); }
+    // Ces trois onglets se touchent AVANT d'avoir choisi un pays — c'est
+    // meme le geste naturel. On y trouvait un bandeau gris et une page
+    // blanche : pas « vide », casse. Voir panneau-vide.js.
+    if (typeof window.panneauVide === 'function') window.panneauVide(tab);
   }
   document.querySelectorAll('.mnav-tab').forEach(function(t) {
     t.classList.toggle('active', t.dataset.tab === tab);

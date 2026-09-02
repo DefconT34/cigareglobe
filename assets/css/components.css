@@ -1400,3 +1400,40 @@ button, a, input, select, textarea, label,
 [dir="rtl"] .lex { border-left:0; border-right:2px solid var(--gold-p);
                    padding-left:0; padding-right:9px; }
 @media (max-width:520px) { .lex-liste { grid-template-columns:1fr; } }
+
+/* ── Panneau sans selection (panneau-vide.js) ──
+   Les onglets Infos / Marques / Lounges se touchent avant d'avoir
+   choisi un pays. Sans ce bloc on y trouvait un bandeau gris et une
+   page blanche : pas « vide », casse. */
+.pv-boite {
+  text-align: center; padding: 28px 20px 24px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.pv-ico   { font-size: 30px; opacity: .55; margin-bottom: 10px; }
+.pv-titre {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px;
+}
+.pv-txt {
+  font-size: 12px; line-height: 1.65; color: var(--text2);
+  margin: 0 0 16px; max-width: 30em;
+}
+.pv-btn {
+  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: .18em;
+  text-transform: uppercase; cursor: pointer;
+  padding: 9px 20px; border-radius: 4px;
+  background: var(--gold); color: #fff; border: 1px solid var(--gold);
+}
+.pv-btn:hover { filter: brightness(1.08); }
+
+/* Sans pays, le bandeau n'a ni drapeau ni nom a montrer : il se replie.
+   La croix de fermeture, elle, reste — c'est la seule sortie du panneau
+   pour qui n'a pas compris la barre du bas. */
+.est-vide .lex-banner, .est-vide .panel-banner { height: 42px; background: transparent; }
+.est-vide .lex-banner canvas,
+.est-vide .panel-banner canvas,
+.est-vide .lex-banner-ov,
+.est-vide .banner-ov,
+.est-vide .lex-flag-emoji, .est-vide .banner-flag,
+.est-vide .lex-country-name, .est-vide .banner-name,
+.est-vide .lex-country-reg,  .est-vide .banner-region { display: none; }

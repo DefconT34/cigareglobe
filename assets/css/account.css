@@ -449,3 +449,49 @@ body.mobile-mode .account-btn { padding: 6px; }
 @media (prefers-reduced-motion: reduce) {
   .tuto-voile, .tuto-trou { transition: none; }
 }
+
+/* ── La legende des reperes du globe (derniere etape) ──
+   Les marques sont DESSINEES, pas decrites : « triangle violet » se
+   cherche encore une fois l'ecran revenu, un triangle violet se
+   reconnait. Les teintes sont celles de la base — #C0401A, #B8860B et
+   #3D6B4A pour les producteurs, #8B2BE2 pour les lounges, #1A6BB5 pour
+   les marches — et non des approximations. */
+.tuto-leg { list-style: none; margin: 12px 0 0; padding: 0; }
+.tuto-leg li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 12px; line-height: 1.5; color: var(--text2);
+  margin-bottom: 9px;
+}
+.tuto-m {
+  flex-shrink: 0; width: 16px; height: 16px;
+  margin-top: 1px; position: relative;
+}
+/* Pastille producteur : la couleur appartient au pays, pas au niveau de
+   production — les trois teintes reelles le disent mieux qu'une phrase. */
+.tuto-m-prod::before, .tuto-m-mixte::before {
+  content: ''; position: absolute; left: 1px; top: 2px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: linear-gradient(135deg, #C0401A 0%, #B8860B 55%, #3D6B4A 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .7);
+}
+/* La petite pastille violette en coin : un producteur qui a AUSSI des
+   caves. C'est le repere le plus deroutant du globe, et le seul qui se
+   superpose a un autre. */
+.tuto-m-mixte::after {
+  content: ''; position: absolute; right: -1px; bottom: 0;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #9B3BFF; box-shadow: 0 0 0 1px rgba(255, 255, 255, .8);
+}
+.tuto-m-lounge::before {
+  content: ''; position: absolute; left: 2px; top: 1px;
+  width: 0; height: 0;
+  border-left: 6px solid transparent; border-right: 6px solid transparent;
+  border-bottom: 13px solid #8B2BE2;
+}
+/* Losange : un carre pivote, comme sur le globe. */
+.tuto-m-marche::before {
+  content: ''; position: absolute; left: 3px; top: 3px;
+  width: 10px; height: 10px; transform: rotate(45deg);
+  background: linear-gradient(135deg, #5AACF0, #1A6BB5 55%, #0D3F80);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .7);
+}

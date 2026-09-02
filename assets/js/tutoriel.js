@@ -57,7 +57,13 @@
     { cle: 'tuto_chercher', cibles: ['#search-btn'] },
     { cle: 'tuto_explorer', cibles: ['#explorer-btn'] },
     { cle: 'tuto_compte',   cibles: ['#accountBtn', '#mobile-menu-btn'] },
-    { cle: 'tuto_remarque', cibles: ['#sugg-btn'] }
+    { cle: 'tuto_remarque', cibles: ['#sugg-btn'] },
+    // EN DERNIER, ET SUR LE GLOBE. On revient d'où l'on est parti, et
+    // cette fois on lit ce qu'on y voit : le site n'a AUCUNE légende
+    // (celle du bas de page a disparu, son CSS seul a survécu), si bien
+    // que rien n'explique pourquoi certains pays portent une pastille
+    // et d'autres un triangle.
+    { cle: 'tuto_reperes', cibles: ['#globe-wrap'], legende: true }
   ];
 
   /**
@@ -91,7 +97,7 @@
     var vivantes = [];
     for (var i = 0; i < ETAPES.length; i++) {
       var el = resoudre(ETAPES[i]);
-      if (el) vivantes.push({ cle: ETAPES[i].cle, el: el });
+      if (el) vivantes.push({ cle: ETAPES[i].cle, el: el, legende: !!ETAPES[i].legende });
     }
     return vivantes;
   }
@@ -151,6 +157,25 @@
     bulle.style.top  = Math.round(top) + 'px';
   }
 
+  /**
+   * La légende des repères du globe.
+   *
+   * Les marques sont DESSINÉES en CSS, et non décrites par des mots :
+   * « triangle violet » se cherche encore une fois l'écran revenu,
+   * tandis qu'un triangle violet se reconnaît. La forme est la clé, pas
+   * son nom — et la couleur d'un producteur lui étant propre, sa
+   * pastille porte ici les trois teintes réellement employées.
+   */
+  function legende() {
+    var lignes = ['prod', 'mixte', 'lounge', 'marche'];
+    var html = '<ul class="tuto-leg">';
+    for (var i = 0; i < lignes.length; i++) {
+      html += '<li><span class="tuto-m tuto-m-' + lignes[i] + '" aria-hidden="true"></span>' +
+              '<span>' + t('tuto_leg_' + lignes[i]) + '</span></li>';
+    }
+    return html + '</ul>';
+  }
+
   function peindre() {
     var e = etapes[index];
     var dernier = (index === etapes.length - 1);
@@ -166,6 +191,7 @@
         '<button type="button" class="tuto-x" aria-label="' + t('tuto_passer') + '">✕</button>' +
       '</div>' +
       '<p class="tuto-txt">' + t(e.cle + '_d') + '</p>' +
+      (e.legende ? legende() : '') +
       '<div class="tuto-pied">' +
         '<div class="tuto-pts" aria-hidden="true">' + points + '</div>' +
         '<button type="button" class="tuto-skip">' + t('tuto_passer') + '</button>' +

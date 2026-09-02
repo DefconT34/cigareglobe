@@ -71,7 +71,8 @@ index.html            Application front (globe, panneaux, PWA)
 assets/js/            Modules espace client (account, reviews, favorites, profile)
                       + forum, agenda, portail d'âge (agegate.js),
                       boîte à suggestions (suggestion.js),
-                      visite guidée de la 1re fois (tutoriel.js)
+                      visite guidée de la 1re fois (tutoriel.js),
+                      onglets sans pays choisi (panneau-vide.js)
 assets/css/           Styles espace client (theme-aware)
 backend/
   config.php          Chargeur .env + connexion PDO (sans secret)

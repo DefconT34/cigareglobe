@@ -2668,6 +2668,7 @@ section('Le didacticiel');
 {
     $tuto = file_get_contents(PROJECT_ROOT . '/assets/js/tutoriel.js');
     $html = file_get_contents(PROJECT_ROOT . '/index.html');
+    $css  = file_get_contents(PROJECT_ROOT . '/assets/css/account.css');
 
     check('didacticiel : le module est charge par la page',
           str_contains($html, 'assets/js/tutoriel.js'));
@@ -2711,7 +2712,7 @@ section('Le didacticiel');
             foreach ($mm[1] as $c) $cibles[] = $c;
         }
     }
-    check('didacticiel : au moins cinq cibles sont declarees', count($cibles) >= 5,
+    check('didacticiel : au moins six cibles sont declarees', count($cibles) >= 6,
           count($cibles) . ' trouvee(s)');
 
     $orphelines = array_values(array_filter($cibles, fn($c) => !isset($ids[$c])));
@@ -2726,7 +2727,7 @@ section('Le didacticiel');
     // ── Chaque etape a ses deux textes ──────────────────
     preg_match_all("/cle:\s*'(tuto_[a-z]+)'/", $tuto, $m);
     $etapes = array_unique($m[1]);
-    check('didacticiel : cinq etapes sont declarees', count($etapes) === 5,
+    check('didacticiel : six etapes sont declarees', count($etapes) === 6,
           implode(', ', $etapes));
 
     $trad = i18n_parse(PROJECT_ROOT . '/assets/js/i18n.js');
@@ -2760,6 +2761,92 @@ section('Le didacticiel');
           str_contains($tuto, "'cg_tuto'") && str_contains($tuto, 'marquerVu'));
     check('didacticiel : passer vaut avoir vu',
           preg_match('/function fermer\(\)\s*\{\s*(\/\/[^\n]*\n\s*)*marquerVu\(\);/', $tuto) === 1);
+
+    // ── La legende des reperes ──────────────────────────
+    // Le site n'a AUCUNE legende : celle du bas de page a disparu, seul
+    // son CSS a survecu (.bbar / .legend dans components.css, que plus
+    // rien ne remplit). La derniere etape est donc le seul endroit qui
+    // explique pourquoi un pays porte une pastille et un autre un
+    // triangle. Ses quatre lignes doivent exister — et etre DESSINEES,
+    // car « triangle violet » se cherche encore une fois l'ecran revenu.
+    $sansLegende = [];
+    foreach (['prod', 'mixte', 'lounge', 'marche'] as $l) {
+        if (empty($trad['fr']['tuto_leg_' . $l]))       $sansLegende[] = "texte $l";
+        if (!str_contains($css, '.tuto-m-' . $l))       $sansLegende[] = "marque $l";
+    }
+    eq('didacticiel : les quatre reperes ont texte et marque dessinee', [], $sansLegende);
+
+    // Les teintes de la legende sont celles de la BASE, pas des
+    // approximations : une legende qui ment est pire qu'une absente.
+    $teintes = [];
+    foreach (['#C0401A', '#B8860B', '#3D6B4A', '#8B2BE2'] as $c) {
+        if (!str_contains($css, $c)) $teintes[] = $c;
+    }
+    eq('didacticiel : la legende reprend les teintes du globe', [], $teintes);
+}
+
+// ════════════════════════════════════════════════════════
+section('Les onglets sans pays choisi');
+
+// CE QUE CE BLOC SURVEILLE. Sur mobile, Infos / Marques / Lounges se
+// touchent AVANT d'avoir choisi un pays — c'est meme le geste naturel.
+// On y trouvait un bandeau gris, une croix, et une page blanche : pas
+// « vide », casse. Rien ne disait qu'il manquait un choix, ni ou le
+// faire.
+{
+    $vide = file_get_contents(PROJECT_ROOT . '/assets/js/panneau-vide.js');
+    $html = file_get_contents(PROJECT_ROOT . '/index.html');
+    $app  = file_get_contents(PROJECT_ROOT . '/assets/js/app.js');
+
+    check('onglets vides : le module est charge par la page',
+          str_contains($html, 'assets/js/panneau-vide.js'));
+    check('onglets vides : la bascule d\'onglet l\'appelle',
+          str_contains($app, 'window.panneauVide(tab)'));
+
+    // Les identifiants vises doivent exister : renommer #lexBody ne
+    // casserait rien de visible — sauf cet ecran, qui se remplirait
+    // dans le vide.
+    $ids = [];
+    if (preg_match_all('/\bid="([A-Za-z0-9_-]+)"/', $html, $m)) {
+        foreach ($m[1] as $i) $ids[$i] = true;
+    }
+    preg_match_all("/(?:aside|corps):\s*'([A-Za-z0-9_-]+)'/", $vide, $m);
+    check('onglets vides : six identifiants sont vises', count($m[1]) === 6,
+          implode(', ', $m[1]));
+    $orphelins = array_values(array_filter($m[1], fn($c) => !isset($ids[$c])));
+    eq('onglets vides : aucun ne pointe un element inexistant', [], $orphelins);
+
+    // UN ECRAN QUI EXPLIQUE SANS OFFRIR DE SORTIE laisse exactement ou
+    // l'on etait. Le bouton doit ramener au globe, la ou le choix se fait.
+    check('onglets vides : l\'ecran offre le geste qui repare',
+          str_contains($vide, "switchMobileTab('globe')"));
+
+    // Trois messages distincts : on ne cherche pas un lounge comme on
+    // cherche une manufacture. Un texte unique aurait suffi a « ne pas
+    // etre vide » sans rien apprendre.
+    $trad = i18n_parse(PROJECT_ROOT . '/assets/js/i18n.js');
+    $manque = [];
+    foreach (['vide_titre', 'vide_lex', 'vide_panel', 'vide_lounge', 'vide_action'] as $k) {
+        if (empty($trad['fr'][$k])) $manque[] = $k;
+    }
+    eq('onglets vides : les cinq libelles sont traduits', [], $manque);
+    // Le panneau reste ouvert pendant qu'on change de langue depuis le
+    // menu : sans data-i18n, son texte resterait dans l'ancienne.
+    check('onglets vides : le texte suit un changement de langue',
+          str_contains($vide, 'data-i18n="vide_titre"') &&
+          str_contains($vide, 'data-i18n="vide_action"'));
+    check('onglets vides : les trois messages different',
+          count(array_unique([$trad['fr']['vide_lex'], $trad['fr']['vide_panel'],
+                              $trad['fr']['vide_lounge']])) === 3);
+
+    // Le bandeau se replie faute de drapeau et de nom a montrer, MAIS
+    // la croix reste : c'est la seule sortie du panneau pour qui n'a pas
+    // compris la barre du bas.
+    $css = file_get_contents(PROJECT_ROOT . '/assets/css/components.css');
+    check('onglets vides : le bandeau se replie', str_contains($css, '.est-vide .lex-banner'));
+    check('onglets vides : la croix de fermeture n\'est pas masquee',
+          !preg_match('/\.est-vide[^{]*\.(lex-close|panel-close)/', $css) &&
+          !str_contains($css, '.est-vide #lexClose'));
 }
 
 // ── Un envoi rate laisse-t-il une trace ? ───────────────
