@@ -99,15 +99,29 @@ function page_col(string $base, string $lang): string {
    une seule page les réunit, sinon Cuba aurait deux adresses pour un
    seul pays, et chacune aurait la moitié du contenu. */
 
+/**
+ * `is_verified` VAUT AUSSI POUR LES PAGES SERVIES.
+ *
+ * L'application filtre dessus depuis toujours (voir data.php) ; ces
+ * pages-ci ne le faisaient pas. Tant qu'aucune fiche n'était marquée
+ * non vérifiée, la différence ne se voyait pas — mais elle aurait
+ * publié, sur les pages que Google indexe, précisément ce que la
+ * modération avait retiré de l'application. Un retrait qui ne retire
+ * qu'à moitié est le pire des deux mondes : invisible à celui qui l'a
+ * décidé, visible à tous les autres.
+ */
+const PAGE_FICHE_PUBLIABLE = 'is_verified = 1';
+
 /** Tous les pays ayant une page, producteurs et pays à établissements. */
 function page_pays_liste(PDO $db): array {
+    $ok = PAGE_FICHE_PUBLIABLE;
     $q = $db->query(
         "SELECT c.id, c.name, c.flag, 1 AS producteur,
-                (SELECT COUNT(*) FROM lounges l WHERE l.country_id = c.id) AS caves
+                (SELECT COUNT(*) FROM lounges l WHERE l.country_id = c.id AND l.$ok) AS caves
            FROM producer_countries c
          UNION
          SELECT lc.id, lc.name, lc.flag, 0 AS producteur,
-                (SELECT COUNT(*) FROM lounges l WHERE l.country_id = lc.id) AS caves
+                (SELECT COUNT(*) FROM lounges l WHERE l.country_id = lc.id AND l.$ok) AS caves
            FROM lounge_countries lc
           WHERE lc.id NOT IN (SELECT id FROM producer_countries)
          ORDER BY name"
@@ -135,7 +149,8 @@ function page_pays(PDO $db, string $id, string $lang): ?array {
 
     $q = $db->prepare("SELECT id, name, city, type, description AS desc_fr, "
                     . page_col('description', $lang) . " AS description
-                       FROM lounges WHERE country_id = ? ORDER BY city, name");
+                       FROM lounges WHERE country_id = ? AND " . PAGE_FICHE_PUBLIABLE . "
+                       ORDER BY city, name");
     $q->execute([$id]);
     $pays['caves'] = $q->fetchAll(PDO::FETCH_ASSOC);
 
@@ -163,7 +178,7 @@ function page_cave(PDO $db, int $id, string $lang): ?array {
                          FROM lounges l
                     LEFT JOIN lounge_countries   lc ON lc.id = l.country_id
                     LEFT JOIN producer_countries pc ON pc.id = l.country_id
-                        WHERE l.id = ? LIMIT 1");
+                        WHERE l.id = ? AND l." . PAGE_FICHE_PUBLIABLE . " LIMIT 1");
     $q->execute([$id]);
     return $q->fetch(PDO::FETCH_ASSOC) ?: null;
 }
@@ -208,7 +223,8 @@ function page_inventaire(PDO $db): array {
     foreach (page_pays_liste($db) as $p) {
         $out['pays'][] = ['slug' => $p['id'], 'maj' => null];
     }
-    foreach ($db->query("SELECT id, name, updated_at FROM lounges ORDER BY id")
+    foreach ($db->query("SELECT id, name, updated_at FROM lounges
+                          WHERE " . PAGE_FICHE_PUBLIABLE . " ORDER BY id")
                 ->fetchAll(PDO::FETCH_ASSOC) as $l) {
         $out['cave'][] = ['slug' => $l['id'] . '-' . page_slug($l['name']), 'maj' => $l['updated_at']];
     }

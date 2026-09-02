@@ -2150,3 +2150,54 @@ La campagne, elle, **n'interroge pas le réseau** : elle compare la base au scea
 Tout domaine cité doit y figurer — une source qui apparaît sans que personne ne
 l'ait regardée fait échouer la campagne. Le nombre de fiches non traçables est
 une **dette dont on interdit la croissance**, pas un objectif de qualité.
+
+### Les 48 fiches « La Casa del Habano » (migrations `134`, `135`)
+
+**Ce qui est établi.** La Casa del Habano est le réseau franchisé de Habanos
+S.A. : il ne vend **que** des habanos, c'est-à-dire des cigares cubains. Or la
+vente de cigares cubains reste interdite aux États-Unis en 2026 — l'embargo de
+1962 n'a jamais été levé, et l'autorisation d'importation personnelle accordée
+sous Obama a été supprimée le 24 septembre 2020.
+
+Une Casa del Habano à **Chicago** ou à **Houston** ne peut pas exister. Ces deux
+fiches ne sont pas incomplètes : elles sont fausses.
+
+**Ce qui n'est pas établi.** Les quarante-six autres. Le réseau compte environ
+140 boutiques dans plus de soixante pays, et Vienne, Madrid, Florence, Osaka ou
+Nairobi sont des marchés plausibles. La liste officielle (`lacasadelhabano.com`)
+est derrière un portail d'âge, et `habanos.com` y renvoie sans la reproduire.
+
+Ne pouvant vérifier, **on ne supprime pas** : effacer 46 adresses probablement
+réelles pour cause de citation fautive ferait plus de dégâts que le défaut. Leur
+champ `source` cesse simplement de mentir — il dit désormais *« à vérifier —
+réseau La Casa del Habano, liste officielle non recoupée »*.
+
+| | avant | après |
+|---|---|---|
+| domaines inexistants cités | 29 | **28** |
+| fiches non traçables | 76 | **28** |
+| établissements publiables | 500 | **497** |
+
+### `is_verified` valait pour l'application, pas pour les pages servies
+
+Défaut trouvé en préparant ce retrait : `data.php` filtre sur `is_verified`
+depuis toujours ; `page.php` et `sitemap.php` ne le faisaient pas. Tant qu'aucune
+fiche n'était marquée non vérifiée, la différence ne se voyait pas — mais elle
+aurait publié, **sur les pages que Google indexe**, précisément ce que la
+modération avait retiré de l'application.
+
+Un retrait qui ne retire qu'à moitié est le pire des deux mondes : invisible à
+celui qui l'a décidé, visible à tous les autres. Corrigé par
+`PAGE_FICHE_PUBLIABLE`, et éprouvé dans les deux sens — la contre-épreuve remet
+la fiche en ligne et vérifie qu'elle revient, sans quoi un filtre qui masquerait
+*tout* aurait passé le contrôle.
+
+⚠ **Le retrait est réversible** : `is_verified = 0` plutôt qu'un `DELETE`. Les
+deux lignes restent consultables en administration si la décision doit être
+revue. `/cave/419` et `/cave/422` rendent 404, ce qui est la bonne réponse.
+
+⚠ **Piège rencontré** : le premier texte de remplacement mentionnait
+`lcdh-locator.com` en explication — et `tools/sources.php`, qui extrait les
+domaines du texte libre, continuait donc à compter 48 fiches citant un domaine
+inexistant. Le champ `source` dit ce qu'il en est **aujourd'hui** ; d'où l'on
+vient est écrit dans le journal de modération.

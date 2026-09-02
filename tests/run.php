@@ -2930,6 +2930,31 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
     eq('pages : une maison repond', 200, $r['status']);
     check('pages : avec son histoire', str_contains($r['body'], 'torcedor'));
 
+    // ── CE QUE LA MODERATION RETIRE DOIT DISPARAITRE PARTOUT ──
+    // L'application filtre sur `is_verified` depuis toujours (data.php) ;
+    // ces pages-ci ne le faisaient pas. Tant qu'aucune fiche n'etait
+    // marquee non verifiee la difference ne se voyait pas — mais elle
+    // aurait publie, sur les pages que GOOGLE INDEXE, precisement ce que
+    // la moderation avait retire de l'application. Un retrait qui ne
+    // retire qu'a moitie est le pire des deux mondes : invisible a celui
+    // qui l'a decide, visible a tous les autres.
+    $pdo->exec("UPDATE lounges SET is_verified = 0 WHERE id = 4242");
+    eq('publication : une fiche retiree rend 404', 404,
+       $p('type=cave&id=4242&lang=fr')['status']);
+    $pageP = $p('type=pays&id=testland&lang=fr')['body'];
+    check('publication : elle sort de la liste de son pays',
+          !str_contains($pageP, '/cave/4242-cafe-habano'));
+    $planR = http('GET', $srv . '/sitemap.php', ['jar' => $anon2])['body'];
+    check('publication : et du plan de site', !str_contains($planR, '/cave/4242-'));
+
+    // CONTRE-EPREUVE : remise en ligne, tout revient. Sans elle, un
+    // filtre qui masquerait TOUT passerait les trois controles ci-dessus.
+    $pdo->exec("UPDATE lounges SET is_verified = 1 WHERE id = 4242");
+    eq('publication : remise en ligne, la fiche repond', 200,
+       $p('type=cave&id=4242&lang=fr')['status']);
+    check('publication : et reparait dans son pays',
+          str_contains($p('type=pays&id=testland&lang=fr')['body'], '/cave/4242-cafe-habano'));
+
     // UN VRAI 404, ET PAS UNE PAGE VIDE EN 200. Repondre 200 sur « rien
     // ici » est ce que les moteurs appellent un soft 404 : ils
     // l'indexent, puis devaluent le site pour cause de pages creuses.
