@@ -45,6 +45,12 @@
     // Le globe attendait derrière : sans ce réveil, il reste sur la
     // dernière image peinte avant l'ouverture du portail.
     if (typeof drawGlobe === 'function') { try { drawGlobe(); } catch (e) {} }
+
+    // La visite guidée commence ICI et pas plus tôt : le portail est le
+    // seul écran qui n'admet rien au-dessus de lui, et un didacticiel
+    // qui expliquerait le site avant qu'on ait le droit d'y entrer
+    // n'aurait aucun sens. Elle décide seule si elle a lieu d'être.
+    if (window.tutoriel) { try { window.tutoriel.apresPortail(); } catch (e) {} }
   }
 
   /**

@@ -2656,6 +2656,112 @@ section('La boite a suggestions');
     test_pdo()->exec("DELETE FROM auth_attempts");
 }
 
+// ════════════════════════════════════════════════════════
+section('Le didacticiel');
+
+// CE QUE CE BLOC SURVEILLE VRAIMENT. Une visite guidee ne tombe pas en
+// panne bruyamment : elle continue de s'ouvrir, et designe du vide.
+// Renommer #accountBtn en #compteBtn ne casse RIEN de visible — sauf la
+// fleche qui pointait dessus, et personne ne s'en apercoit avant qu'un
+// visiteur le signale. D'ou une verification qui relie les selecteurs
+// du didacticiel aux identifiants qui existent pour de bon.
+{
+    $tuto = file_get_contents(PROJECT_ROOT . '/assets/js/tutoriel.js');
+    $html = file_get_contents(PROJECT_ROOT . '/index.html');
+
+    check('didacticiel : le module est charge par la page',
+          str_contains($html, 'assets/js/tutoriel.js'));
+
+    // L'ORDRE COMPTE. Les boutons 🔍 et 🗺 sont poses par leurs modules ;
+    // charge avant eux, le didacticiel ne trouverait que le globe et se
+    // tairait (moins de deux etapes = pas de visite).
+    $rang = fn(string $f) => strpos($html, "assets/js/$f");
+    check('didacticiel : elle est chargee apres les modules qui posent les boutons',
+          $rang('tutoriel.js') > $rang('explorer.js') &&
+          $rang('tutoriel.js') > $rang('search.js'));
+
+    check('didacticiel : le portail d\'age la declenche',
+          str_contains(file_get_contents(PROJECT_ROOT . '/assets/js/agegate.js'),
+                       'tutoriel.apresPortail'));
+
+    check('didacticiel : elle est rejouable depuis le menu mobile',
+          str_contains($html, 'id="mm-tuto"'));
+
+    // ── Les identifiants existants ──────────────────────
+    // Deux sources : le HTML, et les modules qui creent leurs boutons
+    // a la volee (search.js et explorer.js posent #search-btn et
+    // #explorer-btn). Ne regarder que le HTML accuserait a tort.
+    $ids = [];
+    if (preg_match_all('/\bid="([A-Za-z0-9_-]+)"/', $html, $m)) {
+        foreach ($m[1] as $i) $ids[$i] = true;
+    }
+    foreach (glob(PROJECT_ROOT . '/assets/js/*.js') as $f) {
+        if (preg_match_all("/\.id\s*=\s*'([A-Za-z0-9_-]+)'/", file_get_contents($f), $m)) {
+            foreach ($m[1] as $i) $ids[$i] = true;
+        }
+    }
+    check('didacticiel : le releve des identifiants a bien trouve la page',
+          count($ids) > 40, count($ids) . ' identifiant(s)');
+
+    // ── Chaque cible designe quelque chose ──────────────
+    preg_match_all("/cibles:\s*\[([^\]]+)\]/", $tuto, $m);
+    $cibles = [];
+    foreach ($m[1] as $liste) {
+        if (preg_match_all("/'#([A-Za-z0-9_-]+)'/", $liste, $mm)) {
+            foreach ($mm[1] as $c) $cibles[] = $c;
+        }
+    }
+    check('didacticiel : au moins cinq cibles sont declarees', count($cibles) >= 5,
+          count($cibles) . ' trouvee(s)');
+
+    $orphelines = array_values(array_filter($cibles, fn($c) => !isset($ids[$c])));
+    eq('didacticiel : aucune cible ne pointe un element inexistant', [], $orphelines);
+
+    // CONTRE-EPREUVE. Le controle ci-dessus ne vaut que s'il sait dire
+    // non : une cible inventee doit etre reperee. Sans elle, un releve
+    // d'identifiants trop large validerait n'importe quoi.
+    check('didacticiel : une cible inventee serait bien reperee',
+          !isset($ids['bouton-qui-nexiste-pas']));
+
+    // ── Chaque etape a ses deux textes ──────────────────
+    preg_match_all("/cle:\s*'(tuto_[a-z]+)'/", $tuto, $m);
+    $etapes = array_unique($m[1]);
+    check('didacticiel : cinq etapes sont declarees', count($etapes) === 5,
+          implode(', ', $etapes));
+
+    $trad = i18n_parse(PROJECT_ROOT . '/assets/js/i18n.js');
+    $sansTexte = [];
+    foreach ($etapes as $e) {
+        foreach (['_t', '_d'] as $suffixe) {
+            if (empty($trad['fr'][$e . $suffixe])) $sansTexte[] = $e . $suffixe;
+        }
+    }
+    eq('didacticiel : chaque etape a son titre et son texte', [], $sansTexte);
+
+    // Les libelles de navigation, sans lesquels la bulle aurait des
+    // boutons vides. La parite i18n couvre ensuite les cinq autres langues.
+    $sansLibelle = [];
+    foreach (['tuto_suivant', 'tuto_passer', 'tuto_terminer', 'tuto_etape',
+              'tuto_revoir', 'tuto_aide'] as $k) {
+        if (empty($trad['fr'][$k])) $sansLibelle[] = $k;
+    }
+    eq('didacticiel : les libelles de navigation sont traduits', [], $sansLibelle);
+
+    // Le compteur d'etapes se remplit a l'execution : sans ses deux
+    // marques, il annoncerait « Etape {n} sur {total} » tel quel.
+    check('didacticiel : le compteur porte ses deux marques',
+          str_contains($trad['fr']['tuto_etape'], '{n}') &&
+          str_contains($trad['fr']['tuto_etape'], '{total}'));
+
+    // ── Elle ne s'impose pas ────────────────────────────
+    check('didacticiel : une adresse avec parametres l\'ecarte',
+          str_contains($tuto, 'window.location.search.length > 1'));
+    check('didacticiel : elle ne se montre qu\'une fois',
+          str_contains($tuto, "'cg_tuto'") && str_contains($tuto, 'marquerVu'));
+    check('didacticiel : passer vaut avoir vu',
+          preg_match('/function fermer\(\)\s*\{\s*(\/\/[^\n]*\n\s*)*marquerVu\(\);/', $tuto) === 1);
+}
+
 // ── Un envoi rate laisse-t-il une trace ? ───────────────
 // Le cas construit : on force un pilote HTTP avec une cle invalide, et
 // on verifie que l'echec est DIT — au journal, et a la personne. C'est

@@ -235,6 +235,13 @@
     <button class="mlang-btn"        data-lang="zh">🇨🇳 ZH</button>
     <button class="mlang-btn"        data-lang="ar">🇸🇦 AR</button>
   </div>
+  <!-- Revoir la visite guidee. Sur ordinateur la touche « ? » suffit ;
+       un telephone n'a pas de clavier, il lui faut donc un bouton. -->
+  <div class="mmenu-sec" data-i18n="tuto_aide">Aide</div>
+  <button id="mm-tuto" class="mm-forum">
+    <span class="mmf-ico" aria-hidden="true">🧭</span>
+    <span data-i18n="tuto_revoir">Revoir la visite guidée</span>
+  </button>
 </nav>
 
 <!-- ══ PANEL TAB BAR (mobile only) ════════════════════ -->
@@ -535,6 +542,10 @@ if ('serviceWorker' in navigator) {
 <!-- Profil & passeport (Étape D) -->
 <script src="assets/js/profile.js"></script>
 <script src="assets/js/suggestion.js"></script>
+<!-- Visite guidée de la première fois. Chargée EN DERNIER parmi les
+     modules d'interface : elle désigne les boutons que les autres
+     posent (🔍, 🗺, 💬), et ne peut le faire qu'une fois posés. -->
+<script src="assets/js/tutoriel.js"></script>
 <!-- Accessibilité du globe (D4) -->
 <script src="assets/js/a11y-globe.js"></script>
 </body>

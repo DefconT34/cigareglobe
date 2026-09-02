@@ -386,3 +386,66 @@ body.mobile-mode .account-btn { padding: 6px; }
 .sugg-cancel { background: transparent; color: var(--text2); }
 .sugg-send { background: var(--gold); color: #fff; border-color: var(--gold); }
 .sugg-send:disabled { opacity: .5; cursor: default; }
+
+/* ── Visite guidée de la première fois ──
+   Le voile est TRANSPARENT : l'assombrissement vient de l'ombre portée
+   du « trou », qui laisse en pleine lumière l'élément désigné. Un voile
+   opaque avec un enfant clair n'existe pas en CSS — un enfant ne perce
+   pas son parent. Sur les cibles trop vastes (le globe), il n'y a rien
+   à découper : `.plein` rend alors son fond au voile. */
+.tuto-voile {
+  position: fixed; inset: 0; z-index: 10000;
+  background: transparent;
+  opacity: 0; transition: opacity .22s;
+}
+.tuto-voile.show  { opacity: 1; }
+.tuto-voile.plein { background: rgba(10, 6, 3, .62); }
+.tuto-trou {
+  position: absolute; display: none;
+  border-radius: 12px;
+  border: 1px solid var(--gold, #C9A227);
+  box-shadow: 0 0 0 9999px rgba(10, 6, 3, .62);
+  pointer-events: none;                 /* le voile garde les clics */
+  transition: left .2s, top .2s, width .2s, height .2s;
+}
+.tuto-bulle {
+  position: absolute;
+  width: min(88vw, 320px);
+  background: var(--panel, #fff);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px; padding: 16px 18px 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+}
+.tuto-hdr { display: flex; align-items: flex-start; gap: 10px; }
+.tuto-titre {
+  flex: 1; font-family: Cinzel, Georgia, serif;
+  font-size: 14px; line-height: 1.35; color: var(--gold);
+}
+.tuto-x {
+  background: none; border: none; cursor: pointer;
+  font-size: 13px; color: var(--text2); padding: 2px 4px; line-height: 1;
+}
+.tuto-txt {
+  margin: 8px 0 0; font-size: 13px; line-height: 1.55; color: var(--text2);
+}
+.tuto-pied {
+  display: flex; align-items: center; gap: 8px; margin-top: 14px;
+}
+.tuto-pts { flex: 1; display: flex; gap: 5px; }
+.tuto-pt {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--panel-border);
+}
+.tuto-pt.on { background: var(--gold, #C9A227); }
+.tuto-skip, .tuto-next {
+  padding: 7px 14px; font-size: 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--panel-border); font-family: inherit;
+}
+.tuto-skip { background: transparent; color: var(--text2); }
+.tuto-next { background: var(--gold, #C9A227); color: #fff; border-color: var(--gold, #C9A227); }
+
+/* Le mouvement n'apprend rien ici : il ne sert qu'à suivre le passage
+   d'un bouton au suivant. Qui l'a désactivé s'en passe sans rien perdre. */
+@media (prefers-reduced-motion: reduce) {
+  .tuto-voile, .tuto-trou { transition: none; }
+}
