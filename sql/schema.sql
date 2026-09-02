@@ -492,6 +492,28 @@ CREATE TABLE `habanos_presence` (
   CONSTRAINT `habanos_presence_chk_4` CHECK (json_valid(`certifications`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `lexique`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `lexique` (
+  `id` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `categorie` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `variantes` varchar(160) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `terme` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `definition` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `terme_en` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_en` text COLLATE utf8mb4_unicode_ci,
+  `terme_es` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_es` text COLLATE utf8mb4_unicode_ci,
+  `terme_de` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_de` text COLLATE utf8mb4_unicode_ci,
+  `terme_zh` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_zh` text COLLATE utf8mb4_unicode_ci,
+  `terme_ar` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `definition_ar` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `lounge_countries`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -624,6 +646,25 @@ CREATE TABLE `markets` (
   `note_ar` text COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   CONSTRAINT `markets_chk_1` CHECK (json_valid(`top_brands`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `moderation_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `moderation_log` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `acteur_id` int unsigned DEFAULT NULL COMMENT 'NULL = clé d administration ou chemin automatique',
+  `acteur_nom` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Figé au moment de l acte : le journal survit au compte',
+  `portee` enum('admin','moderator','systeme') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `action` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cible_type` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cible_id` int unsigned NOT NULL,
+  `detail` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_ml_cible` (`cible_type`,`cible_id`),
+  KEY `idx_ml_acteur` (`acteur_id`,`created_at`),
+  KEY `idx_ml_date` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `producer_countries`;
@@ -777,6 +818,26 @@ CREATE TABLE `site_languages` (
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `suggestions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `suggestions` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int unsigned DEFAULT NULL,
+  `texte` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Facultatif : sert uniquement a repondre',
+  `page` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ou la personne se trouvait',
+  `lang` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Plafond anti-spam uniquement',
+  `traite` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_sugg_traite` (`traite`,`created_at`),
+  KEY `idx_sugg_date` (`created_at`),
+  KEY `idx_suggestions_user` (`user_id`),
+  CONSTRAINT `fk_suggestions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `translation_status`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -837,73 +898,3 @@ CREATE TABLE `votes` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- ── Lexique du metier (migration 083) ────────────────────
--- Les mots que la prose emploie sans les expliquer : vitole,
--- torcedor, ligero, maduro. Reperes cote serveur sur le FRANCAIS,
--- puis servis traduits — meme regle que les icones d aromes.
--- `variantes` : formes LITTERALES separees par des barres,
--- echappees par preg_quote avant tout usage. Rien de ce qui vient
--- de la base n entre dans une expression reguliere sans echappement.
-CREATE TABLE `lexique` (
-  `id` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `categorie` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `variantes` varchar(160) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `terme` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `definition` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `terme_en` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `definition_en` text COLLATE utf8mb4_unicode_ci,
-  `terme_es` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `definition_es` text COLLATE utf8mb4_unicode_ci,
-  `terme_de` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `definition_de` text COLLATE utf8mb4_unicode_ci,
-  `terme_zh` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `definition_zh` text COLLATE utf8mb4_unicode_ci,
-  `terme_ar` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `definition_ar` text COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ── Journal de moderation (migration 130) ────────────────
--- Qui a decide quoi, et quand. `acteur_nom` est fige au moment de
--- l acte : le journal doit survivre au renommage, a la retrogradation
--- et a la suppression du compte qu on audite. C est pourquoi il n y a
--- volontairement AUCUNE cle etrangere vers `users` — une cascade
--- effacerait les decisions de celui dont on cherche justement la trace.
--- La portee « systeme » couvre les chemins sans auteur humain : seuil
--- de votes atteint, publication directe d un contributeur de confiance.
-CREATE TABLE `moderation_log` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `acteur_id` int unsigned DEFAULT NULL COMMENT 'NULL = cle d administration ou chemin automatique',
-  `acteur_nom` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Fige au moment de l acte : le journal survit au compte',
-  `portee` enum('admin','moderator','systeme') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `action` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cible_type` varchar(24) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cible_id` int unsigned NOT NULL,
-  `detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_ml_cible` (`cible_type`,`cible_id`),
-  KEY `idx_ml_acteur` (`acteur_id`,`created_at`),
-  KEY `idx_ml_date` (`created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ── Boite a suggestions (migration 132) ──────────────────
--- Recueillir les remarques SANS COMPTE : le forum exige une inscription
--- et un email verifie, deux barrieres que la personne qui vient de
--- reperer un defaut ne franchira pas.
--- `email` est NULLABLE, et c est le point : une boite qui exige une
--- adresse n est plus anonyme, et recueille moins.
--- `ip` ne sert qu au plafond anti-spam, comme auth_attempts.
-CREATE TABLE `suggestions` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `texte` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(190) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Facultatif : sert uniquement a repondre',
-  `page` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ou la personne se trouvait',
-  `lang` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ip` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Plafond anti-spam uniquement',
-  `traite` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_sugg_traite` (`traite`,`created_at`),
-  KEY `idx_sugg_date` (`created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

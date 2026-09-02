@@ -2586,74 +2586,126 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
 // ════════════════════════════════════════════════════════
 section('La boite a suggestions');
 
-// Elle est PUBLIQUE et SANS COMPTE : exiger inscription puis
-// verification d'email avant de signaler un defaut, c'est n'en
-// recueillir aucun. Un formulaire anonyme est donc un aimant a spam, et
-// ce sont ses freins qu'il faut eprouver.
+// LE REGIME A CHANGE. La boite avait ete faite SANS compte, a dessein :
+// exiger une inscription puis une verification d'email avant de pouvoir
+// signaler un defaut, c'est n'en recueillir presque aucun. Le
+// proprietaire du site a tranche dans l'autre sens — ce qu'on perd est
+// le retour du visiteur de passage, ce qu'on gagne un interlocuteur
+// identifiable.
+//
+// CE BLOC EPROUVE LES TROIS PORTES, et surtout qu'elles se ferment dans
+// le bon ordre : anonyme, compte non verifie, compte verifie.
 {
-    test_pdo()->exec("DELETE FROM auth_attempts");
+    $srv = start_server();
     test_pdo()->exec("DELETE FROM suggestions");
-    $visiteur = new_client('visiteur');
-    $envoi = fn(array $corps) => post_json($base, $visiteur, '/backend/suggestion.php', $corps);
+    test_pdo()->exec("DELETE FROM auth_attempts");
 
-    // ── Ce qui est refuse ────────────────────────────────
-    $r = $envoi(['texte' => 'bug']);
+    // ── 1. Anonyme : la porte est fermee ────────────────
+    $visiteur = new_client('sugganon');
+    $r = post_json($srv, $visiteur, '/backend/suggestion.php',
+                   ['texte' => 'Une remarque de visiteur anonyme, assez longue.']);
+    eq('suggestion : un anonyme est econduit', 401, $r['status']);
+    eq('suggestion : avec le code que le front sait ouvrir', 'auth_required', $r['json']['code'] ?? null);
+
+    // ── 2. Compte non verifie : fermee aussi ────────────
+    // Meme regle que le forum et les avis. Un compte dont l'adresse n'a
+    // jamais ete confirmee n'identifie personne : il s'ouvre en dix
+    // secondes avec une adresse inventee, et n'aurait donc rien apporte
+    // par rapport a l'anonymat qu'on vient de retirer.
+    $nv = new_client('suggnv');
+    post_json($srv, $nv, '/backend/auth.php?action=register',
+              ['email' => 'sugg-nv@test.local', 'password' => 'motdepasse8',
+               'display_name' => 'Non Verifie']);
+    $r = post_json($srv, $nv, '/backend/suggestion.php',
+                   ['texte' => 'Une remarque envoyee sans avoir confirme son adresse.']);
+    eq('suggestion : un compte non verifie est econduit', 403, $r['status']);
+    eq('suggestion : et sait pourquoi', 'email_not_verified', $r['json']['code'] ?? null);
+
+    // ── 3. Compte verifie : la porte s'ouvre ────────────
+    $m = new_client('suggok');
+    post_json($srv, $m, '/backend/auth.php?action=register',
+              ['email' => 'sugg-ok@test.local', 'password' => 'motdepasse8',
+               'display_name' => 'Membre Verifie']);
+    force_verified('sugg-ok@test.local');
+    $envoi = fn(array $corps) => post_json($srv, $m, '/backend/suggestion.php', $corps);
+
+    // Les garde-fous d'ecriture n'ont pas bouge.
+    $r = $envoi(['texte' => 'court']);
     eq('suggestion : trop courte, refusee', 400, $r['status']);
     eq('suggestion : avec un code stable', 'suggestion_courte', $r['json']['code'] ?? null);
 
-    $r = $envoi(['texte' => 'Allez voir https://exemple.com pour comprendre le probleme.']);
+    $r = $envoi(['texte' => 'Allez voir sur exemple.com, tout y est explique.']);
     eq('suggestion : un lien la fait refuser', 400, $r['status']);
     eq('suggestion : le refus du lien porte son code', 'suggestion_lien', $r['json']['code'] ?? null);
 
     $r = $envoi(['texte' => str_repeat('a', 4001)]);
     eq('suggestion : trop longue, refusee', 400, $r['status']);
 
-    $r = $envoi(['texte' => 'Une remarque parfaitement valable et assez longue.',
-                 'email' => 'pas-une-adresse']);
-    eq('suggestion : une adresse invalide est refusee', 400, $r['status']);
-
-    // Le leurre : on repond « success » sans rien ecrire. Dire au robot
-    // qu'il est repere lui apprendrait a contourner le champ.
-    $r = $envoi(['texte' => 'Un robot remplit tous les champs qu il trouve.', 'site' => 'x']);
+    // Le leurre repond « succes » sans rien ecrire : on ne dit pas au
+    // robot qu'il est repere. Il ne sert plus a grand-chose maintenant
+    // qu'un compte verifie est exige, et il ne coute rien.
+    $r = $envoi(['texte' => 'Une remarque assez longue, mais le leurre est rempli.',
+                 'site'  => 'robot']);
     eq('suggestion : le leurre repond success', 201, $r['status']);
     eq('suggestion : mais n\'ecrit rien', 0,
        (int)test_pdo()->query("SELECT COUNT(*) FROM suggestions")->fetchColumn());
 
-    // ── LES ERREURS DE SAISIE NE COUTENT PAS DE QUOTA ────
-    // Le plafond etait pose AVANT les validations : trois messages trop
-    // courts bloquaient une heure, sur des tentatives legitimes qui
-    // n'avaient rien ecrit. Constate au premier essai du formulaire, ou
-    // le quatrieme envoi — valide, celui-la — s'est fait refuser.
+    // ── L'envoi qui compte ──────────────────────────────
     $r = $envoi(['texte' => 'Le globe tourne trop vite sur mobile, on ne vise rien.',
-                 'email' => 'lecteur@exemple.fr', 'page' => '/fr/', 'lang' => 'fr']);
-    eq('suggestion : apres cinq refus, un envoi valide passe', 201, $r['status']);
+                 'page'  => '/fr/', 'lang' => 'fr']);
+    eq('suggestion : une remarque valide passe', 201, $r['status']);
 
-    $s = test_pdo()->query("SELECT * FROM suggestions ORDER BY id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
-    eq('suggestion : le texte est garde',     'Le globe tourne trop vite sur mobile, on ne vise rien.', $s['texte']);
-    eq('suggestion : l\'adresse aussi',       'lecteur@exemple.fr', $s['email']);
-    // Le contexte, que personne ne pense a donner : « ca ne marche pas »
-    // sans savoir ou est inexploitable.
-    eq('suggestion : la page est retenue',    '/fr/', $s['page']);
-    eq('suggestion : la langue aussi',        'fr',   $s['lang']);
-    eq('suggestion : elle arrive non traitee', 0,     (int)$s['traite']);
+    $s = test_pdo()->query(
+        "SELECT s.*, u.display_name FROM suggestions s
+      LEFT JOIN users u ON u.id = s.user_id ORDER BY s.id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    eq('suggestion : le texte est garde', 'Le globe tourne trop vite sur mobile, on ne vise rien.', $s['texte']);
+    eq('suggestion : elle porte son auteur', 'Membre Verifie', $s['display_name']);
+    // L'ADRESSE VIENT DU COMPTE, jamais du formulaire : un champ libre
+    // aurait permis d'en declarer une autre que la sienne, et la fiche
+    // aurait dit « ecrit par X, joignable chez Y » sans qu'aucun des
+    // deux ne soit verifie.
+    eq('suggestion : l\'adresse vient du compte', 'sugg-ok@test.local', $s['email']);
+    eq('suggestion : la page est retenue', '/fr/', $s['page']);
+    eq('suggestion : la langue aussi',     'fr',   $s['lang']);
+    eq('suggestion : elle arrive non traitee', 0,  (int)$s['traite']);
 
-    // Une langue inconnue ne doit pas entrer telle quelle en base.
-    $envoi(['texte' => 'Une remarque avec une langue inventee par l appelant.', 'lang' => 'xx']);
+    // CONTRE-EPREUVE DE L'ADRESSE : en declarer une autre ne change rien.
+    $envoi(['texte' => 'Une remarque ou je pretends une autre adresse.',
+            'email' => 'quelquun-dautre@test.local']);
+    eq('suggestion : une adresse fournie est ignoree', 'sugg-ok@test.local',
+       test_pdo()->query("SELECT email FROM suggestions ORDER BY id DESC LIMIT 1")->fetchColumn());
+
+    $r = $envoi(['texte' => 'Une langue inconnue doit etre ecartee.', 'lang' => 'xx']);
     eq('suggestion : une langue inconnue est ecartee', null,
        test_pdo()->query("SELECT lang FROM suggestions ORDER BY id DESC LIMIT 1")->fetchColumn() ?: null);
 
-    // ── Le plafond, lui, compte les envois REELS ─────────
-    $envoi(['texte' => 'Un troisieme envoi valide, celui-ci doit encore passer.']);
-    $r = $envoi(['texte' => 'Le quatrieme doit buter sur le plafond horaire.']);
-    eq('suggestion : trois envois par heure, le quatrieme refuse', 429, $r['status']);
+    // ── Le plafond porte sur le MEMBRE ──────────────────
+    // `rate_limit()` comptait par adresse IP : c'etait le seul repere
+    // possible tant que la boite etait anonyme, et c'en etait un mauvais
+    // — deux personnes derriere la meme box consommaient le meme quota,
+    // tandis qu'un seul compte le contournait en changeant de reseau.
+    $r = $envoi(['texte' => 'Le quatrieme envoi de l\'heure doit buter sur le plafond.']);
+    eq('suggestion : trois remarques par heure, la quatrieme refusee', 429, $r['status']);
+    eq('suggestion : avec son code', 'rate_limited', $r['json']['code'] ?? null);
 
-    // Sans jeton CSRF, rien ne passe — meme sans compte.
-    $r = http('POST', $base . '/backend/suggestion.php',
-              ['jar' => $visiteur, 'json' => ['texte' => 'Une remarque sans jeton de securite.']]);
+    // Un AUTRE membre, derriere la meme IP, n'est pas penalise.
+    $m2 = new_client('suggok2');
+    post_json($srv, $m2, '/backend/auth.php?action=register',
+              ['email' => 'sugg-ok2@test.local', 'password' => 'motdepasse8',
+               'display_name' => 'Second Membre']);
+    force_verified('sugg-ok2@test.local');
+    $r = post_json($srv, $m2, '/backend/suggestion.php',
+                   ['texte' => 'Un second membre, derriere la meme adresse IP.']);
+    eq('suggestion : le voisin de reseau n\'est pas penalise', 201, $r['status']);
+
+    // Sans jeton CSRF, rien ne passe — meme connecte.
+    $r = http('POST', $srv . '/backend/suggestion.php',
+              ['jar' => $m, 'json' => ['texte' => 'Une remarque sans jeton de securite.']]);
     eq('suggestion : le jeton CSRF reste exige', 419, $r['status']);
 
     test_pdo()->exec("DELETE FROM suggestions");
     test_pdo()->exec("DELETE FROM auth_attempts");
+    test_pdo()->prepare("DELETE FROM users WHERE email LIKE 'sugg-%@test.local'")->execute();
 }
 
 // ════════════════════════════════════════════════════════

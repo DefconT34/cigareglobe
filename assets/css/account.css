@@ -379,12 +379,16 @@ body.mobile-mode .account-btn { padding: 6px; }
 }
 .sugg-box textarea:focus, .sugg-box input[type=email]:focus { border-color: var(--gold); }
 .sugg-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
-.sugg-cancel, .sugg-send {
+/* `.sugg-connexion` porte le meme habillage que `.sugg-send` : c'est le
+   bouton d'action de la modale quand elle demande un compte. Sans lui,
+   il sortait au rendu par defaut du navigateur — bordure grise et fond
+   blanc — au milieu d'une fenetre qui, elle, est habillee. */
+.sugg-cancel, .sugg-send, .sugg-connexion {
   padding: 9px 18px; font-size: 12px; border-radius: 8px; cursor: pointer;
-  border: 1px solid var(--panel-border);
+  border: 1px solid var(--panel-border); font-family: inherit;
 }
 .sugg-cancel { background: transparent; color: var(--text2); }
-.sugg-send { background: var(--gold); color: #fff; border-color: var(--gold); }
+.sugg-send, .sugg-connexion { background: var(--gold); color: #fff; border-color: var(--gold); }
 .sugg-send:disabled { opacity: .5; cursor: default; }
 
 /* ── Visite guidée de la première fois ──

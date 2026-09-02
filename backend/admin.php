@@ -399,8 +399,14 @@ if ($tab === 'adresses') {
 
 if ($tab === 'suggestions') {
     try {
+        // Le membre est joint quand il y en a un. `LEFT JOIN` et non
+        // `JOIN` : les remarques envoyées sous l'ancien régime — sans
+        // compte — restent, et disparaîtraient d'une jointure stricte.
         $sugg_rows = $db->query(
-            "SELECT * FROM suggestions ORDER BY traite ASC, created_at DESC LIMIT 200"
+            "SELECT s.*, u.display_name AS auteur, u.email AS auteur_email
+               FROM suggestions s
+          LEFT JOIN users u ON u.id = s.user_id
+           ORDER BY s.traite ASC, s.created_at DESC LIMIT 200"
         )->fetchAll();
     } catch (Throwable $e) { $sugg_rows = []; }   // migration 132 non jouée
 }
@@ -1820,8 +1826,9 @@ html{transition:background .25s,color .25s}
     <div class="page-title">Suggestions</div>
     <div class="page-subtitle">
       <?= count($sugg_rows) ?> reçue<?= count($sugg_rows) > 1 ? 's' : '' ?> ·
-      envoyées <strong>sans compte</strong> — c’est ce qui permet à quelqu’un de
-      signaler un défaut sans s’inscrire. Les non traitées sont en tête.
+      envoyées depuis un <strong>compte vérifié</strong> — vous pouvez donc répondre.
+      Les remarques antérieures au changement de règle, envoyées sans compte, sont
+      conservées et signalées comme telles. Les non traitées sont en tête.
     </div>
   </div>
 </div>
@@ -1864,11 +1871,25 @@ html{transition:background .25s,color .25s}
       </div>
     </td>
     <td>
-      <?php if ($s['email']): ?>
-        <a href="mailto:<?= htmlspecialchars($s['email']) ?>" class="ct-city"
-           style="color:var(--gold);word-break:break-all"><?= htmlspecialchars($s['email']) ?></a>
+      <?php
+        // Trois cas, dans cet ordre : un membre (le régime actuel), une
+        // adresse laissée volontairement sous l'ancien, rien du tout.
+        // Le compte supprimé retombe sur le deuxième ou le troisième —
+        // la clé étrangère est en ON DELETE SET NULL, la remarque reste.
+        $adr = $s['auteur_email'] ?: ($s['email'] ?: '');
+      ?>
+      <?php if (!empty($s['auteur'])): ?>
+        <div class="ct-name"><?= htmlspecialchars($s['auteur']) ?></div>
+        <?php if ($adr): ?>
+        <a href="mailto:<?= htmlspecialchars($adr) ?>" class="ct-city"
+           style="color:var(--gold);word-break:break-all"><?= htmlspecialchars($adr) ?></a>
+        <?php endif; ?>
+      <?php elseif ($adr): ?>
+        <a href="mailto:<?= htmlspecialchars($adr) ?>" class="ct-city"
+           style="color:var(--gold);word-break:break-all"><?= htmlspecialchars($adr) ?></a>
+        <div class="ct-city" style="opacity:.6">sans compte (ancien régime)</div>
       <?php else: ?>
-        <span class="ct-city">anonyme</span>
+        <span class="ct-city">anonyme (ancien régime)</span>
       <?php endif; ?>
     </td>
     <td>
