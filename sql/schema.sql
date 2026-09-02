@@ -886,3 +886,24 @@ CREATE TABLE `moderation_log` (
   KEY `idx_ml_acteur` (`acteur_id`,`created_at`),
   KEY `idx_ml_date` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── Boite a suggestions (migration 132) ──────────────────
+-- Recueillir les remarques SANS COMPTE : le forum exige une inscription
+-- et un email verifie, deux barrieres que la personne qui vient de
+-- reperer un defaut ne franchira pas.
+-- `email` est NULLABLE, et c est le point : une boite qui exige une
+-- adresse n est plus anonyme, et recueille moins.
+-- `ip` ne sert qu au plafond anti-spam, comme auth_attempts.
+CREATE TABLE `suggestions` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `texte` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(190) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Facultatif : sert uniquement a repondre',
+  `page` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ou la personne se trouvait',
+  `lang` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ip` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Plafond anti-spam uniquement',
+  `traite` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_sugg_traite` (`traite`,`created_at`),
+  KEY `idx_sugg_date` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

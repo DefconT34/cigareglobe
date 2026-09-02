@@ -2583,6 +2583,79 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
        test_pdo()->query("SELECT last_login_at FROM users WHERE email='alice@test.local'")->fetchColumn());
 }
 
+// ════════════════════════════════════════════════════════
+section('La boite a suggestions');
+
+// Elle est PUBLIQUE et SANS COMPTE : exiger inscription puis
+// verification d'email avant de signaler un defaut, c'est n'en
+// recueillir aucun. Un formulaire anonyme est donc un aimant a spam, et
+// ce sont ses freins qu'il faut eprouver.
+{
+    test_pdo()->exec("DELETE FROM auth_attempts");
+    test_pdo()->exec("DELETE FROM suggestions");
+    $visiteur = new_client('visiteur');
+    $envoi = fn(array $corps) => post_json($base, $visiteur, '/backend/suggestion.php', $corps);
+
+    // ── Ce qui est refuse ────────────────────────────────
+    $r = $envoi(['texte' => 'bug']);
+    eq('suggestion : trop courte, refusee', 400, $r['status']);
+    eq('suggestion : avec un code stable', 'suggestion_courte', $r['json']['code'] ?? null);
+
+    $r = $envoi(['texte' => 'Allez voir https://exemple.com pour comprendre le probleme.']);
+    eq('suggestion : un lien la fait refuser', 400, $r['status']);
+    eq('suggestion : le refus du lien porte son code', 'suggestion_lien', $r['json']['code'] ?? null);
+
+    $r = $envoi(['texte' => str_repeat('a', 4001)]);
+    eq('suggestion : trop longue, refusee', 400, $r['status']);
+
+    $r = $envoi(['texte' => 'Une remarque parfaitement valable et assez longue.',
+                 'email' => 'pas-une-adresse']);
+    eq('suggestion : une adresse invalide est refusee', 400, $r['status']);
+
+    // Le leurre : on repond « success » sans rien ecrire. Dire au robot
+    // qu'il est repere lui apprendrait a contourner le champ.
+    $r = $envoi(['texte' => 'Un robot remplit tous les champs qu il trouve.', 'site' => 'x']);
+    eq('suggestion : le leurre repond success', 201, $r['status']);
+    eq('suggestion : mais n\'ecrit rien', 0,
+       (int)test_pdo()->query("SELECT COUNT(*) FROM suggestions")->fetchColumn());
+
+    // ── LES ERREURS DE SAISIE NE COUTENT PAS DE QUOTA ────
+    // Le plafond etait pose AVANT les validations : trois messages trop
+    // courts bloquaient une heure, sur des tentatives legitimes qui
+    // n'avaient rien ecrit. Constate au premier essai du formulaire, ou
+    // le quatrieme envoi — valide, celui-la — s'est fait refuser.
+    $r = $envoi(['texte' => 'Le globe tourne trop vite sur mobile, on ne vise rien.',
+                 'email' => 'lecteur@exemple.fr', 'page' => '/fr/', 'lang' => 'fr']);
+    eq('suggestion : apres cinq refus, un envoi valide passe', 201, $r['status']);
+
+    $s = test_pdo()->query("SELECT * FROM suggestions ORDER BY id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    eq('suggestion : le texte est garde',     'Le globe tourne trop vite sur mobile, on ne vise rien.', $s['texte']);
+    eq('suggestion : l\'adresse aussi',       'lecteur@exemple.fr', $s['email']);
+    // Le contexte, que personne ne pense a donner : « ca ne marche pas »
+    // sans savoir ou est inexploitable.
+    eq('suggestion : la page est retenue',    '/fr/', $s['page']);
+    eq('suggestion : la langue aussi',        'fr',   $s['lang']);
+    eq('suggestion : elle arrive non traitee', 0,     (int)$s['traite']);
+
+    // Une langue inconnue ne doit pas entrer telle quelle en base.
+    $envoi(['texte' => 'Une remarque avec une langue inventee par l appelant.', 'lang' => 'xx']);
+    eq('suggestion : une langue inconnue est ecartee', null,
+       test_pdo()->query("SELECT lang FROM suggestions ORDER BY id DESC LIMIT 1")->fetchColumn() ?: null);
+
+    // ── Le plafond, lui, compte les envois REELS ─────────
+    $envoi(['texte' => 'Un troisieme envoi valide, celui-ci doit encore passer.']);
+    $r = $envoi(['texte' => 'Le quatrieme doit buter sur le plafond horaire.']);
+    eq('suggestion : trois envois par heure, le quatrieme refuse', 429, $r['status']);
+
+    // Sans jeton CSRF, rien ne passe — meme sans compte.
+    $r = http('POST', $base . '/backend/suggestion.php',
+              ['jar' => $visiteur, 'json' => ['texte' => 'Une remarque sans jeton de securite.']]);
+    eq('suggestion : le jeton CSRF reste exige', 419, $r['status']);
+
+    test_pdo()->exec("DELETE FROM suggestions");
+    test_pdo()->exec("DELETE FROM auth_attempts");
+}
+
 // ── Un envoi rate laisse-t-il une trace ? ───────────────
 // Le cas construit : on force un pilote HTTP avec une cle invalide, et
 // on verifie que l'echec est DIT — au journal, et a la personne. C'est

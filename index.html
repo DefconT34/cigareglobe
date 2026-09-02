@@ -424,6 +424,11 @@
      🔄 Gyroscope y déposent leur bouton. Voir #side-fabs dans
      components.css — la géométrie n'est définie qu'à cet endroit. -->
 <div id="side-fabs">
+  <!-- Boîte à suggestions. Sans compte, à dessein : exiger inscription
+       puis vérification d'email avant de signaler un défaut, c'est
+       n'en recevoir aucun. -->
+  <button id="sugg-btn" class="side-fab" data-i18n-title="sugg_title"
+          title="Une remarque ?" aria-label="Envoyer une remarque">💬</button>
   <button id="contrib-btn" class="side-fab" title="Signaler un établissement" aria-label="Signaler un établissement">✏</button>
 </div>
 <!-- ══ CONTRIBUTION MODAL ══════════════════════════════ -->
@@ -529,6 +534,7 @@ if ('serviceWorker' in navigator) {
 <script src="assets/js/favorites.js"></script>
 <!-- Profil & passeport (Étape D) -->
 <script src="assets/js/profile.js"></script>
+<script src="assets/js/suggestion.js"></script>
 <!-- Accessibilité du globe (D4) -->
 <script src="assets/js/a11y-globe.js"></script>
 </body>

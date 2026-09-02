@@ -79,6 +79,10 @@ const CONTENU_EXCLUES = [
     'favorites'        => 'listes privées',
     'votes'            => 'votes sur les contributions',
     'moderation_log'   => 'journal de modération',
+    // Une suggestion porte parfois une adresse électronique, et
+    // toujours la parole de quelqu'un : elle se sauvegarde, elle ne se
+    // versionne pas.
+    'suggestions'      => 'remarques envoyées par la boîte à suggestions',
     'forum_topics'     => 'discussions',
     'forum_posts'      => 'messages',
     'forum_post_images'=> 'images des messages',

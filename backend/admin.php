@@ -159,6 +159,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $msg = ['type'=>'warn','text'=>"Contribution #{$id} rejetée."];
     } elseif ($id && $action === 'role_set') {
         $msg = changer_role($db, $id, (string)($_POST['role'] ?? ''));
+    } elseif ($id && ($action === 'sugg_traite' || $action === 'sugg_rouvrir')) {
+        // Une remarque LUE n'est pas une remarque TRAITÉE. Deux états
+        // valent mieux qu'une pile qu'on relit sans fin, et le retour en
+        // arrière évite de perdre ce qu'on a classé trop vite.
+        $db->prepare('UPDATE suggestions SET traite = ? WHERE id = ?')
+           ->execute([$action === 'sugg_traite' ? 1 : 0, $id]);
+        $msg = ['type' => 'ok', 'text' => "Suggestion #{$id} "
+              . ($action === 'sugg_traite' ? 'classée comme traitée.' : 'rouverte.')];
+    } elseif ($id && $action === 'sugg_supprimer') {
+        $db->prepare('DELETE FROM suggestions WHERE id = ?')->execute([$id]);
+        journaliser($db, 'suggestion_supprimer', 'suggestion', $id);
+        $msg = ['type' => 'warn', 'text' => "Suggestion #{$id} supprimée."];
     }
 }
 
@@ -307,6 +319,22 @@ if ($tab === 'membres') {
              LIMIT 500"
         )->fetchAll();
     } catch (Throwable $e) { $membres_rows = []; }
+}
+
+// Suggestions — les remarques envoyées sans compte. Ouvertes aux deux
+// portées : lire ce que disent les visiteurs relève de la modération
+// autant que de l'administration.
+$sugg_rows = [];
+$sugg_neuves = 0;
+try {
+    $sugg_neuves = (int)$db->query("SELECT COUNT(*) FROM suggestions WHERE traite = 0")->fetchColumn();
+} catch (Throwable $e) {}
+if ($tab === 'suggestions') {
+    try {
+        $sugg_rows = $db->query(
+            "SELECT * FROM suggestions ORDER BY traite ASC, created_at DESC LIMIT 200"
+        )->fetchAll();
+    } catch (Throwable $e) { $sugg_rows = []; }   // migration 132 non jouée
 }
 
 // Journal — lisible par les DEUX portées, délibérément. Un journal que
@@ -893,6 +921,15 @@ html{transition:background .25s,color .25s}
     <span class="ni-label">Communaute</span>
     <?php if ($forum_flagged): ?>
     <span class="nav-badge nb-red"><?= $forum_flagged ?></span>
+    <?php endif; ?>
+  </a>
+
+  <a class="nav-item <?= $tab==='suggestions' ? 'active' : '' ?>"
+     href="?tab=suggestions">
+    <span class="ni-icon">&#128172;</span>
+    <span class="ni-label">Suggestions</span>
+    <?php if ($sugg_neuves): ?>
+    <span class="nav-badge nb-amber"><?= $sugg_neuves ?></span>
     <?php endif; ?>
   </a>
 
@@ -1585,6 +1622,98 @@ html{transition:background .25s,color .25s}
   · Fermé : <?= htmlspecialchars(implode(' · ', PORTEE_ADMIN_SEULEMENT)) ?>.<br>
   · Chaque décision est inscrite au <a href="?tab=journal" style="color:var(--gold)">journal</a>,
     sous le nom du compte. C'est ce qui permet de confier le rôle sans le regretter.
+</div>
+<?php endif; ?>
+
+<!-- ── SUGGESTIONS ────────────────────────────────────── -->
+<?php elseif ($tab === 'suggestions'): ?>
+<div class="page-header">
+  <div>
+    <div class="page-title">Suggestions</div>
+    <div class="page-subtitle">
+      <?= count($sugg_rows) ?> reçue<?= count($sugg_rows) > 1 ? 's' : '' ?> ·
+      envoyées <strong>sans compte</strong> — c’est ce qui permet à quelqu’un de
+      signaler un défaut sans s’inscrire. Les non traitées sont en tête.
+    </div>
+  </div>
+</div>
+
+<?php if (empty($sugg_rows)): ?>
+<div class="empty-state">
+  <div class="empty-icon">◈</div>
+  <div class="empty-text">Aucune remarque pour l’instant</div>
+  <div class="ct-city" style="margin-top:8px">
+    Le bouton 💬 est en bas à droite de chaque page du site.
+  </div>
+</div>
+<?php else: ?>
+<div class="table-scroll"><table class="contrib-table">
+  <thead>
+    <tr>
+      <th style="width:110px">Reçue</th>
+      <th>Remarque</th>
+      <th style="width:150px">Contexte</th>
+      <th style="width:170px">Répondre</th>
+      <th style="width:190px">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($sugg_rows as $s): ?>
+  <tr<?= $s['traite'] ? ' style="opacity:.55"' : '' ?>>
+    <td style="white-space:nowrap">
+      <div class="ct-name"><?= date('d/m/y', strtotime($s['created_at'])) ?></div>
+      <div class="ct-city"><?= date('H:i', strtotime($s['created_at'])) ?></div>
+    </td>
+    <td>
+      <div class="ct-city" style="white-space:pre-wrap;color:var(--text)">
+        <?= htmlspecialchars($s['texte']) ?>
+      </div>
+    </td>
+    <td>
+      <div class="ct-city">
+        <?= $s['page'] ? htmlspecialchars($s['page']) : '—' ?>
+        <?= $s['lang'] ? '<br>' . strtoupper(htmlspecialchars($s['lang'])) : '' ?>
+      </div>
+    </td>
+    <td>
+      <?php if ($s['email']): ?>
+        <a href="mailto:<?= htmlspecialchars($s['email']) ?>" class="ct-city"
+           style="color:var(--gold);word-break:break-all"><?= htmlspecialchars($s['email']) ?></a>
+      <?php else: ?>
+        <span class="ct-city">anonyme</span>
+      <?php endif; ?>
+    </td>
+    <td>
+      <div class="action-row">
+        <form method="POST">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
+          <input type="hidden" name="id"   value="<?= (int)$s['id'] ?>">
+          <?php if (!$s['traite']): ?>
+          <button class="action-btn ab-approve" name="action" value="sugg_traite">✓ Traitée</button>
+          <?php else: ?>
+          <button class="action-btn" name="action" value="sugg_rouvrir">↺ Rouvrir</button>
+          <?php endif; ?>
+        </form>
+        <form method="POST" onsubmit="return confirm('Supprimer definitivement cette remarque ?')">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars(admin_csrf()) ?>">
+          <input type="hidden" name="id"   value="<?= (int)$s['id'] ?>">
+          <button class="action-btn ab-reject" name="action" value="sugg_supprimer">✕</button>
+        </form>
+      </div>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+  </tbody>
+</table></div>
+
+<div class="ct-city" style="margin-top:18px;line-height:1.7;max-width:62em">
+  <strong>Ce que la boîte accepte, et ce qu’elle refuse.</strong><br>
+  · Trois envois par heure et par adresse — comptés sur les envois RÉELS :
+    une erreur de saisie ne consomme pas le quota.<br>
+  · <strong>Aucun lien</strong> dans le texte. C’est ce qui coupe l’essentiel du
+    spam automatique, et un retour d’essai n’en a pas besoin.<br>
+  · Un champ leurre, invisible, que les robots remplissent et les humains non.<br>
+  · L’adresse est facultative : sans elle, le message arrive quand même.
 </div>
 <?php endif; ?>
 

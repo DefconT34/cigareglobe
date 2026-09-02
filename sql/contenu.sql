@@ -24,6 +24,7 @@
 --   favorites           listes privées
 --   votes               votes sur les contributions
 --   moderation_log      journal de modération
+--   suggestions         remarques envoyées par la boîte à suggestions
 --   forum_topics        discussions
 --   forum_posts         messages
 --   forum_post_images   images des messages

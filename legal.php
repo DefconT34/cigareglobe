@@ -193,6 +193,12 @@ $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
         <td>À la contribution</td>
         <td>Vous prévenir de la publication, limiter les envois en masse</td>
         <td>La fiche reste ; vos coordonnées sont effacées avec le compte</td></tr>
+    <tr><td>Remarques envoyées par la boîte à suggestions, avec l'adresse
+            électronique <strong>si vous en donnez une</strong>, la page où vous
+            étiez et votre langue</td>
+        <td>Quand vous écrivez par le bouton 💬</td>
+        <td>Corriger ce que vous signalez, et vous répondre le cas échéant</td>
+        <td>Effacées une fois traitées</td></tr>
     <tr><td>Jetons de vérification et de réinitialisation</td>
         <td>À l'inscription, à l'oubli du mot de passe</td>
         <td>Prouver que l'adresse est la vôtre</td>
