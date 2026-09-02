@@ -1,0 +1,137 @@
+/* ════════════════════════════════════════════════════════
+   page.css — Les pages servies par le serveur
+   ────────────────────────────────────────────────────────
+   Ces pages ne sont PAS l'application : ni globe, ni panneaux, ni
+   calques. Du texte, des liens, et une colonne lisible. Elles se
+   chargent sur une connexion faible, se lisent sans JavaScript, et
+   c'est ce qu'un moteur de recherche parcourt.
+
+   Elles empruntent les variables et les polices de themes.css — même
+   grammaire visuelle que le reste du site — mais rien de
+   components.css : 78 Ko de règles de mise en page pour une page qui
+   n'a qu'une colonne.
+   ════════════════════════════════════════════════════════ */
+
+.pg-body {
+  margin: 0;
+  background: var(--bg, #F8F5EE);
+  color: var(--text, #2A1F14);
+  font-family: Lato, system-ui, sans-serif;
+  font-size: 15px; line-height: 1.7;
+}
+
+/* ── En-tête ── */
+.pg-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 14px 22px;
+  border-bottom: 1px solid var(--panel-border, #D8D2C4);
+  background: var(--hdr-bg, #F2EDE2);
+}
+.pg-marque {
+  font-family: Cinzel, Georgia, serif; font-size: 16px;
+  letter-spacing: .16em; color: var(--text, #2A1F14); text-decoration: none;
+}
+.pg-marque span { color: var(--gold, #C9A227); }
+.pg-langues { display: flex; gap: 10px; }
+.pg-langues a {
+  font-family: Cinzel, serif; font-size: 10px; letter-spacing: .14em;
+  color: var(--text2, #6B6560); text-decoration: none;
+  padding: 3px 6px; border: 1px solid transparent; border-radius: 3px;
+}
+.pg-langues a:hover { border-color: var(--gold, #C9A227); color: var(--gold, #C9A227); }
+
+/* ── Colonne de lecture ──
+   72 caractères environ : au-delà, l'œil perd la ligne suivante. */
+.pg-main { max-width: 46rem; margin: 0 auto; padding: 28px 22px 56px; }
+
+.pg-fil { font-size: 12px; color: var(--text2, #6B6560); margin-bottom: 10px; }
+.pg-fil a { color: var(--text2, #6B6560); }
+.pg-fil span { opacity: .5; }
+
+.pg-main h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(26px, 5vw, 38px); font-weight: 900;
+  line-height: 1.15; margin: 0 0 18px;
+}
+.pg-bloc { margin: 26px 0; }
+.pg-bloc h2 {
+  font-family: Cinzel, Georgia, serif; font-size: 11px;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold, #C9A227);
+  margin: 0 0 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--panel-border, #D8D2C4);
+}
+.pg-bloc p { margin: 0 0 12px; }
+.pg-chapo { font-size: 16px; line-height: 1.75; }
+.pg-drapeau { font-size: 38px; margin: 0 0 4px; line-height: 1; }
+.pg-n {
+  font-family: Cinzel, serif; font-size: 10px; letter-spacing: .1em;
+  color: var(--text2, #6B6560); border: 1px solid var(--panel-border, #D8D2C4);
+  border-radius: 10px; padding: 1px 7px; margin-inline-start: 4px;
+}
+
+.pg-puces { margin: 0; padding-inline-start: 20px; }
+.pg-puces li { margin-bottom: 5px; }
+
+/* Une grille, pas une colonne : deux cent vingt-six liens en pile
+   verticale font une page de trois mètres que personne ne parcourt. */
+.pg-grille {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 14px;
+}
+/* `> li >` et non `.pg-grille span` : la seconde forme passait AUSSI en
+   bloc le drapeau et le compteur imbriqués dans le lien — drapeau seul
+   sur sa ligne, compteur étiré sur toute la largeur. */
+.pg-grille > li > a, .pg-grille > li > span { display: block; padding: 4px 0; text-decoration: none; }
+.pg-grille > li > a { color: var(--text, #2A1F14); border-bottom: 1px solid transparent; }
+.pg-grille > li > a:hover { color: var(--gold, #C9A227); }
+.pg-n, .pg-dr { display: inline; }
+.pg-dr { font-size: 15px; }
+
+/* Les fiches d'établissement portent leur description : c'est ce qui
+   fait la substance d'une page de pays qui n'a aucun texte propre. */
+.pg-cartes { list-style: none; margin: 0; padding: 0; }
+.pg-cartes li {
+  padding: 12px 0; border-bottom: 1px solid var(--panel-border, #D8D2C4);
+}
+.pg-cartes a { text-decoration: none; color: var(--text, #2A1F14); }
+.pg-cartes a:hover strong { color: var(--gold, #C9A227); }
+.pg-cartes p { margin: 4px 0 0; font-size: 13.5px; color: var(--text2, #6B6560); }
+.pg-ville {
+  font-family: Cinzel, serif; font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--text2, #6B6560); margin-inline-start: 6px;
+}
+
+.pg-faits { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0 0 18px; }
+.pg-faits dt {
+  font-family: Cinzel, serif; font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--text2, #6B6560); padding-top: 3px;
+}
+.pg-faits dd { margin: 0; }
+
+.pg-globe, .pg-retour, .pg-lien-ext { margin: 26px 0 0; }
+.pg-globe a {
+  display: inline-block; text-decoration: none;
+  font-family: Cinzel, serif; font-size: 10px; letter-spacing: .18em;
+  text-transform: uppercase;
+  background: var(--gold, #C9A227); color: #fff;
+  padding: 11px 20px; border-radius: 3px;
+}
+.pg-retour a, .pg-lien-ext a { color: var(--gold, #C9A227); }
+.pg-vide { color: var(--text2, #6B6560); font-style: italic; }
+
+/* ── Pied ──
+   La mention sanitaire est obligatoire, et elle se lit : elle est en
+   tête du pied, pas noyée dans une ligne de liens. */
+.pg-pied {
+  border-top: 1px solid var(--panel-border, #D8D2C4);
+  padding: 18px 22px 30px; text-align: center;
+  font-size: 11.5px; color: var(--text2, #6B6560);
+}
+.pg-pied p { margin: 4px 0; }
+.pg-pied a { color: var(--text2, #6B6560); }
+
+@media (max-width: 520px) {
+  .pg-main { padding: 20px 16px 44px; }
+  .pg-grille { grid-template-columns: 1fr; }
+}

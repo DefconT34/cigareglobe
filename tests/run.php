@@ -2786,6 +2786,232 @@ section('Le didacticiel');
 }
 
 // ════════════════════════════════════════════════════════
+section('Le contenu servi par le serveur');
+
+// CE QUE CE BLOC SURVEILLE. Le plan de site annoncait SEIZE adresses :
+// six pages d'accueil et dix fils de discussion. Cinq cents
+// etablissements, cent dix-huit maisons et cent huit pays n'y etaient
+// pas — ils n'existaient que dans le JavaScript, donc pour personne
+// d'autre que ceux qui connaissaient deja le site. Le HTML brut de la
+// page d'accueil portait UN SEUL lien, et le seul <h1> du site entier
+// etait « Avez-vous 18 ans ou plus ? ».
+require_once PROJECT_ROOT . '/backend/pages_lib.php';
+{
+    // ── Les slugs ───────────────────────────────────────
+    // `brands` n'a pas d'identifiant : sa cle est le NOM, et l'adresse
+    // porte un slug. Deux maisons qui se reduiraient au meme slug en
+    // rendraient une INATTEIGNABLE, sans que rien ne le signale.
+    eq('adresses : les accents tombent',      'partagas',      page_slug('Partagás'));
+    eq('adresses : l\'apostrophe aussi',      'quai-d-orsay',  page_slug("Quai d'Orsay"));
+    eq('adresses : les points aussi',         'a-j-fernandez', page_slug('A.J. Fernandez'));
+    eq('adresses : le tilde espagnol',        'padron',        page_slug('Padrón'));
+    eq('adresses : pas de tiret aux bouts',   'ashton',        page_slug('  Ashton !  '));
+
+    $slugs = [];
+    foreach (test_pdo()->query("SELECT name FROM brands")->fetchAll(PDO::FETCH_COLUMN) as $n) {
+        $slugs[page_slug($n)][] = $n;
+    }
+    $collisions = [];
+    foreach ($slugs as $s => $noms) if (count($noms) > 1) $collisions[] = $s . ' : ' . implode(' / ', $noms);
+    eq('adresses : aucune maison n\'en masque une autre', [], $collisions);
+
+    $mauvais = [];
+    foreach (page_pays_liste(test_pdo()) as $p) {
+        if (!preg_match('/^[a-z0-9-]{1,60}$/', $p['id'])) $mauvais[] = $p['id'];
+    }
+    eq('adresses : chaque pays a un identifiant utilisable en URL', [], $mauvais);
+
+    // ── Les regles de reecriture ────────────────────────
+    // Elles ne s'eprouvent pas sous `php -S`, qui n'a pas mod_rewrite :
+    // on extrait le motif du .htaccess et on le confronte a de vrais
+    // chemins. Une expression fautive se verrait ici, et non trois jours
+    // apres la mise en ligne.
+    $ht = file_get_contents(PROJECT_ROOT . '/.htaccess');
+    $motif = function (string $mot) use ($ht): ?string {
+        return preg_match('#RewriteRule\s+\^(\(\?:\(en\|es\|de\|zh\|ar\)/\)\?' . $mot . '[^\s]*)\s#', $ht, $m)
+             ? '#^' . $m[1] . '#' : null;
+    };
+    foreach ([['pays',   ['pays/cuba', 'en/pays/cuba', 'ar/pays/costarica'],
+                         ['pays/', 'pays/Cuba', 'xx/pays/cuba', 'payse/cuba']],
+              ['marque', ['marque/cohiba', 'zh/marque/quai-d-orsay'],
+                         ['marque/', 'marque/Cohiba']],
+              ['cave',   ['cave/5', 'cave/5-cigarro-ci', 'de/cave/123-x'],
+                         ['cave/', 'cave/abc', 'cave/-5']]] as [$mot, $bons, $mauvaisChemins]) {
+        $re = $motif($mot);
+        check("reecriture : la regle « $mot » existe", $re !== null);
+        if ($re === null) continue;
+        $ratés = [];
+        foreach ($bons as $c)          if (!preg_match($re, $c)) $ratés[] = "refuse $c";
+        foreach ($mauvaisChemins as $c) if (preg_match($re, $c)) $ratés[] = "accepte $c";
+        eq("reecriture : « $mot » accepte et refuse ce qu'il faut", [], $ratés);
+    }
+
+    // -- Les pages elles-memes ---------------------------
+    // CAS CONSTRUIT, et non « on interroge Cuba ». La base de test porte
+    // un decor minimal (`testland`, un etablissement, une maison) : s'y
+    // appuyer sur les donnees reelles faisait passer la campagne en
+    // developpement et echouer partout ailleurs — ce qui est arrive au
+    // premier jet, dix-sept echecs d'un coup. On enrichit donc le decor
+    // de ce qu'on veut eprouver.
+    $pdo = test_pdo();
+    $pdo->exec("UPDATE producer_countries
+                   SET regions    = '[\"Zone Une\",\"Zone Deux\"]',
+                       varieties  = '[\"Variete A\"]',
+                       production = 'Une production de reference, ecrite pour la campagne.',
+                       climate    = 'Climat de reference'
+                 WHERE id = 'testland'");
+    // Un second etablissement, au nom ACCENTUE : c'est lui qui eprouve
+    // le slug dans l'adresse, ce que « Lounge de test » ne fait pas.
+    $pdo->exec("DELETE FROM lounges WHERE id = 4242");
+    $pdo->exec("INSERT INTO lounges (id, country_id, name, city, type, phone, description, is_verified)
+                VALUES (4242, 'testland', 'Cafe Habano', 'Ville-Test', 'Cave & Lounge',
+                        '+225 00 00 00 00', 'Une description de reference pour la campagne.', 1)");
+
+    // Sous `php -S` il n'y a pas de reecriture : on interroge page.php
+    // directement, ce que les regles ci-dessus font en production.
+    $srv = start_server();
+    $anon2 = new_client('ssr');
+    $p = fn(string $q) => http('GET', $srv . '/page.php?' . $q, ['jar' => $anon2]);
+
+    $nbPays    = count(page_pays_liste($pdo));
+    $nbMarques = (int)$pdo->query("SELECT COUNT(*) FROM brands")->fetchColumn();
+
+    $r = $p('type=atlas&lang=fr');
+    eq('pages : l\'atlas repond', 200, $r['status']);
+    // Il doit relier TOUT ce que la base porte, et pas un echantillon :
+    // un atlas qui oublie la moitie des pays laisse cette moitie
+    // introuvable autrement que par le plan de site.
+    $liens = substr_count($r['body'], '<a ');
+    check('pages : l\'atlas relie tout le contenu en un saut',
+          $liens >= $nbPays + $nbMarques,
+          "$liens liens pour " . ($nbPays + $nbMarques) . ' entites');
+    check('pages : il porte un titre de niveau 1',
+          (bool)preg_match('#<h1[^>]*>[^<]+</h1>#', $r['body']));
+
+    $r = $p('type=pays&id=testland&lang=fr');
+    eq('pages : un pays repond', 200, $r['status']);
+    check('pages : son titre est le pays', str_contains($r['body'], '<h1>Testland</h1>'));
+    check('pages : et son contenu est du VRAI texte, pas un gabarit vide',
+          str_contains($r['body'], 'Une production de reference'));
+    check('pages : il declare sa canonique',
+          (bool)preg_match('#rel="canonical" href="[^"]*/pays/testland"#', $r['body']));
+    eq('pages : et les six traductions', 6,
+       preg_match_all('#<link rel="alternate" hreflang="(?!x-default)#', $r['body']));
+    check('pages : il liste ses etablissements',
+          str_contains($r['body'], 'Cafe Habano') && str_contains($r['body'], '/cave/4242-cafe-habano'));
+
+    // Les listes JSON. `regions` vaut ["Zone Une","Zone Deux"] en base :
+    // les decouper sur la virgule affichait le crochet et les
+    // guillemets, et coupait au milieu de tout nom qui en contient une.
+    check('pages : les listes JSON sont decodees, pas decoupees',
+          str_contains($r['body'], '<li>Zone Une</li>') && !str_contains($r['body'], '["Zone'));
+
+    // CONTRE-EPREUVE DE LA TRADUCTION. Sans elle, six adresses servant
+    // le meme francais passeraient tous les controles ci-dessus — et
+    // hreflang annoncerait cinq traductions qui n'existent pas. Le
+    // decor porte une histoire ALLEMANDE et rien d'autre : c'est donc
+    // sur la maison qu'on mesure la difference.
+    $de  = $p('type=marque&id=marque-de-test&lang=de')['body'];
+    $frm = $p('type=marque&id=marque-de-test&lang=fr')['body'];
+    check('pages : la version allemande dit autre chose que la francaise', $de !== $frm);
+    check('pages : elle sert bien la traduction', str_contains($de, 'Testgeschichte'));
+    check('pages : et son marquage suit', str_contains($de, '<html lang="de"'));
+    $ar = $p('type=pays&id=testland&lang=ar')['body'];
+    check('pages : l\'arabe est servi de droite a gauche', str_contains($ar, 'dir="rtl"'));
+
+    $r = $p('type=cave&id=4242&lang=fr');
+    eq('pages : un etablissement repond', 200, $r['status']);
+    check('pages : il renvoie vers son pays',
+          (bool)preg_match('#href="[^"]*/pays/testland"#', $r['body']));
+    check('pages : et se declare comme un lieu',
+          str_contains($r['body'], '"@type":"Store"'));
+
+    $r = $p('type=marque&id=marque-de-test&lang=fr');
+    eq('pages : une maison repond', 200, $r['status']);
+    check('pages : avec son histoire', str_contains($r['body'], 'torcedor'));
+
+    // UN VRAI 404, ET PAS UNE PAGE VIDE EN 200. Repondre 200 sur « rien
+    // ici » est ce que les moteurs appellent un soft 404 : ils
+    // l'indexent, puis devaluent le site pour cause de pages creuses.
+    foreach (['type=pays&id=nexistepas', 'type=cave&id=999999',
+              'type=marque&id=nexistepas'] as $q) {
+        $r = $p($q);
+        eq("pages : « $q » rend un vrai 404", 404, $r['status']);
+        check("pages : et se retire de l'index",
+              str_contains($r['body'], 'name="robots" content="noindex"'));
+    }
+
+    // Le titre d'onglet. Un moteur en affiche une soixantaine de
+    // caracteres : mesure sur une vraie fiche, le premier essai en
+    // faisait CENT TRENTE, dont la moitie repetes — le nom d'un
+    // etablissement porte souvent deja sa rue, et la ville la repetait.
+    $trop = [];
+    foreach (['type=atlas', 'type=pays&id=testland', 'type=cave&id=4242',
+              'type=marque&id=marque-de-test'] as $q) {
+        if (preg_match('#<title>(.*?)</title>#s', $p($q)['body'], $m)) {
+            $n = mb_strlen(html_entity_decode($m[1]));
+            if ($n > 62) $trop[] = $q . ' : ' . $n;
+        }
+    }
+    eq('pages : aucun titre d\'onglet ne depasse ce qu\'un moteur affiche', [], $trop);
+
+    // -- Le plan de site ---------------------------------
+    $r = http('GET', $srv . '/sitemap.php', ['jar' => $anon2]);
+    eq('plan : il repond', 200, $r['status']);
+    $nbCaves = (int)$pdo->query("SELECT COUNT(*) FROM lounges")->fetchColumn();
+    $attendu = 1 + $nbPays + $nbMarques + $nbCaves;      // l'atlas, puis tout le reste
+    $n = preg_match_all('#<loc>#', $r['body']);
+    check('plan : il annonce toutes les entites de la base', $n >= $attendu,
+          "$n adresses pour $attendu attendues");
+    foreach (['/atlas', '/pays/testland', '/marque/marque-de-test', '/cave/4242-'] as $att) {
+        check("plan : il contient $att", str_contains($r['body'], $att));
+    }
+    check('plan : chaque adresse declare ses traductions',
+          preg_match_all('#hreflang="en"#', $r['body']) >= $attendu);
+
+    // -- La coquille renvoie vers la page ----------------
+    // L'application ecrit « ?country=testland » dans la barre d'adresse
+    // des qu'un panneau s'ouvre, et ces adresses se partagent. Sans
+    // canonique, un moteur voit deux adresses pour un seul pays.
+    $r = http('GET', $srv . '/index.php?lang=fr&country=testland', ['jar' => $anon2]);
+    check('coquille : ?country=testland designe /pays/testland comme canonique',
+          (bool)preg_match('#rel="canonical" href="[^"]*/pays/testland"#', $r['body']));
+
+    // CONTRE-EPREUVE, ET ELLE PROTEGE LE CACHE. La valeur entre dans la
+    // cle du fichier de cache : un identifiant seulement « bien forme »
+    // aurait permis d'en faire ecrire autant qu'on veut avec
+    // ?country=aaaa, aaab, aaac... Elle est donc verifiee EN BASE.
+    $r = http('GET', $srv . '/index.php?lang=fr&country=paysinvente', ['jar' => $anon2]);
+    check('coquille : un pays inconnu ne fabrique aucune canonique',
+          !str_contains($r['body'], '/pays/paysinvente'));
+
+    $pdo->exec("DELETE FROM lounges WHERE id = 4242");
+
+    // -- Le titre de niveau 1 de l'application -----------
+    $html = file_get_contents(PROJECT_ROOT . '/index.html');
+    check('h1 : le portail d\'age n\'est plus le titre du site',
+          !preg_match('#<h1[^>]*class="ag-titre"#', $html));
+    eq('h1 : la coquille en a exactement un', 1, preg_match_all('#<h1[\s>]#', $html));
+    check('h1 : et le portail garde son nom accessible',
+          str_contains($html, 'aria-labelledby="ag-titre"') && str_contains($html, 'id="ag-titre"'));
+
+    // Le SEUL lien du HTML brut de la page d'accueil menait nulle part :
+    // sans celui-ci, les pages de contenu ne seraient connues que par le
+    // plan de site — annoncees, mais reliees a rien.
+    check('h1 : la page d\'accueil mene a l\'atlas', str_contains($html, 'href="/atlas"'));
+
+    // Le portail d'age vit dans SA feuille : page.php le porte aussi et
+    // ne charge pas les 78 Ko de components.css. Le recopier aurait
+    // donne deux portails a corriger au lieu d'un.
+    check('portail : sa feuille est distincte',
+          is_file(PROJECT_ROOT . '/assets/css/agegate.css'));
+    check('portail : et components.css ne le redefinit plus',
+          !str_contains(file_get_contents(PROJECT_ROOT . '/assets/css/components.css'), '.ag-box'));
+    check('portail : la coquille charge la feuille',
+          str_contains($html, 'assets/css/agegate.css'));
+}
+
+// ════════════════════════════════════════════════════════
 section('Les onglets sans pays choisi');
 
 // CE QUE CE BLOC SURVEILLE. Sur mobile, Infos / Marques / Lounges se

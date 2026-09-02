@@ -188,6 +188,29 @@
   # La racine passe aussi par index.php (français).
   RewriteRule ^$ /index.php?lang=fr [L,QSA,E=PRETTY:1]
 
+  # ── Le contenu, servi par le serveur ────────────────────
+  # Le plan de site n'annonçait que seize adresses : six pages d'accueil
+  # et dix fils de discussion. Cinq cents établissements, cent dix-huit
+  # maisons et cent huit pays n'existaient QUE dans le JavaScript — donc
+  # pour personne d'autre que ceux qui connaissaient déjà le site.
+  #
+  # page.php sert une vraie page par entité, dans les six langues.
+  # Le préfixe de langue est optionnel : /pays/cuba est le français,
+  # /en/pays/cuba l'anglais. Un seul vocabulaire de segments, en
+  # français, parce que le site a une langue d'origine — multiplier les
+  # segments par langue aurait multiplié les règles sans rien apporter
+  # au référencement, qui se joue sur le slug et le contenu.
+  #
+  # L'ordre compte : ces règles viennent APRÈS celles des pages
+  # d'accueil, qui sont ancrées par ^…$ et ne peuvent pas les capter.
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?atlas/?$        /page.php?lang=$1&type=atlas [L,QSA,E=PRETTY:1]
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?pays/([a-z0-9-]{1,60})/?$   /page.php?lang=$1&type=pays&id=$2 [L,QSA,E=PRETTY:1]
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?marque/([a-z0-9-]{1,80})/?$ /page.php?lang=$1&type=marque&id=$2 [L,QSA,E=PRETTY:1]
+  # L'identifiant numérique fait foi ; le slug qui le suit n'est là que
+  # pour l'humain et pour le lien partagé. Un slug changé ne casse donc
+  # aucune adresse déjà indexée.
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?cave/(\d{1,9})(?:-[a-z0-9-]*)?/?$ /page.php?lang=$1&type=cave&id=$2 [L,QSA,E=PRETTY:1]
+
   # Plan de site : genere, pour que le domaine suive SITE_URL.
   RewriteRule ^sitemap\.xml$ /sitemap.php [L]
 </IfModule>

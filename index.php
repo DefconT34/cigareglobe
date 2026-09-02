@@ -207,6 +207,44 @@ if ($sujetOk) {
     $urlIci = url_langue($lang) . '?sujet=' . $sujetOk['id'];
 }
 
+// ── Une adresse de contenu a UNE page canonique ───────────
+// L'application écrit « ?country=cuba » dans la barre d'adresse dès
+// qu'un panneau s'ouvre (voir majUrl dans deeplinks.js), et ces adresses
+// se partagent. Elles montrent le même contenu que /pays/cuba, qui est
+// la page servie par le serveur : sans canonique, un moteur voit deux
+// adresses pour un seul pays et partage le crédit entre les deux.
+//
+// La canonique désigne la PAGE, jamais l'application : c'est elle qui
+// porte le texte, les liens et les six traductions.
+//
+// Et alors PAS d'alternates ici : la page canonique déclare les siens.
+// En déclarer d'autres depuis une adresse qui ne se revendique pas
+// canonique reviendrait à annoncer six traductions de la coquille.
+require_once __DIR__ . '/backend/pages_lib.php';
+$canonEntite = null;
+if (($v = trim((string)($_GET['country'] ?? ''))) !== '' && preg_match('/^[a-z0-9-]{1,60}$/', $v)) {
+    // VÉRIFIÉ EN BASE, et pas seulement par une expression régulière :
+    // la valeur entre dans la clé du cache plus bas, et un identifiant
+    // simplement « bien formé » aurait permis de faire écrire autant de
+    // fichiers qu'on veut avec ?country=aaaa, aaab, aaac…
+    try {
+        $q = ($db ?? $db = getDB())->prepare(
+            "SELECT 1 FROM producer_countries WHERE id = ?
+             UNION SELECT 1 FROM lounge_countries WHERE id = ? LIMIT 1");
+        $q->execute([$v, $v]);
+        if ($q->fetchColumn()) $canonEntite = page_url('pays', $v, $lang);
+    } catch (Throwable $e) { /* base injoignable : canonique générique */ }
+} elseif ($marqueOk) {
+    $canonEntite = page_url('marque', page_slug($marqueOk['name']), $lang);
+} elseif (($v = (int)($_GET['lounge'] ?? 0)) > 0) {
+    try {
+        $q = ($db ?? getDB())->prepare("SELECT name FROM lounges WHERE id = ? LIMIT 1");
+        $q->execute([$v]);
+        if ($n = $q->fetchColumn()) $canonEntite = page_url('cave', $v . '-' . page_slug((string)$n), $lang);
+    } catch (Throwable $e) { /* base injoignable : canonique générique */ }
+}
+if ($canonEntite) $urlIci = $canonEntite;
+
 // ── Liens alternatifs ─────────────────────────────────────
 // x-default désigne la version servie à un visiteur dont la langue
 // n'est couverte par aucune des six : ici la racine française.
@@ -216,7 +254,7 @@ if ($sujetOk) {
 // reviendrait à annoncer six traductions dont cinq n'existent pas —
 // exactement le contenu dupliqué que hreflang sert à éviter.
 $alternates = '';
-if (!$sujetOk) {
+if (!$sujetOk && !$canonEntite) {
     foreach ($LANGUES as $l) {
         $alternates .= '  <link rel="alternate" hreflang="' . $l . '" href="' . url_langue($l) . "\">\n";
     }
@@ -258,10 +296,18 @@ if (is_file(langues_fichier())) $empreinte = max($empreinte, filemtime(langues_f
 // que soit leur lien. Le nom retenu vient de la BASE, jamais de l'URL —
 // une marque inconnue retombe sur la page générique et sa clé, ce qui
 // interdit à un tiers de créer des fichiers de cache à volonté.
+// La canonique d'entité entre AUSSI dans la clé : sans elle, la
+// première page servie sur ?country=cuba serait rendue à tous les
+// visiteurs suivants, avec la canonique de Cuba — soit exactement le
+// contraire de ce que la canonique doit faire. Elle est construite
+// depuis la BASE, jamais depuis l'URL : une entité inconnue retombe sur
+// la page générique et sa clé, ce qui interdit à un tiers de créer des
+// fichiers de cache à volonté.
 $pageCache = __DIR__ . '/backend/cache/page_' . $lang . '_'
            . substr(sha1(racine() . '|' . (int)$pretty
                     . '|' . ($marqueOk['name'] ?? '')
-                    . '|' . (int)($sujetOk['id'] ?? 0)), 0, 12) . '.html';
+                    . '|' . (int)($sujetOk['id'] ?? 0)
+                    . '|' . (string)$canonEntite), 0, 12) . '.html';
 
 if (is_file($pageCache) && filemtime($pageCache) >= $empreinte) {
     header('Content-Type: text/html; charset=utf-8');

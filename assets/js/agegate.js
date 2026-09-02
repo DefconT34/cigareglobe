@@ -68,7 +68,9 @@
     boite.classList.add('ag-refus');
     boite.innerHTML =
       '<div class="ag-ey">CIGAR ODYSSEY</div>' +
-      '<h1 class="ag-titre">' + t('age_refus_titre') + '</h1>' +
+      // Un `p`, comme dans le gabarit : le portail ne doit pas fournir
+      // le titre de niveau 1 de la page (voir index.html).
+      '<p class="ag-titre">' + t('age_refus_titre') + '</p>' +
       '<p class="ag-txt">' + t('age_refus_texte') + '</p>' +
       '<div class="ag-btns"><button class="ag-non" id="agRetour">' + t('age_retour') + '</button></div>' +
       '<p class="ag-sante">' + t('age_sante') + '</p>';

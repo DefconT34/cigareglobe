@@ -84,7 +84,11 @@ html, body {
 .hdr-divider { width:1px; height:36px; background:var(--panel-border); opacity:.5; flex-shrink:0; }
 .title-block { flex-shrink:0; }
 .eyebrow { font-family:'Cinzel',serif; font-size:8px; letter-spacing:.45em; color:var(--gold); text-transform:uppercase; margin-bottom:2px; }
-.title-main { font-family:'Playfair Display',serif; font-size:26px; font-weight:900; color:var(--text); line-height:1; letter-spacing:.02em; }
+/* `margin:0` n'est pas cosmetique : l'element est passe de `div` a `h1`
+   (le seul titre de niveau 1 du site etait la question du portail
+   d'age), et un h1 arrive avec .67em de marge par defaut, qui
+   descendrait l'en-tete entier. */
+.title-main { font-family:'Playfair Display',serif; font-size:26px; font-weight:900; color:var(--text); line-height:1; letter-spacing:.02em; margin:0; }
 .title-main span { color:var(--gold); }
 .title-sub { font-family:'Playfair Display',serif; font-style:italic; font-size:11px; color:var(--text2); margin-top:1px; }
 .stat-item { text-align:center; flex-shrink:0; }
@@ -1186,82 +1190,6 @@ button, a, input, select, textarea, label,
    marge à la lecture plutôt que de la gaspiller en gouttières. */
 @media (max-width: 640px) {
   .bm-body { padding: 14px 18px 22px; }
-}
-
-/* ══ PORTAIL D'ÂGE ══════════════════════════════════════
-   Le cigare est un produit du tabac : l'accès est réservé aux
-   personnes majeures. Ce n'est pas une modale d'information — elle se
-   dresse AU-DESSUS de tout, écran de chargement compris, et ne se ferme
-   ni par Échap ni par un clic à côté.
-
-   Elle est VISIBLE PAR DÉFAUT : c'est ce qui empêche de la contourner
-   en désactivant JavaScript. Un court script en tête de page pose
-   `age-ok` sur <html> pour qui a déjà répondu, avant le premier rendu —
-   sans quoi le portail clignoterait à chaque page. */
-#agegate {
-  position: fixed; inset: 0; z-index: 100000;
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px;
-  background: rgba(15, 8, 3, .97);
-}
-.age-ok #agegate { display: none; }
-
-.ag-box {
-  width: min(460px, 100%);
-  padding: 34px 34px 26px;
-  text-align: center;
-  background: #F8F5EE; color: #2A1F14;
-  border: 1px solid #C9A227; border-radius: 4px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, .5);
-}
-.ag-ey {
-  font-family: Cinzel, serif; font-size: 10px;
-  letter-spacing: .38em; text-transform: uppercase; color: #7A5200;
-}
-.ag-titre {
-  font-family: 'Playfair Display', serif; font-size: 25px;
-  font-weight: 900; margin: 14px 0 12px; line-height: 1.25;
-}
-.ag-txt {
-  font-family: Lato, sans-serif; font-size: 12.5px; line-height: 1.68;
-  color: #2A1F14; margin: 0 0 22px;
-}
-.ag-btns { display: flex; flex-direction: column; gap: 9px; }
-.ag-oui, .ag-non {
-  width: 100%; padding: 13px 18px; cursor: pointer; border-radius: 3px;
-  font-family: Cinzel, serif; font-size: 10px;
-  letter-spacing: .18em; text-transform: uppercase;
-}
-.ag-oui {
-  background: #C9A227; color: #F8F5EE; border: 1px solid #C9A227;
-}
-.ag-oui:hover { background: #7A5200; border-color: #7A5200; }
-.ag-non {
-  background: none; color: #6B6560; border: 1px solid #B0ADA6;
-}
-.ag-non:hover { border-color: #2A1F14; color: #2A1F14; }
-.ag-oui:focus-visible, .ag-non:focus-visible {
-  outline: 2px solid #7A5200; outline-offset: 2px;
-}
-/* La mention sanitaire n'est pas une note de bas de page : elle est
-   obligatoire, et elle se lit. */
-.ag-sante {
-  margin: 20px 0 0; padding-top: 14px;
-  border-top: 1px solid #B0ADA6;
-  font-family: Lato, sans-serif; font-size: 10.5px; line-height: 1.5;
-  color: #6B6560;
-}
-.ag-refus .ag-titre { color: #6B6560; }
-
-/* Le lien légal : présent, discret, jamais à la place de
-   l'avertissement sanitaire qui le précède. */
-.ag-legal { margin: 10px 0 0; font-family: Lato, sans-serif; font-size: 10.5px; }
-.ag-legal a { color: #6B6560; text-decoration: underline; }
-.ag-legal a:hover { color: #3A362F; }
-
-@media (max-width: 480px) {
-  .ag-box { padding: 26px 22px 20px; }
-  .ag-titre { font-size: 21px; }
 }
 
 /* ══ COMMUNAUTÉ — LES DEUX POINTS D'ENTRÉE ══════════════

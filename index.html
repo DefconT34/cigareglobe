@@ -14,6 +14,10 @@
   <link rel="stylesheet" href="assets/css/themes.css">
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="assets/css/responsive.css">
+  <!-- Le portail d'age vit dans sa propre feuille : les pages servies
+       par le serveur (page.php) le portent aussi, et ne chargent pas
+       les 78 Ko de components.css. Une seule definition. -->
+  <link rel="stylesheet" href="assets/css/agegate.css">
 
   <!-- External libraries -->
   <script src="assets/vendor/topojson-client.min.js"></script>
@@ -127,7 +131,13 @@
     <!-- Logo / Title -->
     <div class="title-block">
       <div class="eyebrow" data-i18n="eyebrow">Cartographie du tabac premium</div>
-      <div class="title-main">CIGAR <span>ODYSSEY</span></div>
+      <!-- Le titre de niveau 1 de l'application. Il etait porte par le
+           portail d'age (« Avez-vous 18 ans ou plus ? »), qui n'a rien
+           a voir avec le sujet de la page ; l'avoir demote laissait la
+           page SANS h1 du tout, ce qui n'est pas mieux. Le nom du site
+           est deja affiche a cet endroit : il devient le titre, sans
+           rien ajouter a l'ecran. -->
+      <h1 class="title-main">CIGAR <span>ODYSSEY</span></h1>
       <div class="title-sub" data-i18n="subtitle">L'atlas du cigare premium d'exception</div>
     </div>
 
@@ -369,7 +379,12 @@
 <div id="agegate" role="dialog" aria-modal="true" aria-labelledby="ag-titre">
   <div class="ag-box">
     <div class="ag-ey">CIGAR ODYSSEY</div>
-    <h1 class="ag-titre" id="ag-titre" data-i18n="age_titre">Avez-vous 18 ans ou plus ?</h1>
+    <!-- UN `p`, ET NON UN `h1`. Le portail est present sur toute page :
+         « Avez-vous 18 ans ou plus ? » etait donc le SEUL titre de
+         niveau 1 que voyait un moteur de recherche, sur le site entier.
+         Le role de dialogue garde son nom accessible par
+         aria-labelledby, qui ne demande aucun niveau de titre. -->
+    <p class="ag-titre" id="ag-titre" data-i18n="age_titre">Avez-vous 18 ans ou plus ?</p>
     <p class="ag-txt" data-i18n="age_texte">Ce site traite du cigare, un produit du tabac. Son accès est réservé aux personnes ayant l'âge légal pour consommer du tabac dans leur pays — 18 ans en France.</p>
     <div class="ag-btns">
       <button class="ag-oui" id="agOui" data-i18n="age_oui">J'ai 18 ans ou plus</button>
@@ -379,7 +394,13 @@
     <!-- Les mentions légales doivent être atteignables AVANT d'entrer :
          c'est le seul écran que tout visiteur traverse, ce site n'ayant
          pas de pied de page. -->
-    <p class="ag-legal"><a href="legal.php" data-i18n="age_legal">Mentions légales et confidentialité</a></p>
+    <!-- Le lien vers l'atlas est ici pour une raison de fond : c'est le
+         SEUL lien du HTML brut de la page d'accueil, et donc le seul
+         chemin par lequel un robot peut atteindre les six cent quarante
+         pages de contenu. Sans lui, elles ne seraient connues que par le
+         plan de site — annoncées, mais reliées à rien. -->
+    <p class="ag-legal"><a href="/atlas" data-i18n="pg_atlas_t">L'atlas complet</a>
+       · <a href="legal.php" data-i18n="age_legal">Mentions légales et confidentialité</a></p>
   </div>
 </div>
 

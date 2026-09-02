@@ -68,6 +68,10 @@ espace membre (contributions, favoris, profil). PWA multilingue
 
 ```
 index.html            Application front (globe, panneaux, PWA)
+index.php             Coquille multilingue de l'application (lang, meta, canonique)
+page.php              Contenu servi par le serveur : /atlas, /pays/…,
+                      /cave/…, /marque/… — voir docs/referencement.md
+sitemap.php           Plan de site (sert /sitemap.xml)
 assets/js/            Modules espace client (account, reviews, favorites, profile)
                       + forum, agenda, portail d'âge (agegate.js),
                       boîte à suggestions (suggestion.js),

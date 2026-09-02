@@ -10,6 +10,7 @@
 
 require_once __DIR__ . '/backend/config.php';
 require_once __DIR__ . '/backend/langues.php';
+require_once __DIR__ . '/backend/pages_lib.php';
 
 // Seules les langues SERVIES entrent au plan. Déclarer une version
 // qu'index.php rend en français ferait annoncer six traductions dont
@@ -42,6 +43,53 @@ foreach ($LANGUES_PLAN as $l) {
     echo '    <priority>' . ($l === 'fr' ? '1.0' : '0.9') . "</priority>\n";
     echo "  </url>\n";
 }
+// ── L'atlas et tout ce qu'il relie ───────────────────────
+// LE CONSTAT QUI A OUVERT CE CHANTIER : ce plan annonçait SEIZE
+// adresses. Cinq cents établissements, cent dix-huit maisons et cent
+// huit pays n'y figuraient pas — ils n'existaient que dans le
+// JavaScript, donc pour personne d'autre que ceux qui connaissaient
+// déjà le site.
+//
+// Ici, CHAQUE entité est déclarée dans les six langues, et les six
+// versions se désignent mutuellement par xhtml:link : c'est ce qui dit
+// à un moteur qu'il s'agit d'une traduction et non d'un doublon. Le
+// contenu l'est réellement — les colonnes `_en`, `_es`… existent pour
+// les descriptions, les histoires et les fiches de pays.
+//
+// Contrairement aux discussions plus bas, qui n'ont qu'une langue.
+try {
+    $db  = $db ?? getDB();
+    $inv = page_inventaire($db);
+
+    // L'atlas d'abord : c'est le seul lien qui mène aux six cent
+    // quarante autres. Un plan de site fait connaître des adresses ;
+    // ce sont les LIENS qui leur donnent du poids.
+    $entrees = [['atlas', '', null, '0.8']];
+    foreach (['pays' => '0.7', 'marque' => '0.6', 'cave' => '0.5'] as $type => $prio) {
+        foreach ($inv[$type] as $e) $entrees[] = [$type, $e['slug'], $e['maj'], $prio];
+    }
+
+    foreach ($entrees as [$type, $slug, $maj, $prio]) {
+        echo "  <url>\n";
+        echo '    <loc>' . htmlspecialchars(page_url($type, $slug, 'fr'), ENT_XML1) . "</loc>\n";
+        foreach ($LANGUES_PLAN as $alt) {
+            printf("    <xhtml:link rel=\"alternate\" hreflang=\"%s\" href=\"%s\"/>\n",
+                   $alt, htmlspecialchars(page_url($type, $slug, $alt), ENT_XML1));
+        }
+        printf("    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"%s\"/>\n",
+               htmlspecialchars(page_url($type, $slug, 'fr'), ENT_XML1));
+        if ($maj) {
+            echo '    <lastmod>' . htmlspecialchars(date('Y-m-d', strtotime((string)$maj)), ENT_XML1) . "</lastmod>\n";
+        }
+        echo "    <changefreq>monthly</changefreq>\n";
+        echo '    <priority>' . $prio . "</priority>\n";
+        echo "  </url>\n";
+    }
+} catch (Throwable $e) {
+    // Base injoignable : le plan garde ses pages d'accueil. Un plan
+    // amputé vaut mieux qu'un XML tronqué au milieu d'une balise.
+}
+
 // ── Les discussions ──────────────────────────────────────
 // Elles sont le seul contenu qui grandit sans qu'on l'écrive, et elles
 // vivaient dans un calque JavaScript : le plan de site n'annonçait que
