@@ -70,5 +70,26 @@ if ($simule) {
 }
 
 [$evts, $mails] = forum_evt_rappels($db, $jours);
+
+// ── La trace ─────────────────────────────────────────────
+// Un cron qui cesse de tourner ne dit rien. Il n'echoue pas : il
+// n'arrive plus, et c'est tout. Version de PHP changee par
+// l'hebergeur, dossier deplace, quota atteint — le rendez-vous passe
+// sans que personne soit prevenu, et on l'apprend par un inscrit.
+//
+// Chaque passage laisse donc une ligne au journal de moderation, ou la
+// portee « systeme » est justement faite pour les actions sans auteur
+// humain. `prevol.php` s'en sert pour dire depuis quand le cron n'a
+// plus donne signe de vie.
+//
+// La trace est ecrite MEME quand il n'y a rien a envoyer : c'est le
+// cas le plus frequent, et c'est precisement celui ou l'on ne saurait
+// pas distinguer « rien a faire » de « ne tourne plus ».
+//
+// --dry-run n'ecrit rien : une simulation ne doit pas laisser croire
+// que le cron a tourne.
+journaliser($db, 'cron_rappels', 'cron', 0,
+    sprintf('%d rendez-vous, %d email(s)', $evts, $mails));
+
 printf("Rappels J-%d : %d rendez-vous, %d email(s) envoye(s).\n", $jours, $evts, $mails);
 exit(0);

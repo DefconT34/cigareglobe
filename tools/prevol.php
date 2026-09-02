@@ -75,6 +75,7 @@ function prevol_environnement(): array {
         'legal_a_trous'  => prevol_legal_a_trous(),
         'contenu_present'=> is_file(PREVOL_RACINE . '/sql/contenu.sql'),
         'env_ignore'     => prevol_env_hors_depot(),
+        'cron_dernier'   => prevol_cron_dernier(),
     ];
 }
 
@@ -96,6 +97,61 @@ function prevol_legal_a_trous(): bool {
         fn($l) => !str_starts_with(ltrim($l), '//') && !str_starts_with(ltrim($l), '*')
     );
     return str_contains(implode("\n", $utiles), 'À COMPLÉTER');
+}
+
+/** Date du dernier passage du cron, ou null. Tolere une base injoignable. */
+function prevol_cron_dernier(): ?string {
+    try {
+        $d = getDB()->query(
+            "SELECT created_at FROM moderation_log WHERE cible_type = 'cron'
+             ORDER BY id DESC LIMIT 1")->fetchColumn();
+        return $d === false ? null : (string)$d;
+    } catch (Throwable $e) {
+        return null;   // base ou table absente : comme s'il n'avait jamais tourne
+    }
+}
+
+/**
+ * Le cron des rappels donne-t-il encore signe de vie ?
+ *
+ * POURQUOI CE CONTRÔLE EXISTE. Un cron qui cesse de tourner n'échoue
+ * pas : il n'arrive plus, et c'est tout. Aucune erreur, aucune trace,
+ * aucun symptôme — jusqu'au jour où un inscrit n'a pas reçu son rappel.
+ * Version de PHP changée par l'hébergeur, dossier déplacé, quota
+ * atteint : trois causes ordinaires, toutes silencieuses.
+ *
+ * `forum_rappels.php` inscrit donc chaque passage au journal, y compris
+ * quand il n'a rien à envoyer — c'est le cas le plus fréquent, et
+ * justement celui où l'on ne saurait pas distinguer « rien à faire » de
+ * « ne tourne plus ».
+ *
+ * Fonction PURE, pour que les trois situations s'éprouvent sans
+ * attendre deux jours.
+ *
+ * @param ?string $dernier date du dernier passage, ou null
+ */
+function prevol_constat_cron(?string $dernier, ?int $maintenant = null): array {
+    $remede = 'Une ligne quotidienne au cPanel :' . "\n"
+            . '    0 9 * * * /usr/local/bin/php <racine>/tools/forum_rappels.php >/dev/null';
+
+    if ($dernier === null) {
+        // Avant la première mise en ligne, c'est normal : le cron n'a
+        // pas encore eu l'occasion de tourner. On le rappelle sans
+        // bloquer — un contrôle qui crie sur un site neuf s'ignore.
+        return prevol_constat('rappel', 'cron',
+            'Le cron des rappels n’a jamais tourné. Sans lui, aucun rappel de '
+          . 'rendez-vous ne part.', $remede);
+    }
+
+    $jours = (int)floor((($maintenant ?? time()) - strtotime($dernier)) / 86400);
+
+    if ($jours >= 2) {
+        return prevol_constat('avertissement', 'cron',
+            'Dernier passage il y a ' . $jours . ' jours (' . substr($dernier, 0, 16)
+          . '). Une tâche quotidienne qui saute deux jours ne tourne plus.', $remede);
+    }
+    return prevol_constat('rappel', 'cron',
+        'Dernier passage : ' . substr($dernier, 0, 16) . '. Le cron répond.', '');
 }
 
 /**
@@ -242,9 +298,7 @@ function prevol_controles(array $e): array {
     // Aucun de ces points ne se lit dans un fichier : ils ne bloquent
     // donc pas, mais les taire reviendrait à laisser croire que le
     // contrôle couvre tout.
-    $c[] = prevol_constat('rappel', 'cron',
-        'tools/forum_rappels.php doit tourner une fois par jour, sinon aucun rappel '
-      . 'de rendez-vous ne part.', 'Une ligne quotidienne au cPanel — voir docs/emails.md.');
+    $c[] = prevol_constat_cron($e['cron_dernier']);
     $c[] = prevol_constat('rappel', 'sauvegarde',
         'uploads/ et les tables personnelles ne sont dans aucun dépôt, par construction.',
         'Une copie hors de cette machine, avant la première visite.');
@@ -279,6 +333,7 @@ function prevol_env_propre(): array {
         'legal_a_trous'   => false,
         'contenu_present' => true,
         'env_ignore'      => true,
+        'cron_dernier'    => date('Y-m-d H:i:s'),
     ];
 }
 
@@ -353,8 +408,35 @@ function prevol_autotest(): int {
         }
     }
 
+    // ── Le cron : trois ages, trois verdicts ─────────────
+    // Fonction pure : les trois situations s'eprouvent en une seconde,
+    // la ou les attendre demanderait deux jours.
+    $t = mktime(12, 0, 0, 9, 10, 2026);
+    $ages = [
+        [null,                  'rappel',        'jamais tourne'],
+        ['2026-09-10 09:00:00', 'rappel',        'passe ce matin'],
+        ['2026-09-09 09:00:00', 'rappel',        'passe hier'],
+        ['2026-09-08 09:00:00', 'avertissement', 'deux jours de silence'],
+        ['2026-08-20 09:00:00', 'avertissement', 'trois semaines de silence'],
+    ];
+    foreach ($ages as [$date, $niveau, $libelle]) {
+        $obtenu = prevol_constat_cron($date, $t);
+        if ($obtenu['niveau'] !== $niveau) {
+            printf("  ECHEC  cron %-28s attendu %s, obtenu %s\n",
+                   $libelle, $niveau, $obtenu['niveau']);
+            $echecs++;
+        }
+    }
+    // Un cron muet depuis deux jours doit DIRE depuis quand : « il ne
+    // repond plus » sans date n'aide personne a chercher la cause.
+    $muet = prevol_constat_cron('2026-09-08 09:00:00', $t);
+    if (!str_contains($muet['dit'], '2026-09-08')) {
+        echo "  ECHEC  cron : l'avertissement ne date pas le dernier passage\n";
+        $echecs++;
+    }
+
     printf("prevol --autotest : %d cas, %d echec(s)\n",
-           count($cas) + count($issues) + 3, $echecs);
+           count($cas) + count($issues) + count($ages) + 4, $echecs);
     return $echecs === 0 ? 0 : 1;
 }
 
