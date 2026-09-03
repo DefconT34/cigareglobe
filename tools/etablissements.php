@@ -50,6 +50,11 @@ const ETAB_INDICATIF = [
     'gibraltar'=>'350','greece'=>'30','guatemala'=>'502','guinea'=>'224','honduras'=>'504',
     'hongkong'=>'852','india'=>'91','indonesia'=>'62','iran'=>'98','israel'=>'972',
     'italy'=>'39','ivorycoast'=>'225','jamaica'=>'1876','japan'=>'81','kenya'=>'254',
+    // Macao est entre dans l'atlas avec la migration 138, quand trois
+    // etablissements macanais ont ete sortis de Hong Kong. Sans cette
+    // ligne, la creation du pays AVEUGLAIT le controle sur ses fiches :
+    // « pays hors table » se lit comme « rien a signaler ».
+    'macau'=>'853',
     'kuwait'=>'965','lebanon'=>'961','luxembourg'=>'352','malaysia'=>'60','mali'=>'223',
     'mexico'=>'52','monaco'=>'377','morocco'=>'212','netherlands'=>'31','nicaragua'=>'505',
     'nigeria'=>'234','oman'=>'968','panama'=>'507','paraguay'=>'595','peru'=>'51',

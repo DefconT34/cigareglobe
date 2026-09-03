@@ -211,6 +211,7 @@ var FLAGS_SPEC = {
   china:       {h:['#EE1C25'], o:[['etoilesChine','#FFFF00']]},
   taiwan:      {h:['#FE0000'], o:[['canton','#000095',0.5,0.5],['soleilTaiwan','#FFFFFF',0.25,0.25,0.16]]},
   hongkong:    {h:['#DE2910'], o:[['bauhinia','#FFFFFF',0.5,0.5,0.24]]},
+  macau:       {h:['#00785E'], o:[['lotusMacao','#FFFFFF',0.5,0.52,0.26]]},
   vietnam:     {h:['#DA251D'], o:[['etoile','#FFFF00',0.5,0.5,0.24,0.098]]},
   singapore:   {hp:[['#EF3340',1],['#FFFFFF',1]],
                 o:[['croissant','#FFFFFF',0.16,0.25,0.15],['etoilesSingapour','#FFFFFF']]},
@@ -520,6 +521,32 @@ function drawFlag(cvs,id,t=0){
                            c.rotate(a+Math.PI/2);
                            c.beginPath();c.ellipse(0,0,r*.26,r*.52,0,0,Math.PI*2);c.fill();
                            c.restore();}
+                         }break;
+      // Macao : le lotus a trois petales, le pont du Gouverneur-Nobre-de-
+      // Carvalho, l'eau, et les cinq etoiles en arc. Dessine plutot que
+      // laisse en gris : un pays entre dans l'atlas avec sa fiche, et
+      // trois bandes grises a la place d'un drapeau se remarquent.
+      case'lotusMacao': {const cx=A[2]*W,cy=A[3]*H+w(A[2]*W),r=A[4]*H;
+                         c.fillStyle=A[1];
+                         // Les trois petales
+                         [[-.40,-.06,-.55],[0,-.26,0],[.40,-.06,.55]].forEach(([dx,dy,rot])=>{
+                           c.save();c.translate(cx+dx*r,cy+dy*r);c.rotate(rot);
+                           c.beginPath();c.ellipse(0,0,r*.16,r*.40,0,0,Math.PI*2);c.fill();
+                           c.restore();});
+                         // La tige
+                         c.fillRect(cx-r*.045,cy+r*.14,r*.09,r*.26);
+                         // Le pont : une arche
+                         c.lineWidth=r*.09;c.strokeStyle=A[1];
+                         c.beginPath();c.arc(cx,cy+r*.86,r*.52,Math.PI*1.18,Math.PI*1.82);c.stroke();
+                         // L'eau : trois traits sous le pont
+                         [0,1,2].forEach(k=>{
+                           c.lineWidth=r*.055;c.beginPath();
+                           c.moveTo(cx-r*(.46-k*.10),cy+r*(.62+k*.13));
+                           c.lineTo(cx+r*(.46-k*.10),cy+r*(.62+k*.13));c.stroke();});
+                         // Les cinq etoiles, en arc au-dessus du lotus
+                         star5(cx,cy-r*.92,r*.20,r*.085,A[1]);
+                         [[-.62,-.62],[-.36,-.84],[.36,-.84],[.62,-.62]].forEach(([dx,dy])=>
+                           star5(cx+dx*r,cy+dy*r,r*.13,r*.055,A[1]));
                          }break;
       case'angkor':     {const cx=A[2]*W,cy=A[3]*H+w(A[2]*W),r=A[4]*H;
                          c.fillStyle=A[1];
@@ -1104,7 +1131,7 @@ var FLAGS_DESSINES = [
                       'hongkong','india','indonesia','iran','israel',
                       'italy','ivorycoast','jamaica','japan','japan_mkt',
                       'kenya','kuwait','lebanon','luxembourg','malaysia',
-                      'mali','mexico','monaco','morocco','netherlands',
+                      'macau','mali','mexico','monaco','morocco','netherlands',
                       'nicaragua','nigeria','oman','panama','paraguay',
                       'peru','philippines','poland','portugal','qatar',
                       'romania','russia','russia_mkt','saudiarabia','senegal',
