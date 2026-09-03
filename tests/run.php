@@ -3316,6 +3316,37 @@ require_once PROJECT_ROOT . '/backend/completude_lib.php';
 }
 
 // ════════════════════════════════════════════════════════
+section('Les informations des etablissements');
+
+// CE QUE CE BLOC SURVEILLE. On ne peut pas verifier depuis un depot de
+// code qu'un etablissement EXISTE : il faudrait appeler, ou y aller. On
+// peut verifier sa COHERENCE, et une fiche fabriquee laisse presque
+// toujours une trace mecanique.
+//
+// L'audit a trouve, sur 497 fiches : 33 numeros de telephone qu'aucun
+// operateur n'attribue (1234, 4567, 6789, une meme touche repetee), 9
+// indicatifs appartenant a un autre pays, et 4 affiliations Habanos
+// pretees a des commerces americains — impossibles sous embargo.
+{
+    $out = []; $code = 0;
+    exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(PROJECT_ROOT . '/tools/etablissements.php')
+         . ' --autotest 2>&1', $out, $code);
+    eq('etablissements : les cas construits passent', 0, $code, implode("\n", array_slice($out, -4)));
+
+    // LE CLIQUET. Les compteurs ne doivent que descendre : une fiche
+    // ajoutee demain avec un numero en « 4567 » les ferait remonter, et
+    // on aurait corrige quarante-six fiches pour en laisser entrer
+    // quarante-sept.
+    $out2 = []; $code2 = 0;
+    exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(PROJECT_ROOT . '/tools/etablissements.php')
+         . ' --verifier 2>&1', $out2, $code2);
+    eq('etablissements : aucune anomalie nouvelle', 0, $code2, implode("\n", $out2));
+
+    check('etablissements : le sceau est versionne',
+          is_file(PROJECT_ROOT . '/sql/etablissements_audit.json'));
+}
+
+// ════════════════════════════════════════════════════════
 section('La politique de cache');
 
 // CE QUE CE BLOC SURVEILLE. `mod_expires`, dans le .htaccess, pose sa
