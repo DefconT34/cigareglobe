@@ -473,6 +473,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "thewheatbakerlagos.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "timeout.com": {
             "dns": "resout",
             "fiches": 3
