@@ -3150,15 +3150,39 @@ require_once PROJECT_ROOT . '/tools/sources.php';
         eq('sources : seule la fiche citant un domaine mort est comptee', [12],
            sources_fiches_sans_source($invFactice, $sceauFactice));
 
-        // ── LE CLIQUET ──────────────────────────────────
-        // Il ne peut que descendre. Ajouter une fiche qui cite un
-        // domaine deja connu comme inexistant fera echouer la campagne —
-        // c'est le but. Le nombre n'est pas un objectif de qualite, c'est
-        // une dette dont on interdit la croissance.
-        $morts = array_keys(array_filter($sceau['domaines'],
+        // ── LE CLIQUET, DESORMAIS A ZERO ────────────────
+        // Cette assertion demandait autrefois qu'il RESTE des domaines
+        // morts au sceau — facon de verifier que le cliquet mesurait bien
+        // quelque chose. La migration 142 a solde la dette : exiger sa
+        // presence reviendrait maintenant a exiger le defaut.
+        //
+        // Le cliquet est donc reserre d'un cran : zero, et il ne peut plus
+        // remonter. Une fiche qui citerait un domaine mort est prise deux
+        // fois — par `--verifier` avant le figeage (domaine inconnu du
+        // sceau, code 1), et ici apres.
+        //
+        // CONTRE-EPREUVE : un sceau vide, ou ecrit sans que la resolution
+        // DNS ait eu lieu, donnerait lui aussi « zero mort ». On verifie
+        // donc d'abord que chaque entree porte un verdict legal — sans
+        // quoi ce zero ne vaudrait rien.
+        $verdicts = array_column($sceau['domaines'], 'dns');
+        check('sources : le sceau porte un verdict DNS par domaine',
+              count($verdicts) === count($sceau['domaines'])
+                && count($sceau['domaines']) > 0
+                && !array_diff(array_unique($verdicts), ['resout', 'inexistant']),
+              count($sceau['domaines']) . ' domaine(s) juges');
+
+        $sceau_morts = fn(array $s) => array_keys(array_filter($s['domaines'],
                             fn($x) => ($x['dns'] ?? '') === 'inexistant'));
-        check('sources : le sceau connait des domaines inexistants',
-              count($morts) > 0, count($morts) . ' domaine(s)');
+
+        // Le cliquet sait dire non : sur le sceau factice, qui porte un
+        // domaine mort, la meme mesure en trouve un.
+        eq('sources : le cliquet repere un mort quand il y en a un',
+           ['connu-mort.test'], $sceau_morts($sceauFactice));
+
+        $morts = $sceau_morts($sceau);
+        check('sources : plus aucun domaine cite n\'est inexistant',
+              $morts === [], $morts ? implode(', ', $morts) : 'dette soldee');
 
         $inv = sources_inventaire(test_pdo());
         $sans = sources_fiches_sans_source($inv, $sceau);
