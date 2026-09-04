@@ -76,10 +76,6 @@ $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
   .lg-maj { font-size: 12px; color: #6B5030; }
   .lg-sommaire { margin: 24px 0 0; padding: 0; list-style: none; }
   .lg-sommaire li { margin: 5px 0; }
-  .lg-todo { border: 1px solid rgba(207,94,94,.45); background: rgba(207,94,94,.08);
-             border-radius: 8px; padding: 12px 16px; margin: 14px 0; }
-  .lg-todo strong { color: #CF5E5E; letter-spacing: .06em; font-size: 12px; }
-  .lg-todo p { margin: 6px 0 0; font-size: 13.5px; }
   table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
   th, td { text-align: left; padding: 8px 10px; vertical-align: top;
            border-bottom: 1px solid rgba(201,162,39,.14); }
@@ -146,17 +142,6 @@ $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     Téléphone : 04 44 44 60 40<br>
     SIRET 510 909 807 00032
   </p>
-
-  <div class="lg-todo">
-    <strong>DEUX POINTS À CONFIRMER</strong>
-    <p><strong>1. L'identité déposée chez l'hébergeur.</strong> Le régime
-    ci-dessus ne tient que si l'éditeur a bien communiqué ses nom, prénom
-    et adresse à o2switch — ce sont les informations du compte client.
-    Sans elles, la dispense d'affichage tombe.</p>
-    <p><strong>2. L'hébergeur.</strong> Les coordonnées ci-dessus sont
-    celles d'o2switch, relevées sur son propre site. À corriger si le
-    site est hébergé ailleurs.</p>
-  </div>
 
   <h3>Propriété intellectuelle</h3>
   <p>Les textes de l'atlas — fiches pays, articles de marque, notices de
@@ -257,12 +242,14 @@ $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
   que pour une réclamation, écrivez à l'adresse de contact ci-dessus.
   Vous pouvez également saisir la CNIL.</p>
 
-  <div class="lg-todo">
-    <strong>À VÉRIFIER AVANT LA MISE EN LIGNE</strong>
-    <p>Le portage des données (article 20 du RGPD) n'est pas encore
-    outillé : il n'existe pas d'export automatique. Une demande se
-    traite donc à la main. À décider : outiller, ou l'assumer par écrit.</p>
-  </div>
+  <h3>Emporter vos données</h3>
+  <p>L'article 20 du RGPD vous donne le droit de recevoir les données que
+  vous avez fournies, dans un format lisible par une machine. Ce site
+  n'en propose pas l'export automatique : la demande se traite à la
+  main, à l'adresse de contact ci-dessus, et la réponse vous parvient
+  sous forme de fichiers JSON.</p>
+  <p>Le procédé est écrit ici plutôt que passé sous silence : un droit
+  qu'on ne sait pas comment exercer n'est pas un droit exercé.</p>
 
   <!-- ══════════════════════════════════════════════════ -->
   <h2 id="conditions">3. Conditions d'utilisation</h2>

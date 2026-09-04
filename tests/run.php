@@ -3916,6 +3916,60 @@ section('Les onglets sans pays choisi');
 }
 
 // ════════════════════════════════════════════════════════
+section('Les mentions legales ne parlent qu\'au visiteur');
+
+// CE QUE CE BLOC A ETE ECRIT POUR RATTRAPER. Deux encarts rouges
+// s'adressant a l'editeur — « DEUX POINTS A CONFIRMER » et « A VERIFIER
+// AVANT LA MISE EN LIGNE » — ont ete servis a chaque visiteur de la page
+// legale pendant toute la mise en service. Le seul controle qui lisait
+// ce fichier cherchait « A COMPLETER » : un marqueur qu'ils ne
+// portaient pas.
+//
+// Un document juridique qui affiche lui-meme qu'il n'est pas fini se
+// contredit : le fond peut etre irreprochable, l'encart dit le
+// contraire. Et la note n'atteignait meme pas son destinataire, qui est
+// le seul a ne pas relire ses propres mentions legales.
+{
+    defined('PREVOL_INCLUDE') || define('PREVOL_INCLUDE', true);
+    require_once PROJECT_ROOT . '/tools/prevol.php';
+
+    // ── La page telle qu'un visiteur la recoit ───────────
+    $srvL = start_server();
+    $rL   = http('GET', $srvL . '/legal.php', ['jar' => new_client('legal')]);
+    eq('mentions : la page repond', 200, $rL['status']);
+
+    foreach ([
+        'encart de chantier'      => 'lg-todo',
+        'marqueur a completer'    => 'À COMPLÉTER',
+        'note avant mise en ligne'=> 'À VÉRIFIER AVANT LA MISE EN LIGNE',
+        'point a confirmer'       => 'À CONFIRMER',
+    ] as $quoi => $motif) {
+        check("mentions : rien qui s'adresse a l'editeur ($quoi)",
+              !str_contains($rL['body'], $motif));
+    }
+
+    // Le fond doit rester : un test qui ne verifie que des ABSENCES
+    // passerait aussi sur une page vide.
+    foreach (['o2switch', 'Chemin des Pardiaux', '6-III-2',
+              'article 20 du RGPD'] as $atendu) {
+        check("mentions : le fond est bien la ($atendu)",
+              str_contains($rL['body'], $atendu));
+    }
+
+    // ── Le garde-fou qui empeche la rechute ──────────────
+    // Le controle d'avant-vol lit desormais ce fichier. On verifie les
+    // deux sens : il laisse passer la page reelle, et il arrete un
+    // encart plante. Un garde-fou qu'on n'a jamais vu refuser ne prouve
+    // rien.
+    check('mentions : le controle d\'avant-vol accepte la page reelle',
+          prevol_legal_encart_public() === false);
+    check('mentions : et refuse un encart plante',
+          prevol_encart_dans('<div class="lg-todo">a trancher</div>') === true);
+    check('mentions : sans accuser la feuille de style',
+          prevol_encart_dans('.lg-todo { border: 1px solid red; }') === false);
+}
+
+// ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 
 // Un test qui ecrit dans la base APPLICATIVE ne se voit pas : il passe,

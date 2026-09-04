@@ -68,9 +68,18 @@ Effort : P = Petit · M = Moyen · G = Gros.
     prouve pas qu'on sait le lire
 
 ### B. Déploiement
-- [ ] **B1** — Mise en ligne o2switch (.env serveur, roter secrets, **migrations 001→130**, cron des rappels) · M
+- [x] ~~**B1** — Mise en ligne o2switch~~ ✅
   - ⚠ Le décompte disait « 001→072 » : il y a **130** migrations.
-  - **`php tools/prevol.php` décide.** Il sort en 1 tant qu'un point bloque.
+  - **`php tools/prevol.php` décide.** Il sort en 1 tant qu'un point bloque. ⚠ **Lancé sur le
+    poste de développement, il sortira toujours en 1** — `MAIL_LOG_ONLY`, `SITE_URL` locale,
+    `ALLOWED_ORIGIN` ouvert sont les valeurs justes *en local*. Il ne juge que le serveur.
+  - Le site sert `200` sur `https://thecigarodyssey.com`, plan de site à 725 URLs
+  - Déploiement par **cPanel Git™ Version Control** : dépôt cloné dans
+    `~/repositories/cigareglobe`, recopié vers `public_html` par `.cpanel.yml`. `public_html`
+    n'est donc **pas** une copie de travail Git — `git pull` s'y lance dans le dépôt, jamais
+    dans la racine servie
+  - Le `.env` n'existe que dans `public_html` : les outils qui parlent à la base ne
+    fonctionnent pas depuis le dépôt, et c'est voulu
 - [x] ~~**B7** — Le contrôle d'avant-vol~~ ✅
   - **Rien n'empêchait de mettre en ligne avec le `.env` du poste de développement.** Relevé
     ici : `MAIL_LOG_ONLY=true`, `SITE_URL=http://127.0.0.1:8099`, `ALLOWED_ORIGIN=*`,
@@ -124,9 +133,14 @@ Effort : P = Petit · M = Moyen · G = Gros.
     personnelles dans l'arborescence servie par Apache — le `.gitignore` porte `*.zip`, donc
     invisible pour Git et **téléchargeable par le Web**. Le critère qui compte d'abord est
     d'être hors de la racine servie. 5 cas construits (483 vérifications)
-- [ ] **B4b2** — **Aucun dépôt distant** · **bloquant** · P
-  - `git remote -v` ne renvoie rien : l'historique et le contenu tiennent sur un seul disque
-  - L'archive de sauvegarde aussi, tant qu'elle reste sur cette machine
+- [ ] **B4b2** — **La sauvegarde tient sur un seul disque** · **bloquant** · P
+  - ~~`git remote -v` ne renvoie rien~~ → **réglé** : `origin` pointe sur
+    `github.com/DefconT34/cigareglobe`, et le serveur en tire ses déploiements. Le code et le
+    contenu versionné sont à deux endroits
+  - **Ce qui reste, et qui est le vrai sujet** : `uploads/` (4 507 fichiers, 28 Mo) et les
+    20 tables personnelles ne sont dans aucun dépôt, par construction. L'archive de
+    `tools/sauvegarde.php` n'a **jamais été rapatriée ni vérifiée** hors du serveur
+  - Git ne rendra jamais ces données : elles ne dépendent que de cette copie unique
 - [x] ~~**B5a** — Le droit à l'effacement (RGPD art. 17)~~ ✅
   - `auth.php` exposait register/login/logout/forgot/reset/resend : **on pouvait s'inscrire
     et pas s'effacer**. La seule porte du site qui n'existait que dans un sens
@@ -150,11 +164,28 @@ Effort : P = Petit · M = Moyen · G = Gros.
     la prose de l'atlas engagerait sans que personne n'ait relu ce qu'il engage
   - La politique de confidentialité est **dérivée du schéma réel**, table par table — pas un
     modèle recopié. Elle nomme ce qui reste après une suppression, et pourquoi
-- [ ] **B5c** — Les faits que seul l'éditeur connaît · **bloquant** · P
-  - 8 blocs `[[ À COMPLÉTER ]]` dans `legal.php` : identité, statut, adresse, SIRET,
-    directeur de la publication, hébergeur. **Les inventer produirait un document faux,
-    c'est-à-dire pire qu'absent** — il aurait l'air d'être en règle
-  - À décider aussi : outiller le portage des données (RGPD art. 20), ou l'assumer par écrit
+- [x] ~~**B5c** — Les faits que seul l'éditeur connaît~~ ✅
+  - Les 8 blocs `[[ À COMPLÉTER ]]` ne demandaient pas à être remplis : ils posaient la
+    mauvaise question. L'éditeur est une **personne physique non professionnelle**, et
+    l'article **6-III-2 de la LCEN** le dispense d'afficher son identité — à condition de
+    l'avoir déposée chez l'hébergeur. Le document dit ce régime, et dit qu'il n'est pas
+    l'anonymat
+  - **DEUX ENCARTS DE CHANTIER ONT ÉTÉ SERVIS AU PUBLIC PENDANT TOUTE LA MISE EN SERVICE** —
+    « DEUX POINTS À CONFIRMER », « À VÉRIFIER AVANT LA MISE EN LIGNE ». Ils s'adressaient à
+    l'éditeur et c'est le visiteur qui les lisait. Un document juridique qui annonce lui-même
+    qu'il n'est pas fini se contredit : le fond était bon, l'encart disait le contraire
+  - **Aucun contrôle ne les voyait** : le seul qui lisait ce fichier cherchait
+    « À COMPLÉTER », un marqueur qu'ils ne portaient pas. `prevol.php` cherche désormais
+    l'**attribut** `class="lg-todo"` — et non la classe CSS, sans quoi il accuserait à jamais
+    sa propre feuille de style, faute déjà commise deux fois dans ce projet
+  - L'un des deux points s'est **réglé par la mesure** : le serveur dit lui-même
+    o2switch (`koko6788@cerisier`, `/home2/koko6788`), et l'adresse *Chemin des Pardiaux* est
+    confirmée au registre — ⚠ *boulevard Gustave Flaubert* est l'**ancienne**, celle que la
+    mémoire propose. L'autre — l'identité déposée chez l'hébergeur — est devenu un **rappel
+    d'avant-vol** : aucun fichier ne peut y répondre
+  - Portage des données (RGPD art. 20) : **assumé par écrit**, comme le prévoyait
+    l'alternative. Une section dit au visiteur que l'export est manuel et par où le demander
+  - 14 vérifications (695 → 709), dont 8 cas construits sur la détection elle-même
   - Une relecture juridique conditionne la traduction des trois documents
 - [x] ~~**B6** — HSTS, et les fichiers qui protègent la production~~ ✅
   - **HSTS** : la redirection http→https ne protégeait pas la **première** visite — la

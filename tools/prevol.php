@@ -73,6 +73,7 @@ function prevol_environnement(): array {
         'db_user'        => (string)DB_USER,
         // Ce qui ne vient pas du .env mais décide autant.
         'legal_a_trous'  => prevol_legal_a_trous(),
+        'legal_encart'   => prevol_legal_encart_public(),
         'contenu_present'=> is_file(PREVOL_RACINE . '/sql/contenu.sql'),
         'env_ignore'     => prevol_env_hors_depot(),
         'cron_dernier'   => prevol_cron_dernier(),
@@ -99,6 +100,38 @@ function prevol_legal_a_trous(): bool {
         fn($l) => !str_starts_with(ltrim($l), '//') && !str_starts_with(ltrim($l), '*')
     );
     return str_contains(implode("\n", $utiles), 'À COMPLÉTER');
+}
+
+/**
+ * Un encart de chantier a-t-il survécu dans la page servie ?
+ *
+ * DEUX ENCARTS ONT ÉTÉ EN LIGNE PENDANT TOUTE LA MISE EN SERVICE. Ils
+ * s'adressaient à l'éditeur — « DEUX POINTS À CONFIRMER », « À VÉRIFIER
+ * AVANT LA MISE EN LIGNE » — et chaque visiteur de la page légale les
+ * lisait. Aucun contrôle ne les voyait : le seul qui regardait ce
+ * fichier cherchait « À COMPLÉTER », un marqueur qu'ils ne portaient
+ * pas.
+ *
+ * Une note au développeur affichée sur les mentions légales fait
+ * exactement l'inverse de ce que le document cherche : elle annonce
+ * qu'il n'est pas fini. Le fond peut être irréprochable, la note dit le
+ * contraire.
+ *
+ * On cherche donc l'ATTRIBUT et non la classe CSS : `.lg-todo {` en
+ * feuille de style ne doit pas déclencher le contrôle, sans quoi il
+ * accuserait à jamais un fichier propre — la faute que la fonction
+ * voisine documente déjà, et qu'on ne refait pas deux fois.
+ */
+function prevol_encart_dans(string $src): bool {
+    $utiles = array_filter(
+        explode("\n", $src),
+        fn($l) => !str_starts_with(ltrim($l), '//') && !str_starts_with(ltrim($l), '*')
+    );
+    return (bool)preg_match('/class\s*=\s*"[^"]*\blg-todo\b/', implode("\n", $utiles));
+}
+
+function prevol_legal_encart_public(): bool {
+    return prevol_encart_dans((string)@file_get_contents(PREVOL_RACINE . '/legal.php'));
 }
 
 /** Date du dernier passage du cron, ou null. Tolere une base injoignable. */
@@ -340,6 +373,13 @@ function prevol_controles(array $e): array {
           . 'moins que pas de document.',
             'Renseigner les blocs, puis relancer ce contrôle.');
     }
+    if ($e['legal_encart']) {
+        $c[] = prevol_constat('bloquant', 'legal.php',
+            'Un encart de chantier (`lg-todo`) est encore dans la page : il s’adresse à '
+          . 'l’éditeur et c’est le VISITEUR qui le lit. Un document qui annonce lui-même '
+          . 'qu’il n’est pas fini ne vaut pas mieux qu’un document absent.',
+            'Trancher le point, puis retirer l’encart — la question survit ici, en rappel.');
+    }
     if (!$e['contenu_present']) {
         $c[] = prevol_constat('bloquant', 'sql/contenu.sql',
             'Absent : une base neuve serait vide. Le site répondrait 200 sur une page creuse.',
@@ -359,6 +399,16 @@ function prevol_controles(array $e): array {
     $c[] = prevol_constat('rappel', 'sauvegarde',
         'uploads/ et les tables personnelles ne sont dans aucun dépôt, par construction.',
         'Une copie hors de cette machine, avant la première visite.');
+    // Ce point était affiché sur la page légale elle-même. Il n'y avait
+    // rien à y faire : il ne s'adresse pas au visiteur, et aucun fichier
+    // ne peut y répondre. Sa place est ici — un rappel qui revient à
+    // chaque contrôle, plutôt qu'une note lue par tout le monde sauf par
+    // celui qu'elle concerne.
+    $c[] = prevol_constat('rappel', 'identité LCEN',
+        'Les mentions légales usent de la dispense d’affichage de l’article 6-III-2 de la '
+      . 'LCEN, réservée à l’éditeur non professionnel. Elle ne tient que si nom, prénom et '
+      . 'adresse ont bien été communiqués à l’hébergeur.',
+        'Vérifier la fiche du compte client o2switch : c’est elle qui fait foi.');
     $c[] = prevol_constat('rappel', 'DNS',
         'SPF, DKIM et DMARC décident si les emails arrivent ou tombent en indésirable.',
         'php tools/mail_doctor.php');
@@ -388,6 +438,7 @@ function prevol_env_propre(): array {
         'db_pass'         => 'un-mot-de-passe',
         'db_user'         => 'cigar',
         'legal_a_trous'   => false,
+        'legal_encart'    => false,
         'contenu_present' => true,
         'env_ignore'      => true,
         'cron_dernier'    => date('Y-m-d H:i:s'),
@@ -420,6 +471,7 @@ function prevol_autotest(): int {
         ['local au milieu', ['admin_email' => 'contact@localhost-solutions.com'], null],
         ['pilote sans cle', ['mail_api_key' => ''],                    'MAIL_API_KEY'],
         ['mentions a trous',['legal_a_trous' => true],                 'legal.php'],
+        ['encart de chantier', ['legal_encart' => true],               'legal.php'],
         ['contenu absent',  ['contenu_present' => false],              'sql/contenu.sql'],
     ];
 
@@ -447,6 +499,30 @@ function prevol_autotest(): int {
             // veut dire qu'un contrôle déborde sur le terrain d'un autre.
             printf("  ECHEC  %-18s %s attendu SEUL, obtenu : %s\n",
                    $nom, $attendu, implode(', ', $sujets));
+            $echecs++;
+        }
+    }
+
+    // ── L'encart de chantier, sur des sources construites ─
+    // Le booleen ci-dessus prouve que le CONSTAT se leve ; il ne dit
+    // rien de la detection elle-meme. Or tout le risque est la : trop
+    // large, elle accuse la feuille de style et bloque un fichier
+    // propre ; trop etroite, elle laisse passer ce qu'elle cherche.
+    $sources = [
+        ['encart nu',        '<div class="lg-todo">a corriger</div>',        true],
+        ['encart et voisins','<div class="lg-bloc lg-todo lg-x">x</div>',    true],
+        ['espaces autour',   '<div class = "lg-todo">x</div>',               true],
+        // CONTRE-EPREUVES : chacune est un fichier PROPRE qu'une regle
+        // trop gourmande refuserait.
+        ['la feuille de style', '.lg-todo { border: 1px solid red; }',       false],
+        ['le commentaire PHP',  '  // un encart class="lg-todo" serait vu',  false],
+        ['une classe voisine',  '<div class="lg-todos-anciens">x</div>',     false],
+        ['le mot seul',         '<p>lg-todo</p>',                            false],
+        ['page vide',           '',                                          false],
+    ];
+    foreach ($sources as [$nom, $src, $attendu]) {
+        if (prevol_encart_dans($src) !== $attendu) {
+            printf("  ECHEC  encart/%-20s attendu %s\n", $nom, $attendu ? 'vu' : 'ignore');
             $echecs++;
         }
     }
@@ -515,7 +591,8 @@ function prevol_autotest(): int {
     }
 
     printf("prevol --autotest : %d cas, %d echec(s)\n",
-           count($cas) + count($issues) + count($ages) + count($inscr) + 4, $echecs);
+           count($cas) + count($sources) + count($issues) + count($ages)
+         + count($inscr) + 4, $echecs);
     return $echecs === 0 ? 0 : 1;
 }
 
