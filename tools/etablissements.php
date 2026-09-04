@@ -115,9 +115,32 @@ function etab_indicatif_coherent(string $pays, string $tel): ?bool {
  * un seuil trop bas aurait accusé des fiches justes. Mesuré sur le
  * corpus avant de fixer le seuil.
  */
+/**
+ * Les numéros dont la FORME accuse, mais qu'une source primaire atteste.
+ *
+ * `+855 10 567 825` porte « 5678 » — une suite de quatre. Le motif est
+ * bien là, et la règle a raison de le voir : elle ne peut pas savoir
+ * qu'il chevauche la frontière entre « 567 » et « 825 », ni que ce
+ * numéro est celui que l'établissement publie lui-même.
+ *
+ * DEUX SORTIES POSSIBLES, ET LA MAUVAISE EST LA PLUS TENTANTE. On
+ * pouvait assouplir la règle — n'y voir une suite que DANS un groupe —
+ * mais un faux numéro se laisse écrire « +33 1 23 45 67 89 », dont
+ * aucun groupe ne porte quatre chiffres d'affilée : la règle assouplie
+ * l'aurait laissé passer. On ne rabote pas un contrôle pour un cas ;
+ * on inscrit le cas, avec ce qui le justifie.
+ *
+ * Toute entrée ici demande une source PRIMAIRE — le site de
+ * l'établissement, pas un annuaire qui l'a recopié.
+ */
+const ETAB_NUMEROS_ATTESTES = [
+    '85510567825' => 'bertie-pnh.com — Bertie Phnom Penh, numéro publié par l’établissement',
+];
+
 function etab_motif_fabrique(string $tel): ?string {
     $n = etab_chiffres($tel);
     if (strlen($n) < 6) return null;
+    if (isset(ETAB_NUMEROS_ATTESTES[$n])) return null;
     if (preg_match('/(\d)\1{4,}/', $n, $m))        return 'chiffre répété : ' . $m[0];
     // PAS D'ANCRE EN DÉBUT DE CHAÎNE : le motif suit l'indicatif, il
     // n'est donc jamais en position zéro. Ancré, ce contrôle laissait
@@ -214,6 +237,12 @@ function etab_autotest(): int {
         ['+1 212 751 9060',   false, 'un vrai numero new-yorkais'],
         ['+81 3 3476 3000',   false, 'trois zeros ne sont pas une suite'],
         ['+34 91 431 05 28',  false, 'un vrai numero espagnol'],
+        // Atteste a la source primaire : la forme accuse, le site de
+        // l'etablissement le publie. Voir ETAB_NUMEROS_ATTESTES.
+        ['+855 10 567 825',   false, 'suite 5678 mais numero atteste'],
+        // CONTRE-EPREUVE de la liste : elle exempte UN numero, pas une
+        // forme. Un voisin d'un chiffre, absent de la liste, reste pris.
+        ['+855 11 567 825',   true,  'voisin non atteste : toujours pris'],
     ];
     foreach ($fab as [$t, $att, $titre]) {
         $dire((etab_motif_fabrique($t) !== null) === $att, 'fabrication : ' . $titre,
