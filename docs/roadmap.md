@@ -2201,3 +2201,50 @@ revue. `/cave/419` et `/cave/422` rendent 404, ce qui est la bonne réponse.
 domaines du texte libre, continuait donc à compter 48 fiches citant un domaine
 inexistant. Le champ `source` dit ce qu'il en est **aujourd'hui** ; d'où l'on
 vient est écrit dans le journal de modération.
+
+### Le « PDF officiel Habanos S.A. » : le soupçon était mal placé (`141`)
+
+Trois fiches citant cette source portaient un indicatif d'un autre pays, et j'en
+avais conclu qu'elle était douteuse. **Mesuré, c'est l'inverse** :
+
+| | fiches | numéros faux | taux |
+|---|---|---|---|
+| Bloc « PDF officiel Habanos S.A. » | 110 | 5 | **4,5 %** |
+| Reste du corpus | 387 | 31 | **8,0 %** |
+
+Cette source est meilleure que la moyenne. Elle n'a pas été touchée.
+
+### Où l'excès se logeait réellement
+
+**181 fiches revendiquent « La Casa del Habano »**, alors que le réseau réel en
+compte environ 140. En les rangeant par source :
+
+| Source | Fiches | |
+|---|---|---|
+| PDF officiel Habanos S.A. | 96 | plausible |
+| ex-`lcdh-locator.com` | 45 | déjà signalées (migration `135`) |
+| **`thecigarodyssey.com`** | **21** | **le site lui-même** |
+| `habanos.com`, `lacasadelhabano.com`, `jjfox.co.uk`… | 19 | sourcées |
+
+96 + 19 = 115, en deçà des 140 réelles. C'est en ajoutant les deux blocs
+non sourcés qu'on dépasse.
+
+### La citation circulaire
+
+Soixante fiches portaient `thecigarodyssey.com` en source, et **vingt-huit
+revendiquaient une affiliation officielle** : 21 La Casa del Habano, 2 Cohiba
+Atmosphere, 5 Davidoff.
+
+Une affiliation officielle est un fait qui concerne un **tiers** — elle décrit
+une relation commerciale entre une enseigne et Habanos S.A. ou Davidoff.
+L'affirmer sur la seule autorité du site qui l'affirme n'est pas une source
+faible : c'est l'absence de source, déguisée en source.
+
+Les 21 sont d'un même import du 22 mars, toutes dans des villes secondaires —
+Rosario, Antofagasta, Penang, Chiang Mai, Cotonou, Lomé, Conakry. Précisément
+les endroits où une succursale plausible s'invente sans qu'on aille vérifier.
+
+⚠ **On ne supprime rien** : certaines existent sûrement. Le champ `source` cesse
+seulement de laisser croire à une vérification qui n'a pas eu lieu — avec deux
+formulations, parce qu'un hôtel qui a un fumoir énonce un fait ordinaire, tandis
+qu'une enseigne qui se dit franchisée engage un tiers.

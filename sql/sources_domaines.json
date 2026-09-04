@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-09-02",
+    "fige_le": "2026-09-04",
     "domaines": {
         "21club.com": {
             "dns": "resout",
@@ -556,10 +556,6 @@
         "thebristol.com.pa": {
             "dns": "inexistant",
             "fiches": 1
-        },
-        "thecigarodyssey.com": {
-            "dns": "resout",
-            "fiches": 60
         },
         "thefleming.com.hk": {
             "dns": "inexistant",
