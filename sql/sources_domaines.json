@@ -289,6 +289,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "lcdh.com.my": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "le-diplomate.fr": {
             "dns": "resout",
             "fiches": 1
@@ -326,6 +330,10 @@
             "fiches": 1
         },
         "manchebo.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "marinabaysands.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -378,6 +386,10 @@
             "fiches": 2
         },
         "parisyachtmarina.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "pavilion-kl.com": {
             "dns": "resout",
             "fiches": 1
         },
