@@ -108,13 +108,30 @@ UPDATE `translation_status`
  WHERE `entite` = 'lounges' AND `entite_id` = '385' AND `champ` = 'description';
 
 -- ── Phnom Penh : la fiche qui manquait ───────────────────
+-- L'IDENTIFIANT EST ÉCRIT, ET LA PREMIÈRE VERSION LE LAISSAIT AU
+-- COMPTEUR. C'est la seule migration de ce dépôt qui ait jamais inséré
+-- un établissement : la convention se posait ici, et elle s'est posée
+-- de travers. `AUTO_INCREMENT` ne vaut que pour une base ; appliquée en
+-- production la fiche a reçu 2557, en développement 2565. Deux
+-- identifiants pour le même lounge, donc deux ADRESSES PUBLIQUES —
+-- /cave/2557-… en ligne, /cave/2565-… dans le dump versionné — et
+-- `contenu_dump.php --verifier` aurait crié à la dérive sur une base
+-- pourtant juste.
+--
+-- 2557 est la valeur RETENUE parce que c'est celle que la production
+-- porte déjà et que son adresse est au plan de site. Le développement
+-- s'aligne sur le site, jamais l'inverse.
+--
+-- Toute migration qui insère du contenu versionné écrit son identifiant.
 INSERT INTO `lounges`
-  (`country_id`, `name`, `city`, `type`, `phone`, `hours`, `website`,
+  (`id`,
+   `country_id`, `name`, `city`, `type`, `phone`, `hours`, `website`,
    `source`, `is_verified`,
    `description`, `description_en`, `description_es`,
    `description_de`, `description_zh`, `description_ar`,
    `created_at`, `updated_at`)
 VALUES (
+  2557,
   'cambodia',
   'Bertie Phnom Penh',
   'Phnom Penh — House 16, Street 13, Village 9, Sangkat Wat Phnom, Khan Daun Penh',
@@ -140,7 +157,10 @@ VALUES (
   NOW(), NOW()
 );
 
-SET @bertie_pnh = LAST_INSERT_ID();
+-- L'identifiant est ecrit, plus lu : LAST_INSERT_ID() renvoyait ce que
+-- le compteur avait bien voulu donner, c'est-a-dire une valeur qui
+-- changeait d'une base a l'autre.
+SET @bertie_pnh = 2557;
 
 -- Les cinq sceaux de la nouvelle fiche, calculés depuis la colonne.
 INSERT INTO `translation_status`
