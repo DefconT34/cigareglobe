@@ -399,7 +399,7 @@
         },
         "raffles.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "royalgolfmarrakech.com": {
             "dns": "resout",
@@ -414,6 +414,10 @@
             "fiches": 1
         },
         "sandylane.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "sauttercigars.com": {
             "dns": "resout",
             "fiches": 1
         },
