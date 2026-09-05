@@ -3715,10 +3715,28 @@ section('Le francais reste dans les colonnes traduites');
         ['Die Boutique der Familie Fuente in Santiago, Dominikanische Republik.', false, 'bon allemand, article defini'],
         ['Cigar lounge at the Mamilla boutique hotel, overlooking the old city walls.', false, 'bon anglais'],
     ];
-    $sonde = fn(string $v) => (bool)preg_match($signature, $v) || preg_match_all($motsFr, $v) >= 3;
+    // LE SEUIL DEPEND DE LA LANGUE, et c'est le point qui a coute trois
+    // migrations. Trois mots francais dans un texte ALLEMAND sont un
+    // defaut. DEUX dans un texte espagnol sont normaux — l'espagnol
+    // emploie vraiment « de la », « en el », « los ». Et deux dans un
+    // texte CHINOIS ou ARABE sont deja de trop : ces ecritures
+    // n'emploient aucun mot-outil latin.
+    //
+    // L'espagnol est donc HORS DE PORTEE de cette sonde. Le dire vaut
+    // mieux que de le mesurer mal : un controle qui crie sur du bon
+    // espagnol finit par etre ignore quand il a raison.
+    $seuils = ['de' => 3, 'en' => 3, 'zh' => 2, 'ar' => 2];
+    $sonde = fn(string $v, int $seuil = 3) =>
+        (bool)preg_match($signature, $v) || preg_match_all($motsFr, $v) >= $seuil;
     foreach ($cas as [$texte, $attendu, $titre]) {
         check('francais reste : ' . $titre, $sonde($texte) === $attendu, mb_substr($texte, 0, 40));
     }
+    // CONTRE-EPREUVE DU SEUIL : ce chinois ne porte que deux mots
+    // francais. A trois, il passait ; a deux, il est pris.
+    check('francais reste : deux mots suffisent en chinois',
+          $sonde('大卫杜夫精品店 位于flagship Shin Kong Mitsukoshi du quartier Xinyi — face à Taipei 101.', 2));
+    check('francais reste : et trois ne suffisaient pas',
+          !$sonde('大卫杜夫精品店 位于flagship Shin Kong Mitsukoshi du quartier Xinyi — face à Taipei 101.', 3));
 
     // ── LE CLIQUET, SUR LA BASE DE DEVELOPPEMENT ────────
     // Le decor de test ne porte qu'un etablissement : il ne dirait rien
@@ -3727,13 +3745,16 @@ section('Le francais reste dans les colonnes traduites');
         $pdoT = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
                         . ';charset=utf8mb4', DB_USER, DB_PASS,
                         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        // TOUTES LES FICHES, publiees ou non : une fiche depubliee reste
+        // au dump versionne, et repartirait telle quelle le jour ou une
+        // source la retablirait. C'etait l'angle mort de la 158.
         $restes = [];
         foreach ($pdoT->query(
-            "SELECT id, description_en, description_es, description_de, description_zh, description_ar
-               FROM lounges WHERE is_verified = 1") as $r) {
-            foreach (['en','es','de','zh','ar'] as $l) {
+            "SELECT id, description_en, description_de, description_zh, description_ar
+               FROM lounges") as $r) {
+            foreach ($seuils as $l => $seuil) {
                 $v = (string)$r['description_' . $l];
-                if ($v !== '' && $sonde($v)) $restes[] = (int)$r['id'] . '/' . $l;
+                if ($v !== '' && $sonde($v, $seuil)) $restes[] = (int)$r['id'] . '/' . $l;
                 if (count($restes) >= 5) break 2;
             }
         }
