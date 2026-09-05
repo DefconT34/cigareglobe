@@ -33,6 +33,10 @@
             "dns": "resout",
             "fiches": 4
         },
+        "bangkok.intercontinental.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "barcelona.com": {
             "dns": "resout",
             "fiches": 1
@@ -89,6 +93,10 @@
             "dns": "resout",
             "fiches": 3
         },
+        "cigaraficionado.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "cigarcitybrewing.com": {
             "dns": "resout",
             "fiches": 1
@@ -117,6 +125,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "citynomads.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "claridges.co.uk": {
             "dns": "resout",
             "fiches": 1
@@ -136,6 +148,10 @@
         "drewestate.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "egmcigars.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "elbulli.com": {
             "dns": "resout",
@@ -215,11 +231,11 @@
         },
         "habanomag.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 6
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 23
+            "fiches": 27
         },
         "hajenius.com": {
             "dns": "resout",
@@ -306,6 +322,10 @@
             "fiches": 1
         },
         "le-diplomate.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lecadre223.com": {
             "dns": "resout",
             "fiches": 1
         },
