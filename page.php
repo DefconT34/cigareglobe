@@ -277,10 +277,11 @@ if ($db === null) {
         if (trim((string)$c['description']) !== '') {
             $corps .= '<section class="pg-bloc"><p class="pg-chapo">' . nl2br(e($c['description'])) . '</p></section>';
         }
-        // Les liens sortants. Le lien de carte est construit depuis les
-        // COORDONNÉES quand elles existent : `maps_url` n'est qu'une
-        // RECHERCHE Google fabriquée depuis le nom et la ville, qui peut
-        // tomber à côté — une position, elle, désigne le lieu.
+        // Les liens sortants. Le lien de carte est CONSTRUIT ici, depuis
+        // ce que la fiche porte à cet instant — coordonnées si elle en a,
+        // nom et ville sinon. La colonne `maps_url` n'est plus lue : elle
+        // gardait un lien fabriqué à la saisie, que les corrections de nom
+        // et d'adresse laissaient en arrière. Voir backend/carte_lib.php.
         $liens = [];
         if (trim((string)$c['website']) !== '') {
             $liens[] = '<a href="' . e($c['website']) . '" rel="nofollow noopener" target="_blank">'
@@ -290,12 +291,9 @@ if ($db === null) {
             $liens[] = '<a href="https://instagram.com/' . e(ltrim((string)$c['instagram'], '@'))
                      . '" rel="nofollow noopener" target="_blank">@' . e(ltrim((string)$c['instagram'], '@')) . ' ↗</a>';
         }
-        if ($c['lat'] !== null && $c['lon'] !== null) {
-            $liens[] = '<a href="https://www.google.com/maps/search/?api=1&query='
-                     . e($c['lat'] . ',' . $c['lon'])
-                     . '" rel="nofollow noopener" target="_blank">Google Maps ↗</a>';
-        } elseif ($c['maps_url']) {
-            $liens[] = '<a href="' . e($c['maps_url']) . '" rel="nofollow noopener" target="_blank">Google Maps ↗</a>';
+        $carte = carte_lien((string)$c['name'], (string)$c['city'], $c['lat'], $c['lon']);
+        if ($carte !== null) {
+            $liens[] = '<a href="' . e($carte) . '" rel="nofollow noopener" target="_blank">Google Maps ↗</a>';
         }
         if ($liens) $corps .= '<p class="pg-lien-ext">' . implode(' · ', $liens) . '</p>';
         $corps .= '<p class="pg-retour"><a href="' . e(page_url('pays', $c['country_id'], $lang)) . '">'

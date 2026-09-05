@@ -29,6 +29,8 @@
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/langues.php';
+defined('CARTE_INCLUDE') || define('CARTE_INCLUDE', true);
+require_once __DIR__ . '/carte_lib.php';
 
 /** Les segments d'adresse, en français : le site a une langue d'origine. */
 const PAGE_SEGMENTS = ['pays' => 'pays', 'cave' => 'cave', 'marque' => 'marque'];

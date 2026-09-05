@@ -20,6 +20,9 @@ require_once __DIR__ . '/config.php';
 // par PHP ; celles d'un fichier inclus plus loin ne le sont pas — le
 // meme piege que la note de champs_traduits() sur les constantes.
 require_once __DIR__ . '/aromes.php';
+// Meme raison : lounge_carte() s'en sert des la premiere reponse servie.
+defined('CARTE_INCLUDE') || define('CARTE_INCLUDE', true);
+require_once __DIR__ . '/carte_lib.php';
 
 // Les details techniques (message SQL, fichier, ligne) partent dans le
 // journal du serveur, jamais dans la reponse : ils renseigneraient un
@@ -257,8 +260,27 @@ function lounge_extra_cols(): string {
     // lat/lon (migration 012) : NULL sur la quasi-totalite des fiches
     // aujourd'hui. Le front n'affiche la distance que lorsqu'elles
     // existent — jamais d'approximation par le pays.
-    return ', hours, maps_url, website, instagram, lat, lon'
+    // `maps_url` N'EST PLUS LUE EN BASE. Elle contenait un lien fabrique
+    // a la saisie depuis le nom et la ville : les corrections d'adresse
+    // le laissaient en arriere, et le bouton « carte » envoyait a
+    // l'ancienne adresse. Le lien est desormais construit ligne par
+    // ligne par lounge_carte(), depuis les valeurs du moment.
+    return ', hours, website, instagram, lat, lon'
          . ', ROUND(COALESCE(rating, 0), 1) AS rating, COALESCE(rating_count, 0) AS rating_count';
+}
+
+/**
+ * Pose `maps_url` sur une ligne, construite depuis ses propres valeurs.
+ *
+ * La cle garde son nom : le front la lit sous ce nom (app.js,
+ * explorer.js), et la renommer aurait casse les navigateurs servant
+ * encore l'ancien script pour ne rien gagner.
+ */
+function lounge_carte(array $r): array {
+    $r['maps_url'] = carte_lien(
+        (string)($r['name'] ?? ''), (string)($r['city'] ?? ''),
+        $r['lat'] ?? null, $r['lon'] ?? null);
+    return $r;
 }
 
 // ── Tous les lounges groupés par pays (pour l'Explorer) ──
@@ -283,14 +305,16 @@ function action_lounges_all(PDO $db): void {
         $r['id']           = (int)$r['id'];
         $r['rating']       = $r['rating'] ? (float)$r['rating'] : null;
         $r['rating_count'] = (int)($r['rating_count'] ?? 0);
-        $grouped[$cid][] = $r;
+        $grouped[$cid][] = lounge_carte($r);
     }
 
     // ── Contributions communautaires (optionnel) ─────────
     try {
         // Les contributions communautaires n'ont pas ces champs enrichis :
-        // on les aligne à NULL pour obtenir la même forme que les fiches vérifiées.
-        $comm_extra = ', NULL AS hours, NULL AS maps_url, NULL AS website, NULL AS instagram';
+        // on les aligne à NULL pour obtenir la même forme que les fiches
+        // vérifiées. `maps_url` n'y est plus : comme pour les fiches, il
+        // est construit plus bas depuis le nom et la ville.
+        $comm_extra = ', NULL AS hours, NULL AS website, NULL AS instagram';
         $comm = $db->query(
             "SELECT country_id, name, city, type, phone,
                     '' AS price, description AS `desc`, source_url AS source" . $comm_extra . ",
@@ -302,7 +326,7 @@ function action_lounges_all(PDO $db): void {
         foreach ($comm->fetchAll() as $r) {
             $cid = $r['country_id']; unset($r['country_id']);
             $r['id'] = null;
-            $grouped[$cid][] = $r;
+            $grouped[$cid][] = lounge_carte($r);
         }
     } catch (Throwable $e) {
         // Table approved_lounges absente ou colonnes manquantes — ignorer
@@ -477,7 +501,7 @@ function action_lounges(PDO $db): void {
         $r['id']           = (int)$r['id'];
         $r['rating']       = $r['rating'] ? (float)$r['rating'] : null;
         $r['rating_count'] = (int)($r['rating_count'] ?? 0);
-        return $r;
+        return lounge_carte($r);
     }, $stmt->fetchAll());
 
     // Plus de bloc « community » : depuis la migration 013, une

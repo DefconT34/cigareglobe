@@ -3916,6 +3916,74 @@ section('Les onglets sans pays choisi');
 }
 
 // ════════════════════════════════════════════════════════
+section('Le lien de carte suit la fiche');
+
+// CE QUE CE BLOC RATTRAPE. La colonne `maps_url` portait un lien Google
+// fabrique A LA SAISIE depuis le nom et la ville. Les migrations 143 a
+// 148 ont corrige des noms et des adresses sans y toucher : la fiche de
+// Dakar affichait « 40 rue Jules Ferry » dans les six langues et son
+// bouton « Google Maps » pointait toujours sur la Route des Almadies.
+//
+// C'est le pire element ou se tromper : il n'est pas lu, il est SUIVI.
+{
+    defined('CARTE_INCLUDE') || define('CARTE_INCLUDE', true);
+    require_once PROJECT_ROOT . '/backend/carte_lib.php';
+
+    // ── La base ne stocke plus de lien ──────────────────
+    // Une valeur derivee rangee dans une colonne ne se met pas a jour
+    // toute seule. Le seul etat sur lequel on peut compter est l'absence.
+    $restants = (int)test_pdo()->query(
+        "SELECT COUNT(*) FROM lounges WHERE maps_url IS NOT NULL AND maps_url <> ''")->fetchColumn();
+    eq('carte : aucun lien n\'est stocke en base', 0, $restants);
+
+    // ── Le lien servi vient bien de la fiche du moment ──
+    $srvC = start_server();
+    $cliC = new_client('carte');
+
+    // Le decor de test porte un etablissement connu : on le renomme, on
+    // redemande la page, et le lien doit avoir suivi. C'est la propriete
+    // qui compte, et elle etait fausse avant ce chantier.
+    $pdoC = test_pdo();
+    $pdoC->exec("UPDATE lounges SET name = 'Cave Amont', city = 'Testville — 1 rue Avant' WHERE id = 1");
+    $r1 = http('GET', $srvC . '/page.php?type=cave&id=1&lang=fr', ['jar' => $cliC]);
+    check('carte : le lien porte le nom du moment',
+          str_contains($r1['body'], 'Cave%20Amont'));
+
+    $pdoC->exec("UPDATE lounges SET name = 'Cave Aval', city = 'Testville — 2 rue Apres' WHERE id = 1");
+    $r2 = http('GET', $srvC . '/page.php?type=cave&id=1&lang=fr', ['jar' => $cliC]);
+    check('carte : renommee, le lien a suivi',
+          str_contains($r2['body'], 'Cave%20Aval') && !str_contains($r2['body'], 'Cave%20Amont'));
+    check('carte : la nouvelle adresse aussi',
+          str_contains($r2['body'], 'rue%20Apres') && !str_contains($r2['body'], 'rue%20Avant'));
+
+    // CONTRE-EPREUVE : des coordonnees l'emportent sur le nom. Sans
+    // cela, un homonyme a l'autre bout de la ville ferait aussi bien
+    // l'affaire, et le lien designerait le mauvais lieu avec aplomb.
+    // On n'ecrit PAS « 5.3200%2C-4.0100 » : la colonne est un
+    // decimal(10,7) et rend « 5.3200000 ». Un test qui epelle la
+    // precision du schema casse le jour ou le schema change, pour une
+    // raison qui n'est pas la sienne. On verifie la FORME.
+    $pdoC->exec("UPDATE lounges SET lat = 5.3200, lon = -4.0100 WHERE id = 1");
+    $r3 = http('GET', $srvC . '/page.php?type=cave&id=1&lang=fr', ['jar' => $cliC]);
+    $q3 = preg_match('/maps\/search\/\?api=1&(?:amp;)?query=([^"&]+)/', $r3['body'], $m3)
+        ? urldecode($m3[1]) : '';
+    check('carte : les coordonnees l\'emportent',
+          (bool)preg_match('/^5\.32\d*,-4\.01\d*$/', $q3)
+            && !str_contains($r3['body'], 'Cave%20Aval'), $q3);
+    $pdoC->exec("UPDATE lounges SET lat = NULL, lon = NULL WHERE id = 1");
+
+    // ── L'API sert le meme lien construit ───────────────
+    // Deux surfaces affichent ce bouton : la page serveur et le front,
+    // qui lit `maps_url` dans la reponse JSON. Corriger l'une sans
+    // l'autre aurait laisse la moitie du defaut en place.
+    $rj = http('GET', $srvC . '/backend/data.php?action=lounges&id=testland', ['jar' => $cliC]);
+    $f  = $rj['json']['static'][0] ?? null;
+    check('carte : l\'API rend un lien', is_array($f) && !empty($f['maps_url']));
+    check('carte : et il porte le nom du moment',
+          is_array($f) && str_contains((string)$f['maps_url'], 'Cave%20Aval'));
+}
+
+// ════════════════════════════════════════════════════════
 section('Les mentions legales ne parlent qu\'au visiteur');
 
 // CE QUE CE BLOC A ETE ECRIT POUR RATTRAPER. Deux encarts rouges
