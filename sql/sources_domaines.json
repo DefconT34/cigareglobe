@@ -213,9 +213,13 @@
             "dns": "resout",
             "fiches": 1
         },
+        "habanomag.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 21
+            "fiches": 23
         },
         "hajenius.com": {
             "dns": "resout",
