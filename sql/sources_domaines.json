@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-09-04",
+    "fige_le": "2026-09-05",
     "domaines": {
         "21club.com": {
             "dns": "resout",
@@ -70,6 +70,10 @@
             "fiches": 1
         },
         "casadecampo.com.do": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "casadelhabanochile.cl": {
             "dns": "resout",
             "fiches": 1
         },
@@ -211,7 +215,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 17
+            "fiches": 18
         },
         "hajenius.com": {
             "dns": "resout",
@@ -279,7 +283,7 @@
         },
         "lacasadelhabano.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "lacasadelhabano.kn": {
             "dns": "resout",
