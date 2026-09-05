@@ -52,6 +52,32 @@ le journal — tout ce que le dépôt ne porte pas, et donc tout ce qu'un
 Les sections qui suivent détaillent chaque étape, pour le cas où l'outil
 signale un manque.
 
+## 0. L'ordre, quand une migration accompagne du code
+
+Le dépôt est cloné **hors** de la racine web (`~/repositories/cigareglobe`)
+et recopié vers `public_html` par `.cpanel.yml`. Une mise à jour compte
+donc **trois** gestes, et leur ordre n'est pas libre :
+
+```bash
+cd ~/repositories/cigareglobe && git pull          # 1. le dépôt
+# 2. la recopie : cPanel → Git™ Version Control → Deploy HEAD Commit
+mysql -u <user> -p <base> < sql/migrations/<n>.sql # 3. la migration
+```
+
+**Le code d'abord, la migration ensuite.** La règle vient d'un cas réel :
+la migration 149 vide la colonne `maps_url`, dont l'ancien code se sert
+pour afficher le bouton « Google Maps ». Appliquée avant la recopie, elle
+a laissé le site sans aucun lien de carte — la donnée retirée, et le code
+qui la lisait encore en place.
+
+L'inverse est sans danger : du code neuf devant une base pas encore
+migrée lit des colonnes qui existent déjà. C'est le retrait qui blesse,
+jamais l'ajout.
+
+Une migration qui ne fait qu'ajouter ou corriger des lignes se passe
+dans n'importe quel ordre. Celles qui **retirent** — colonne vidée,
+table supprimée, valeur mise à NULL — se lancent après.
+
 ## 1. Le code
 
 Deux voies. La première est préférable : elle rend les mises à jour
