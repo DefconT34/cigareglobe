@@ -59,7 +59,12 @@ function page_libelles(): array {
               's_key_info','s_factories','zones_title','no_lounge_title','s_sommelier',
               'contrib_city_lbl','contrib_phone_lbl','contrib_type_lbl',
               'age_titre','age_texte','age_oui','age_non','age_sante','age_legal',
-              'age_refus_titre','age_refus_texte','age_retour'];
+              'age_refus_titre','age_refus_texte','age_retour',
+              // La fiche de marque servait le NOM des lignes et rien
+              // d'autre : ni cape, ni force, ni accords, alors que la
+              // base les porte pour 117 maisons sur 118.
+              'bm_pairings','bm_celebrities','bm_limited','gam_force','gam_cape',
+              'force_light','force_light_medium','force_medium','force_medium_full','force_full'];
     $out = [];
     foreach (i18n_parse($src) as $l => $paires) {
         foreach ($garde as $k) if (isset($paires[$k])) $out[$l][$k] = $paires[$k];
@@ -340,16 +345,101 @@ if ($db === null) {
             $corps .= '</dl>';
         }
         $corps .= bloc('', $m['history']);
-        // La gamme est un tableau JSON de {name,...} : on n'en sert que
-        // les noms, le reste appartient a la fiche de l'application.
+
+        // LA GAMME, ENTIÈRE. Elle ne servait que les NOMS des lignes :
+        // « le reste appartient à la fiche de l'application », disait
+        // le commentaire. Cela laissait la cape, la force, les vitoles
+        // et le texte de chaque module hors de la page indexable —
+        // 279 modules sur 117 maisons, invisibles pour qui n'exécute
+        // pas JavaScript. La donnée existait, la page ne la servait pas.
         $gamme = json_decode((string)$m['gamme'], true);
         if (is_array($gamme) && $gamme) {
-            $corps .= '<section class="pg-bloc"><h2>' . e(L('gamme_depth_title')) . '</h2><ul class="pg-grille">';
+            $corps .= '<section class="pg-bloc"><h2>' . e(L('gamme_depth_title')) . '</h2>'
+                    . '<ul class="pg-modules">';
             foreach ($gamme as $g) {
-                $nom = is_array($g) ? ($g['name'] ?? '') : (string)$g;
-                if ($nom !== '') $corps .= '<li><span>' . e($nom) . '</span></li>';
+                if (!is_array($g)) { $g = ['name' => (string)$g]; }
+                $nom = trim((string)($g['name'] ?? ''));
+                if ($nom === '') continue;
+                $corps .= '<li><h3>' . e($nom) . '</h3>';
+
+                // Cape et force sur une même ligne. La force est stockée
+                // en anglais (« Medium-Full ») et se traduit par une clé
+                // dédiée ; à défaut, on rend la valeur telle quelle
+                // plutôt que rien.
+                $meta = [];
+                if (trim((string)($g['wrapper'] ?? '')) !== '') {
+                    $meta[] = '<span><b>' . e(L('gam_cape')) . '</b> ' . e($g['wrapper']) . '</span>';
+                }
+                if (trim((string)($g['force'] ?? '')) !== '') {
+                    $cle = 'force_' . strtolower(str_replace('-', '_', (string)$g['force']));
+                    $lib = L($cle);
+                    $meta[] = '<span><b>' . e(L('gam_force')) . '</b> '
+                            . e($lib === $cle ? $g['force'] : $lib) . '</span>';
+                }
+                if ($meta) $corps .= '<p class="pg-mod-meta">' . implode(' · ', $meta) . '</p>';
+
+                if (trim((string)($g['story'] ?? '')) !== '') {
+                    $corps .= '<p>' . nl2br(e($g['story'])) . '</p>';
+                }
+                $vit = array_filter(array_map('strval', (array)($g['vitolas'] ?? [])),
+                                    fn($v) => trim($v) !== '');
+                if ($vit) {
+                    $corps .= '<p class="pg-mod-vit">' . e(implode(' · ', $vit)) . '</p>';
+                }
+                $corps .= '</li>';
             }
             $corps .= '</ul></section>';
+        }
+
+        // LES ACCORDS. Le champ était SÉLECTIONNÉ par la requête et
+        // n'était affiché nulle part — 117 maisons en portent.
+        $acc = json_decode((string)$m['pairings'], true);
+        if (is_array($acc) && $acc) {
+            $corps .= '<section class="pg-bloc"><h2>' . e(L('bm_pairings')) . '</h2><ul class="pg-modules">';
+            foreach ($acc as $a) {
+                if (!is_array($a)) continue;
+                $nom = trim((string)($a['name'] ?? ''));
+                if ($nom === '') continue;
+                $corps .= '<li><h3>' . e($nom) . '</h3>';
+                if (trim((string)($a['type'] ?? '')) !== '') {
+                    $corps .= '<p class="pg-mod-meta"><span>' . e($a['type']) . '</span></p>';
+                }
+                if (trim((string)($a['notes'] ?? '')) !== '') {
+                    $corps .= '<p>' . nl2br(e($a['notes'])) . '</p>';
+                }
+                $corps .= '</li>';
+            }
+            $corps .= '</ul></section>';
+        }
+
+        // LES FIGURES ASSOCIÉES (48 maisons).
+        $cel = json_decode((string)$m['celebrities'], true);
+        if (is_array($cel) && $cel) {
+            $corps .= '<section class="pg-bloc"><h2>' . e(L('bm_celebrities')) . '</h2><ul class="pg-modules">';
+            foreach ($cel as $c) {
+                if (!is_array($c)) continue;
+                $nom = trim((string)($c['name'] ?? ''));
+                if ($nom === '') continue;
+                $corps .= '<li><h3>' . e($nom) . '</h3>';
+                if (trim((string)($c['anecdote'] ?? '')) !== '') {
+                    $corps .= '<p>' . nl2br(e($c['anecdote'])) . '</p>';
+                }
+                $corps .= '</li>';
+            }
+            $corps .= '</ul></section>';
+        }
+
+        // LES ÉDITIONS LIMITÉES (42 maisons) : une liste de noms
+        // propres, sans texte et sans traduction.
+        $eds = json_decode((string)$m['limited_eds'], true);
+        if (is_array($eds) && $eds) {
+            $lignes = array_filter(array_map(
+                fn($x) => is_array($x) ? trim((string)($x['name'] ?? '')) : trim((string)$x), $eds));
+            if ($lignes) {
+                $corps .= '<section class="pg-bloc"><h2>' . e(L('bm_limited')) . '</h2><ul class="pg-grille">';
+                foreach ($lignes as $l) $corps .= '<li><span>' . e($l) . '</span></li>';
+                $corps .= '</ul></section>';
+            }
         }
         if ($m['country_id'] && $m['pays_nom']) {
             $corps .= '<p class="pg-retour"><a href="' . e(page_url('pays', $m['country_id'], $lang)) . '">'

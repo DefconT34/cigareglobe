@@ -3677,6 +3677,54 @@ section('Les onglets sans pays choisi');
 }
 
 // ════════════════════════════════════════════════════════
+section('La fiche de marque sert ce que la base contient');
+
+// CE QUE LA PAGE LAISSAIT DEHORS. Elle ne rendait que le NOM de chaque
+// ligne de la gamme — « le reste appartient a la fiche de
+// l'application », disait le commentaire. Cela mettait hors de la page
+// indexable la cape, la force, les vitoles et le texte de 279 modules
+// sur 117 maisons. Les ACCORDS etaient meme SELECTIONNES par la requete
+// et affiches nulle part : 117 maisons en portent.
+//
+// Le grief n'est pas esthetique. Un robot qui lit /marque/aladino ne
+// pouvait pas savoir de quelle cape est fait ce cigare, alors que la
+// donnee etait la, a deux lignes de code.
+{
+    $srvM = start_server();
+    $cliM = new_client('marque');
+    $r = http('GET', $srvM . '/page.php?type=marque&id=marque-de-test&lang=fr', ['jar' => $cliM]);
+    eq('marque : la fiche repond', 200, $r['status']);
+    $b = $r['body'];
+
+    // ── La gamme, entiere ───────────────────────────────
+    check('marque : le nom du module',    str_contains($b, 'Module de test'));
+    check('marque : sa cape',             str_contains($b, 'Cape de test'));
+    check('marque : son recit',           str_contains($b, 'Recit du module de test.'));
+    check('marque : ses vitoles',         str_contains($b, 'Corona') && str_contains($b, 'Robusto'));
+
+    // La force est stockee en anglais et doit sortir TRADUITE : c'est la
+    // seule valeur de la gamme qui passe par le dictionnaire.
+    check('marque : la force est traduite, pas recopiee',
+          str_contains($b, 'Moyenne à corsée') && !str_contains($b, 'Medium-Full'));
+
+    // ── Les trois blocs qui n'existaient pas ────────────
+    check('marque : les accords',         str_contains($b, 'Accord de test')
+                                       && str_contains($b, 'Note d accord de test.'));
+    check('marque : les figures',         str_contains($b, 'Figure de test')
+                                       && str_contains($b, 'Anecdote de test.'));
+    check('marque : les editions limitees', str_contains($b, 'Edition limitee de test'));
+
+    // ── Les libelles suivent la langue ──────────────────
+    // CONTRE-EPREUVE : sans elle, une page qui rendrait tout en francais
+    // quelle que soit la langue passerait les huit assertions ci-dessus.
+    $re = http('GET', $srvM . '/page.php?type=marque&id=marque-de-test&lang=en', ['jar' => $cliM]);
+    check('marque : en anglais, les titres sont anglais',
+          str_contains($re['body'], 'Range Depth') && str_contains($re['body'], 'Pairings'));
+    check('marque : et la force aussi',
+          str_contains($re['body'], 'Medium-Full') || str_contains($re['body'], 'Medium‑Full'));
+}
+
+// ════════════════════════════════════════════════════════
 section('Le francais reste dans les colonnes traduites');
 
 // CE QUE LES TROIS CONTROLES i18n NE VOYAIENT PAS. melange_check cherche

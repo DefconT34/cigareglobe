@@ -135,3 +135,36 @@
   .pg-main { padding: 20px 16px 44px; }
   .pg-grille { grid-template-columns: 1fr; }
 }
+
+/* ── Les modules d'une marque ────────────────────────────
+   La fiche de marque ne servait que le NOM de chaque ligne. Elle porte
+   desormais la cape, la force, le texte et les vitoles — et les memes
+   blocs servent aux accords et aux figures associees, qui ont la meme
+   forme : un titre, une meta, un paragraphe. */
+.pg-modules { list-style: none; margin: 0; padding: 0; }
+.pg-modules > li {
+  padding: 14px 0; border-bottom: 1px solid var(--panel-border, #D8D2C4);
+}
+.pg-modules > li:last-child { border-bottom: none; padding-bottom: 0; }
+.pg-modules h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px; font-weight: 700; margin: 0 0 4px;
+  color: var(--text, #2A1F14);
+}
+.pg-modules p { margin: 0 0 6px; }
+.pg-modules > li > p:last-child { margin-bottom: 0; }
+
+/* Cape et force : une ligne de metadonnees, discrete, ou le libelle
+   compte moins que la valeur. */
+.pg-mod-meta { font-size: 13px; color: var(--text2, #6B6560); }
+.pg-mod-meta b {
+  font-family: Cinzel, Georgia, serif; font-size: 10px; font-weight: 400;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold, #C9A227); margin-inline-end: 4px;
+}
+
+/* Les vitoles se lisent comme une legende, pas comme du texte. */
+.pg-mod-vit {
+  font-size: 12.5px; color: var(--text2, #6B6560);
+  letter-spacing: .04em;
+}

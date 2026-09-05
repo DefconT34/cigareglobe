@@ -194,9 +194,13 @@ function page_cave(PDO $db, int $id, string $lang): ?array {
 function page_marque(PDO $db, string $slug, string $lang): ?array {
     foreach ($db->query("SELECT name FROM brands")->fetchAll(PDO::FETCH_COLUMN) as $nom) {
         if (page_slug($nom) !== $slug) continue;
-        $q = $db->prepare("SELECT b.name, b.founded, b.factory, b.gamme, b.country_id,
-                                  " . page_col('history', $lang) . "  AS history,
-                                  " . page_col('pairings', $lang) . " AS pairings,
+        // `limited_eds` n'a pas de colonnes traduites : c'est une liste
+        // de noms propres d'éditions, qui ne se traduisent pas.
+        $q = $db->prepare("SELECT b.name, b.founded, b.factory, b.country_id, b.limited_eds,
+                                  " . page_col('history', $lang) . "     AS history,
+                                  " . page_col('gamme', $lang) . "       AS gamme,
+                                  " . page_col('pairings', $lang) . "    AS pairings,
+                                  " . page_col('celebrities', $lang) . " AS celebrities,
                                   COALESCE(pc.name, lc.name) AS pays_nom
                              FROM brands b
                         LEFT JOIN producer_countries pc ON pc.id = b.country_id

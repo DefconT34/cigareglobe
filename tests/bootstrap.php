@@ -180,12 +180,24 @@ function setup_test_database(): PDO {
     // Avec un allemand reel, une detection mal placee rend zero terme et
     // la parite entre les deux langues casse. C'est la difference entre
     // mesurer une presence et mesurer la propriete voulue.
+    // LA GAMME N'EST PLUS VIDE, et c'est necessaire depuis que la fiche
+    // de marque sert autre chose que des noms. Avec `gamme = '[]'` la
+    // page rendait un bloc absent, et un test qui cherche la cape ou la
+    // force passerait aussi bien sur un rendu casse que sur un rendu
+    // juste — il ne mesurerait que le vide.
+    //
+    // Les quatre champs sont peuples parce que la page en tire quatre
+    // sections distinctes : gamme, accords, figures, editions limitees.
     $pdo->exec(
-        "INSERT INTO brands (name, country_id, founded, history, history_de, gamme)
+        "INSERT INTO brands (name, country_id, founded, history, history_de,
+                             gamme, pairings, celebrities, limited_eds)
          VALUES ('Marque de test', 'testland', '1900',
                  'Histoire de test : une cape posee par un torcedor, sur une vitole courte.',
                  'Testgeschichte: ein Deckblatt, von einem Roller aufgelegt, auf einem kurzen Format.',
-                 '[]')"
+                 '[{\"name\":\"Module de test\",\"color\":\"#8B4513\",\"force\":\"Medium-Full\",\"wrapper\":\"Cape de test\",\"vitolas\":[\"Corona\",\"Robusto\"],\"story\":\"Recit du module de test.\"}]',
+                 '[{\"type\":\"Spiritueux\",\"name\":\"Accord de test\",\"notes\":\"Note d accord de test.\"}]',
+                 '[{\"name\":\"Figure de test\",\"anecdote\":\"Anecdote de test.\"}]',
+                 '[\"Edition limitee de test\"]')"
     );
 
     // Une feuille, pour la meme raison que la marque ci-dessus.
