@@ -147,6 +147,23 @@ function ph_couper(string $texte, float $corps, ?string $police, int $largeur, i
     return $lignes;
 }
 
+/**
+ * La ville, ou rien si le nom la dit déjà.
+ *
+ * Cent quatre-vingts fiches sur quatre cent huit s'appellent « X —
+ * Ville » : la carte affichait « Le Cadre VIP — Bamako », puis
+ * « Bamako » juste en dessous. Répéter n'ajoute pas, ça dilue.
+ *
+ * CONTRE-EXEMPLE À NE PAS CASSER : « La Casa del Habano — Kowloon » est
+ * à Hong Kong. Le nom porte le quartier, la ville reste utile. On ne
+ * retire donc que ce qui est LITTÉRALEMENT déjà là.
+ */
+function ph_ville(string $nom, string $ville): string {
+    $ville = trim($ville);
+    if ($ville === '') return '';
+    return mb_stripos($nom, $ville) === false ? $ville : '';
+}
+
 /** Le nom de fichier d'une carte. Volontairement rigide : voir ph_est_carte(). */
 function ph_nom(int $id, bool $mini = false): string {
     return ($mini ? 'thumb_placeholder_' : 'placeholder_') . $id . '.jpg';
@@ -271,7 +288,8 @@ function ph_carte(array $fiche, int $l = PH_L, int $h = PH_H) {
         $y += ph_ligne($im, $ligne, 30*$k, $police, $cx, $y, ph_rvb(PH_OR));
     }
     $y += (int)round(6 * $k);
-    foreach (ph_couper((string)$fiche['ville'], 17*$k, $police, $l - 2*$marge, 1) as $ligne) {
+    $ville = ph_ville((string)$fiche['name'], (string)$fiche['ville']);
+    foreach (ph_couper($ville, 17*$k, $police, $l - 2*$marge, 1) as $ligne) {
         $y += ph_ligne($im, $ligne, 17*$k, $police, $cx, $y, ph_rvb(PH_OR_PALE));
     }
 
@@ -383,6 +401,17 @@ function ph_autotest(): int {
           'coupure : un mot unique trop long est tronque', implode(' | ', $c));
 
     $dire(ph_couper('   ', 30, $police, 400, 2) === [], 'coupure : rien a couper, rien a ecrire');
+
+    // ── La ville, quand le nom la dit deja ──────────────
+    $dire(ph_ville('Le Cadre VIP — Bamako', 'Bamako') === '',
+          'ville : retiree si le nom la porte deja');
+    // CONTRE-EPREUVE : le nom porte le QUARTIER, la ville reste utile.
+    $dire(ph_ville('La Casa del Habano — Kowloon', 'Hong Kong') === 'Hong Kong',
+          'ville : gardee quand le nom dit autre chose');
+    $dire(ph_ville('Cave de BAMAKO', 'Bamako') === '',
+          'ville : la casse ne compte pas');
+    $dire(ph_ville('Cave sans ville', '  ') === '',
+          'ville : rien a afficher, rien a comparer');
     $dire(ph_couper("Deux   espaces\tet\nsauts", 30, $police, 900, 2) === ['Deux espaces et sauts'],
           'coupure : les blancs sont normalises');
 
@@ -405,7 +434,7 @@ function ph_autotest(): int {
     $dire(imagesx($im) === PH_MINI_L && imagesy($im) === PH_MINI_H, 'dessin : la vignette suit l echelle');
     imagedestroy($im);
 
-    printf("placeholders --autotest : %d cas, %d echec(s)%s\n", 19, $echecs,
+    printf("placeholders --autotest : %d cas, %d echec(s)%s\n", 23, $echecs,
            $police === null ? "  [sans police vectorielle : repli bitmap]" : '');
     return $echecs === 0 ? 0 : 1;
 }

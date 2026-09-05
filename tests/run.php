@@ -3695,7 +3695,7 @@ section('Les images des fiches');
         fclose($pipes[1]); fclose($pipes[2]);
         $code = proc_close($proc);
         if ($code !== 0) echo "\n" . $sortie . "\n";
-        eq('images : les 19 cas construits du generateur restent conformes', 0, $code);
+        eq('images : les 23 cas construits du generateur restent conformes', 0, $code);
     } else {
         check('images : autotest du generateur lancable', false);
     }
