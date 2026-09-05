@@ -215,7 +215,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 18
+            "fiches": 21
         },
         "hajenius.com": {
             "dns": "resout",
@@ -280,6 +280,10 @@
         "labodeguita.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "lacasadelhabano-dl.es": {
+            "dns": "resout",
+            "fiches": 2
         },
         "lacasadelhabano.com": {
             "dns": "resout",
