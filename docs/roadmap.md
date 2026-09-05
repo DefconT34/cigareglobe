@@ -138,9 +138,15 @@ Effort : P = Petit · M = Moyen · G = Gros.
     `github.com/DefconT34/cigareglobe`, et le serveur en tire ses déploiements. Le code et le
     contenu versionné sont à deux endroits
   - **Ce qui reste, et qui est le vrai sujet** : `uploads/` (4 507 fichiers, 28 Mo) et les
-    20 tables personnelles ne sont dans aucun dépôt, par construction. L'archive de
-    `tools/sauvegarde.php` n'a **jamais été rapatriée ni vérifiée** hors du serveur
-  - Git ne rendra jamais ces données : elles ne dépendent que de cette copie unique
+    20 tables personnelles ne sont dans aucun dépôt, par construction
+  - **L'archive a été fabriquée sur le serveur** (5 sept. 2026), dans
+    `/home2/koko6788/cigarodyssey-sauvegardes/`, hors de la racine servie — vérifié depuis
+    l'extérieur : dix chemins plausibles testés, tous en `404`
+  - ⚠ **Elle n'a pas encore été rapatriée.** Tant qu'elle reste sur o2switch elle ne protège
+    de rien : elle disparaîtra avec ce qu'elle sauvegarde. Le point reste donc ouvert
+  - Une fois le fichier descendu, `php tools/sauvegarde.php --verifier <fichier>` le rouvre
+    et le recompte ; le `.env` en est absent par construction (mot de passe de la base et clé
+    d'administration ne voyagent pas dans un fichier fait pour être copié ailleurs)
 - [x] ~~**B5a** — Le droit à l'effacement (RGPD art. 17)~~ ✅
   - `auth.php` exposait register/login/logout/forgot/reset/resend : **on pouvait s'inscrire
     et pas s'effacer**. La seule porte du site qui n'existait que dans un sens
@@ -2279,3 +2285,99 @@ les endroits où une succursale plausible s'invente sans qu'on aille vérifier.
 seulement de laisser croire à une vérification qui n'a pas eu lieu — avec deux
 formulations, parce qu'un hôtel qui a un fumoir énonce un fait ordinaire, tandis
 qu'une enseigne qui se dit franchisée engage un tiers.
+
+---
+
+## La campagne des sources (migrations `142`→`156`)
+
+Quatre blocs de fiches dont la source ne tenait pas, repris un par un.
+**501 → 408 fiches publiables** : 98 retirées, une cinquantaine corrigées,
+dix ajoutées. Il ne reste dans l'atlas aucune fiche dont la source soit une
+invention.
+
+| Bloc | Départ | Fin |
+|---|---|---|
+| Domaine cité inexistant | 28 | 0 |
+| Affiliation officielle sans source externe | 28 | 0 |
+| Réseau LCDH, liste non recoupée | 41 | 0 |
+| Sans source externe | 31 | 0 |
+
+### Ce que le défaut avait de particulier
+**Il ne se voyait jamais sur une fiche.** Chacune était plausible : bon nom
+d'enseigne, bonne ville, adresse crédible. Ce qui trahissait était toujours
+*collectif* — le nombre par pays, la date d'import commune, la source unique
+inexistante. Un lecteur ne peut pas voir ça ; un contrôle mécanique, si.
+
+Deux formes revenaient. **Un nom réel déplacé** : Olivos Golf Club de Buenos
+Aires à Milan, Cigar Lounge 33 de Belgique à Marbella, Pacific Cigar de Hong
+Kong à Vancouver, Bertie du bon quartier au mauvais hôtel. Et **un salon
+inventé dans un lieu vrai** : le Hemingway Bar d'Arusha (le vrai s'appelle
+Hatari), la Cigar Terrace de Dubaï (le club a QD's et sa chicha). La seconde
+est la plus coûteuse à débusquer : la moitié de la fiche est exacte.
+
+### L'import du 22 mars
+Cinquante-sept fiches posées d'un coup, toutes avec un téléphone et **aucune**
+avec un site, des horaires ou des coordonnées. Il prenait une enseigne réelle
+et la **répliquait sur les grandes villes du pays** : Malaisie 1 vraie / 4
+affichées, Afrique de l'Ouest 1/5, Colombie 1/5, Argentine 2/4, Chili 1/4,
+Italie 3/6, Espagne 0 sur le continent. Le fonds initial — identifiants bas,
+source « PDF officiel Habanos S.A. » — s'est révélé **nettement plus juste**
+que trois mois de corrections ne le laissaient croire.
+
+### Trois raccourcis que la mesure a réfutés
+- Le bloc « PDF officiel Habanos S.A. » soupçonné à tort : **4,5 %** de
+  téléphones faux contre 8,0 % dans le reste du corpus — meilleur que la moyenne.
+- La forme des numéros de téléphone : 44,6 % de motifs décoratifs contre 21,2 %
+  ailleurs… mais **42,1 % contre 38,5 % à pays égal**. Un artefact de
+  composition géographique, `8888` étant recherché en Asie.
+- Seize adresses annoncées manquantes : il y en avait **quatre**, les six autres
+  étaient déjà dans l'atlas.
+
+### Deux garde-fous ont mieux vu que l'auteur
+Le sceau `translation_status` (migration `140`) et la contrainte
+`uq_country_name` (migration `153`), qui a refusé une correction et révélé que
+**sept des neuf prévues auraient dupliqué** un établissement déjà juste.
+
+### La méthode, à la fin
+`habanomag.com` reprend les fiches de habanos.com et du site officiel LCDH,
+classées par ville, par pays **et par échelon**. Quinze pages lues d'un bloc ont
+réglé ce qui demandait vingt-sept enquêtes. Le réseau a trois échelons — La Casa
+del Habano, Habanos Specialist, Habanos Point — que l'import confondait en un
+seul, ce qui prête à un commerce une franchise qu'il n'a pas obtenue.
+
+### Ce qui reste ouvert, et qui est dit tel quel
+**Quinze fiches d'hôtels d'Afrique de l'Ouest** — Dakar, Cotonou, Ouagadougou,
+Bamako, Lomé, Conakry — sont gardées publiées sans confirmation ni démenti.
+Retirer sur ce silence reviendrait à faire disparaître une région parce qu'elle
+est moins indexée. Le champ `source` le dit.
+
+**Six adresses réelles** attendent au journal (`action = 'a_documenter'`) faute
+d'adresse postale : quatre Habanos Points du Bénin et de Guinée, la seconde
+Casa del Habano de Bangkok, le Habanos Specialist de Hanoï.
+
+---
+
+## Les images des fiches (migration `156`, `tools/placeholders.php`)
+
+**Une seule vraie photographie dans tout l'atlas** : la façade du lounge
+d'Abidjan. Les 407 autres images sont des **cartes engendrées** — nom, ville,
+pays, une marque graphique — et c'est délibéré. Chercher des photos ailleurs
+serait s'approprier le travail de quelqu'un ; en fabriquer serait inventer
+l'apparence de lieux réels, exactement le défaut que la campagne des sources
+vient de retirer.
+
+- Les 440 cartes d'origine étaient faites **hors du dépôt**, à la police bitmap
+  de GD : rouge sur bleu marine, cinq pixels de haut, un cigare fait d'un
+  rectangle. Refaites : palette du site (or sur presque-noir), police
+  vectorielle quand le serveur en a une, cigare conique à bague et pied allumé.
+- **33 fiches publiées n'avaient aucune ligne** dans `lounge_photos` — toutes
+  issues des chantiers `143`→`155`. Elles s'affichaient sans rien.
+- La carte ne répète plus ce qui est déjà dit : ni la ville que le nom porte
+  (180 fiches), ni la ville qui **est** le pays (15 états-villes).
+- ⚠ **Les octets ne voyagent pas avec le code.** `uploads/` est exclu du
+  déploiement : la migration pose les lignes, `php tools/placeholders.php --tout`
+  fabrique les images, et il faut le lancer **sur le serveur**.
+
+`Last-Modified` et la taille du fichier, lus ensemble, disent où un déploiement
+coince : horodatage frais + taille inchangée = la regénération tourne mais le
+code est vieux.
