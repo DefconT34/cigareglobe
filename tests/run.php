@@ -3791,6 +3791,63 @@ section('La fiche dit d ou elle vient');
     $rv = http('GET', $srvS . '/page.php?type=cave&id=1-lounge-de-test&lang=fr', ['jar' => $cliS]);
     check('source : vide, aucune ligne n est posee',
           !str_contains($rv['body'], 'pg-source') && !str_contains($rv['body'], 'pg-reserve'));
+
+    // ── LE CLIQUET : une reserve ne decrit pas une offre ─
+    // CE QUE RENDRE LA SOURCE VISIBLE A MONTRE. Les dix-huit fiches
+    // marquees « a verifier » portaient une description qui affirmait
+    // justement ce que la reserve declare inconnu :
+    //
+    //   « Habanos premium pour la communaute d'affaires internationale
+    //     de Dakar et le corps diplomatique »   (#2537)
+    //   « Frequentee par les chefs d'Etat lors des sommets »  (#2538)
+    //
+    // Le bandeau et la prose se dementaient a deux lignes d'intervalle.
+    // La migration 162 les a ramenees a ce qui est su ; ce cliquet
+    // empeche la prose de revenir.
+    //
+    // LES MOTS CHOISIS SONT DES MOTS D'AFFIRMATION, pas des mots du
+    // sujet. « Habanos » est volontairement ABSENT de la liste : le
+    // #250 de Barcelone dit « l'appartenance au reseau franchise
+    // Habanos n'est recoupee par aucune liste officielle » — nommer ce
+    // qui manque est le contraire de l'affirmer.
+    $offre = '/\b(premium|client[eè]le|corps diplomatique|chefs d.[EÉ]tat|atmosph[eè]re|exclusive?|embl[eé]matique|pris[eé]e|renomm[eé]e?|le plus|la plus)\b/iu';
+
+    // CONTRE-EPREUVES : la sonde doit dire OUI sur l'ancienne prose et
+    // NON sur la nouvelle. Sans elles, une sonde qui ne declenche jamais
+    // ferait passer n'importe quoi.
+    check('reserve : la sonde reconnait l ancienne prose',
+          (bool)preg_match($offre, 'Habanos premium pour la communauté d\'affaires internationale de Dakar et le corps diplomatique.'));
+    check('reserve : et le superlatif aussi',
+          (bool)preg_match($offre, 'l\'hôtel de luxe le plus moderne de Guinée'));
+    check('reserve : mais laisse passer la nouvelle',
+          !preg_match($offre, 'Radisson Blu Hotel, route de King Fahd, dans le quartier de Ngor à Dakar. Un espace cigares y est annoncé ; aucune source publique ne le décrit.'));
+    check('reserve : et laisse nommer ce qui manque',
+          !preg_match($offre, 'L\'appartenance au réseau franchisé Habanos n\'est recoupée par aucune liste officielle.'));
+
+    // Le decor de test ne porte qu'un etablissement : on mesure la ou
+    // les 408 fiches vivent, comme la sonde du francais residuel.
+    try {
+        $pdoR = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
+                        . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $bavardes = [];
+        foreach ($pdoR->query(
+            "SELECT id, description FROM lounges
+              WHERE " . PAGE_FICHE_PUBLIABLE . " AND source LIKE 'à vérifier%'") as $r) {
+            if (preg_match($offre, (string)$r['description'], $m)) {
+                $bavardes[] = (int)$r['id'] . ' (« ' . $m[0] . ' »)';
+            }
+        }
+        eq('reserve : aucune fiche non recoupee ne decrit une offre', [], $bavardes);
+        // Le cliquet ne vaut que s'il porte sur quelque chose : si le
+        // jour venait ou plus aucune fiche n'est marquee, l'assertion
+        // ci-dessus passerait sur un ensemble vide.
+        $n = (int)$pdoR->query("SELECT COUNT(*) FROM lounges
+                                 WHERE " . PAGE_FICHE_PUBLIABLE . " AND source LIKE 'à vérifier%'")->fetchColumn();
+        check('reserve : le cliquet porte bien sur des fiches', $n >= 18, $n . ' fiche(s) marquee(s)');
+    } catch (Throwable $e) {
+        check('reserve : base de developpement lisible', false, $e->getMessage());
+    }
 }
 
 // ════════════════════════════════════════════════════════

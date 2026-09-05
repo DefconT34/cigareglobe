@@ -2443,3 +2443,44 @@ fiches et le lien se construit au rendu.
 - La `source` n'a pas de colonnes traduites : une valeur sur 173 est de la prose
   française sans domaine (#2524, Alvear Palace). Elle est vraie ; lui fabriquer
   un domaine pour faire propre serait la faute que ce chantier a défaite.
+
+---
+
+## Les dix-huit descriptions qui en disaient trop (migration `162`)
+
+Rendre la source visible a rendu une contradiction visible. Les dix-huit fiches
+marquées « ⚠ Information non recoupée » portaient une description qui affirmait
+**exactement ce que la réserve déclare inconnu** :
+
+> « Habanos premium pour la communauté d'affaires internationale de Dakar et le
+> corps diplomatique. » — #2537 Radisson Blu Dakar
+>
+> « Fréquentée par les chefs d'État lors des sommets de la CEDEAO. » — #2538
+
+Le bandeau et la prose se démentaient à deux lignes d'intervalle. Ces phrases
+viennent toutes de l'import du 22 mars, du même geste que les 98 fiches retirées
+par le chantier des quatre blocs.
+
+**Ce qui reste** : le nom de l'établissement, sa nature, son quartier — c'est-à-dire
+ce que la migration `155` a réellement établi, *l'hôtel existe*. **Ce qui part** :
+l'offre de cigares, la clientèle, les superlatifs, et les dates non sourcées
+(1960, 1967, 1975, 1984). La phrase finale est la même pour quinze fiches, et
+c'est voulu : elles partagent un état, pas une histoire.
+
+**Trois cas qui ne sont pas des hôtels**
+- **#745 Viña del Mar** — ce n'est pas le salon qui manque, c'est le commerce.
+- **#250 Barcelone** — c'est l'appartenance au réseau franchisé qui manque. Son
+  champ `type` disait « La Casa del Habano Officielle », **rendu au-dessus de la
+  description** : la page se contredisait elle-même. Passé à « Cave & Lounge ».
+- **#413 Tampa** — celui-ci portait une **impossibilité**, pas une incertitude.
+  La fiche annonçait « La Casa del Habano de Tampa » ; le réseau vend des cigares
+  cubains et n'a aucune adresse aux États-Unis, où ces produits ne sont pas
+  vendus. Même faute que le #411 Miami de la migration `157`.
+
+**Aucune fiche n'est retirée** : le motif de la `155` tient toujours.
+
+Un cliquet garde la porte — aucune fiche non recoupée ne peut décrire une offre
+(`premium`, `clientèle`, `corps diplomatique`, superlatifs). Les mots choisis sont
+des mots **d'affirmation**, pas du sujet : « Habanos » en est absent, parce que
+#250 le nomme pour dire qu'il manque, et que nommer ce qui manque est le
+contraire de l'affirmer.
