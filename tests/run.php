@@ -3677,6 +3677,73 @@ section('Les onglets sans pays choisi');
 }
 
 // ════════════════════════════════════════════════════════
+section('Le francais reste dans les colonnes traduites');
+
+// CE QUE LES TROIS CONTROLES i18n NE VOYAIENT PAS. melange_check cherche
+// l'anglais dans les colonnes qui ne sont pas la sienne, langue_check
+// les ecritures etrangeres, divergence les faits ajoutes. Aucun ne
+// cherchait le FRANCAIS reste dans une colonne traduite.
+//
+// Vingt et une fiches avaient ete « traduites » par une substitution mot
+// a mot qui ne remplacait que quelques jetons : « La Casa del Habano
+// oficialle de Chester chez Turmeaus, célèbre tobacconist britannique »
+// etait la version ESPAGNOLE. Un lecteur hispanophone n'y voyait pas un
+// defaut : il croyait le site mal fait.
+{
+    // LA SONDE PORTE SUR L'ALLEMAND. Ses mots-outils ne recouvrent
+    // presque pas ceux du francais, ce qui rend la mesure franche —
+    // alors qu'espagnol et francais partagent « de », « la », « en ».
+    //
+    // ⚠ « des » est EXCLU : l'allemand le possede au genitif. La
+    // premiere version de cette sonde accusait deux fiches ecrites en
+    // bon allemand. Un mot partage par deux langues ne prouve rien.
+    $motsFr = '/\b(de la|du |aux |à |sur |chez |avec |pour |dans |qui |cette |leur |où |le |les |une )\b/iu';
+
+    // La signature de la substitution : un suffixe etranger colle a un
+    // mot francais qu'on n'a pas retire.
+    $signature = '/(offiziellle|oficialle|Eröffnund|Openede|Inauguradoe|Geöffnund)/u';
+
+    // CONTRE-EPREUVES : la sonde doit dire OUI sur du francais deguise,
+    // et NON sur les langues qu'elle surveille. Sans elles, une sonde
+    // qui ne declenche jamais passerait pour un corpus impeccable.
+    $cas = [
+        ['La Casa del Habano oficialle de Chester chez Turmeaus.', true,  'espagnol reste francais'],
+        ['Eröffnund le 6 janv. 2025 par les frères Kamal.',        true,  'allemand reste francais'],
+        ['Bar à cigares du Hilton, le palace de la capitale.',      true,  'francais pur'],
+        ['Die offizielle La Casa del Habano von Chester, bei Turmeaus, dem bekannten britischen Tabakhaus.', false, 'bon allemand'],
+        ['Zigarrenlounge des Royal Monceau, eröffnet 2018. Lederne Clubsessel und eine Terrasse.', false, 'bon allemand avec « des » au genitif'],
+        ['Die Boutique der Familie Fuente in Santiago, Dominikanische Republik.', false, 'bon allemand, article defini'],
+        ['Cigar lounge at the Mamilla boutique hotel, overlooking the old city walls.', false, 'bon anglais'],
+    ];
+    $sonde = fn(string $v) => (bool)preg_match($signature, $v) || preg_match_all($motsFr, $v) >= 3;
+    foreach ($cas as [$texte, $attendu, $titre]) {
+        check('francais reste : ' . $titre, $sonde($texte) === $attendu, mb_substr($texte, 0, 40));
+    }
+
+    // ── LE CLIQUET, SUR LA BASE DE DEVELOPPEMENT ────────
+    // Le decor de test ne porte qu'un etablissement : il ne dirait rien
+    // du corpus. On mesure donc la ou les 408 fiches vivent.
+    try {
+        $pdoT = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
+                        . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $restes = [];
+        foreach ($pdoT->query(
+            "SELECT id, description_en, description_es, description_de, description_zh, description_ar
+               FROM lounges WHERE is_verified = 1") as $r) {
+            foreach (['en','es','de','zh','ar'] as $l) {
+                $v = (string)$r['description_' . $l];
+                if ($v !== '' && $sonde($v)) $restes[] = (int)$r['id'] . '/' . $l;
+                if (count($restes) >= 5) break 2;
+            }
+        }
+        eq('francais reste : aucune colonne traduite n\'est restee francaise', [], $restes);
+    } catch (Throwable $e) {
+        check('francais reste : base de developpement lisible', false, $e->getMessage());
+    }
+}
+
+// ════════════════════════════════════════════════════════
 section('Les images des fiches');
 
 // L'ATLAS NE PORTE QU'UNE SEULE VRAIE PHOTOGRAPHIE, la façade du lounge
