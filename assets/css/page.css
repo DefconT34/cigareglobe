@@ -168,3 +168,47 @@
   font-size: 12.5px; color: var(--text2, #6B6560);
   letter-spacing: .04em;
 }
+
+/* ── Le chiffre, et ce qu'il mesure ──────────────────────
+   « 0,58 M$ (2024) » ne dit pas ce qu'on a compte. La ligne qui suit le
+   dit, et se lit comme une note de bas de page : plus petite, plus
+   sourde, mais jamais absente. */
+.pg-chiffre {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px; font-weight: 700; margin: 0 0 2px;
+}
+.pg-source-chiffre {
+  font-size: 13px; color: var(--text2, #6B6560); line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Le rang de production ────────────────────────────────
+   « ★ Production majeure · Caraïbes » : une ligne sous le titre, dans
+   la petite capitale des libelles du site. Elle se lit comme un
+   sous-titre, pas comme un bloc de contenu. */
+.pg-rang {
+  font-family: Cinzel, Georgia, serif; font-size: 11px; font-weight: 400;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold, #C9A227);
+  margin: -6px 0 18px;
+}
+
+/* ── D'ou vient la fiche ──────────────────────────────────
+   La citation se lit comme une note de bas de page : presente, jamais
+   au premier plan. La reserve, elle, doit se voir — c'est le seul
+   endroit ou le lecteur apprend que la fiche n'est pas recoupee. */
+.pg-source {
+  font-size: 12.5px; color: var(--text2, #6B6560);
+  margin: 14px 0 0; letter-spacing: .01em;
+}
+/* SEPT THEMES, dont quatre sombres. Un fond or pale et un texte brun
+   codes en dur se seraient rendus illisibles sur `navy` et `bordeaux` :
+   la reserve prend donc le fond de panneau et la couleur de texte du
+   theme actif, et ne garde de l'or que le filet lateral. */
+.pg-reserve {
+  font-size: 12.5px; margin: 14px 0 0;
+  padding: 8px 12px; border-radius: 6px;
+  color: var(--text); background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-inline-start: 3px solid var(--gold);
+}

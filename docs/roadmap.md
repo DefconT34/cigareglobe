@@ -2381,3 +2381,65 @@ vient de retirer.
 `Last-Modified` et la taille du fichier, lus ensemble, disent où un déploiement
 coince : horodatage frais + taille inchangée = la regénération tourne mais le
 code est vieux.
+
+---
+
+## Ce que les pages serveur ne servaient pas
+
+Un recoupement mécanique — pour chaque colonne que `backend/pages_lib.php`
+SÉLECTIONNE, la chercher dans `page.php` — a rendu **huit colonnes muettes**
+sur trois types de page. Aucune n'était visible fiche par fiche : chaque page
+paraissait complète. C'est encore le collectif qui a parlé.
+
+### La fiche de marque
+`gamme` ne rendait que le **nom** des lignes. Cape, force, vitoles et récit de
+**279 modules sur 117 maisons** n'atteignaient pas la page indexable. `pairings`
+était même sélectionnée par la requête et affichée nulle part, de même que
+`celebrities` et `limited_eds`. ≈ 101 000 caractères remis au lecteur.
+
+### La fiche de pays
+- `tier` — le rang de production, renseigné sur **16 pays sur 16**.
+- `region` — la macro-région (« Caraïbes », « Amérique du Sud »).
+- `rev_detail` — **ce que le chiffre mesure**. « 0,58 M$ (2024) » sur la fiche
+  du Brésil se lisait comme le poids d'une industrie ; la colonne disait
+  « exportations de cigares et cigarillos (douanes brésiliennes) ». Servir le
+  nombre sans sa définition, c'est publier un chiffre faux.
+- Les Canaries ont l'explication **sans** le chiffre : le bloc se rend dès que
+  l'un des deux est là.
+- 192 champs remplis — 16 pays × 2 colonnes × 6 langues, 5 125 caractères.
+- `flag` reste délibérément non rendue : Windows ne compose pas les emoji de
+  drapeau, et « CU » en 38 px sous le titre se lit comme une coquille.
+
+### La fiche d'établissement — le plus coûteux
+`source` était sélectionnée et rendue **nulle part**. 407 fiches sur 408 en
+portent une, 9 377 caractères. Tout le chantier des quatre blocs s'est mené au
+nom de « aucune fiche sans source », 98 fiches retirées pour ce motif — et la
+règle restait **invérifiable par celui qu'elle protège**.
+
+Pire : la migration `155` avait gardé **dix-huit fiches publiées** en écrivant
+dans `source` « à vérifier — l'hôtel existe, son salon cigares n'est recoupé
+nulle part ». La décision était bonne, mais elle tenait sur une phrase de la
+migration : *« le champ source dit désormais exactement l'état »*. Il ne le
+disait à personne. Ces dix-huit fiches se présentaient comme les 389 autres.
+
+Deux rendus, parce que ce sont deux choses :
+- **une citation** (« habanos.com officiel 2024 », « PDF officiel Habanos S.A. »)
+  se rend **telle quelle** dans les six langues — on ne traduit pas une
+  référence ; seul le libellé suit la langue ;
+- **« à vérifier — … »** n'est pas une source mais son absence : on rend la
+  **réserve traduite** (« Nicht bestätigte Angabe »), jamais la note française.
+
+`rating` / `rating_count` restent sélectionnées et **non rendues**, et c'est
+écrit dans le code : trois fiches sur 408 portent une note, toutes à 5,0,
+chacune sur **un seul vote**. Afficher « ★ 5,0 » laisserait croire à un
+classement là où il n'y a qu'une voix.
+
+`maps_url` disparaît de la requête : la migration `149` l'a vidée sur les 508
+fiches et le lien se construit au rendu.
+
+### Reste ouvert
+- **#11 Fagot Cigare (Abidjan)** est la **seule** fiche publiée sans aucune
+  source. L'utilisateur est sur place.
+- La `source` n'a pas de colonnes traduites : une valeur sur 173 est de la prose
+  française sans domaine (#2524, Alvear Palace). Elle est vraie ; lui fabriquer
+  un domaine pour faire propre serait la faute que ce chantier a défaite.

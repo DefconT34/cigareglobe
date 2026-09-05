@@ -3725,6 +3725,155 @@ section('La fiche de marque sert ce que la base contient');
 }
 
 // ════════════════════════════════════════════════════════
+section('La fiche dit d ou elle vient');
+
+// LE PLUS COUTEUX DES QUATRE ECARTS. `lounges.source` etait
+// SELECTIONNEE par page_cave() et rendue nulle part : 407 fiches sur
+// 408 en portent une, 9 377 caracteres qu'aucun lecteur ne voyait.
+//
+// Le chantier des quatre blocs s'est mene au nom de « aucune fiche sans
+// source » — 98 fiches retirees pour ce motif. Servir la fiche en
+// taisant sa source rendait cette regle invisible a celui qu'elle
+// protege.
+//
+// PIRE : la migration 155 a garde DIX-HUIT fiches publiees en ecrivant
+// dans `source` « a verifier — l'hotel existe, son salon cigares n'est
+// recoupe nulle part ». La decision etait bonne — ne pas effacer
+// l'Afrique de l'Ouest de l'atlas parce qu'elle est moins indexee — mais
+// elle tenait sur une phrase de la migration : « le champ source dit
+// desormais exactement l'etat ». Il ne le disait a personne. Ces
+// dix-huit fiches se presentaient au lecteur comme les 389 autres.
+{
+    $srvS = start_server();
+    $cliS = new_client('source');
+    $pdo  = test_pdo();
+
+    // ── Cas 1 : une citation, rendue telle quelle ───────
+    $pdo->exec("UPDATE lounges SET source = 'exemple-officiel.test 2024' WHERE id = 1");
+    $r = http('GET', $srvS . '/page.php?type=cave&id=1-lounge-de-test&lang=fr', ['jar' => $cliS]);
+    eq('source : la fiche repond', 200, $r['status']);
+    check('source : la citation est rendue',
+          str_contains($r['body'], 'exemple-officiel.test 2024'));
+    check('source : sous un libelle, pas nue',
+          (bool)preg_match('~class="pg-source">\s*Source\s*:~u', $r['body']));
+
+    // Une citation NE SE TRADUIT PAS — c'est une reference. Seul le
+    // libelle suit la langue.
+    $ra = http('GET', $srvS . '/page.php?type=cave&id=1-lounge-de-test&lang=de', ['jar' => $cliS]);
+    check('source : le libelle suit la langue',
+          str_contains($ra['body'], 'Quelle') && !str_contains($ra['body'], '>Source :'));
+    check('source : mais la citation reste intacte',
+          str_contains($ra['body'], 'exemple-officiel.test 2024'));
+
+    // ── Cas 2 : ce qui n'est PAS une source ─────────────
+    // La note francaise ne doit PAS sortir : le lecteur allemand a droit
+    // a la reserve dans sa langue, pas a une phrase francaise.
+    $pdo->exec("UPDATE lounges
+                   SET source = 'à vérifier — l''hôtel existe, son salon cigares n''est recoupé nulle part'
+                 WHERE id = 1");
+    $rr = http('GET', $srvS . '/page.php?type=cave&id=1-lounge-de-test&lang=fr', ['jar' => $cliS]);
+    check('reserve : elle se voit',
+          str_contains($rr['body'], 'pg-reserve') && str_contains($rr['body'], 'Information non recoupée'));
+    check('reserve : et ne se deguise pas en citation',
+          !str_contains($rr['body'], 'pg-source'));
+
+    $rd = http('GET', $srvS . '/page.php?type=cave&id=1-lounge-de-test&lang=de', ['jar' => $cliS]);
+    check('reserve : traduite en allemand',
+          str_contains($rd['body'], 'Nicht bestätigte Angabe'));
+    // CONTRE-EPREUVE CENTRALE : sans elle, un rendu qui recopierait la
+    // note francaise telle quelle passerait tout ce qui precede.
+    check('reserve : la note francaise ne fuit pas',
+          !str_contains($rd['body'], 'recoupé nulle part')
+          && !str_contains($rd['body'], 'à vérifier'));
+
+    // ── Cas 3 : pas de source, pas de ligne ─────────────
+    $pdo->exec("UPDATE lounges SET source = '' WHERE id = 1");
+    $rv = http('GET', $srvS . '/page.php?type=cave&id=1-lounge-de-test&lang=fr', ['jar' => $cliS]);
+    check('source : vide, aucune ligne n est posee',
+          !str_contains($rv['body'], 'pg-source') && !str_contains($rv['body'], 'pg-reserve'));
+}
+
+// ════════════════════════════════════════════════════════
+section('La fiche de pays sert ce que la base contient');
+
+// LE MEME DEFAUT, UN CRAN PLUS LOIN. Apres la page de marque, un
+// recoupement entre ce que page_pays() SELECTionne et ce que page.php
+// rend a laisse quatre colonnes sans lecteur. `flag` l'est
+// deliberement — Windows ne compose pas les emoji de drapeau. Les trois
+// autres non :
+//
+//   tier        le rang de production, renseigne sur 16 pays sur 16
+//   region      la macro-region — « Caraibes », « Amerique du Sud »
+//   rev_detail  CE QUE LE CHIFFRE MESURE
+//
+// Le troisieme est le plus couteux. « 0,58 M$ (2024) » sur la fiche du
+// Bresil se lisait comme le poids d'une industrie ; la colonne disait
+// « exportations de cigares et cigarillos (douanes bresiliennes) ».
+// Servir le nombre sans sa definition, c'est publier un chiffre faux.
+//
+// 192 champs remplis — 16 pays x 2 colonnes x 6 langues, 5 125
+// caracteres — n'atteignaient aucun lecteur.
+{
+    $srvP = start_server();
+    $cliP = new_client('pays');
+    $pdo  = test_pdo();
+
+    // On enrichit le decor plutot que d'interroger Cuba : meme raison
+    // qu'a la campagne des pages, une assertion appuyee sur les donnees
+    // reelles passe ici et tombe partout ailleurs.
+    $pdo->exec("UPDATE producer_countries
+                   SET revenue       = '123 M\$ (2024)',
+                       rev_detail    = 'exportations de reference (douanes de test)',
+                       rev_detail_en = 'reference exports (test customs)',
+                       region_en     = 'Nowhere'
+                 WHERE id = 'testland'");
+
+    $r = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliP]);
+    eq('pays : la fiche repond', 200, $r['status']);
+    $b = $r['body'];
+
+    // Les libelles de rang sont stockes DEJA en capitales dans i18n.js
+    // (« ◉ PRODUCTION ÉMERGENTE ») ; on cherche donc la chaine telle
+    // quelle, pas une version que la CSS produirait.
+    check('pays : le rang de production est rendu',
+          str_contains($b, 'pg-rang') && str_contains($b, 'PRODUCTION ÉMERGENTE'));
+    check('pays : la macro-region suit le rang sur la meme ligne',
+          (bool)preg_match('~class="pg-rang">[^<]*PRODUCTION ÉMERGENTE[^<]*·[^<]*Nulle part~u', $b));
+    check('pays : le chiffre est rendu',   str_contains($b, '123 M$ (2024)'));
+    check('pays : et ce qu il mesure aussi',
+          str_contains($b, 'exportations de reference (douanes de test)'));
+
+    // CONTRE-EPREUVE DE LANGUE : sans elle, une page qui servirait tout
+    // en francais quelle que soit la langue passerait les quatre
+    // assertions ci-dessus.
+    $re = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=en', ['jar' => $cliP]);
+    check('pays : en anglais, le rang et la region sont anglais',
+          str_contains($re['body'], 'EMERGING PRODUCTION') && str_contains($re['body'], 'Nowhere'));
+    check('pays : et la definition du chiffre aussi',
+          str_contains($re['body'], 'reference exports (test customs)')
+          && !str_contains($re['body'], 'douanes de test'));
+
+    // LE CAS DES CANARIES : une explication SANS chiffre. C'est le seul
+    // pays dans ce cas, et une condition ecrite « si revenue » l'aurait
+    // prive de l'explication aussi. Le bloc doit se rendre des que l'un
+    // des deux est la.
+    $pdo->exec("UPDATE producer_countries SET revenue = '' WHERE id = 'testland'");
+    $rc = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliP]);
+    check('pays : l explication se sert meme sans le chiffre',
+          str_contains($rc['body'], 'exportations de reference (douanes de test)'));
+    check('pays : et le chiffre vide ne laisse pas de ligne vide',
+          !str_contains($rc['body'], 'pg-chiffre'));
+
+    // CONTRE-EPREUVE INVERSE : les deux vides, et le bloc disparait —
+    // sinon un titre « Chiffre d'affaires » coifferait le neant sur les
+    // pays qui n'ont ni l'un ni l'autre.
+    $pdo->exec("UPDATE producer_countries SET rev_detail = '', rev_detail_en = '' WHERE id = 'testland'");
+    $rv = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliP]);
+    check('pays : sans chiffre ni definition, pas de bloc',
+          !str_contains($rv['body'], 'pg-source-chiffre') && !str_contains($rv['body'], 'pg-chiffre'));
+}
+
+// ════════════════════════════════════════════════════════
 section('Le francais reste dans les colonnes traduites');
 
 // CE QUE LES TROIS CONTROLES i18n NE VOYAIENT PAS. melange_check cherche

@@ -171,8 +171,17 @@ function page_pays(PDO $db, string $id, string $lang): ?array {
 /* ── Les établissements ──────────────────────────────────── */
 
 function page_cave(PDO $db, int $id, string $lang): ?array {
+    // `maps_url` N'EST PLUS LUE : la migration 149 l'a vidée sur les 508
+    // fiches, et le lien se construit au rendu (backend/carte_lib.php).
+    // La sélectionner encore ne rapportait que NULL.
+    //
+    // `rating` / `rating_count` restent SÉLECTIONNÉES ET NON RENDUES, et
+    // c'est délibéré : trois fiches sur 408 portent une note, toutes à
+    // 5,0, chacune sur UN seul vote. Afficher « ★ 5,0 » sur ces trois-là
+    // laisserait croire à un classement là où il n'y a qu'une voix. Le
+    // jour où le nombre de votes le permettra, c'est ici que ça se rend.
     $q = $db->prepare("SELECT l.id, l.name, l.city, l.type, l.phone, l.price, l.hours,
-                              l.maps_url, l.website, l.instagram, l.lat, l.lon,
+                              l.website, l.instagram, l.lat, l.lon,
                               l.rating, l.rating_count, l.source,
                               " . page_col('description', $lang) . " AS description,
                               l.country_id, COALESCE(pc.name, lc.name) AS pays_nom,

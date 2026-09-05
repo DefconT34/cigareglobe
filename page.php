@@ -64,7 +64,12 @@ function page_libelles(): array {
               // d'autre : ni cape, ni force, ni accords, alors que la
               // base les porte pour 117 maisons sur 118.
               'bm_pairings','bm_celebrities','bm_limited','gam_force','gam_cape',
-              'force_light','force_light_medium','force_medium','force_medium_full','force_full'];
+              'force_light','force_light_medium','force_medium','force_medium_full','force_full',
+              // Le rang de production et la macro-région : deux colonnes
+              // que la page de pays SÉLECTIONNAIT sans jamais les rendre.
+              'tier_major','tier_notable','tier_emerging',
+              // D'où vient la fiche, et quand elle ne vient de nulle part.
+              'pg_source','pg_source_reserve'];
     $out = [];
     foreach (i18n_parse($src) as $l => $paires) {
         foreach ($garde as $k) if (isset($paires[$k])) $out[$l][$k] = $paires[$k];
@@ -207,8 +212,47 @@ if ($db === null) {
         // emoji de drapeau, et « CU » en 38 px sous le titre se lit
         // comme une coquille. Les petits, en tête de lien, restent —
         // ils sont accompagnés du nom du pays.
+        // QUATRE COLONNES ÉTAIENT SÉLECTIONNÉES SANS ÊTRE RENDUES.
+        // `flag` l'est délibérément — voir la note ci-dessus. Les trois
+        // autres, non : le rang de production, la macro-région et,
+        // surtout, ce que le chiffre d'affaires MESURE.
+        // SANS LIBELLÉ, ET C'EST VOULU. « ★ PRODUCTION MAJEURE » se
+        // décrit tout seul ; le coiffer d'un « Informations clés »
+        // n'ajoute rien. Quant à la macro-région — « Caraïbes » —, la
+        // seule clé disponible est « Régions », déjà employée plus bas
+        // pour les régions de CULTURE (Vuelta Abajo, Partido…). Deux
+        // blocs du même nom disant deux choses différentes seraient pires
+        // que pas de libellé du tout.
+        $bandeau = [];
+        if (($p['tier'] ?? '') !== '') {
+            $cle = 'tier_' . strtolower((string)$p['tier']);
+            $lib = L($cle);
+            if ($lib !== $cle) $bandeau[] = $lib;
+        }
+        if (trim((string)($p['region'] ?? '')) !== '') $bandeau[] = trim((string)$p['region']);
+        if ($bandeau) {
+            $corps .= '<p class="pg-rang">' . e(implode(' · ', $bandeau)) . '</p>';
+        }
+
         $corps .= bloc(L('s_production'),   $p['production']   ?? null);
-        $corps .= bloc(L('revenue_label'),  $p['revenue']      ?? null);
+
+        // LE CHIFFRE D'AFFAIRES NE SE SERT PAS SEUL. « 0,58 M$ (2024) »
+        // ne dit pas ce qu'on a compté ; `rev_detail` le dit —
+        // « exportations de cigares et cigarillos (douanes
+        // brésiliennes) ». Le champ existait, traduit, pour les seize
+        // pays producteurs, et n'atteignait aucun lecteur.
+        //
+        // Les Canaries ont un rev_detail SANS revenue : le bloc se rend
+        // donc dès que l'un des deux est là, sinon la seule fiche qui
+        // n'a que l'explication perdrait aussi l'explication.
+        $rev = trim((string)($p['revenue'] ?? ''));
+        $det = trim((string)($p['rev_detail'] ?? ''));
+        if ($rev !== '' || $det !== '') {
+            $corps .= '<section class="pg-bloc"><h2>' . e(L('revenue_label')) . '</h2>';
+            if ($rev !== '') $corps .= '<p class="pg-chiffre">' . e($rev) . '</p>';
+            if ($det !== '') $corps .= '<p class="pg-source-chiffre">' . nl2br(e($det)) . '</p>';
+            $corps .= '</section>';
+        }
         $corps .= bloc(L('f_harvest'),      $p['harvest']      ?? null);
         $corps .= bloc(L('f_climate'),      $p['climate']      ?? null);
         $corps .= bloc(L('f_soil'),         $p['soil']         ?? null);
@@ -301,6 +345,47 @@ if ($db === null) {
             $liens[] = '<a href="' . e($carte) . '" rel="nofollow noopener" target="_blank">Google Maps ↗</a>';
         }
         if ($liens) $corps .= '<p class="pg-lien-ext">' . implode(' · ', $liens) . '</p>';
+
+        // ── D'OÙ VIENT CETTE FICHE ──────────────────────────
+        // La colonne `source` était SÉLECTIONNÉE et rendue nulle part.
+        // 407 fiches sur 408 en portent une — 9 377 caractères qui
+        // n'atteignaient aucun lecteur. Tout le chantier des quatre
+        // blocs s'est mené au nom de « aucune fiche sans source » ;
+        // servir la fiche en taisant sa source rend cette règle
+        // invérifiable par celui à qui elle est destinée.
+        //
+        // DEUX CAS, ET ILS NE SE RENDENT PAS PAREIL.
+        //
+        // 1. UNE CITATION — « habanos.com officiel 2024 », « PDF
+        //    officiel Habanos S.A. », « cigarjournal.com ». Elle se rend
+        //    TELLE QUELLE, dans toutes les langues, comme une référence
+        //    bibliographique : on ne traduit pas une référence. Le mot
+        //    « officiel » qui suit un domaine dans une trentaine de
+        //    valeurs est un qualificatif de la citation, pas une phrase.
+        //    Une seule valeur sur 173 est de la prose sans domaine
+        //    (#2524, Alvear Palace) : elle est VRAIE, et lui fabriquer
+        //    un domaine pour faire propre serait exactement la faute que
+        //    ce chantier a passé quatre blocs à défaire.
+        //
+        // 2. « à vérifier — … » — CE N'EST PAS UNE SOURCE, c'est son
+        //    absence. Dix-huit fiches publiées en portent une, posée
+        //    délibérément par la migration 155 : quinze salons d'hôtel
+        //    d'Afrique de l'Ouest et trois autres qu'on ne peut ni
+        //    confirmer ni démentir, gardés pour ne pas faire disparaître
+        //    de l'atlas ce qui est seulement moins indexé. Cette
+        //    décision tenait sur une phrase — « le champ `source` dit
+        //    désormais exactement l'état ». Il ne le disait à personne.
+        //    On rend donc la RÉSERVE, traduite, et non la note française
+        //    qui la détaille : le lecteur allemand doit lire « nicht
+        //    bestätigte Angabe », pas une phrase française.
+        $src = trim((string)($c['source'] ?? ''));
+        if ($src !== '') {
+            $reserve = (bool)preg_match('/^\s*(à|a)\s+v[ée]rifier\b/iu', $src);
+            $corps .= $reserve
+                ? '<p class="pg-reserve">⚠ ' . e(L('pg_source_reserve')) . '</p>'
+                : '<p class="pg-source">' . e(L('pg_source')) . ' : ' . e($src) . '</p>';
+        }
+
         $corps .= '<p class="pg-retour"><a href="' . e(page_url('pays', $c['country_id'], $lang)) . '">'
                 . e($c['pays_drapeau'] . ' ' . L('lounge_section_of') . ' ' . $c['pays_nom']) . ' →</a></p>';
 
