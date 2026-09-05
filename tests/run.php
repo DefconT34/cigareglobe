@@ -3676,6 +3676,81 @@ section('Les onglets sans pays choisi');
     }
 }
 
+// ════════════════════════════════════════════════════════
+section('Les images des fiches');
+
+// L'ATLAS NE PORTE QU'UNE SEULE VRAIE PHOTOGRAPHIE, la façade du lounge
+// d'Abidjan. Les quatre cent sept autres images sont des CARTES
+// engendrées : nom, ville, pays, et rien d'autre. Ce bloc surveille les
+// deux propriétés qui comptent.
+{
+    // ── Les cas construits du générateur ────────────────
+    $cmd = sprintf('%s -d xdebug.mode=off %s --autotest',
+                   escapeshellarg(PHP_BINARY),
+                   escapeshellarg(PROJECT_ROOT . '/tools/placeholders.php'));
+    $pipes = [];
+    $proc = proc_open($cmd, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, PROJECT_ROOT);
+    if (is_resource($proc)) {
+        $sortie = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[1]); fclose($pipes[2]);
+        $code = proc_close($proc);
+        if ($code !== 0) echo "\n" . $sortie . "\n";
+        eq('images : les 19 cas construits du generateur restent conformes', 0, $code);
+    } else {
+        check('images : autotest du generateur lancable', false);
+    }
+
+    // ── Une vraie photo ne se regenere jamais ───────────
+    // LE SEUL RISQUE SERIEUX DE CET OUTIL. Il ecrase des fichiers ; s'il
+    // se trompe de cible, une photographie envoyee par quelqu'un
+    // disparait sans retour. Le motif est donc verifie ici aussi, hors
+    // du fichier qui le definit — un controle qui ne s'eprouve que
+    // lui-meme ne prouve rien.
+    defined('PLACEHOLDERS_INCLUDE') || define('PLACEHOLDERS_INCLUDE', true);
+    require_once PROJECT_ROOT . '/tools/placeholders.php';
+
+    check('images : le nom engendre est reconnu',        ph_est_carte('placeholder_47.jpg'));
+    check('images : une photo televersee est protegee',  !ph_est_carte('p69bb321188fc44.85625998.jpg'));
+    check('images : un nom approchant ne suffit pas',    !ph_est_carte('mon_placeholder_47.jpg'));
+
+    // ── Aucune fiche publiee sans image ─────────────────
+    // Trente-trois fiches issues des chantiers 143 a 155 n'avaient
+    // AUCUNE ligne dans lounge_photos : elles s'affichaient sans rien.
+    // La migration 156 les a posees ; ce cliquet empeche que la
+    // prochaine fiche creee reintroduise le trou.
+    //
+    // Mesure sur la base de DEVELOPPEMENT : le decor de test ne porte
+    // qu'un etablissement, et ne dirait rien du corpus.
+    $sansImage = [];
+    try {
+        $pdoI = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
+                        . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $sansImage = $pdoI->query(
+            "SELECT l.id FROM lounges l
+              WHERE l.is_verified = 1
+                AND NOT EXISTS (SELECT 1 FROM lounge_photos p WHERE p.lounge_id = l.id)
+              ORDER BY l.id LIMIT 5")->fetchAll(PDO::FETCH_COLUMN);
+        eq('images : aucune fiche publiee sans image', [], $sansImage);
+
+        // ── Et aucune ligne ne pointe dans le vide ──────
+        // Une ligne sans fichier est pire qu'une absence de ligne : la
+        // page reserve la place et sert une image cassee.
+        $vides = [];
+        foreach ($pdoI->query(
+            "SELECT p.lounge_id, p.filename FROM lounge_photos p
+               JOIN lounges l ON l.id = p.lounge_id
+              WHERE l.is_verified = 1") as $r) {
+            $f = PROJECT_ROOT . '/uploads/lounges/' . (int)$r['lounge_id'] . '/' . $r['filename'];
+            if (!is_file($f)) $vides[] = (int)$r['lounge_id'];
+            if (count($vides) >= 5) break;
+        }
+        eq('images : aucune ligne ne pointe vers un fichier absent', [], $vides);
+    } catch (Throwable $e) {
+        check('images : base de developpement lisible', false, $e->getMessage());
+    }
+}
+
 // ── Ce que la racine web ne doit pas servir ─────────────
 // Ces regles ne s'eprouvent que sous Apache — `php -S` ignore le
 // .htaccess. Le controle lit donc le FICHIER, et verifie que les regles
