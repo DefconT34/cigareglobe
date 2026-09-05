@@ -3839,6 +3839,34 @@ section('La fiche dit d ou elle vient');
             }
         }
         eq('reserve : aucune fiche non recoupee ne decrit une offre', [], $bavardes);
+
+        // ── LE CLIQUET CENTRAL DU CHANTIER DES SOURCES ──
+        // « Aucune fiche sans source » a coute 98 retraits. La derniere
+        // exception est tombee avec la migration 163 : #11 Fagot Cigare,
+        // a Abidjan, dont l'utilisateur a fourni le site officiel.
+        // Le compte est a ZERO, et doit y rester.
+        $sans = [];
+        foreach ($pdoR->query(
+            "SELECT id, name FROM lounges
+              WHERE " . PAGE_FICHE_PUBLIABLE . " AND TRIM(COALESCE(source,'')) = ''") as $r) {
+            $sans[] = '#' . (int)$r['id'] . ' ' . $r['name'];
+        }
+        eq('source : aucune fiche publiee n\'est sans source', [], $sans);
+        // CONTRE-EPREUVE : la mesure doit savoir en trouver une. Sans
+        // elle, une requete cassee rendrait toujours zero.
+        $pdo->exec("UPDATE lounges SET source = '' WHERE id = 1");
+        $vus = [];
+        foreach ($pdo->query(
+            "SELECT id FROM lounges
+              WHERE " . PAGE_FICHE_PUBLIABLE . " AND TRIM(COALESCE(source,'')) = ''") as $r) {
+            $vus[] = (int)$r['id'];
+        }
+        // On cherche la fiche qu'on vient de vider, PAS une liste exacte :
+        // le decor de test porte d'autres etablissements sans source, et
+        // c'est sans importance — le cliquet, lui, porte sur la base de
+        // developpement, ou les 408 fiches vivent.
+        check('source : et la mesure sait en reperer une',
+              in_array(1, $vus, true), implode(',', $vus));
         // Le cliquet ne vaut que s'il porte sur quelque chose : si le
         // jour venait ou plus aucune fiche n'est marquee, l'assertion
         // ci-dessus passerait sur un ensemble vide.

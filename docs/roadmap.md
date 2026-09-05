@@ -2484,3 +2484,44 @@ Un cliquet garde la porte — aucune fiche non recoupée ne peut décrire une of
 des mots **d'affirmation**, pas du sujet : « Habanos » en est absent, parce que
 #250 le nomme pour dire qu'il manque, et que nommer ce qui manque est le
 contraire de l'affirmer.
+
+---
+
+## Fagot Cigare : la dernière des 408 (migration `163`)
+
+`#11 Fagot Cigare`, à Abidjan, était la **seule fiche publiée sans aucune
+source**. L'utilisateur, qui est sur place, a fourni le site officiel —
+[lefagot.com](https://lefagot.com). **Le compte des fiches sans source est
+maintenant à zéro**, et un cliquet l'y maintient.
+
+En la documentant, trois autres défauts sont apparus :
+
+- **La prose affirmait ce que la source ne dit pas.** « Seule fabrique
+  artisanale de cigares ivoiriens » — le site ne revendique nulle part d'être
+  la seule. « Cigares sur mesure, live cigar show » — ni l'un ni l'autre n'y
+  figurent.
+- **Les cinq traductions étaient des substitutions mot à mot** : *« Only factory
+  artisanal de cigares ivoiriens »*, *« Einzige Fabrik artisanale de cigares
+  ivoiriens »*. La faute exacte des migrations `157`→`160`.
+- **`city` listait quatre localités** — « Abidjan (et Tiassalé, Djékanou,
+  Tiébissou) ». Djékanou et Tiébissou sont des **noms de cigares** de la gamme
+  Aboussouan, pas des adresses ; Tiassalé n'apparaît nulle part.
+
+### Une sonde qui manquait, et une qui ne marche pas
+Cette fiche a **échappé aux deux sondes** de français résiduel : elles cherchent
+des mots-outils français (`de la`, `du`, `le`, `les`) et ce résidu n'en porte
+aucun. Elle a été trouvée en **lisant la ligne**, pas par un outil.
+
+Une sonde de remplacement a été essayée puis **rejetée par la mesure** : compter
+le taux de mots communs entre le français et sa traduction. Sur le corpus,
+**312 fiches dépassent 50 %**, et celles du haut du classement — #4, #13, #17 —
+sont de l'anglais et de l'allemand parfaitement corrects. Le recouvrement mesure
+les **noms propres**, pas la traduction.
+
+### Ce qui reste ouvert
+Le site ne décrit pas un point de vente : il décrit un **fabricant**, avec trois
+lignes nommées (Robusto, Aboussouan — Le Poro, Tiébissou, Djékanou — et
+Fagorillos) et un terroir revendiqué. La Côte d'Ivoire est pourtant dans
+`lounge_countries`, pas dans `producer_countries`. Ouvrir un pays producteur
+demande un rang, une région, des récoltes, un climat, des sols et six langues :
+c'est un chantier, pas une ligne.
