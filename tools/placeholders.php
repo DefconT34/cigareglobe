@@ -148,20 +148,32 @@ function ph_couper(string $texte, float $corps, ?string $police, int $largeur, i
 }
 
 /**
- * La ville, ou rien si le nom la dit déjà.
+ * La ville, ou rien si elle est déjà dite ailleurs sur la carte.
  *
- * Cent quatre-vingts fiches sur quatre cent huit s'appellent « X —
- * Ville » : la carte affichait « Le Cadre VIP — Bamako », puis
- * « Bamako » juste en dessous. Répéter n'ajoute pas, ça dilue.
+ * DEUX REDONDANCES, TROUVÉES EN REGARDANT LES CARTES SERVIES.
+ *
+ * La première : cent quatre-vingts fiches sur quatre cent huit
+ * s'appellent « X — Ville ». La carte affichait « Le Cadre VIP —
+ * Bamako », puis « Bamako » juste en dessous.
+ *
+ * La seconde : quinze fiches sont dans un ÉTAT-VILLE — Hong Kong,
+ * Singapour. Leur ville et leur pays portent le même mot, et la carte
+ * l'écrivait deux fois, une fois en clair et une fois en capitales
+ * espacées. C'est la ligne de ville qui saute : le pays est l'ancre
+ * graphique du bas, il reste.
  *
  * CONTRE-EXEMPLE À NE PAS CASSER : « La Casa del Habano — Kowloon » est
- * à Hong Kong. Le nom porte le quartier, la ville reste utile. On ne
- * retire donc que ce qui est LITTÉRALEMENT déjà là.
+ * à Hong Kong. Le nom porte le QUARTIER — sans la seconde règle, la
+ * ville resterait affichée en double du pays. Et « Le Cadre VIP —
+ * Bamako » est au Mali : la ville saute par la première règle, le pays
+ * reste, et il apprend quelque chose.
  */
-function ph_ville(string $nom, string $ville): string {
+function ph_ville(string $nom, string $ville, string $pays = ''): string {
     $ville = trim($ville);
     if ($ville === '') return '';
-    return mb_stripos($nom, $ville) === false ? $ville : '';
+    if (mb_stripos($nom, $ville) !== false) return '';
+    if ($pays !== '' && mb_strtolower($ville) === mb_strtolower(trim($pays))) return '';
+    return $ville;
 }
 
 /** Le nom de fichier d'une carte. Volontairement rigide : voir ph_est_carte(). */
@@ -288,7 +300,7 @@ function ph_carte(array $fiche, int $l = PH_L, int $h = PH_H) {
         $y += ph_ligne($im, $ligne, 30*$k, $police, $cx, $y, ph_rvb(PH_OR));
     }
     $y += (int)round(6 * $k);
-    $ville = ph_ville((string)$fiche['name'], (string)$fiche['ville']);
+    $ville = ph_ville((string)$fiche['name'], (string)$fiche['ville'], (string)$fiche['pays']);
     foreach (ph_couper($ville, 17*$k, $police, $l - 2*$marge, 1) as $ligne) {
         $y += ph_ligne($im, $ligne, 17*$k, $police, $cx, $y, ph_rvb(PH_OR_PALE));
     }
@@ -412,6 +424,16 @@ function ph_autotest(): int {
           'ville : la casse ne compte pas');
     $dire(ph_ville('Cave sans ville', '  ') === '',
           'ville : rien a afficher, rien a comparer');
+    // L ETAT-VILLE : ville et pays portent le meme mot. C est la ligne
+    // de ville qui saute, le pays est l ancre du bas.
+    $dire(ph_ville('Davidoff — ION Orchard', 'Singapour', 'Singapour') === '',
+          'ville : etat-ville, la ville ne double pas le pays');
+    $dire(ph_ville('La Casa del Habano — Kowloon', 'Hong Kong', 'Hong Kong') === '',
+          'ville : Kowloon a Hong Kong, la ville doublait le pays');
+    // CONTRE-EPREUVE : Bamako n est pas le Mali. La ville saute par la
+    // premiere regle, mais le pays apprend quelque chose et reste.
+    $dire(ph_ville('Cave centrale', 'Bamako', 'Mali') === 'Bamako',
+          'ville : ville et pays distincts, on garde la ville');
     $dire(ph_couper("Deux   espaces\tet\nsauts", 30, $police, 900, 2) === ['Deux espaces et sauts'],
           'coupure : les blancs sont normalises');
 
@@ -434,7 +456,7 @@ function ph_autotest(): int {
     $dire(imagesx($im) === PH_MINI_L && imagesy($im) === PH_MINI_H, 'dessin : la vignette suit l echelle');
     imagedestroy($im);
 
-    printf("placeholders --autotest : %d cas, %d echec(s)%s\n", 23, $echecs,
+    printf("placeholders --autotest : %d cas, %d echec(s)%s\n", 26, $echecs,
            $police === null ? "  [sans police vectorielle : repli bitmap]" : '');
     return $echecs === 0 ? 0 : 1;
 }
