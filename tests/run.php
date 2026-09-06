@@ -4154,6 +4154,35 @@ section('La fiche de pays sert ce que la base contient');
     $rv = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliP]);
     check('pays : sans chiffre ni definition, pas de bloc',
           !str_contains($rv['body'], 'pg-source-chiffre') && !str_contains($rv['body'], 'pg-chiffre'));
+
+    // ── UN PAYS AUX TROUS DECLARES ──────────────────────
+    // La Cote d'Ivoire est ouverte en pays producteur SANS variete, ni
+    // climat, ni sol, ni saison de recolte : aucune source ne les donne,
+    // et on n'ecrit pas ce qu'on ne sait pas. Panama, le plus mince des
+    // seize precedents, les porte tous les quatre.
+    //
+    // CE QUI SE JOUE ICI : une page qui coifferait le vide d'un titre —
+    // « Climat » suivi de rien — dirait au lecteur que l'information
+    // existe et qu'elle s'est perdue. Un champ vide doit disparaitre,
+    // pas s'annoncer.
+    $pdo->exec("UPDATE producer_countries
+                   SET climate = '', climate_en = '', soil = '', soil_en = '',
+                       harvest = '', harvest_en = '', varieties = '[]'
+                 WHERE id = 'testland'");
+    $rt = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliP]);
+    eq('trous : la fiche repond quand meme', 200, $rt['status']);
+    // Les libelles tels que i18n.js les porte en francais.
+    foreach (['Climat', 'Sol', 'Récolte', 'Variétés'] as $titre) {
+        check('trous : aucun titre « ' . $titre .' » sans contenu',
+              !preg_match('~<h2>\s*' . preg_quote($titre, '~') . '\s*</h2>~u', $rt['body']));
+    }
+    // CONTRE-EPREUVE : le titre doit revenir des que le champ revient.
+    // Sans elle, une page qui ne rendrait JAMAIS le climat passerait.
+    $pdo->exec("UPDATE producer_countries SET climate = 'Climat de reference' WHERE id = 'testland'");
+    $rt2 = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliP]);
+    check('trous : et le titre revient quand le champ revient',
+          str_contains($rt2['body'], 'Climat de reference')
+          && (bool)preg_match('~<h2>\s*' . preg_quote('Climat', '~') . '\s*</h2>~u', $rt2['body']));
 }
 
 // ════════════════════════════════════════════════════════

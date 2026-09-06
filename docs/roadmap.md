@@ -2618,3 +2618,56 @@ sous une autre forme, et un test le garde.
 portent toutes deux une colonne `notes` ; la requête les joint, et MySQL refusait.
 Sans ce paramètre il fallait renoncer à la jointure ou écrire le `COALESCE` à la
 main — c'est-à-dire à côté de la seule fabrique qui connaît les langues.
+
+---
+
+## La Côte d'Ivoire, dix-septième pays producteur (migration `165`)
+
+La migration `164` avait **refusé** cette promotion, et elle avait raison :
+lefagot.com parlait d'un « terroir riche » sans jamais dire où la feuille était
+cultivée. Ce qui manquait n'était pas de la prudence — c'était une source.
+
+### Ce qui est établi
+1. **Le tabac est cultivé en Côte d'Ivoire**, et pas marginalement : ~8 071 t/an
+   de feuilles, premier tonnage d'Afrique de l'Ouest (FAO). Filière historique au
+   nord, autour de Bouaké, où la SITAB (Imperial Brands) est l'unique cigarettier.
+2. **La chaîne du Fagot est ivoirienne** — « de la récolte […] jusqu'à la mise des
+   bagues, tout le processus se fait en Côte d'Ivoire » (abidjanmag.com,
+   19 juin 2020 ; jcdmag.com). ⚠ La phrase est **identique chez les deux** : un
+   communiqué relayé deux fois, donc *une* affirmation du fabricant, pas deux
+   constats.
+3. **La composition par terroir vient d'un tiers** : une cave d'Abidjan
+   (vivinto.net) décrit une **cape de Tiébissou** sur une **sous-cape et une tripe
+   de Didiévi**, deux sols, ~100 jours de vieillissement.
+4. **La géographie confirme** : Tiébissou, Didiévi et Djékanou sont trois des
+   quatre départements de la **région du Bélier**. Un fabricant qui inventerait des
+   terroirs ne tomberait pas sur trois subdivisions contiguës d'une même région.
+
+### Les trous sont déclarés, pas comblés
+`varieties`, `climate`, `soil`, `harvest` et `revenue` **restent vides**. Panama,
+le plus mince des seize précédents, les porte tous. La variété est le manque qui
+compte : une source faible affirme que le pays ne cultive que du **Burley** — un
+tabac de cigarette — mais rien ne dit que le tabac du Bélier passe par le circuit
+SITAB du nord. On n'écrit ni « Burley » ni autre chose. **Un test garde qu'un
+champ vide disparaît au lieu de s'annoncer** : « Climat » suivi de rien dirait au
+lecteur que l'information existe et s'est perdue.
+
+### Trois garde-fous ont eu raison contre moi
+- `coherence_check` : `regions` doit correspondre **exactement** aux noms des
+  zones (j'écrivais « Tiébissou (Bélier) » d'un côté, « Tiébissou » de l'autre),
+  et `producer_countries.brands` doit nommer la maison **telle qu'elle existe**
+  en base (« Le Fagot » ≠ « Le Fagot Cigar » — la maison serait restée invisible
+  depuis le globe).
+- `i18n_superlatif_check` : trois traductions disaient « le plus grand tonnage »
+  là où le français dit « premier ». Passées à l'ordinal.
+- **L'oubli de la règle 143** : `production_zones.id` est auto-incrémenté *et*
+  versionné. Sans identifiant explicite, développement et production divergent et
+  `traductions.sql` vise des lignes inexistantes. Figés à 46-48.
+
+### Une note de la 163 rectifiée
+« Tiassalé n'apparaît nulle part sur le site » était vrai de lefagot.com et
+**faux du dossier** : les quatre localités de l'ancien champ `city` étaient les
+sites de production.
+
+### Reste ouvert
+**La variété.** Une question à Fagot suffirait.
