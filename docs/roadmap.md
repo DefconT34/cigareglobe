@@ -2671,3 +2671,40 @@ sites de production.
 
 ### Reste ouvert
 **La variété.** Une question à Fagot suffirait.
+
+---
+
+## Le climat et le sol du Bélier (migration `166`)
+
+Deux des cinq trous de la fiche ivoirienne se referment. **La condition que je
+m'étais fixée est tenue** : la source porte sur un **périmètre du Bélier**, pas
+sur la Côte d'Ivoire en général — sinon j'aurais écrit une généralité déguisée en
+fait tabacole.
+
+**Source** : *« Intégration de données topographiques et hydrographiques […] cas
+d'un périmètre de la région du Bélier en Côte d'Ivoire »*,
+[Physio-Géo](https://journals.openedition.org/physio-geo/4120), revue de
+géographie physique (OpenEdition).
+
+- **Climat baouléen** — tropical humide de *transition* entre l'équatorial à
+  quatre saisons du sud et le tropical humide à deux saisons du nord ;
+  1 000 à 1 400 mm/an en deux périodes (avril-juin, septembre-octobre).
+- **Sols ferrallitiques** sur un substratum **essentiellement granitique**.
+
+### Ce qu'on n'en déduit pas
+`harvest` **reste vide**, et c'est le point délicat. Le régime des pluies est
+documenté, mais un calendrier de **récolte du tabac** ne s'en déduit pas : la date
+de coupe dépend de la variété, de la conduite de la plante et du séchage. Écrire
+« Avr – Juin » parce qu'il pleut à ce moment-là serait exactement la faute que
+cette migration se refuse.
+
+La source mentionne aussi des **gleysols** le long du Kan et de la Marahoué, en
+les disant favorables à la **riziculture irriguée**. Les nommer dans un champ de
+fiche tabac laisserait croire qu'ils portent le tabac : on ne garde que le sol
+dominant.
+
+### L'écart avec Panama, recompté
+**Trois champs**, et non cinq : `varieties`, `harvest`, `revenue`.
+Les deux premiers, une question à Fagot les refermerait. Le troisième restera
+probablement vide — la filière est intérieure, il n'existe pas de ligne
+d'exportation ; les Canaries sont déjà dans ce cas et la page sait le rendre.
