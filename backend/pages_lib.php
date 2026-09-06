@@ -179,6 +179,20 @@ function page_pays(PDO $db, string $id, string $lang): ?array {
     $q->execute([$id]);
     $pays['caves'] = $q->fetchAll(PDO::FETCH_ASSOC);
 
+    // LES DONNÉES GÉNÉRALES. `producer_geo` porte huit champs par pays et
+    // n'était lue par aucune page serveur : 17 pays, 136 valeurs
+    // réservées à l'application. Trois de ces champs portent des mots et
+    // ont donc des colonnes traduites (migration 169) ; les cinq autres
+    // sont des noms propres, des nombres et des unités.
+    $gc = [];
+    foreach (['currency', 'language', 'independent'] as $c) {
+        $gc[] = page_col($c, $lang) . " AS `$c`";
+    }
+    $q = $db->prepare("SELECT capital, population, area, timezone, gdp, "
+                    . implode(', ', $gc) . " FROM producer_geo WHERE country_id = ? LIMIT 1");
+    $q->execute([$id]);
+    $pays['geo'] = $q->fetch(PDO::FETCH_ASSOC) ?: null;
+
     $q = $db->prepare("SELECT name, founded FROM brands WHERE country_id = ? ORDER BY name");
     $q->execute([$id]);
     $pays['marques'] = $q->fetchAll(PDO::FETCH_ASSOC);

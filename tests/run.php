@@ -4183,6 +4183,53 @@ section('La fiche de pays sert ce que la base contient');
     check('trous : et le titre revient quand le champ revient',
           str_contains($rt2['body'], 'Climat de reference')
           && (bool)preg_match('~<h2>\s*' . preg_quote('Climat', '~') . '\s*</h2>~u', $rt2['body']));
+
+    // ── LES DONNEES GENERALES ───────────────────────────
+    // Huit champs par pays — capitale, population, superficie, monnaie,
+    // langue, fuseau, PIB, independance — que 17 pays portaient et
+    // qu'AUCUNE page serveur ne rendait. Trois d'entre eux portent des
+    // MOTS, et la table n'avait aucune colonne traduite : les servir
+    // tels quels aurait injecte « Espagnol » et « Peso cubain » dans
+    // les pages allemandes. La migration 169 a pose les colonnes.
+    $pdo->exec("DELETE FROM producer_geo WHERE country_id = 'testland'");
+    $pdo->exec("INSERT INTO producer_geo
+                  (country_id, capital, population, area, currency, language, timezone, gdp, independent,
+                   currency_en, language_en)
+                VALUES ('testland', 'Ville-Capitale', '1,0 M (2025)', '1 000 km²',
+                        'Monnaie de test (TST)', 'Langue de test', 'UTC+0', '—', '1960',
+                        'Test currency (TST)', 'Test language')");
+    $rg = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliP]);
+    foreach ([['la capitale', 'Ville-Capitale'], ['la population', '1,0 M (2025)'],
+              ['la superficie', '1 000 km²'],    ['la monnaie', 'Monnaie de test (TST)'],
+              ['la langue', 'Langue de test'],   ['le fuseau', 'UTC+0'],
+              ['l independance', '1960']] as [$quoi, $attendu]) {
+        check('geo : la fiche sert ' . $quoi, str_contains($rg['body'], $attendu));
+    }
+    // UN TIRET N'EST PAS UNE VALEUR. Le PIB des Canaries est stocke
+    // « — » : un marqueur d'absence herite de l'application, qui
+    // l'affiche pour tenir sa grille. « PIB : — » coifferait le vide
+    // d'un libelle, ce que le cliquet des trous interdit juste au-dessus.
+    check('geo : un tiret ne se rend pas comme une valeur',
+          !preg_match('~<dt>\s*PIB\s*</dt>~u', $rg['body']));
+    // CONTRE-EPREUVE : le libelle doit revenir des qu'il y a un chiffre.
+    $pdo->exec("UPDATE producer_geo SET gdp = '9,9 Md\$ (2025)' WHERE country_id = 'testland'");
+    $rg2 = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliP]);
+    check('geo : et il revient quand le chiffre est la',
+          str_contains($rg2['body'], '9,9 Md$ (2025)')
+          && (bool)preg_match('~<dt>\s*PIB\s*</dt>~u', $rg2['body']));
+    // CONTRE-EPREUVE DE LANGUE : sans elle, un rendu qui servirait le
+    // francais dans les six langues passerait tout ce qui precede.
+    $rge = http('GET', $srvP . '/page.php?type=pays&id=testland&lang=en', ['jar' => $cliP]);
+    check('geo : monnaie et langue suivent la langue',
+          str_contains($rge['body'], 'Test currency (TST)')
+          && str_contains($rge['body'], 'Test language')
+          && !str_contains($rge['body'], 'Monnaie de test'));
+    // Et ce qui n'a PAS de colonne traduite se sert tel quel : la
+    // capitale est un nom propre, la superficie un nombre.
+    check('geo : le nom propre et le nombre ne bougent pas',
+          str_contains($rge['body'], 'Ville-Capitale') && str_contains($rge['body'], '1 000 km²'));
+
+    $pdo->exec("DELETE FROM producer_geo WHERE country_id = 'testland'");
 }
 
 // ════════════════════════════════════════════════════════

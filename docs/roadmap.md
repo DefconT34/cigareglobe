@@ -2788,3 +2788,48 @@ drapeaux, mais sur la base de développement, où ils sont justes. **`prevol.php
 tourne sur le serveur** : c'est le seul endroit d'où le dégât est visible. Il porte
 désormais un constat **bloquant** sur les drapeaux abîmés ou vides, dont la
 remédiation donne la commande avec le jeu de caractères explicite.
+
+---
+
+## Les données générales (migration `169`)
+
+`producer_geo` porte **huit champs par pays** — capitale, population, superficie,
+monnaie, langue, fuseau, PIB, indépendance — et n'était rendue par **aucune page
+serveur**. Dix-sept pays, 136 valeurs, réservées à l'application JavaScript.
+C'est le même défaut que les cinq contenus ouverts précédemment, sur une table
+qui avait échappé au recensement.
+
+### Pourquoi une migration avant du code
+La table n'avait **aucune colonne traduite**, et c'était sans conséquence tant que
+seule l'application la lisait : celle-ci reconstruit monnaie et langue à
+l'exécution, depuis des **codes** (`data.pays.js`) et `Intl`. Une page serveur ne
+le peut pas — ou alors en pariant sur `ext-intl`, dont rien ne garantit la
+présence chez l'hébergeur.
+
+Les rendre telles quelles aurait injecté « Espagnol », « Peso cubain » et
+« soulèvement dès 1868 » dans les pages allemandes, chinoises et arabes.
+
+**28 valeurs distinctes seulement** : 15 monnaies (le code ISO entre parenthèses
+ne bouge pas), 8 langues, et 5 dates d'indépendance sur 14 — les neuf autres sont
+des **années nues** qui ne se traduisent pas, et `page_col()` retombe sur le
+français, qui donne le même chiffre.
+
+### Non traduit, et assumé
+`capital` reste en noms propres — « La Havane » est l'exonyme français, et l'atlas
+sert déjà « Côte d'Ivoire » tel quel en allemand. `population`, `area`, `gdp` et
+`timezone` restent en notation française (« 87,1 Md$ », virgule décimale) : c'est
+**déjà** le cas de `revenue`, servi sur chaque fiche de pays dans les six langues
+depuis des mois. Changer ici seulement créerait deux conventions dans une même page.
+
+### Un tiret n'est pas une valeur
+Le PIB des Canaries est stocké « — » : un marqueur d'absence hérité de
+l'application, qui l'affiche pour tenir sa grille. Une page servie n'a pas de
+grille à tenir, et « PIB : — » coifferait le vide d'un libellé — exactement ce que
+le cliquet des trous déclarés interdit deux blocs plus bas. Un test le garde, avec
+la contre-épreuve : le libellé revient dès qu'il y a un chiffre.
+
+### Et `schema.sql` suit
+Les nouvelles colonnes y sont ajoutées à la main : une migration modifie la base
+vivante, `schema.sql` définit la base neuve. Sans cela toute la campagne tombe en
+cascade — c'est arrivé, cinq échecs d'un coup, dont un « l'arabe est servi de
+droite à gauche » sans rapport apparent.

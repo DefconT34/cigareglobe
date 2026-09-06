@@ -80,7 +80,11 @@ function page_libelles(): array {
               'mkt_consumption','mkt_share','mkt_trend','mkt_lex_volume','mkt_world_rank',
               's_habanos','hab_no_rep','hab_founded','hab_ownership','hab_hq',
               'hab_revenue','hab_employees','hab_factories','hab_official_brands',
-              'hab_distribution','hab_festival','hab_certifications'];
+              'hab_distribution','hab_festival','hab_certifications',
+              // Les données générales : huit champs par pays, servis par
+              // aucune page avant la migration 169.
+              'lex_general','lex_capital','lex_population','lex_area','lex_currency',
+              'lex_language','lex_timezone','lex_gdp','lex_independence'];
     $out = [];
     foreach (i18n_parse($src) as $l => $paires) {
         foreach ($garde as $k) if (isset($paires[$k])) $out[$l][$k] = $paires[$k];
@@ -278,6 +282,38 @@ if ($db === null) {
         if (trim((string)($p['region'] ?? '')) !== '') $bandeau[] = trim((string)$p['region']);
         if ($bandeau) {
             $corps .= '<p class="pg-rang">' . e(implode(' · ', $bandeau)) . '</p>';
+        }
+
+        // ── LES DONNÉES GÉNÉRALES ───────────────────────────
+        // Huit champs par pays, dix-sept pays, cent trente-six valeurs —
+        // et aucune page serveur ne les rendait. Elles viennent AVANT le
+        // tabac, comme dans l'application : on situe le pays, puis on
+        // parle de ce qu'il cultive.
+        //
+        // Trois d'entre elles portent des mots et passent par les
+        // colonnes traduites de la migration 169. Les cinq autres sont
+        // des noms propres et des nombres, servis tels quels.
+        if (!empty($p['geo'])) {
+            $g = $p['geo'];
+            $gf = [];
+            foreach ([[L('lex_capital'), $g['capital']], [L('lex_population'), $g['population']],
+                      [L('lex_area'), $g['area']],       [L('lex_currency'), $g['currency']],
+                      [L('lex_language'), $g['language']], [L('lex_timezone'), $g['timezone']],
+                      [L('lex_gdp'), $g['gdp']],         [L('lex_independence'), $g['independent']]] as [$k, $v]) {
+                // UN TIRET N'EST PAS UNE VALEUR. Le PIB des Canaries est
+                // stocké « — » : c'est un marqueur d'absence, hérité de
+                // l'application, qui l'affiche pour tenir sa grille. Une
+                // page servie n'a pas de grille à tenir, et « PIB : — »
+                // coifferait le vide d'un libellé — exactement ce que le
+                // cliquet des trous déclarés interdit deux blocs plus bas.
+                if (in_array(trim((string)$v), ['', '—', '–', '-', 'N/A'], true)) continue;
+                $gf[] = [$k, (string)$v];
+            }
+            if ($gf) {
+                $corps .= '<section class="pg-bloc"><h2>' . e(L('lex_general')) . '</h2><dl class="pg-faits">';
+                foreach ($gf as [$k, $v]) $corps .= '<dt>' . e($k) . '</dt><dd>' . e($v) . '</dd>';
+                $corps .= '</dl></section>';
+            }
         }
 
         $corps .= bloc(L('s_production'),   $p['production']   ?? null);
