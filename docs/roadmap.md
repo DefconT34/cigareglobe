@@ -2525,3 +2525,47 @@ Fagorillos) et un terroir revendiqué. La Côte d'Ivoire est pourtant dans
 `lounge_countries`, pas dans `producer_countries`. Ouvrir un pays producteur
 demande un rang, une région, des récoltes, un climat, des sols et six langues :
 c'est un chantier, pas une ligne.
+
+---
+
+## La maison Le Fagot Cigar (migration `164`)
+
+**La 119ᵉ maison, et la première hors d'un pays producteur.** Les 118 autres ont
+toutes leur `country_id` dans `producer_countries` ; la Côte d'Ivoire est un pays
+d'établissements. `page_marque()` prévoit le cas depuis toujours — un `LEFT JOIN`
+sur `lounge_countries` — mais **aucune donnée ne l'avait jamais emprunté**. Le
+chemin a été éprouvé par la campagne **avant** la migration, pas après.
+
+### Pourquoi la Côte d'Ivoire n'est PAS passée pays producteur
+La réponse tient à une phrase absente. lefagot.com dit « savoir-faire local »,
+« un terroir riche », « feuilles minutieusement sélectionnées ». **Il ne dit
+jamais où la feuille est cultivée.**
+
+Les trois déclinaisons de l'Aboussouan portent des noms de lieux ivoiriens —
+Le Poro au nord, Tiébissou et Djékanou au centre — et c'est troublant. Mais ce
+sont des **noms de produits**. Un atelier peut parfaitement rouler à la main à
+Abidjan des feuilles importées.
+
+Ouvrir un dix-septième pays producteur imposerait d'affirmer un climat, un sol,
+une saison de récolte, des régions de culture et des variétés dont aucune source
+ne dispose — **sur la foi de noms de cigares**. Le plus mince des seize, Panama,
+porte tout cela plus un chiffre douanier.
+
+**Ce manque est écrit dans la fiche elle-même, dans les six langues.** Le lecteur
+apprend que la maison parle d'un terroir sans dire où le tabac pousse, et
+pourquoi la Côte d'Ivoire figure en pays d'adresses.
+
+### Un garde-fou a refusé une citation, et il avait raison
+Le premier jet citait le site — « uniquement la feuille, le geste et le temps ».
+`marques_check` l'a rejetée : *prête une parole*. La citation était pourtant
+réelle et attribuée, et un mécanisme d'exception existe (Kipling, El Rey del
+Mundo). **On n'en a pas ouvert une** : la phrase ne disait rien de plus que
+« sans additif », écrit deux mots plus tôt. Une exception se réserve à ce qu'une
+paraphrase perdrait ; en ouvrir une pour de l'ornement use le garde-fou pour les
+fois où il aura raison contre quelque chose qui compte.
+
+### Ce qui débloquerait la promotion
+Trois réponses, que seul quelqu'un à Abidjan peut obtenir :
+1. **La feuille est-elle cultivée en Côte d'Ivoire, ou importée ?**
+2. Si ivoirienne : où — le Poro ? le Bélier ? — et quelle variété ?
+3. Existe-t-il une ligne d'exportation de cigares ivoiriens aux douanes ?

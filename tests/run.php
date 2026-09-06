@@ -3879,6 +3879,63 @@ section('La fiche dit d ou elle vient');
 }
 
 // ════════════════════════════════════════════════════════
+section('Une maison peut vivre hors d un pays producteur');
+
+// UN CHEMIN DE CODE QUE RIEN N'AVAIT JAMAIS EMPRUNTE. Les 118 maisons
+// de l'atlas ont toutes leur `country_id` dans `producer_countries`.
+// page_marque() fait pourtant un LEFT JOIN sur `lounge_countries` — le
+// code prevoit le cas depuis toujours, et AUCUNE DONNEE ne l'a jamais
+// exerce.
+//
+// Le Fagot Cigar, a Abidjan, est la premiere : la Cote d'Ivoire est un
+// pays d'etablissements, pas un pays producteur. On eprouve le chemin
+// AVANT d'y mettre du contenu reel, pas apres.
+//
+// Ce qui se jouait sans filet : `COALESCE(pc.name, lc.name)`. Si le
+// second membre manquait, la page rendrait une maison sans pays — ou
+// pire, un 404 sur une fiche qui existe.
+{
+    $srvB = start_server();
+    $cliB = new_client('maisonhorspays');
+    $pdo  = test_pdo();
+
+    $pdo->exec("INSERT INTO lounge_countries (id, name, flag, lat, lon)
+                VALUES ('paysdecaves', 'Pays de caves', '🏳', 0, 0)
+                ON DUPLICATE KEY UPDATE name = VALUES(name)");
+    $pdo->exec("DELETE FROM brands WHERE name = 'Maison hors pays'");
+    $pdo->exec("INSERT INTO brands (name, country_id, founded, history, gamme)
+                VALUES ('Maison hors pays', 'paysdecaves', '2020 — nulle part',
+                        'Une histoire de reference pour la campagne.',
+                        '[{\"name\":\"Module sans cape\",\"story\":\"Un module qui ne declare ni cape ni force.\"}]')");
+
+    $r = http('GET', $srvB . '/page.php?type=marque&id=maison-hors-pays&lang=fr', ['jar' => $cliB]);
+    eq('maison hors pays : la fiche repond', 200, $r['status']);
+    check('maison hors pays : le nom du pays est rendu',
+          str_contains($r['body'], 'Pays de caves'));
+    check('maison hors pays : et son histoire',
+          str_contains($r['body'], 'Une histoire de reference pour la campagne.'));
+
+    // UN MODULE SANS CAPE NI FORCE ne doit pas poser une ligne de
+    // metadonnees vide. Le Fagot ne declare ni l'une ni l'autre, et la
+    // page ne doit pas lui en inventer.
+    check('maison hors pays : le module sans cape se rend quand meme',
+          str_contains($r['body'], 'Module sans cape')
+          && str_contains($r['body'], 'Un module qui ne declare ni cape ni force.'));
+    check('maison hors pays : et sans ligne de metadonnees vide',
+          !preg_match('~class="pg-mod-meta">\s*</p>~', $r['body']));
+
+    // CONTRE-EPREUVE : le lien vers le pays doit mener quelque part.
+    // Un `country_id` sans page ferait une impasse depuis la fiche.
+    $rp = http('GET', $srvB . '/page.php?type=pays&id=paysdecaves&lang=fr', ['jar' => $cliB]);
+    eq('maison hors pays : le pays a bien une page', 200, $rp['status']);
+    check('maison hors pays : qui liste la maison',
+          str_contains($rp['body'], 'Maison hors pays'));
+
+    $pdo->exec("DELETE FROM brands WHERE name = 'Maison hors pays'");
+    $pdo->exec("DELETE FROM lounge_countries WHERE id = 'paysdecaves'");
+}
+
+// ════════════════════════════════════════════════════════
 section('La fiche de pays sert ce que la base contient');
 
 // LE MEME DEFAUT, UN CRAN PLUS LOIN. Apres la page de marque, un
