@@ -3714,6 +3714,20 @@ section('La fiche de marque sert ce que la base contient');
                                        && str_contains($b, 'Anecdote de test.'));
     check('marque : les editions limitees', str_contains($b, 'Edition limitee de test'));
 
+    // ── AUCUN TITRE VIDE ────────────────────────────────
+    // L'histoire de la maison est le CHAPO de la fiche : elle n'a pas de
+    // titre, et n'en veut pas. Elle passait pourtant par bloc('') — qui
+    // posait un « <h2></h2> » VIDE sur les cent vingt maisons.
+    //
+    // Un titre de niveau deux sans texte n'est pas invisible : un
+    // lecteur d'ecran l'annonce, et il ouvre une section qui ne dit pas
+    // de quoi elle parle. Trouve en verifiant une fiche neuve ; le
+    // defaut, lui, etait la depuis le premier jour.
+    check('marque : aucun titre de section n est vide',
+          !preg_match('~<h2>\s*</h2>~', $b));
+    check('marque : et l histoire est servie comme chapo',
+          (bool)preg_match('~class="pg-chapo">[^<]*Histoire de test~', $b));
+
     // ── Les libelles suivent la langue ──────────────────
     // CONTRE-EPREUVE : sans elle, une page qui rendrait tout en francais
     // quelle que soit la langue passerait les huit assertions ci-dessus.

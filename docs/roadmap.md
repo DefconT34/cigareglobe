@@ -2857,3 +2857,46 @@ ne change rien — vérifié par empreinte avant/après.
 Aucun emoji n'est écrit dans le fichier : tout est en hexadécimal ASCII,
 reconverti côté serveur. Un fichier qui porterait les caractères repasserait par
 la connexion fautive et reproduirait la panne.
+
+---
+
+## Trinidad USA, la quatrième jumelle (migration `171`)
+
+L'atlas portait **Trinidad (Cuba)** et trois jumelles américaines — Cohiba USA,
+Partagás USA, Romeo y Julieta USA — et **pas la quatrième**. Un lecteur qui
+cherchait qui fabrique le Trinidad vendu aux États-Unis ne trouvait rien, alors
+que le motif était établi trois fois à côté.
+
+### L'histoire n'est pas celle des autres
+Cohiba USA et Partagás USA sont des noms **cubains** que General Cigar a déposés
+aux États-Unis dans le vide créé par l'embargo. Trinidad, non :
+
+> La famille Trinidad fonde *Trinidad y Hermanos* à Cuba en **1905** ; la
+> Révolution la confisque. Exilés, les Trinidad font rouler un Trinidad non
+> cubain par les **Fuente, à Tampa, dès 1968** — arrêt une dizaine d'années plus
+> tard. Seconde tentative dominicaine, encore avec les Fuente, en **1997**. La
+> famille **gagne contre Cuba devant les tribunaux américains en 2001**, et vend
+> la marque à **Altadis U.S.A. en 2002**.
+> — [Cigar Aficionado, *The Tale of Trinidad*](https://www.cigaraficionado.com/article/the-tale-of-trinidad)
+
+C'est la maison d'origine qui récupère son propre nom avant de le céder.
+
+### Une fiche qui ne tient pas dans une usine
+Les trois autres jumelles ont **une** adresse. Le Trinidad américain est
+**multi-sites** : *Santiago* chez Tabacalera Palma (José « Jochy » Blanco,
+République dominicaine), *Espiritu* chez A.J. Fernandez (Estelí, Nicaragua),
+assemblages menés par Rafael Nodal pour Altadis.
+
+### Ce qu'on n'écrit pas
+`force`, `vitolas`, `pairings`, `celebrities`, `limited_eds` : rien de sourcé.
+Le catalogue de 2003 — Coloniales, Fundadores, Reyes, Robusto Extra, Robusto T —
+est cité dans **l'histoire** et non dans la gamme : le fabricant ne le présente
+plus, mais aucune source ne dit qu'il soit arrêté. Le dire arrêté serait
+affirmer ; le mettre en gamme serait affirmer l'inverse.
+
+### Un titre vide sur les cent vingt fiches
+Trouvé en vérifiant la fiche neuve, et **présent depuis le premier jour** :
+l'histoire de la maison passait par `bloc('')`, qui posait un `<h2></h2>` **vide**.
+Un titre de niveau deux sans texte n'est pas invisible — un lecteur d'écran
+l'annonce, et il ouvre une section qui ne dit pas de quoi elle parle. L'histoire
+se rend maintenant en `pg-chapo`, comme le fait déjà la fiche d'établissement.

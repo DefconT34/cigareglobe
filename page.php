@@ -584,7 +584,17 @@ if ($db === null) {
             foreach ($faits as [$k, $v]) $corps .= '<dt>' . e($k) . '</dt><dd>' . e($v) . '</dd>';
             $corps .= '</dl>';
         }
-        $corps .= bloc('', $m['history']);
+        // L'HISTOIRE N'A PAS DE TITRE, et n'en veut pas : c'est le
+        // chapô de la fiche. Elle passait par bloc('') — qui posait un
+        // « <h2></h2> » VIDE sur les cent vingt maisons. Un titre de
+        // niveau deux sans texte n'est pas invisible : un lecteur
+        // d'écran l'annonce, et il ouvre une section qui ne dit pas de
+        // quoi elle parle. La fiche d'établissement rendait déjà son
+        // texte en `pg-chapo` sans titre ; on fait pareil.
+        if (trim((string)$m['history']) !== '') {
+            $corps .= '<section class="pg-bloc"><p class="pg-chapo">'
+                    . nl2br(e((string)$m['history'])) . '</p></section>';
+        }
 
         // LA GAMME, ENTIÈRE. Elle ne servait que les NOMS des lignes :
         // « le reste appartient à la fiche de l'application », disait
