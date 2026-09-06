@@ -2708,3 +2708,48 @@ dominant.
 Les deux premiers, une question à Fagot les refermerait. Le troisième restera
 probablement vide — la filière est intérieure, il n'existe pas de ligne
 d'exportation ; les Canaries sont déjà dans ce cas et la page sait le rendre.
+
+---
+
+## Ce qu'un pays producteur porte (migration `167`)
+
+La migration `165` a ouvert un pays **sans regarder tout ce qu'un pays porte**.
+Un recensement des tables à clé pays le montre :
+
+| table | couverture des 17 | Côte d'Ivoire |
+|---|---|---|
+| `brands` | 17/17 | ✓ |
+| **`producer_geo`** | **16/17** | **ABSENTE** ← seul trou universel |
+| `lounges` | 16/17 | ✓ 14 |
+| `production_zones` | 16/17 | ✓ 3 |
+| `feuilles` | 15/17 | ABSENTE |
+| `habanos_presence` | 12/17 | ABSENTE |
+
+`producer_geo` est **la seule table que les seize pays producteurs précédents ont
+tous**, et la Côte d'Ivoire en était la seule exception — un trou que j'avais créé.
+Source : [fiche pays du ministère français des Affaires étrangères](https://www.diplomatie.gouv.fr/fr/information-par-pays/cote-d-ivoire/presentation-de-la-cote-d-ivoire).
+
+**Deux pièges évités** : la monnaie n'est **pas** celle du Cameroun — les deux
+disent « franc CFA » mais le Cameroun est en **XAF** et la Côte d'Ivoire en
+**XOF**, deux monnaies distinctes de même parité. Et la capitale est
+**Yamoussoukro** alors que les quatorze adresses de l'atlas sont à **Abidjan** :
+le champ porte les deux, comme les Canaries portent « Las Palmas / Santa Cruz ».
+
+### Une lecture de ma part qui était fausse
+La `165` avait laissé `varieties` vide en le comptant parmi les trous, « faute de
+source sur la variété ». **Méprise sur le champ** : `varieties` ne porte pas le
+cultivar botanique, il porte **les tabacs nommés du pays** — le Brésil y met
+« Mata Fina », « Arapiraca », qui sont des lieux. Et c'est cette liste qui rend
+les fiches de feuilles atteignables : `coherence_check` a refusé les deux
+nouvelles feuilles, *« injoignables »*. Le champ se remplit donc sans rien
+affirmer de botanique.
+
+### Deux feuilles, plus maigres et assumées
+`caracteres`, `notes` et `pairings` restent **vides** : les caves décrivent des
+arômes boisés et floraux pour **l'assemblage** des deux feuilles, pas pour
+chacune. Les répartir serait inventer. La genèse dit ce qu'on sait et ce qu'on ne
+sait pas plutôt que de meubler.
+
+### L'écart avec Panama, re-recompté
+**Deux champs** : `harvest` et `revenue`. Une question à Fagot referme le premier ;
+le second restera probablement vide — la filière est intérieure.
