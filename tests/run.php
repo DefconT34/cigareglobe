@@ -4707,6 +4707,32 @@ section('Les mentions legales ne parlent qu\'au visiteur');
           prevol_encart_dans('<div class="lg-todo">a trancher</div>') === true);
     check('mentions : sans accuser la feuille de style',
           prevol_encart_dans('.lg-todo { border: 1px solid red; }') === false);
+
+    // ── LE DRAPEAU ABIME PAR LE CHARSET DE LA CONNEXION ─
+    // Le drapeau ivoirien est arrive en production en HUIT POINTS
+    // D'INTERROGATION, alors que la colonne est en utf8mb4 et que la
+    // valeur etait intacte en developpement. La cause n'etait ni le
+    // fichier ni la colonne : un `mysql < fichier` sans
+    // --default-character-set=utf8mb4 ouvre la connexion en `utf8`
+    // trois octets, et remplace octet par octet tout caractere sur
+    // quatre octets. Deux indicateurs regionaux font huit « ? ».
+    //
+    // AUCUN OUTIL LOCAL NE POUVAIT LE VOIR : coherence_check verifie
+    // les drapeaux, mais sur la base de developpement ou ils sont
+    // justes. prevol.php tourne sur le SERVEUR — c'est le seul endroit
+    // d'ou le degat est visible.
+    check('drapeaux : huit points d interrogation sont vus',
+          prevol_constat_drapeaux(['producer_countries/ivorycoast']) !== null);
+    check('drapeaux : et le constat bloque',
+          (prevol_constat_drapeaux(['producer_countries/ivorycoast'])['niveau'] ?? '') === 'bloquant');
+    // La remediation doit donner la commande QUI MARCHE, pas seulement
+    // nommer le probleme : c'est elle qu'on relira dans six mois.
+    check('drapeaux : la remediation porte le jeu de caracteres',
+          str_contains(prevol_constat_drapeaux(['x/y'])['remede'] ?? '', '--default-character-set=utf8mb4'));
+    // CONTRE-EPREUVE : sans elle, un constat qui crierait toujours
+    // passerait les trois assertions ci-dessus.
+    check('drapeaux : rien a dire quand ils sont entiers',
+          prevol_constat_drapeaux([]) === null);
 }
 
 // ════════════════════════════════════════════════════════

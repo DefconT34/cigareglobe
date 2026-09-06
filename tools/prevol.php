@@ -197,6 +197,50 @@ function prevol_constat_inscriptions(int $total, int $en_attente): ?array {
 }
 
 /**
+ * Un drapeau abîmé par le charset de la connexion.
+ *
+ * CE CONTRÔLE EXISTE PARCE QU'AUCUN OUTIL LOCAL NE POUVAIT LE VOIR.
+ * Le drapeau ivoirien 🇨🇮 est arrivé en production sous la forme de huit
+ * points d'interrogation, alors qu'il était intact en base de
+ * développement et que la colonne est bien en `utf8mb4`.
+ *
+ * La cause n'est ni le fichier ni la colonne : c'est le client. Un
+ * `mysql < migration.sql` lancé sans `--default-character-set=utf8mb4`
+ * ouvre la connexion dans le jeu par défaut du serveur, souvent `utf8`
+ * — celui de MySQL qui ne code que TROIS octets. Tout caractère sur
+ * quatre octets y est remplacé, octet par octet, par « ? ».
+ *
+ * D'où le partage des dégâts, contre-intuitif : l'arabe et le chinois
+ * (trois octets) passent sans une égratignure, les emoji (quatre) sont
+ * détruits. Un contrôle qui ne regarderait que « le texte s'affiche »
+ * aurait conclu que tout allait bien.
+ *
+ * Ce contrôle-ci tourne SUR LE SERVEUR, donc sur la base qui a reçu la
+ * migration. C'est le seul endroit d'où le dégât est visible.
+ */
+function prevol_drapeaux_abimes(PDO $db): array {
+    $abimes = [];
+    foreach (['producer_countries' => 'id', 'lounge_countries' => 'id',
+              'markets' => 'id'] as $table => $cle) {
+        try {
+            $q = $db->query("SELECT `$cle` AS k, `flag` FROM `$table`
+                              WHERE `flag` LIKE '%?%' OR `flag` = ''");
+        } catch (Throwable $e) { continue; }
+        foreach ($q as $r) $abimes[] = $table . '/' . $r['k'];
+    }
+    return $abimes;
+}
+
+function prevol_constat_drapeaux(array $abimes): ?array {
+    if (!$abimes) return null;
+    return prevol_constat('bloquant', 'drapeaux',
+        count($abimes) . ' drapeau(x) abîmé(s) ou vides : ' . implode(', ', array_slice($abimes, 0, 6))
+      . '. Un emoji de drapeau tient sur quatre octets ; une migration passée '
+      . 'sans jeu de caractères explicite les remplace par des « ? ».',
+        'mysql --default-character-set=utf8mb4 -u <user> -p <base> < sql/migrations/<n>.sql');
+}
+
+/**
  * Le cron des rappels donne-t-il encore signe de vie ?
  *
  * POURQUOI CE CONTRÔLE EXISTE. Un cron qui cesse de tourner n'échoue
@@ -396,6 +440,12 @@ function prevol_controles(array $e): array {
     // finit par ne plus être lu.
     $insc = prevol_constat_inscriptions($e['inscriptions'], $e['inscriptions_attente']);
     if ($insc !== null) $c[] = $insc;
+
+    // Les drapeaux, sur la base que le serveur sert vraiment.
+    try {
+        $dr = prevol_constat_drapeaux(prevol_drapeaux_abimes(getDB()));
+        if ($dr !== null) $c[] = $dr;
+    } catch (Throwable $e2) { /* base injoignable : les autres constats le disent déjà */ }
     $c[] = prevol_constat('rappel', 'sauvegarde',
         'uploads/ et les tables personnelles ne sont dans aucun dépôt, par construction.',
         'Une copie hors de cette machine, avant la première visite.');

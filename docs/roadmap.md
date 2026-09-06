@@ -2753,3 +2753,38 @@ sait pas plutôt que de meubler.
 ### L'écart avec Panama, re-recompté
 **Deux champs** : `harvest` et `revenue`. Une question à Fagot referme le premier ;
 le second restera probablement vide — la filière est intérieure.
+
+---
+
+## Le drapeau perdu en route (migration `168`)
+
+Le drapeau ivoirien 🇨🇮 est arrivé en production sous la forme de **huit points
+d'interrogation** — `???????? Côte d'Ivoire` sur l'index des feuilles, quand les
+seize autres pays portaient le leur.
+
+**Ni le fichier ni la colonne n'étaient en cause** : la colonne est en `utf8mb4`,
+et en développement `HEX()` donnait `F09F87A8F09F87AE`. C'est **le client** : un
+`mysql < migration.sql` sans `--default-character-set=utf8mb4` ouvre la connexion
+dans le jeu par défaut du serveur, souvent `utf8` — celui de MySQL, qui ne code
+que **trois octets**. Tout caractère sur quatre octets y est remplacé octet par
+octet par `?`. Deux indicateurs régionaux font huit points d'interrogation.
+
+**Le partage des dégâts est contre-intuitif.** L'arabe, le chinois et les accents
+(un à trois octets) sont passés sans une égratignure — les six langues de la fiche
+s'affichaient parfaitement. Seul l'emoji est tombé. Un contrôle qui aurait vérifié
+« le texte s'affiche » aurait conclu que tout allait bien.
+
+Sur les six migrations déployées ce jour-là, **une seule** portait des caractères
+de quatre octets. Le dégât tenait en un champ.
+
+### La réparation ne peut pas porter l'emoji
+L'écrire dans le fichier reproduirait la panne : la valeur repasserait par la même
+connexion. On écrit les **octets**, en hexadécimal ASCII, reconvertis côté serveur
+par `CONVERT(UNHEX('…') USING utf8mb4)`.
+
+### Un contrôle qui voit depuis le serveur
+Aucun outil local ne pouvait attraper ceci — `coherence_check` vérifie les
+drapeaux, mais sur la base de développement, où ils sont justes. **`prevol.php`
+tourne sur le serveur** : c'est le seul endroit d'où le dégât est visible. Il porte
+désormais un constat **bloquant** sur les drapeaux abîmés ou vides, dont la
+remédiation donne la commande avec le jeu de caractères explicite.

@@ -61,7 +61,7 @@ donc **trois** gestes, et leur ordre n'est pas libre :
 ```bash
 cd ~/repositories/cigareglobe && git pull          # 1. le dépôt
 # 2. la recopie : cPanel → Git™ Version Control → Deploy HEAD Commit
-mysql -u <user> -p <base> < sql/migrations/<n>.sql # 3. la migration
+mysql --default-character-set=utf8mb4 -u <user> -p <base> < sql/migrations/<n>.sql
 ```
 
 **Le code d'abord, la migration ensuite.** La règle vient d'un cas réel :
@@ -119,8 +119,8 @@ Créez la base et son utilisateur dans cPanel → *MySQL® Databases*, puis
 depuis phpMyAdmin ou le terminal :
 
 ```bash
-mysql -u <user> -p <base> < sql/schema.sql       # les tables
-mysql -u <user> -p <base> < sql/contenu.sql      # l'atlas : 500 lounges, 118 marques
+mysql --default-character-set=utf8mb4 -u <user> -p <base> < sql/schema.sql
+mysql --default-character-set=utf8mb4 -u <user> -p <base> < sql/contenu.sql
 mysql -u <user> -p <base> < sql/migrations/016_forum_amorce.sql
 ```
 
@@ -232,3 +232,32 @@ doit s'afficher, et non « adresse non renseignée ». Si c'est le cas,
 - **DMARC en `p=none`** signifie « surveille, n'applique rien ». C'est le
   bon réglage au démarrage ; passez à `p=quarantine` une fois les
   rapports propres.
+
+
+---
+
+## ⚠ `--default-character-set=utf8mb4` n'est pas facultatif
+
+Le drapeau ivoirien 🇨🇮 est arrivé en production sous la forme de **huit points
+d'interrogation**, alors que la colonne est en `utf8mb4` et que la valeur était
+intacte en développement (`HEX()` donnait `F09F87A8F09F87AE`).
+
+La cause n'est ni le fichier ni la colonne : **c'est le client**. Un
+`mysql < migration.sql` sans jeu de caractères explicite ouvre la connexion dans
+le jeu par défaut du serveur, souvent `utf8` — celui de MySQL, qui ne code que
+**trois octets**. Tout caractère sur quatre octets y est remplacé, octet par
+octet, par `?`.
+
+**Le partage des dégâts est contre-intuitif** : l'arabe, le chinois et les
+accents français (un à trois octets) passent sans une égratignure ; seuls les
+emoji tombent. Un contrôle qui vérifierait « le texte s'affiche » conclurait que
+tout va bien.
+
+`tools/prevol.php` porte maintenant un constat **bloquant** sur les drapeaux
+abîmés — c'est le seul outil qui tourne sur le serveur, donc le seul d'où le
+dégât est visible.
+
+Et une réparation ne doit **jamais** réécrire le caractère : elle repasserait par
+la même connexion. On écrit les octets en hexadécimal ASCII —
+`CONVERT(UNHEX('…') USING utf8mb4)` — pour que le fichier ne contienne plus rien
+qu'un jeu de caractères puisse abîmer. Voir la migration `168`.
