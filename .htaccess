@@ -211,6 +211,17 @@
   # aucune adresse déjà indexée.
   RewriteRule ^(?:(en|es|de|zh|ar)/)?cave/(\d{1,9})(?:-[a-z0-9-]*)?/?$ /page.php?lang=$1&type=cave&id=$2 [L,QSA,E=PRETTY:1]
 
+  # Cinq contenus qui vivaient en base, traduits en six langues, et que
+  # rien n'exposait : ni adresse, ni lien, ni plan de site. Les quatre
+  # index d'abord — ancrés par ^…$, ils ne peuvent pas capter la fiche —
+  # puis la feuille, dont l'identifiant EST déjà un slug en base
+  # (« bresil-arapiraca ») : rien à fabriquer, rien à faire diverger.
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?feuilles/?$     /page.php?lang=$1&type=feuilles [L,QSA,E=PRETTY:1]
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?lexique/?$      /page.php?lang=$1&type=lexique [L,QSA,E=PRETTY:1]
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?aromes/?$       /page.php?lang=$1&type=aromes [L,QSA,E=PRETTY:1]
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?marches/?$      /page.php?lang=$1&type=marches [L,QSA,E=PRETTY:1]
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?feuille/([a-z0-9-]{1,60})/?$ /page.php?lang=$1&type=feuille&id=$2 [L,QSA,E=PRETTY:1]
+
   # Plan de site : genere, pour que le domaine suive SITE_URL.
   RewriteRule ^sitemap\.xml$ /sitemap.php [L]
 </IfModule>

@@ -2569,3 +2569,52 @@ Trois réponses, que seul quelqu'un à Abidjan peut obtenir :
 1. **La feuille est-elle cultivée en Côte d'Ivoire, ou importée ?**
 2. Si ivoirienne : où — le Poro ? le Bélier ? — et quelle variété ?
 3. Existe-t-il une ligne d'exportation de cigares ivoiriens aux douanes ?
+
+---
+
+## Cinq contenus qui n'avaient aucune adresse
+
+**163 492 caractères, en six langues, que rien n'exposait.** Les feuilles, le
+lexique, les arômes, les marchés et la présence d'Habanos vivaient en base et
+n'étaient servis que par l'application JavaScript : ni adresse, ni lien, ni plan
+de site. Un robot ne pouvait pas les atteindre, un lecteur sans JavaScript non
+plus.
+
+| | lignes | caractères (×6 langues) |
+|---|---|---|
+| `feuilles` | 30 | 103 446 |
+| `habanos_presence` | 12 | 27 704 |
+| `lexique` | 20 | 12 868 |
+| `aromes` | 20 | 10 456 |
+| `markets` | 10 | 9 018 |
+
+**`production_zones` n'en faisait pas partie.** Je l'avais annoncée dans la même
+liste — c'était faux. `page_pays()` la sélectionne depuis toujours et `page.php`
+la rend sous « Zones de culture ». Cinq entités, pas six. Un test le vérifie
+maintenant plutôt que de me croire sur parole.
+
+### Ce qui a été ouvert
+- `/feuilles` — les trente tabacs **groupés par pays**, parce qu'une feuille est
+  d'abord un terroir ; une liste alphabétique ne dirait rien.
+- `/feuille/<id>` — genèse, culture, caractères, notes, accords, et les cigares
+  qui la portent (dérivés de `producer_countries.brands`, comme le fait l'app).
+- `/lexique` — vingt termes **d'une traite**, avec ancres. Une définition de deux
+  phrases ne fait pas une page : vingt adresses maigres se seraient concurrencées.
+- `/aromes` — notes et accords **séparés** : `contexte` distingue ce qu'on trouve
+  de ce qu'on propose. Les mélanger ferait croire qu'on boit du cuir.
+- `/marches` — les dix marchés, classés.
+- La présence d'Habanos **sur les douze pages de pays** concernées.
+
+**34 adresses nouvelles × 6 langues = 204**, toutes au plan de site (639 → 673).
+
+### Les liens comptent autant que les pages
+Les quatre index sont liés **en haut de l'atlas**, avant les listes de pays — pas
+après cent dix-neuf maisons. Un plan de site fait connaître une adresse ; c'est un
+lien qui lui donne du poids. Quatre pages orphelines auraient été le même défaut
+sous une autre forme, et un test le garde.
+
+### Un défaut de fabrique corrigé au passage
+`page_col()` ne savait pas préfixer une table. `feuilles` et `producer_countries`
+portent toutes deux une colonne `notes` ; la requête les joint, et MySQL refusait.
+Sans ce paramètre il fallait renoncer à la jointure ou écrire le `COALESCE` à la
+main — c'est-à-dire à côté de la seule fabrique qui connaît les langues.

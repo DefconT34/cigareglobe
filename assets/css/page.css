@@ -212,3 +212,45 @@
   border: 1px solid var(--panel-border);
   border-inline-start: 3px solid var(--gold);
 }
+
+/* ── Les portes de l'atlas ────────────────────────────────
+   Quatre pages qui ne sont ni un pays ni une maison, et qui seraient
+   invisibles au milieu de cent dix-neuf liens : elles prennent la
+   largeur, en haut, avant les listes. */
+.pg-portes { display: grid; gap: 10px; margin: 0 0 22px; }
+@media (min-width: 620px) { .pg-portes { grid-template-columns: 1fr 1fr; } }
+.pg-portes a {
+  display: block; padding: 12px 14px; border-radius: 8px;
+  border: 1px solid var(--panel-border); background: var(--panel-bg);
+  text-decoration: none; color: inherit;
+}
+.pg-portes a:hover { border-color: var(--gold); }
+.pg-portes strong {
+  display: block; font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px; font-weight: 700; margin-bottom: 3px;
+}
+.pg-portes span { display: block; font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+
+/* ── Le glossaire ─────────────────────────────────────────
+   Vingt termes d'une traite. Le terme porte le poids, la variante se
+   tient a cote de lui sans le concurrencer. */
+.pg-lex { margin: 0; }
+.pg-lex dt {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 17px; font-weight: 700; margin: 18px 0 4px;
+}
+.pg-lex dt:first-child { margin-top: 0; }
+.pg-lex-var {
+  font-family: Cinzel, Georgia, serif; font-size: 10px; font-weight: 400;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--gold);
+  margin-inline-start: 6px;
+}
+.pg-lex dd { margin: 0; line-height: 1.65; }
+
+/* Un sous-titre A L'INTERIEUR d'un bloc — le bloc Habanos en porte
+   quatre sous un seul <h2>. */
+.pg-sous {
+  font-family: Cinzel, Georgia, serif; font-size: 11px; font-weight: 400;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--gold);
+  margin: 20px 0 8px;
+}

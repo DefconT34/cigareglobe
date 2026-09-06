@@ -64,8 +64,14 @@ try {
     // L'atlas d'abord : c'est le seul lien qui mène aux six cent
     // quarante autres. Un plan de site fait connaître des adresses ;
     // ce sont les LIENS qui leur donnent du poids.
-    $entrees = [['atlas', '', null, '0.8']];
-    foreach (['pays' => '0.7', 'marque' => '0.6', 'cave' => '0.5'] as $type => $prio) {
+    // Les quatre index qui n'existaient pas : feuilles, lexique,
+    // aromes, marches. Ils suivent l'atlas de pres — ce sont eux qui
+    // mènent aux trente fiches de feuilles, et ils ne dependent
+    // d'aucune ligne de base pour exister.
+    $entrees = [['atlas', '', null, '0.8'],
+                ['feuilles', '', null, '0.7'], ['lexique', '', null, '0.6'],
+                ['aromes', '', null, '0.6'],   ['marches', '', null, '0.6']];
+    foreach (['pays' => '0.7', 'marque' => '0.6', 'feuille' => '0.6', 'cave' => '0.5'] as $type => $prio) {
         foreach ($inv[$type] as $e) $entrees[] = [$type, $e['slug'], $e['maj'], $prio];
     }
 

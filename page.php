@@ -69,7 +69,18 @@ function page_libelles(): array {
               // que la page de pays SÉLECTIONNAIT sans jamais les rendre.
               'tier_major','tier_notable','tier_emerging',
               // D'où vient la fiche, et quand elle ne vient de nulle part.
-              'pg_source','pg_source_reserve'];
+              'pg_source','pg_source_reserve',
+              // Cinq contenus qui n'avaient aucune adresse : les
+              // feuilles, le lexique, les arômes, les marchés, et la
+              // présence d'Habanos sur les pages de pays.
+              'pg_feuilles_t','pg_feuilles_d','pg_lexique_t','pg_lexique_d',
+              'pg_aromes_t','pg_aromes_d','pg_marches_t','pg_marches_d',
+              'fe_emploi','fe_feuille','fe_genese','fe_culture','fe_caracteres',
+              'fe_notes','fe_pairings','fe_cigares',
+              'mkt_consumption','mkt_share','mkt_trend','mkt_lex_volume','mkt_world_rank',
+              's_habanos','hab_no_rep','hab_founded','hab_ownership','hab_hq',
+              'hab_revenue','hab_employees','hab_factories','hab_official_brands',
+              'hab_distribution','hab_festival','hab_certifications'];
     $out = [];
     foreach (i18n_parse($src) as $l => $paires) {
         foreach ($garde as $k) if (isset($paires[$k])) $out[$l][$k] = $paires[$k];
@@ -160,6 +171,22 @@ function bloc_liste(string $titre, ?string $brut): string {
     return $h . '</ul></section>';
 }
 
+/**
+ * La même liste, mais À L'INTÉRIEUR d'un bloc déjà ouvert.
+ *
+ * Le bloc Habanos porte quatre listes sous un seul titre de section.
+ * bloc_liste() ouvre sa propre `<section class="pg-bloc">` : l'employer
+ * ici imbriquerait quatre sections dans une cinquième, toutes de même
+ * classe, et le style comme la structure du document s'en trouveraient
+ * faux. Un sous-titre suffit.
+ */
+function sous_liste(string $titre, ?string $brut): string {
+    $entier = bloc_liste($titre, $brut);
+    if ($entier === '') return '';
+    $ul = substr($entier, (int)strpos($entier, '<ul'), -strlen('</section>'));
+    return '<h3 class="pg-sous">' . e($titre) . '</h3>' . $ul;
+}
+
 if ($db === null) {
     http_response_code(503);
     $titre = 'Service momentanément indisponible';
@@ -177,6 +204,25 @@ if ($db === null) {
     $autr = array_values(array_filter($pays, fn($p) => (int)$p['producteur'] !== 1));
 
     $corps .= '<p class="pg-chapo">' . e(L('pg_atlas_d')) . '</p>';
+
+    // LES LIENS COMPTENT AUTANT QUE LES PAGES — c'est écrit en tête de
+    // pages_lib.php, et ces quatre-là seraient orphelines sans ce bloc.
+    // Le plan de site fait connaître une adresse ; c'est un lien qui lui
+    // donne du poids et qui fait revenir un robot. Placé AVANT les
+    // listes de pays, parce qu'une page atteignable en un saut depuis le
+    // haut de l'atlas n'est pas au même rang qu'une page citée après
+    // cent dix-neuf maisons.
+    $corps .= '<nav class="pg-portes">';
+    foreach ([['feuilles', 'pg_feuilles_t', 'pg_feuilles_d'],
+              ['lexique',  'pg_lexique_t',  'pg_lexique_d'],
+              ['aromes',   'pg_aromes_t',   'pg_aromes_d'],
+              ['marches',  'pg_marches_t',  'pg_marches_d']] as [$t3, $kt, $kd]) {
+        $corps .= '<a href="' . e(page_url($t3, '', $lang)) . '">'
+                . '<strong>' . e(L($kt)) . '</strong>'
+                . '<span>' . e(page_extrait(L($kd), 90)) . '</span></a>';
+    }
+    $corps .= '</nav>';
+
     foreach ([[L('pg_producteurs'), $prod], [L('pg_pays_caves'), $autr]] as [$t2, $liste]) {
         if (!$liste) continue;
         $corps .= '<section class="pg-bloc"><h2>' . e($t2) . ' <span class="pg-n">' . count($liste) . '</span></h2><ul class="pg-grille">';
@@ -269,6 +315,79 @@ if ($db === null) {
             }
             $corps .= '</ul></section>';
         }
+        // ── LA PRÉSENCE D'HABANOS ───────────────────────────
+        // Douze pays en portent une, et aucune n'atteignait le serveur :
+        // statut, actionnariat, siège, manufactures, distributeurs,
+        // festival, certifications. C'est le plus gros des cinq contenus
+        // muets — quatre mille caractères de description à eux seuls.
+        //
+        // `present` DISTINGUE DEUX CHOSES QU'IL NE FAUT PAS CONFONDRE :
+        // quatre pays ont une représentation Habanos, huit n'en ont pas
+        // et sont là pour une autre raison — le Brésil pour la Mata
+        // Fina, l'Équateur pour ses capes. Le statut le dit en toutes
+        // lettres, et le libellé `hab_no_rep` existe pour les seconds.
+        if ($hab = page_habanos($db, (string)$p['id'], $lang)) {
+            $corps .= '<section class="pg-bloc"><h2>' . e(L('s_habanos')) . '</h2>';
+            if (trim((string)$hab['status']) !== '') {
+                $corps .= '<p class="pg-rang">' . e((string)$hab['status']) . '</p>';
+            } elseif (!(int)$hab['present']) {
+                $corps .= '<p class="pg-rang">' . e(L('hab_no_rep')) . '</p>';
+            }
+            if (trim((string)$hab['description']) !== '') {
+                $corps .= '<p>' . nl2br(e((string)$hab['description'])) . '</p>';
+            }
+
+            $hf = [];
+            foreach ([[L('hab_founded'), $hab['founded']], [L('hab_ownership'), $hab['ownership']],
+                      [L('hab_hq'), $hab['hq']],           [L('hab_revenue'), $hab['revenue']],
+                      [L('hab_employees'), $hab['employees']],
+                      [L('hab_festival'), $hab['festival']]] as [$k, $v]) {
+                if (trim((string)$v) !== '') $hf[] = [$k, (string)$v];
+            }
+            if ($hf) {
+                $corps .= '<dl class="pg-faits">';
+                foreach ($hf as [$k, $v]) $corps .= '<dt>' . e($k) . '</dt><dd>' . e($v) . '</dd>';
+                $corps .= '</dl>';
+            }
+
+            // Les manufactures portent un objet par entrée — nom, ville,
+            // année, marques — là où les trois autres listes ne portent
+            // que des chaînes. bloc_liste() ne garderait que le nom.
+            $us = json_decode((string)$hab['factories'], true);
+            if (is_array($us) && $us) {
+                $corps .= '<h3 class="pg-sous">' . e(L('hab_factories')) . '</h3><ul class="pg-modules">';
+                foreach ($us as $u) {
+                    if (!is_array($u) || trim((string)($u['name'] ?? '')) === '') continue;
+                    $meta = array_filter([trim((string)($u['city'] ?? '')), trim((string)($u['founded'] ?? ''))]);
+                    $corps .= '<li><h3>' . e((string)$u['name']) . '</h3>';
+                    if ($meta) $corps .= '<p class="pg-mod-meta">' . e(implode(' · ', $meta)) . '</p>';
+                    $mq = $u['marques'] ?? null;
+                    if (is_array($mq) && $mq) {
+                        $corps .= '<p class="pg-mod-vit">' . e(implode(' · ', array_map('strval', $mq))) . '</p>';
+                    }
+                    $corps .= '</li>';
+                }
+                $corps .= '</ul>';
+            }
+
+            $corps .= sous_liste(L('hab_official_brands'), $hab['marques_officielles'] ?? null)
+                    . sous_liste(L('hab_certifications'),  $hab['certifications'] ?? null);
+
+            $ds = json_decode((string)$hab['distributeurs'], true);
+            if (is_array($ds) && $ds) {
+                $corps .= '<h3 class="pg-sous">' . e(L('hab_distribution')) . '</h3><dl class="pg-faits">';
+                foreach ($ds as $d) {
+                    if (!is_array($d)) continue;
+                    $ou = trim((string)($d['pays'] ?? ''));
+                    $qui = trim((string)($d['distributeur'] ?? ''));
+                    if ($qui === '') continue;
+                    $corps .= '<dt>' . e($ou !== '' ? $ou : '—') . '</dt><dd>' . e($qui) . '</dd>';
+                }
+                $corps .= '</dl>';
+            }
+            $corps .= '</section>';
+        }
+
         if ($p['marques']) {
             $corps .= '<section class="pg-bloc"><h2>' . e(L('s_iconic')) . ' <span class="pg-n">' . count($p['marques']) . '</span></h2><ul class="pg-grille">';
             foreach ($p['marques'] as $m) {
@@ -531,6 +650,161 @@ if ($db === null) {
                     . e($m['pays_nom']) . ' →</a></p>';
         }
     }
+
+// ══ CINQ CONTENUS QUI N'AVAIENT AUCUNE ADRESSE ═══════════
+// Les feuilles, le lexique, les arômes, les marchés et la présence
+// d'Habanos vivaient en base, traduits en six langues, et n'étaient
+// servis que par l'application JavaScript. Rien ne les exposait : ni
+// adresse, ni lien, ni plan de site. Un robot ne pouvait pas les
+// atteindre, et un lecteur sans JavaScript non plus.
+
+} elseif ($type === 'feuilles') {
+    $titre = page_titre(L('pg_feuilles_t'));
+    $desc  = L('pg_feuilles_d');
+    $h1    = L('pg_feuilles_t');
+    $filAriane = [[L('pg_atlas_t'), page_url('atlas', '', $lang)]];
+    $corps .= '<p class="pg-chapo">' . e(L('pg_feuilles_d')) . '</p>';
+
+    // GROUPÉES PAR PAYS, parce qu'une feuille est d'abord un terroir.
+    // Une liste alphabétique de trente noms ne dirait rien ; « Brésil :
+    // Mata Fina, Mata Norte, Arapiraca » dit tout de suite pourquoi ces
+    // trois-là se ressemblent.
+    $parPays = [];
+    foreach (page_feuilles_liste($db, $lang) as $f) {
+        $parPays[(string)$f['pays_nom']][] = $f;
+    }
+    foreach ($parPays as $paysNom => $liste) {
+        $corps .= '<section class="pg-bloc"><h2>' . e(trim((string)$liste[0]['pays_drapeau'] . ' ' . $paysNom))
+                . ' <span class="pg-n">' . count($liste) . '</span></h2><ul class="pg-modules">';
+        foreach ($liste as $f) {
+            $corps .= '<li><h3><a href="' . e(page_url('feuille', (string)$f['id'], $lang)) . '">'
+                    . e((string)$f['name']) . '</a></h3>';
+            if (trim((string)$f['emploi']) !== '') {
+                $corps .= '<p class="pg-mod-meta"><b>' . e(L('fe_emploi')) . '</b> ' . e((string)$f['emploi']) . '</p>';
+            }
+            if (trim((string)$f['caracteres']) !== '') {
+                $corps .= '<p>' . e(page_extrait((string)$f['caracteres'], 150)) . '</p>';
+            }
+            $corps .= '</li>';
+        }
+        $corps .= '</ul></section>';
+    }
+
+} elseif ($type === 'feuille') {
+    $f = page_feuille($db, $id, $lang);
+    if ($f) {
+        $slug  = (string)$f['id'];
+        $h1    = (string)$f['name'];
+        $titre = page_titre((string)$f['name'], (string)$f['pays_nom']);
+        $desc  = page_extrait((string)$f['caracteres']) ?: ($f['name'] . ' — ' . $f['pays_nom']);
+        $filAriane = [[L('pg_atlas_t'), page_url('atlas', '', $lang)],
+                      [L('pg_feuilles_t'), page_url('feuilles', '', $lang)]];
+
+        $bandeau = [];
+        if (trim((string)$f['emploi']) !== '')   $bandeau[] = trim((string)$f['emploi']);
+        if (trim((string)$f['pays_nom']) !== '') $bandeau[] = trim((string)$f['pays_nom']);
+        if ($bandeau) $corps .= '<p class="pg-rang">' . e(implode(' · ', $bandeau)) . '</p>';
+
+        $corps .= bloc(L('fe_genese'),     $f['genese']     ?? null);
+        $corps .= bloc(L('fe_culture'),    $f['culture']    ?? null);
+        $corps .= bloc(L('fe_caracteres'), $f['caracteres'] ?? null);
+        $corps .= bloc_liste(L('fe_notes'),    $f['notes']    ?? null);
+        $corps .= bloc_liste(L('fe_pairings'), $f['pairings'] ?? null);
+
+        if ($f['cigares']) {
+            $corps .= '<section class="pg-bloc"><h2>' . e(L('fe_cigares')) . '</h2><ul class="pg-modules">';
+            foreach ($f['cigares'] as $c) {
+                $corps .= '<li><h3>' . e($c['name']) . '</h3>'
+                        . ($c['desc'] !== '' ? '<p>' . e($c['desc']) . '</p>' : '') . '</li>';
+            }
+            $corps .= '</ul></section>';
+        }
+        if ($f['country_id'] && $f['pays_nom']) {
+            $corps .= '<p class="pg-retour"><a href="' . e(page_url('pays', (string)$f['country_id'], $lang)) . '">'
+                    . e(trim((string)$f['pays_drapeau'] . ' ' . $f['pays_nom'])) . ' →</a></p>';
+        }
+    }
+
+} elseif ($type === 'lexique') {
+    $titre = page_titre(L('pg_lexique_t'));
+    $desc  = L('pg_lexique_d');
+    $h1    = L('pg_lexique_t');
+    $filAriane = [[L('pg_atlas_t'), page_url('atlas', '', $lang)]];
+    $corps .= '<p class="pg-chapo">' . e(L('pg_lexique_d')) . '</p>';
+
+    // UNE SEULE PAGE POUR VINGT TERMES, et c'est un choix. Une
+    // définition de deux phrases ne fait pas une page : vingt adresses
+    // maigres se seraient concurrencées entre elles. Un glossaire d'une
+    // traite se lit, se cherche au clavier, et tient en une adresse. Les
+    // ancres permettent d'en viser un seul.
+    $corps .= '<dl class="pg-lex">';
+    foreach (page_lexique_liste($db, $lang) as $t) {
+        $var = array_filter(array_map('trim', explode('|', (string)$t['variantes'])));
+        $corps .= '<dt id="' . e('lex-' . (string)$t['id']) . '">' . e((string)$t['terme']);
+        if ($var) $corps .= ' <span class="pg-lex-var">' . e(implode(' · ', $var)) . '</span>';
+        $corps .= '</dt><dd>' . nl2br(e((string)$t['definition'])) . '</dd>';
+    }
+    $corps .= '</dl>';
+
+} elseif ($type === 'aromes') {
+    $titre = page_titre(L('pg_aromes_t'));
+    $desc  = L('pg_aromes_d');
+    $h1    = L('pg_aromes_t');
+    $filAriane = [[L('pg_atlas_t'), page_url('atlas', '', $lang)]];
+    $corps .= '<p class="pg-chapo">' . e(L('pg_aromes_d')) . '</p>';
+
+    // DEUX CHOSES DIFFÉRENTES SOUS UNE MÊME TABLE : `contexte` distingue
+    // ce qu'on TROUVE dans un cigare (note) de ce qu'on lui PROPOSE
+    // (accord). Les mélanger ferait croire qu'on boit du cuir.
+    $parContexte = ['note' => [], 'accord' => []];
+    foreach (page_aromes_liste($db, $lang) as $a) {
+        $c = (string)$a['contexte'];
+        if (!isset($parContexte[$c])) $parContexte[$c] = [];
+        $parContexte[$c][] = $a;
+    }
+    foreach ([['note', L('fe_notes')], ['accord', L('fe_pairings')]] as [$cle, $lib]) {
+        if (empty($parContexte[$cle])) continue;
+        $corps .= '<section class="pg-bloc"><h2>' . e($lib)
+                . ' <span class="pg-n">' . count($parContexte[$cle]) . '</span></h2><ul class="pg-modules">';
+        foreach ($parContexte[$cle] as $a) {
+            $corps .= '<li><h3>' . e(ucfirst((string)$a['famille'])) . '</h3>'
+                    . '<p>' . nl2br(e((string)$a['texte'])) . '</p></li>';
+        }
+        $corps .= '</ul></section>';
+    }
+
+} elseif ($type === 'marches') {
+    $titre = page_titre(L('pg_marches_t'));
+    $desc  = L('pg_marches_d');
+    $h1    = L('pg_marches_t');
+    $filAriane = [[L('pg_atlas_t'), page_url('atlas', '', $lang)]];
+    $corps .= '<p class="pg-chapo">' . e(L('pg_marches_d')) . '</p>';
+
+    foreach (page_marches_liste($db, $lang) as $m) {
+        $corps .= '<section class="pg-bloc"><h2>' . e(trim((string)$m['flag'] . ' ' . $m['name']));
+        if ((int)$m['rank_num'] > 0) {
+            $corps .= ' <span class="pg-n">' . e(L('mkt_world_rank')) . ' ' . (int)$m['rank_num'] . '</span>';
+        }
+        $corps .= '</h2>';
+
+        $faits = [];
+        foreach ([[L('mkt_consumption'), $m['consumption']], [L('mkt_lex_volume'), $m['cigars']],
+                  [L('mkt_share'), $m['share']],             [L('mkt_trend'), $m['trend']]] as [$k, $v]) {
+            if (trim((string)$v) !== '') $faits[] = [$k, (string)$v];
+        }
+        if ($faits) {
+            $corps .= '<dl class="pg-faits">';
+            foreach ($faits as [$k, $v]) $corps .= '<dt>' . e($k) . '</dt><dd>' . e($v) . '</dd>';
+            $corps .= '</dl>';
+        }
+        if (trim((string)$m['note']) !== '') $corps .= '<p>' . nl2br(e((string)$m['note'])) . '</p>';
+
+        $tb = json_decode((string)$m['top_brands'], true);
+        if (is_array($tb) && $tb) {
+            $corps .= '<p class="pg-mod-vit">' . e(implode(' · ', array_map('strval', $tb))) . '</p>';
+        }
+        $corps .= '</section>';
+    }
 }
 
 // ── Introuvable ──────────────────────────────────────────
@@ -544,7 +818,13 @@ if ($h1 === '') {
     $noindex = true;
 }
 
-$urlIci = ($type === 'atlas') ? page_url('atlas', '', $lang) : page_url($type, $slug, $lang);
+// LE TYPE VIENT DE L'ADRESSE, donc de l'extérieur. Les règles de
+// réécriture n'en laissent passer que six, mais page.php répond AUSSI
+// en direct (/page.php?type=…), et un type inconnu ferait chercher une
+// clé absente de PAGE_SEGMENTS. On retombe alors sur l'atlas, qui est
+// la page que le 404 propose de toute façon.
+$connu  = isset(PAGE_INDEX[$type]) || isset(PAGE_SEGMENTS[$type]);
+$urlIci = $connu ? page_url($type, $slug, $lang) : page_url('atlas', '', $lang);
 $racine = page_racine();
 
 // Le .htaccess garde le HTML UNE HEURE dans le navigateur

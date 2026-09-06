@@ -33,7 +33,20 @@ defined('CARTE_INCLUDE') || define('CARTE_INCLUDE', true);
 require_once __DIR__ . '/carte_lib.php';
 
 /** Les segments d'adresse, en français : le site a une langue d'origine. */
-const PAGE_SEGMENTS = ['pays' => 'pays', 'cave' => 'cave', 'marque' => 'marque'];
+const PAGE_SEGMENTS = ['pays' => 'pays', 'cave' => 'cave', 'marque' => 'marque',
+                       'feuille' => 'feuille'];
+
+/**
+ * Les pages d'index — celles qui n'ont pas de fiche derrière elles.
+ *
+ * `atlas` était seule de son espèce et se traitait par un `if` dans
+ * page_url(). Quatre autres l'ont rejointe : le lexique, les arômes et
+ * les marchés se lisent d'une traite, et la liste des feuilles ouvre
+ * sur trente fiches. Un `if` par page aurait fini par en manquer une.
+ */
+const PAGE_INDEX = ['atlas'    => 'atlas',   'feuilles' => 'feuilles',
+                    'lexique'  => 'lexique', 'aromes'   => 'aromes',
+                    'marches'  => 'marches'];
 
 /**
  * Un nom propre réduit à une adresse.
@@ -79,8 +92,8 @@ function page_prefixe(string $lang): string {
  */
 function page_url(string $type, string $slug, string $lang = 'fr'): string {
     $p = page_racine() . page_prefixe($lang);
-    if ($type === 'atlas') return $p . '/atlas';
     if ($type === 'accueil') return $p . '/';
+    if (isset(PAGE_INDEX[$type])) return $p . '/' . PAGE_INDEX[$type];
     return $p . '/' . PAGE_SEGMENTS[$type] . '/' . $slug;
 }
 
@@ -90,9 +103,19 @@ function page_url(string $type, string $slug, string $lang = 'fr'): string {
  * Le nom est construit depuis la liste FERMÉE des langues connues,
  * jamais depuis l'entrée : aucune injection possible.
  */
-function page_col(string $base, string $lang): string {
-    if ($lang === 'fr' || !in_array($lang, langues_connues(), true)) return "`$base`";
-    return "COALESCE(NULLIF(`{$base}_{$lang}`, ''), `$base`)";
+function page_col(string $base, string $lang, string $table = ''): string {
+    // LE PRÉFIXE DE TABLE N'EST PAS UN CONFORT. `feuilles` et
+    // `producer_countries` portent toutes deux une colonne `notes` ; la
+    // requête des feuilles les joint, et MySQL refusait — « Champ
+    // 'notes' dans field list est ambigu ». Sans ce paramètre, il
+    // fallait renoncer à la jointure ou écrire le COALESCE à la main,
+    // c'est-à-dire à côté de la seule fabrique qui connaît les langues.
+    //
+    // L'alias est encadré d'accents graves comme le reste : il vient du
+    // code, jamais de l'entrée, mais l'échapper coûte un caractère.
+    $t = $table === '' ? '' : "`$table`.";
+    if ($lang === 'fr' || !in_array($lang, langues_connues(), true)) return "{$t}`$base`";
+    return "COALESCE(NULLIF({$t}`{$base}_{$lang}`, ''), {$t}`$base`)";
 }
 
 /* ── Les pays ────────────────────────────────────────────
@@ -234,7 +257,7 @@ function page_marques_liste(PDO $db): array {
  * l'auraient rendu coûteux à servir.
  */
 function page_inventaire(PDO $db): array {
-    $out = ['pays' => [], 'cave' => [], 'marque' => []];
+    $out = ['pays' => [], 'cave' => [], 'marque' => [], 'feuille' => []];
     foreach (page_pays_liste($db) as $p) {
         $out['pays'][] = ['slug' => $p['id'], 'maj' => null];
     }
@@ -246,6 +269,14 @@ function page_inventaire(PDO $db): array {
     foreach ($db->query("SELECT name, updated_at FROM brands ORDER BY name")
                 ->fetchAll(PDO::FETCH_ASSOC) as $b) {
         $out['marque'][] = ['slug' => page_slug($b['name']), 'maj' => $b['updated_at']];
+    }
+    // Les trente feuilles. Leur identifiant EST le slug en base
+    // (« bresil-arapiraca ») : on ne le refabrique pas, sinon le plan de
+    // site finirait par annoncer une adresse que la page ne revendique
+    // pas — exactement ce que page_url() existe pour empêcher.
+    foreach ($db->query("SELECT id, updated_at FROM feuilles ORDER BY id")
+                ->fetchAll(PDO::FETCH_ASSOC) as $f) {
+        $out['feuille'][] = ['slug' => $f['id'], 'maj' => $f['updated_at']];
     }
     return $out;
 }
@@ -281,4 +312,107 @@ function page_extrait(string $brut, int $max = 160): string {
     return ($coupe !== false && $coupe > $max / 2.5)
         ? mb_substr($court, 0, $coupe + 1)
         : rtrim($court, " \t\n\r\0\x0B,;:—-") . '…';
+}
+
+/* ── Cinq contenus qui n'avaient aucune page ─────────────
+   Les feuilles, le lexique, les arômes, les marchés et la présence
+   d'Habanos existaient en base, TRADUITS EN SIX LANGUES, et n'étaient
+   servis que par l'application JavaScript. Aucune adresse ne les
+   exposait, donc aucun moteur ne pouvait les lire.
+
+   `production_zones` faisait partie de la même liste dans mes notes.
+   C'était FAUX : page_pays() la sélectionne depuis toujours et
+   page.php la rend sous « Zones de culture ». Vérifié sur /pays/cuba,
+   qui affiche bien « Vuelta Abajo ». Une entité de moins à ouvrir,
+   parce qu'elle n'était pas fermée. */
+
+/** Les trente feuilles, avec le pays qui les donne. */
+function page_feuilles_liste(PDO $db, string $lang): array {
+    return $db->query(
+        "SELECT f.id, f.country_id,
+                " . page_col('emploi', $lang, 'f') . " AS emploi,
+                " . page_col('caracteres', $lang, 'f') . " AS caracteres,
+                f.name, COALESCE(pc.name, lc.name) AS pays_nom,
+                COALESCE(pc.flag, lc.flag) AS pays_drapeau
+           FROM feuilles `f`
+      LEFT JOIN producer_countries pc ON pc.id = f.country_id
+      LEFT JOIN lounge_countries   lc ON lc.id = f.country_id
+       ORDER BY pays_nom, f.name"
+    )->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/** Une feuille et tout ce qui s'y rattache. */
+function page_feuille(PDO $db, string $id, string $lang): ?array {
+    $champs = [];
+    foreach (['emploi', 'genese', 'culture', 'caracteres', 'notes', 'pairings'] as $c) {
+        $champs[] = page_col($c, $lang, 'f') . " AS `$c`";
+    }
+    $q = $db->prepare("SELECT f.id, f.name, f.country_id, " . implode(', ', $champs) . ",
+                              COALESCE(pc.name, lc.name) AS pays_nom,
+                              COALESCE(pc.flag, lc.flag) AS pays_drapeau
+                         FROM feuilles `f`
+                    LEFT JOIN producer_countries pc ON pc.id = f.country_id
+                    LEFT JOIN lounge_countries   lc ON lc.id = f.country_id
+                        WHERE f.id = ? LIMIT 1");
+    $q->execute([$id]);
+    $f = $q->fetch(PDO::FETCH_ASSOC) ?: null;
+    if (!$f) return null;
+
+    // LES CIGARES QUI LA PORTENT NE SONT PAS STOCKÉS SUR LA FEUILLE.
+    // `producer_countries.brands` est un tableau JSON dont chaque entrée
+    // porte un drapeau `cape`. C'est ainsi que l'application dérive la
+    // liste, et on fait pareil plutôt que d'inventer une table.
+    $f['cigares'] = [];
+    $q = $db->prepare("SELECT brands FROM producer_countries WHERE id = ?");
+    $q->execute([$f['country_id']]);
+    $brut = (string)$q->fetchColumn();
+    foreach ((array)json_decode($brut, true) as $c) {
+        if (!is_array($c) || empty($c['cape'])) continue;
+        if (trim((string)($c['name'] ?? '')) === '') continue;
+        $f['cigares'][] = ['name' => (string)$c['name'], 'desc' => (string)($c['desc'] ?? '')];
+    }
+    return $f;
+}
+
+/** Le lexique du métier, dans l'ordre des catégories puis des termes. */
+function page_lexique_liste(PDO $db, string $lang): array {
+    return $db->query(
+        "SELECT id, categorie, variantes,
+                " . page_col('terme', $lang) . "      AS terme,
+                " . page_col('definition', $lang) . " AS definition
+           FROM lexique ORDER BY categorie, terme"
+    )->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/** Les arômes : des notes qu'on trouve, des accords qu'on propose. */
+function page_aromes_liste(PDO $db, string $lang): array {
+    return $db->query(
+        "SELECT famille, contexte, " . page_col('texte', $lang) . " AS texte
+           FROM aromes ORDER BY contexte, famille"
+    )->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/** Les dix marchés consommateurs, du premier au dernier. */
+function page_marches_liste(PDO $db, string $lang): array {
+    return $db->query(
+        "SELECT id, name, flag, rank_num, share, top_brands,
+                " . page_col('consumption', $lang) . " AS consumption,
+                " . page_col('cigars', $lang) . "      AS cigars,
+                " . page_col('trend', $lang) . "       AS trend,
+                " . page_col('note', $lang) . "        AS note
+           FROM markets ORDER BY rank_num, name"
+    )->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/** La présence d'Habanos dans un pays — douze en portent une. */
+function page_habanos(PDO $db, string $countryId, string $lang): ?array {
+    $q = $db->prepare("SELECT present, status_color, founded, hq, ceo, revenue, employees,
+                              factories, marques_officielles, distributeurs, certifications,
+                              " . page_col('status', $lang) . "      AS status,
+                              " . page_col('ownership', $lang) . "   AS ownership,
+                              " . page_col('description', $lang) . " AS description,
+                              " . page_col('festival', $lang) . "    AS festival
+                         FROM habanos_presence WHERE country_id = ? LIMIT 1");
+    $q->execute([$countryId]);
+    return $q->fetch(PDO::FETCH_ASSOC) ?: null;
 }

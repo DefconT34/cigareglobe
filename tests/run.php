@@ -3879,6 +3879,147 @@ section('La fiche dit d ou elle vient');
 }
 
 // ════════════════════════════════════════════════════════
+section('Cinq contenus qui n avaient aucune adresse');
+
+// 163 492 CARACTERES, EN SIX LANGUES, QUE RIEN N'EXPOSAIT. Les
+// feuilles, le lexique, les aromes, les marches et la presence
+// d'Habanos vivaient en base et n'etaient servis que par
+// l'application JavaScript : ni adresse, ni lien, ni plan de site.
+//
+// `production_zones` figurait dans la meme liste de mes notes. C'ETAIT
+// FAUX : page_pays() la selectionne depuis toujours et page.php la rend
+// sous « Zones de culture ». Cinq entites, pas six — le test le
+// verifie plus bas plutot que de me croire sur parole.
+{
+    $srvN = start_server();
+    $cliN = new_client('sansadresse');
+    $pdo  = test_pdo();
+
+    // Le decor ne porte qu'une feuille. On complete ce qu'on eprouve,
+    // comme la campagne des pages : s'appuyer sur les donnees reelles
+    // passerait ici et tomberait partout ailleurs.
+    $pdo->exec("DELETE FROM lexique WHERE id = 'terme-de-test'");
+    $pdo->exec("INSERT INTO lexique (id, categorie, variantes, terme, definition, terme_en, definition_en)
+                VALUES ('terme-de-test', 'forme', 'variante-a|variante-b',
+                        'Terme de test', 'Definition de test.',
+                        'Test term', 'Test definition.')");
+    $pdo->exec("DELETE FROM aromes WHERE famille = 'famille-test'");
+    $pdo->exec("INSERT INTO aromes (famille, contexte, texte, texte_en)
+                VALUES ('famille-test', 'note', 'Note de test.', 'Test note.'),
+                       ('famille-test', 'accord', 'Accord de test.', 'Test pairing.')");
+    $pdo->exec("DELETE FROM markets WHERE id = 'marche-de-test'");
+    $pdo->exec("INSERT INTO markets (id, name, flag, rank_num, consumption, cigars, share, trend, top_brands, note)
+                VALUES ('marche-de-test', 'Marche de test', '🏳', 99, '1 M\$/an',
+                        '~1 cigare/an', '~0 %', 'stable',
+                        '[\"Marque de test\"]', 'Note de marche de test.')");
+    $pdo->exec("DELETE FROM habanos_presence WHERE country_id = 'testland'");
+    $pdo->exec("INSERT INTO habanos_presence
+                  (country_id, present, status, founded, ownership, hq, description,
+                   factories, marques_officielles, distributeurs, certifications, status_en)
+                VALUES ('testland', 1, 'STATUT DE TEST', '1999', 'Actionnariat de test',
+                        'Siege de test', 'Description Habanos de test.',
+                        '[{\"name\":\"Usine de test\",\"city\":\"Ville-Test\",\"marques\":[\"Marque d usine\"]}]',
+                        '[\"Marque officielle de test\"]',
+                        '[{\"pays\":\"Zone de test\",\"distributeur\":\"Distributeur de test\"}]',
+                        '[\"Certification de test\"]', 'TEST STATUS')");
+
+    // ── Les quatre index repondent et portent leur contenu
+    foreach ([['feuilles', 'Feuille de test'],
+              ['lexique',  'Definition de test.'],
+              ['aromes',   'Accord de test.'],
+              ['marches',  'Note de marche de test.']] as [$t4, $attendu]) {
+        $r = http('GET', $srvN . '/page.php?type=' . $t4 . '&lang=fr', ['jar' => $cliN]);
+        eq('sans adresse : /' . $t4 . ' repond', 200, $r['status']);
+        check('sans adresse : /' . $t4 . ' sert son contenu',
+              str_contains($r['body'], $attendu), mb_substr($attendu, 0, 30));
+    }
+
+    // Les aromes portent DEUX choses sous une meme table : ce qu'on
+    // trouve (note) et ce qu'on propose (accord). Les melanger ferait
+    // croire qu'on boit du cuir.
+    $ra = http('GET', $srvN . '/page.php?type=aromes&lang=fr', ['jar' => $cliN]);
+    check('sans adresse : notes et accords sont separes',
+          (bool)preg_match('~Notes.*Note de test\..*Accords.*Accord de test\.~s', $ra['body']));
+
+    // ── La fiche de feuille
+    $rf = http('GET', $srvN . '/page.php?type=feuille&id=feuille-de-test&lang=fr', ['jar' => $cliN]);
+    eq('sans adresse : la fiche de feuille repond', 200, $rf['status']);
+    foreach ([['sa genese', 'Genese de test'], ['sa culture', 'Culture de test'],
+              ['ses caracteres', 'Caracteres de test'], ['ses notes', 'Cacao'],
+              ['ses accords', 'Chocolat noir']] as [$quoi, $attendu]) {
+        check('sans adresse : la feuille sert ' . $quoi, str_contains($rf['body'], $attendu));
+    }
+    // `notes` EXISTE AUSSI SUR producer_countries, et la requete joint
+    // les deux tables. Sans prefixe, MySQL refusait — « Champ 'notes'
+    // dans field list est ambigu ». C'est ce que cette assertion garde.
+    check('sans adresse : la jointure ne rend pas les notes du PAYS',
+          !str_contains($rf['body'], 'Une production de reference'));
+
+    // CONTRE-EPREUVE DE LANGUE, sur chacune des quatre surfaces qui ont
+    // une colonne traduite. Sans elle, un rendu qui servirait le
+    // francais quelle que soit la langue passerait tout ce qui precede.
+    foreach ([['lexique', 'Test definition.', 'Definition de test.'],
+              ['aromes',  'Test pairing.',    'Accord de test.']] as [$t5, $en, $fr]) {
+        $re = http('GET', $srvN . '/page.php?type=' . $t5 . '&lang=en', ['jar' => $cliN]);
+        check('sans adresse : /' . $t5 . ' suit la langue',
+              str_contains($re['body'], $en) && !str_contains($re['body'], $fr));
+    }
+
+    // ── La presence d'Habanos, sur la page du PAYS
+    $rp = http('GET', $srvN . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliN]);
+    foreach ([['son statut', 'STATUT DE TEST'], ['sa description', 'Description Habanos de test.'],
+              ['son actionnariat', 'Actionnariat de test'],
+              ['ses manufactures', 'Usine de test'],
+              ['les marques de l usine', 'Marque d usine'],
+              ['ses marques officielles', 'Marque officielle de test'],
+              ['son reseau', 'Distributeur de test'],
+              ['ses certifications', 'Certification de test']] as [$quoi, $attendu]) {
+        check('habanos : la page pays sert ' . $quoi, str_contains($rp['body'], $attendu));
+    }
+    $rpe = http('GET', $srvN . '/page.php?type=pays&id=testland&lang=en', ['jar' => $cliN]);
+    check('habanos : le statut suit la langue',
+          str_contains($rpe['body'], 'TEST STATUS') && !str_contains($rpe['body'], 'STATUT DE TEST'));
+
+    // Le bloc porte QUATRE listes sous un seul <h2> : elles doivent
+    // etre des sous-titres, pas des sections imbriquees dans une
+    // section de meme classe.
+    check('habanos : les listes sont des sous-titres, pas des blocs imbriques',
+          !preg_match('~<section class="pg-bloc">(?:(?!</section>).)*<section class="pg-bloc">~s', $rp['body']));
+
+    // ── LES PAGES NE DOIVENT PAS ETRE ORPHELINES ────────
+    // Un plan de site fait connaitre une adresse ; c'est un LIEN qui lui
+    // donne du poids. Quatre pages sans lien entrant seraient le meme
+    // defaut sous une autre forme : atteignables en theorie, ignorees en
+    // pratique.
+    $rat = http('GET', $srvN . '/page.php?type=atlas&lang=fr', ['jar' => $cliN]);
+    foreach (['feuilles', 'lexique', 'aromes', 'marches'] as $t6) {
+        check('sans adresse : l atlas mene a /' . $t6,
+              (bool)preg_match('~href="[^"]*/' . $t6 . '"~', $rat['body']));
+    }
+    // Et la liste des feuilles mene aux fiches.
+    $rfl = http('GET', $srvN . '/page.php?type=feuilles&lang=fr', ['jar' => $cliN]);
+    check('sans adresse : la liste mene a la fiche',
+          (bool)preg_match('~href="[^"]*/feuille/feuille-de-test"~', $rfl['body']));
+
+    // ── production_zones N'ETAIT PAS FERMEE ─────────────
+    // Je l'avais annoncee dans la meme liste. Verification plutot que
+    // parole : la page du pays doit deja porter ses zones.
+    $pdo->exec("DELETE FROM production_zones WHERE name = 'Zone de reference'");
+    $pdo->exec("INSERT INTO production_zones (country_id, name, lat, lon, note)
+                VALUES ('testland', 'Zone de reference', 0, 0, 'Note de zone de reference.')");
+    $rz = http('GET', $srvN . '/page.php?type=pays&id=testland&lang=fr', ['jar' => $cliN]);
+    check('zones : la page pays les servait deja',
+          str_contains($rz['body'], 'Zone de reference')
+          && str_contains($rz['body'], 'Note de zone de reference.'));
+
+    $pdo->exec("DELETE FROM production_zones WHERE name = 'Zone de reference'");
+    $pdo->exec("DELETE FROM habanos_presence WHERE country_id = 'testland'");
+    $pdo->exec("DELETE FROM markets WHERE id = 'marche-de-test'");
+    $pdo->exec("DELETE FROM aromes WHERE famille = 'famille-test'");
+    $pdo->exec("DELETE FROM lexique WHERE id = 'terme-de-test'");
+}
+
+// ════════════════════════════════════════════════════════
 section('Une maison peut vivre hors d un pays producteur');
 
 // UN CHEMIN DE CODE QUE RIEN N'AVAIT JAMAIS EMPRUNTE. Les 118 maisons
