@@ -2833,3 +2833,27 @@ Les nouvelles colonnes y sont ajoutées à la main : une migration modifie la ba
 vivante, `schema.sql` définit la base neuve. Sans cela toute la campagne tombe en
 cascade — c'est arrivé, cinq échecs d'un coup, dont un « l'arabe est servi de
 droite à gauche » sans rapport apparent.
+
+---
+
+## Tous les drapeaux, restaurés (migration `170`)
+
+**Le contrôle posé par la `168` a trouvé un second cas, et il n'est pas de moi.**
+Sur l'atlas en production, **Macao** s'affichait `???????? Macao` — même signature
+que le drapeau ivoirien. En développement la valeur est intacte
+(`F09F87B2F09F87B4`) : la corruption vient d'un **déploiement antérieur**, passé
+par la même commande sans `--default-character-set=utf8mb4`. Personne ne l'avait
+vue parce que personne ne regardait le drapeau de Macao.
+
+**Réparer Macao seul corrigerait l'instance, pas la classe.** Rien ne dit qu'un
+troisième drapeau ne s'est pas abîmé autrement qu'en `?` — un octet perdu ne laisse
+pas toujours une trace lisible, et la seule façon d'en être sûr est de reposer la
+valeur connue. Les 120 drapeaux des trois tables sont donc réalignés sur la source
+versionnée. Ce n'est pas une réécriture à l'aveugle : la base de développement a
+elle-même été réalignée depuis `contenu.sql`, donc depuis la production, et elle
+ne porte aujourd'hui **aucun** drapeau abîmé. Pour 119 lignes sur 120, la migration
+ne change rien — vérifié par empreinte avant/après.
+
+Aucun emoji n'est écrit dans le fichier : tout est en hexadécimal ASCII,
+reconverti côté serveur. Un fichier qui porterait les caractères repasserait par
+la connexion fautive et reproduirait la panne.
