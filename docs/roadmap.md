@@ -3471,3 +3471,70 @@ vu, et s'est tu une fois la faute retirée.
 Label Trading. En République dominicaine, il ne reste que des cas particuliers —
 La Palina à trancher, Nomad à vérifier, Gurkha (faite chez Las Lavas), Paul
 Garmirian, Zino.
+
+---
+
+## Migration `187` — Aucun cigare de machine dans l'atlas
+
+**155 marques** — trois de moins qu'à la migration précédente. 865 assertions,
+0 échec, huit contrôles verts.
+
+**Décision éditoriale du propriétaire de l'atlas, appliquée à l'existant.** La
+règle était déjà écrite à moitié : `docs/maisons-absentes.md` excluait les
+cigarillos du périmètre, et posait la question européenne en disant qu'elle
+« mérite d'être décidée, pas subie ». Elle est décidée.
+
+### Ce qui sort, sur la foi de son propre texte
+| fiche | ce qu'elle disait d'elle-même |
+|---|---|
+| **Guantanamera** (Cuba) | « le seul havane dont l'argument principal est d'être fabriqué à la machine » |
+| **Café Crème** (Indonésie) | « techniquement un cigarillo : un petit module de fabrication mécanique » |
+| **Henri Wintermans** (Indonésie) | la maison du Café Crème ; sa gamme ne portait que lui |
+
+Aucune n'a été jugée de l'extérieur : chacune se décrivait ainsi.
+
+### Le produit sort, pas le récit
+L'entrée `El Reloj` de la gamme de **J.C. Newman** est retirée — un cigare
+produit par les machines des années 1930 de Tampa. **La fiche reste**, et son
+histoire continue de raconter ces machines : c'est du patrimoine industriel, et
+la maison est dans l'atlas pour Diamond Crown et Cuesta-Rey, roulés à la main
+chez Fuente. Son champ `gamme` devient vide, comme celui des sept maisons mères
+de la `180`.
+
+### Ce que retirer casse — et le seul point de couture
+La recherche des renvois, faite **avant** la suppression, a montré que les trois
+marques ne se citaient qu'entre elles : aucune autre fiche, aucun établissement,
+aucune feuille, aucun marché ne les nomme.
+
+Sauf une phrase. **Taru Martani** se définissait par contraste : « la fiche
+indonésienne ne comptait jusqu'ici que des marques néerlandaises ». Supprimer
+sans réécrire aurait laissé un renvoi vers des fiches disparues. Réécrite dans
+les six langues, avec le `SELECT` de contrôle des six `REPLACE` — six lignes à 1.
+
+### Deux conséquences assumées
+- **Cuba passe de 28 fiches à 27**, et le document dit *par choix* plutôt que de
+  laisser croire à un oubli. Le portefeuille d'Habanos en compte 28.
+- **L'Indonésie passe de trois fiches à une.** Il reste Taru Martani, qui
+  « roule encore l'essentiel de sa production à la main ».
+
+### La règle ferme aussi la question européenne
+Pays-Bas, Belgique et Allemagne n'étaient candidats que par des maisons de
+cigarillos. Les trois lignes sont closes dans le recensement.
+
+### Le partage passe entre la main et la machine
+Pas entre la feuille entière et le hachis. **Canaritos** roule à la main une
+tripe de morceaux de feuille : elle reste, et sa fiche le dit. De même José L.
+Piedra et Quintero à Cuba.
+
+### ⚠ Ce qui reste à trancher : Dannemann
+Sa fiche raconte cent cinquante ans à São Félix da Cachoeira et le terroir du
+Recôncavo — mais sa `gamme` décrit trois cigarillos : « cigarillo brésilien sous
+cape Bahia », « format mini, dix minutes, aromatisé vanille ou cerise », et une
+ligne Premium en cigares pleine longueur. **Le Brésil ne compte que quatre
+fiches** : la retirer est une décision de pays, pas de produit. Elle n'a pas été
+prise ici.
+
+### Les fiches ne sont pas perdues
+Elles restent dans le `sql/contenu.sql` du commit précédent et dans l'historique
+Git. Le journal de modération dit lesquelles et pourquoi — pour qu'on ne les
+recrée pas par inadvertance.

@@ -1,7 +1,9 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`186`**. L'atlas compte **158 maisons** dans 18 pays producteurs.*
+`187`**. L'atlas compte **155 maisons** dans 18 pays producteurs — trois de
+moins qu'à la migration `186`, parce que la règle « aucun cigare de machine » a
+été appliquée à l'existant.*
 
 > **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
 > Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
@@ -79,10 +81,40 @@ et recoupée sur une source qui se met à jour.
 
 ---
 
+## ⚠ La règle qui décide de tout : aucun cigare de machine
+
+**Décision du propriétaire de l'atlas, appliquée par la migration `187`.** Le
+cigare de machine n'entre pas ici. Cela vaut pour ce qu'on ajoute **et** pour ce
+qui y était déjà.
+
+Trois fiches ont été retirées, chacune sur la foi de son propre texte :
+
+| fiche | ce qu'elle disait d'elle-même |
+|---|---|
+| **Guantanamera** (Cuba) | « le seul havane dont l'argument principal est d'être fabriqué à la machine » |
+| **Café Crème** (Indonésie) | « techniquement un cigarillo : un petit module de fabrication mécanique » |
+| **Henri Wintermans** (Indonésie) | la maison du Café Crème ; sa gamme ne portait que lui |
+
+Et l'entrée `El Reloj` de la gamme de **J.C. Newman**, un cigare produit par les
+machines des années 1930 de Tampa. **La fiche J.C. Newman reste** : la maison est
+dans l'atlas pour Diamond Crown et Cuesta-Rey, roulés à la main chez Fuente. Ce
+qui sort est le *produit* de machine, pas le récit qui l'explique.
+
+**Cette règle ferme aussi la question européenne** (voir plus bas) : Pays-Bas,
+Belgique et Allemagne n'étaient candidats que par des maisons de cigarillos.
+
+⚠ **Un cas reste à trancher : Dannemann.** Sa fiche raconte cent cinquante ans à
+São Félix da Cachoeira et le terroir du Recôncavo, mais sa gamme décrit trois
+cigarillos. Le Brésil ne compte que quatre fiches : la retirer est une décision
+de **pays**, pas de produit.
+
+---
+
 ## Ce qui est complet
 
-- **Cuba : 28 fiches sur 28.** L'intégralité du portefeuille d'Habanos S.A. C'est
-  le seul pays dans ce cas, parce que la liste y est *finie et officielle*.
+- **Cuba : 27 fiches sur 28, et la vingt-huitième est exclue par choix.**
+  Le portefeuille d'Habanos S.A. en compte 28 ; Guantanamera en est sortie parce
+  qu'elle est faite à la machine. Ce n'est pas un oubli.
 - **Les jumelles non cubaines : traitées.** Neuf ajoutées par la migration `173`,
   plus Trinidad USA par la `171`. La dixième, **Sancho Panza non cubain**, n'a
   volontairement pas été créée : STG l'a retirée de son tarif en janvier 2026.
@@ -184,13 +216,18 @@ New Hampshire) · **Cuban Crafters** (Miami)
 |---|---|---|
 | ~~Mozambique~~ | ~~Bongani~~ | **FAIT** — migration `174`, 18ᵉ pays producteur, et celui-là cultive vraiment |
 | ~~Australie~~ | ~~Nicoya Cigars~~ | **FAIT autrement** — migration `183`. Pays d'adresses, pas producteur : plus aucune culture depuis 2006 |
-| **Pays-Bas** | Ritmeester, Willem II, Agio, De Olifant | pays **d'adresses** déjà présent ; maisons de cigarillos, machine |
-| **Belgique** | J. Cortès, Neos | pays **d'adresses** déjà présent ; J. Cortès possède Oliva depuis 2016 |
-| **Allemagne** | Woermann | pays **d'adresses** déjà présent ; l'atlas a Dannemann, rattachée au Brésil |
+| ~~Pays-Bas~~ | ~~Ritmeester, Willem II, Agio, De Olifant~~ | **HORS PÉRIMÈTRE** — maisons de cigarillos, machine |
+| ~~Belgique~~ | ~~J. Cortès, Neos~~ | **HORS PÉRIMÈTRE** — machine. *(J. Cortès possède Oliva depuis 2016, mais Oliva est déjà dans l'atlas par ses cigares roulés main au Nicaragua)* |
+| ~~Allemagne~~ | ~~Woermann~~ | **HORS PÉRIMÈTRE** — machine |
 
-Ces trois-là restent à décider — non pas « faut-il ouvrir un pays ? », la
-question était mal posée, mais **« l'atlas porte-t-il le cigare de machine ? »**.
-C'est un choix éditorial, et il mérite d'être fait, pas subi.
+**Ces trois lignes sont closes.** La question n'était pas « faut-il ouvrir un
+pays ? » — elle était mal posée — mais **« l'atlas porte-t-il le cigare de
+machine ? »**. La réponse est **non** (migration `187`), et elle vaut aussi
+pour l'existant : trois fiches en sont sorties.
+
+La tradition européenne du cigare de machine est réelle et ancienne. Elle n'est
+pas ignorée par mépris : elle est simplement hors du sujet de cet atlas, comme
+les cigarillos et la grande distribution le sont depuis le début.
 
 ---
 
@@ -225,12 +262,23 @@ visible.
 
 Un atlas du cigare **premium roulé à la main** n'a pas à porter :
 
+- **Le cigare de machine, quel que soit son prestige.** C'est la règle décidée
+  et appliquée par la migration `187`, y compris à l'existant. Elle ne dépend
+  ni de l'ancienneté de la maison, ni de la qualité du tabac : Guantanamera est
+  un havane et est sortie ; Henri Wintermans a cent vingt ans et est sortie.
+  Le critère est le geste, pas le renom.
 - **Cigarillos et grande distribution** : Black & Mild, Swisher, White Owl,
   Phillies, Dutch Masters, Backwoods, Garcia y Vega, King Edward, Tiparillo,
-  Game, Maxum, Marsh Wheeling.
+  Game, Maxum, Marsh Wheeling — et la tradition européenne : Ritmeester,
+  Willem II, Agio, De Olifant, J. Cortès, Neos, Woermann.
 - **Kretek** : Djarum, Djarum Black — cigarette de clou de girofle.
 - **Exclusivités de détaillants** : 5 Vegas, 898 Collection, East Coast Rollers,
   Morro Castle, San Miguel — des marques de catalogue sans maison derrière.
+
+**Ce qui n'est PAS exclu** : le *shortfiller* roulé à la main. Canaritos, à
+Tenerife, roule à la main une tripe faite de morceaux de feuille ; sa fiche le
+dit et elle reste. De même José L. Piedra et Quintero à Cuba. Le partage passe
+entre la main et la machine, pas entre la feuille entière et le hachis.
 
 ---
 
