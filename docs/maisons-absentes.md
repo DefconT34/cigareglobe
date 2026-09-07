@@ -127,7 +127,7 @@ boutique nicaraguayen.
 
 | pays absent | maison | note |
 |---|---|---|
-| **Mozambique** | **Bongani** | présentée comme la première marque entièrement africaine, tabac africain |
+| ~~Mozambique~~ | ~~**Bongani**~~ | **FAIT (migration `174`)** — 18ᵉ pays producteur. Et l'étiquette « entièrement africaine » n'a **pas** été reprise : le fondateur ne la revendique pas |
 | **Australie** | **Nicoya Cigars** | fondée en 2015, seule maison australienne |
 | **Pays-Bas** | Ritmeester, Willem II, Agio, De Olifant | tradition européenne, machine |
 | **Belgique** | J. Cortès, Neos | |
@@ -163,8 +163,7 @@ du cigare **premium roulé à la main** :
 1. **Les dix jumelles non cubaines** — motif déjà établi, histoires distinctes,
    sources accessibles. Et c'est le manque qu'un lecteur remarque, comme il a
    remarqué Trinidad USA.
-2. **Bongani (Mozambique)** — un pays de plus sur la carte, et le seul autre
-   cigare africain documenté.
+2. ~~**Bongani (Mozambique)**~~ — **fait**, migration `174`.
 3. **Les quatre maisons-mères** — Selected Tobacco, Maya Selva, Boutique Blends,
    Forged : l'atlas porte déjà leurs marques sans nommer qui les fait.
 4. **Diamond Crown et Cuesta-Rey** — l'atlas a J.C. Newman sans ses deux marques.

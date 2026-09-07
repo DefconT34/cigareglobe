@@ -2960,3 +2960,54 @@ classement est retiré, pas excepté.
 `i18n_fraicheur` a compté trente traductions sans empreinte : mon sceau excluait
 les gammes `[]`. Or `Capitol` porte « [] » **et cinq sceaux** — le sceau dit que la
 traduction correspond au français, et « [] » traduit « [] » exactement.
+
+---
+
+## Le Mozambique et Bongani (migration `174`)
+
+Le Mozambique n'était dans l'atlas **ni** comme producteur **ni** comme pays
+d'adresses. Il entre par une seule maison — **Bongani** — et devient le
+**18ᵉ pays producteur**, le second africain ouvert en trois mois après la Côte
+d'Ivoire, et le premier d'Afrique australe (9ᵉ macro-région).
+
+**Kamal Moukheiber**, libanais de naissance, HEC Paris, quinze ans de banque
+d'investissement à Londres (Credit Suisse, Lehman Brothers), s'installe à Maputo
+en 2013 pour un projet immobilier. L'idée lui vient dans un café, en regardant des
+clients fumer. Premier cigare : **décembre 2016**. Un maître cigarier dominicain,
+passé par General Cigar sur Macanudo, forme des rouleuses mozambicaines — première
+promotion diplômée en 2017. L'atelier de la **Baixa**, à Maputo, sort une dizaine
+de milliers de cigares par mois.
+
+Le tabac est cultivé au Mozambique par des paysans **sous contrat**, à partir de
+**semences dominicaines**. La **cape vient du Cameroun** — que l'atlas porte comme
+producteur de cape — et les cigares vieillissent dans des **feuilles de cèdre du
+Ghana**. La maison se vend jusqu'en **Côte d'Ivoire**, ouverte trois migrations
+plus tôt.
+
+### Une étiquette que le fabricant ne revendique pas
+On lit partout — Wikipédia le premier — que Bongani est « la première marque de
+cigares **entièrement** africaine ». **Le fondateur ne dit pas cela** : il
+revendique une sélection guidée par la qualité, d'Afrique comme d'ailleurs, et la
+tripe mêle des tabacs africains et non africains, dominicains compris.
+« Premier cigare africain » se défend ; « entièrement africain » est une formule
+de reprise de presse, et l'atlas ne la reprend pas.
+
+### Les trous, déclarés — et plus larges qu'en Côte d'Ivoire
+`regions`, `varieties`, `climate`, `soil`, `harvest` et `revenue` restent vides.
+Une couverture de presse attribue le tabac à la province de **Manica**, mais c'est
+une source unique et indirecte, et la fiche Wikipédia de la province ne mentionne
+**aucune** culture de tabac. Pour la Côte d'Ivoire, deux caves décrivaient
+l'assemblage par terroir et une revue de géographie décrivait la région : ici,
+rien de tel. Ni zone de culture, ni coordonnées, ni feuille.
+
+### Deux leçons appliquées
+Le **drapeau** est écrit en hexadécimal et reconverti côté serveur — leçon de la
+migration `168`. Et `producer_geo` est remplie du même geste : la `167` avait
+appris que c'est la seule table que **tous** les pays producteurs portent.
+
+### Un troisième garde-fou découvert
+`coherence_check` a refusé : *« aucun drapeau dessiné dans flags.js — la fiche
+affiche trois bandes grises »*. Le drapeau mozambicain est donc dessiné :
+trois bandes, deux liserés blancs, un triangle de hampe, une étoile. **L'emblème
+officiel — livre, houe et fusil — n'est pas dessiné et ne le sera pas** : le
+rendre « à peu près » donnerait un objet qui ressemble à une arme sans en être une.

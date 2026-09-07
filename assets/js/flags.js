@@ -189,6 +189,17 @@ var FLAGS_SPEC = {
   caymanisles: {o:[['ensign','#00247D']]},
   // ── Afrique ───────────────────────────────────────────
   ivorycoast:  {v:['#F77F00','#FFFFFF','#009E60']},
+  // Trois bandes, deux liseres blancs, un triangle de hampe et une
+  // etoile. L'embleme officiel — livre, houe et fusil dans l'etoile —
+  // n'a pas de primitive ici, et n'en aura pas : le dessiner « a peu
+  // pres » donnerait un objet qui ressemble a une arme sans en etre
+  // une. L'etoile seule est une simplification assumee, comme celle
+  // du Senegal.
+  mozambique:  {h:['#009639','#000000','#FFD100'],
+                o:[['bande','#FFFFFF',0,1,0.310,0.355],
+                   ['bande','#FFFFFF',0,1,0.645,0.690],
+                   ['tri','#D21034',0.36],
+                   ['etoile','#FFD100',0.115,0.5,0.115,0.048]]},
   guinea:      {v:['#CE1126','#FCD116','#009460']},
   mali:        {v:['#14B53A','#FCD116','#CE1126']},
   nigeria:     {v:['#008751','#FFFFFF','#008751']},
@@ -1131,7 +1142,8 @@ var FLAGS_DESSINES = [
                       'hongkong','india','indonesia','iran','israel',
                       'italy','ivorycoast','jamaica','japan','japan_mkt',
                       'kenya','kuwait','lebanon','luxembourg','malaysia',
-                      'macau','mali','mexico','monaco','morocco','netherlands',
+                      'macau','mali','mexico','monaco','morocco','mozambique',
+                      'netherlands',
                       'nicaragua','nigeria','oman','panama','paraguay',
                       'peru','philippines','poland','portugal','qatar',
                       'romania','russia','russia_mkt','saudiarabia','senegal',
