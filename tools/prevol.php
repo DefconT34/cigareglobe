@@ -241,6 +241,49 @@ function prevol_constat_drapeaux(array $abimes): ?array {
 }
 
 /**
+ * Un tableau `brands` mal formé, vu depuis le serveur.
+ *
+ * MÊME AVEUGLEMENT QUE POUR LES DRAPEAUX. En production, les
+ * vingt-trois marques dominicaines n'étaient plus des objets mais des
+ * CHAÎNES contenant du JSON — et la base de développement, elle, était
+ * juste. Aucun contrôle local ne pouvait le voir.
+ *
+ * La cause tenait à MariaDB : `JSON_TABLE` puis `JSON_ARRAYAGG` gardent
+ * le type JSON sur MySQL et le perdent sur MariaDB, où l'agrégat empile
+ * des chaînes. La migration passait toute la campagne et cassait la
+ * page en ligne.
+ *
+ * Le symptôme visible était brutal et trompeur : `brandCard()` fait
+ * `b.name.replace(...)`, la TypeError interrompait la construction du
+ * innerHTML, et le panneau du pays restait BLANC — production, revenus,
+ * climat et sols compris. Huit blocs justes emportés par une liste.
+ */
+function prevol_brands_abimees(PDO $db): array {
+    $mauvais = [];
+    try {
+        $q = $db->query("SELECT `id`, `brands` FROM `producer_countries`");
+    } catch (Throwable $e) { return []; }
+    foreach ($q as $r) {
+        $j = json_decode((string)$r['brands'], true);
+        if (!is_array($j)) { $mauvais[] = $r['id'] . ' (illisible)'; continue; }
+        foreach ($j as $i => $b) {
+            if (!is_array($b)) { $mauvais[] = $r['id'] . '[' . $i . '] non-objet'; continue; }
+            if (trim((string)($b['name'] ?? '')) === '') $mauvais[] = $r['id'] . '[' . $i . '] sans nom';
+        }
+    }
+    return $mauvais;
+}
+
+function prevol_constat_brands(array $mauvais): ?array {
+    if (!$mauvais) return null;
+    return prevol_constat('bloquant', 'marques',
+        count($mauvais) . ' entrée(s) de `producer_countries.brands` mal formée(s) : '
+      . implode(', ', array_slice($mauvais, 0, 5))
+      . '. Le panneau du pays reste BLANC sur le globe — pas seulement la liste des marques.',
+        'Réécrire le tableau EN TOUTES LETTRES dans une migration, sans fonction JSON_* : leur comportement diffère entre MySQL et MariaDB.');
+}
+
+/**
  * Le cron des rappels donne-t-il encore signe de vie ?
  *
  * POURQUOI CE CONTRÔLE EXISTE. Un cron qui cesse de tourner n'échoue
@@ -445,6 +488,8 @@ function prevol_controles(array $e): array {
     try {
         $dr = prevol_constat_drapeaux(prevol_drapeaux_abimes(getDB()));
         if ($dr !== null) $c[] = $dr;
+        $br = prevol_constat_brands(prevol_brands_abimees(getDB()));
+        if ($br !== null) $c[] = $br;
     } catch (Throwable $e2) { /* base injoignable : les autres constats le disent déjà */ }
     $c[] = prevol_constat('rappel', 'sauvegarde',
         'uploads/ et les tables personnelles ne sont dans aucun dépôt, par construction.',

@@ -3060,3 +3060,47 @@ Les dix-huit autres tiennent : Fuente et Ashton chez Tabacalera A. Fuente, Quesa
 chez MATASA, E.P. Carrillo à la Tabacalera La Alianza, La Aurora et La Flor
 Dominicana dans leurs propres murs, et les marques d'Altadis à la Tabacalera de
 García.
+
+---
+
+## MariaDB n'est pas MySQL (migration `179`)
+
+**Signalé par l'utilisateur : « les marques pour la République dominicaine ne
+s'affichent pas en ligne ».** En local, les vingt-trois vignettes se rendaient.
+En production, zéro.
+
+En production, chaque entrée de `producer_countries.brands` était une **chaîne**
+contenant du JSON au lieu d'être un objet — avec l'espace après les deux-points
+qui est la signature de MariaDB. Les dix-sept autres pays étaient intacts.
+
+**La cause est ma migration `178`** : elle reconstruisait le tableau avec
+`JSON_TABLE` puis `JSON_ARRAYAGG`. Sur **MySQL** — le poste de développement — la
+colonne garde son type JSON à travers la table dérivée. Sur **MariaDB** —
+o2switch — le type se perd et l'agrégat empile des chaînes.
+
+**La migration passait toute la campagne en local et cassait la page en ligne.**
+C'est une divergence que la campagne, par construction, ne verra jamais : je ne
+peux pas éprouver MariaDB ici.
+
+### La parade
+**On n'écrit plus de JSON avec des fonctions JSON.** Le tableau est posé en toutes
+lettres, comme une chaîne littérale — ce que faisaient toutes les migrations
+antérieures, et ce qu'aucun moteur ne peut interpréter de travers.
+
+Les migrations `173` et `175` employaient `JSON_ARRAY_APPEND` et
+`JSON_MERGE_PRESERVE` ; vérification pays par pays dans le navigateur sur le site
+en ligne : elles ont produit des objets corrects sur MariaDB. Seule la `178`
+divergeait. Mais la règle vaut pour toutes.
+
+### Le symptôme était trompeur
+`brandCard()` fait `b.name.replace(...)`. Sur une entrée sans `name`, la
+`TypeError` interrompt la construction du `innerHTML` — une seule concaténation,
+du badge de rang jusqu'aux marques. Le panneau restait **entièrement blanc**.
+`panels.js` filtre désormais les entrées sans nom : une liste de vingt-trois
+vignettes ne doit pas pouvoir emporter les huit blocs qui la précèdent.
+
+### Et un contrôle qui voit depuis le serveur
+Comme pour les drapeaux de la `168`, aucun outil local ne pouvait attraper ceci :
+la base de développement est juste. `tools/prevol.php` porte désormais un constat
+**bloquant** sur les tableaux `brands` mal formés, avec une remédiation qui dit
+quoi faire — réécrire en toutes lettres, sans fonction `JSON_*`.

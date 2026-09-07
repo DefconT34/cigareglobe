@@ -4850,6 +4850,32 @@ section('Les mentions legales ne parlent qu\'au visiteur');
     // passerait les trois assertions ci-dessus.
     check('drapeaux : rien a dire quand ils sont entiers',
           prevol_constat_drapeaux([]) === null);
+
+    // ── LE TABLEAU `brands` MAL FORME ───────────────────
+    // MEME AVEUGLEMENT QUE POUR LES DRAPEAUX. En production, les
+    // vingt-trois marques dominicaines n'etaient plus des objets mais
+    // des CHAINES contenant du JSON — et la base de developpement,
+    // elle, etait juste.
+    //
+    // La cause tenait a MariaDB : JSON_TABLE puis JSON_ARRAYAGG gardent
+    // le type JSON sur MySQL et le perdent sur MariaDB, ou l'agregat
+    // empile des chaines. La migration passait TOUTE LA CAMPAGNE et
+    // cassait la page en ligne.
+    check('marques : une entree non-objet est vue',
+          prevol_constat_brands(['dominican[0] non-objet']) !== null);
+    check('marques : et le constat bloque',
+          (prevol_constat_brands(['x[0] sans nom'])['niveau'] ?? '') === 'bloquant');
+    // La remediation doit dire QUOI FAIRE — c'est elle qu'on relira.
+    check('marques : la remediation interdit les fonctions JSON',
+          str_contains(prevol_constat_brands(['x[0] non-objet'])['remede'] ?? '', 'JSON_*'));
+    // Et elle doit dire que le degat depasse la liste : c'est ce qui
+    // avait rendu le symptome incomprehensible.
+    check('marques : le constat dit que la page entiere blanchit',
+          str_contains(prevol_constat_brands(['x[0] non-objet'])['dit'] ?? '', 'BLANC'));
+    // CONTRE-EPREUVE : sans elle, un constat qui crierait toujours
+    // passerait les quatre assertions ci-dessus.
+    check('marques : rien a dire quand le tableau est sain',
+          prevol_constat_brands([]) === null);
 }
 
 // ════════════════════════════════════════════════════════

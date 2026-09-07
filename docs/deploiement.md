@@ -261,3 +261,35 @@ Et une réparation ne doit **jamais** réécrire le caractère : elle repasserai
 la même connexion. On écrit les octets en hexadécimal ASCII —
 `CONVERT(UNHEX('…') USING utf8mb4)` — pour que le fichier ne contienne plus rien
 qu'un jeu de caractères puisse abîmer. Voir la migration `168`.
+
+---
+
+## ⚠ MariaDB n'est pas MySQL : pas de fonction `JSON_*` dans une migration
+
+Le poste de développement tourne sous **MySQL**, o2switch sous **MariaDB**. Leurs
+fonctions JSON ne se comportent pas pareil.
+
+La migration `178` reconstruisait `producer_countries.brands` avec `JSON_TABLE`
+puis `JSON_ARRAYAGG`. Sur MySQL, la colonne garde son type à travers la table
+dérivée et le résultat est un tableau d'**objets**. Sur MariaDB, le type se perd
+et l'agrégat empile des **chaînes** :
+
+```
+"{\"desc\": \"Opus X…\", \"name\": \"Arturo Fuente\", \"iconic\": true}"
+```
+
+*(l'espace après les deux-points est la signature de MariaDB)*
+
+**La migration passait toute la campagne en local et cassait la page en ligne.**
+Et le symptôme était trompeur : `brandCard()` fait `b.name.replace(...)`, la
+`TypeError` interrompait la construction du `innerHTML`, et le panneau du pays
+restait **blanc** — production, revenus, climat et sols compris. Huit blocs justes
+emportés par une liste.
+
+**La règle** : dans une migration, un tableau JSON s'écrit **en toutes lettres**,
+comme une chaîne littérale. Aucun moteur ne peut interpréter de travers
+`'["Tiébissou","Didiévi"]'`.
+
+`tools/prevol.php` porte un constat **bloquant** sur les tableaux `brands` mal
+formés — c'est le seul outil qui tourne sur le serveur, donc le seul d'où la
+divergence est visible.
