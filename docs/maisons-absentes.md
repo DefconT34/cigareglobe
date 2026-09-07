@@ -1,13 +1,20 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`180`**. L'atlas compte **137 maisons** dans 18 pays producteurs.*
+`181`**. L'atlas compte **139 maisons** dans 18 pays producteurs.*
 
 > **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
 > Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
-> Blends et Forged Cigar Company. **69 restent.** Le recensement complet, avec les
-> six maisons canariennes et les dix européennes découvertes à la troisième
-> passe, est ci-dessous.
+> Blends et Forged Cigar Company.
+>
+> **Diamond Crown et Cuesta-Rey aussi** (migration `181`) — les deux marques
+> premium de J.C. Newman, roulées chez Fuente et classées pour cette raison en
+> République dominicaine, comme Ashton avant elles. La fiche de la maison mère
+> a été corrigée dans la foulée : elle nomme les deux marques en prose et son
+> champ `gamme` ne porte plus l'entrée Diamond Crown, qui faisait doublon.
+>
+> **67 restent.** Le recensement complet, avec les six maisons canariennes et
+> les dix européennes découvertes à la troisième passe, est ci-dessous.
 
 *Version d'origine : l'atlas comptait alors **130 maisons**
 dans **18 pays producteurs**. Ce document remplace une première version, faite le
@@ -62,13 +69,13 @@ et recoupée sur une source qui se met à jour.
 
 ---
 
-## Les 71 maisons absentes, par pays
+## Les 69 maisons absentes, par pays
 
-### République dominicaine — 17
+### République dominicaine — 15
 | maison | qui |
 |---|---|
-| **Diamond Crown** | J.C. Newman, faite par Fuente — l'atlas a J.C. Newman sans ses marques |
-| **Cuesta-Rey** | J.C. Newman, même cas |
+| ~~Diamond Crown~~ | **FAIT** — migration `181` |
+| ~~Cuesta-Rey~~ | **FAIT** — migration `181` |
 | **Aging Room** | Rafael Nodal ; faite par Jochy Blanco, Tabacalera La Palma, Tamboril |
 | **Boutique Blends** | Rafael Nodal — *la maison* derrière Aging Room et Swag |
 | **Tabacalera La Palma** | Jochy Blanco — l'usine qui fait aussi le Trinidad Santiago |
@@ -151,7 +158,7 @@ visible.
 | **Arturo Fuente** | Fuente Fuente OpusX, Casa Cuba |
 | **La Aurora** | León Jimenes, Fernando León Family Reserve |
 | **Villiger** | La Flor de Ynclan, San'Doro |
-| **J.C. Newman** | Brick House |
+| **J.C. Newman** | Brick House *(Diamond Crown et Cuesta-Rey n'en sont PAS : ce sont des marques, elles ont leur fiche depuis la migration `181`)* |
 | **Rocky Patel** | The Edge |
 | **Tatuaje** | Cabaiguan, Surrogates |
 | **Quesada** | Casa Magna |
@@ -180,8 +187,10 @@ Un atlas du cigare **premium roulé à la main** n'a pas à porter :
 1. **Les quatre maisons-mères** — Selected Tobacco, Maya Selva, Boutique Blends,
    Forged. L'atlas porte déjà leurs marques sans nommer qui les fait ; c'est le
    même défaut que les huit colonnes muettes, à l'échelle d'une entité.
-2. **Diamond Crown et Cuesta-Rey** — J.C. Newman est dans l'atlas sans ses deux
-   marques premium, faites par Fuente.
+2. ~~**Diamond Crown et Cuesta-Rey**~~ — **FAIT**, migration `181`. Elles ont
+   révélé une variante du défaut : la confusion ligne/marque prise à l'envers,
+   deux marques de plein droit réduites à une ligne du champ `gamme` de leur
+   maison mère — et l'une des deux n'y était même pas.
 3. **Les Canaries** — deux maisons pour un pays producteur qui n'en a que deux.
    Puros Artesanos Julio cultive sa propre plantation à La Palma.
 4. **Nicoya (Australie)** — un continent de plus, et une maison unique.

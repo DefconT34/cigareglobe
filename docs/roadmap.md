@@ -3148,3 +3148,55 @@ Deluxe.
 `marques_check` et `i18n_superlatif_check` ont refusé « troisième producteur
 mondial » en allemand et en arabe, et « sa première boutique » en chinois — des
 superlatifs que le français ne porte pas. Reformulés en ordinal, pas exceptés.
+
+---
+
+## Migration `181` — Les deux marques de J.C. Newman
+
+**139 marques**, 18 pays producteurs, 844 assertions, 0 échec, huit contrôles
+verts, 7 290 sceaux à jour.
+
+L'atlas portait **J.C. Newman sans ses deux marques premium**. Diamond Crown
+n'existait que sous la forme d'une ligne de trois phrases dans le champ `gamme`
+de la maison mère ; **Cuesta-Rey n'existait nulle part**.
+
+### La confusion ligne/marque, prise à l'envers
+`docs/maisons-absentes.md` a identifié vingt-sept **lignes** que les index
+prennent pour des maisons. Ici c'est l'inverse : deux **marques** de plein droit
+réduites à des lignes.
+
+| marque | ce qu'elle est |
+|---|---|
+| **Cuesta-Rey** (1884, Ybor City) | plus ancienne que la maison qui la possède ; rachetée par Stanford Newman en 1958, roulée chez Fuente depuis les années 1980 |
+| **Diamond Crown** (1995) | la commande de Stanford Newman à Carlos Fuente Sr. pour le centenaire — une gamme entière au diamètre 54 quand le marché s'arrêtait à 52 |
+
+### Pourquoi elles sont dominicaines et leur maison américaine
+Le précédent est dans l'atlas et il est exact : **Ashton**. William Ashton Taylor
+est de Philadelphie, sa marque est américaine, sa fiche est dominicaine parce que
+ses cigares sortent de la Tabacalera A. Fuente. Diamond Crown et Cuesta-Rey sont
+le même montage — marque américaine, tabac et main dominicains. Les trois fiches
+se renvoient l'une à l'autre.
+
+### La fiche de la maison mère corrigée dans la foulée
+Son dernier paragraphe disait « plusieurs gammes fabriquées en République
+dominicaine, dont Diamond Crown » et ignorait Cuesta-Rey. Il nomme désormais les
+deux et dit pourquoi elles sont classées ailleurs, **dans les six langues**. Son
+champ `gamme` perd l'entrée Diamond Crown, devenue doublon d'une fiche entière —
+patron de la migration `180`, où les maisons mères nomment leurs marques en prose.
+
+### Les six REPLACE sont vérifiés par la migration elle-même
+Un `REPLACE` qui ne trouve pas son motif **ne dit rien et sort en succès** :
+c'est ainsi qu'un REPLACE allemand avait silencieusement échoué au chantier des
+jumelles. La migration finit donc par un `SELECT` qui doit rendre **six lignes à
+1**. Elle les a rendues.
+
+### Ce que la fiche n'énonce pas comme un fait
+`jcnewman.com` attribue à Cuesta-Rey le titre de cigare officiel du roi
+Alphonse XIII d'Espagne. Aucune source indépendante ne le confirme : la fiche
+l'**attribue explicitement à la maison** — « c'est elle qui le dit » — plutôt que
+de l'énoncer. Même traitement que les notes de presse sans `source_url`.
+
+### Reste de la liste des maisons absentes
+**67**, dont : les six canariennes (Dos Santos/La Regenta, Canaritos, El Sitio,
+Kolumbus, Puros Artesanos Julio, Montealto), Nicoya en Australie, et la scène
+boutique nicaraguayenne et dominicaine.
