@@ -3011,3 +3011,52 @@ affiche trois bandes grises »*. Le drapeau mozambicain est donc dessiné :
 trois bandes, deux liserés blancs, un triangle de hampe, une étoile. **L'emblème
 officiel — livre, houe et fusil — n'est pas dessiné et ne le sera pas** : le
 rendre « à peu près » donnerait un objet qui ressemble à une arme sans en être une.
+
+---
+
+## Vérification des fiches dominicaines (migration `176`)
+
+Les **22 fiches** de la République dominicaine ont été recoupées une à une.
+Toutes répondent, la page pays les liste toutes, et il ne reste aucune trace de
+`Fonseca Dominicain` après son passage au Nicaragua. **Mais trois portaient une
+usine fausse**, et aucune de ces erreurs n'était récente : elles étaient là depuis
+l'import.
+
+### Davidoff et Avo n'ont jamais été faits chez MATASA
+L'atlas les attribuait tous deux à « Manufactura de Tabacos S.A. (MATASA),
+Santiago ». **MATASA est la manufacture de la famille Quesada** — l'atlas porte
+d'ailleurs la maison Quesada sous ce nom et avec cette usine, ce qui rendait la
+contradiction visible pour qui lisait les deux fiches.
+
+Les deux sortent de **Tabadom** (Tabacos Dominicanos), fondée en février 1984 par
+**Hendrik « Henke » Kelner** à Villa González, et vendue plus tard à Davidoff.
+Kelner y produisait les **Avo avant les Davidoff** ; les premiers Davidoff
+dominicains datent de 1990. Le même atelier fait aussi les Griffin's et les Troya.
+
+La fiche d'Avo **répétait l'erreur en toutes lettres, dans les six langues**. Elle
+est corrigée sans être défaite : la phrase disait vrai sur le fond — c'est bien le
+même atelier que Davidoff — et faux sur le nom.
+
+### Macanudo n'est pas fait à La Romana
+L'atlas écrivait « General Cigar, La Romana et Santiago ». **La Romana est la
+Tabacalera de García, c'est-à-dire l'usine d'Altadis** — celle des Montecristo,
+Romeo y Julieta et H. Upmann dominicains, que l'atlas porte correctement par
+ailleurs. Mettre les deux villes faisait cohabiter dans une même ligne deux
+groupes concurrents. Macanudo est roulé à Santiago, chez General Cigar Dominicana,
+depuis le transfert de la Jamaïque en 2000.
+
+### Un champ vague rempli
+**The Griffin's** portait « Rép. dominicaine » — vrai, mais sans contenu. La même
+source qui corrige Davidoff et Avo nomme l'atelier.
+
+### Et un piège de langue
+La substitution allemande n'a rien remplacé pendant que les cinq autres passaient :
+**« anbahnen » est un verbe séparable** et rejette son « an » en fin de
+proposition. Une vérification langue par langue l'a montré — un `REPLACE` qui
+échoue ne dit rien, il laisse simplement le texte fautif en place.
+
+### Ce que la vérification dit du reste
+Les dix-huit autres tiennent : Fuente et Ashton chez Tabacalera A. Fuente, Quesada
+chez MATASA, E.P. Carrillo à la Tabacalera La Alianza, La Aurora et La Flor
+Dominicana dans leurs propres murs, et les marques d'Altadis à la Tabacalera de
+García.
