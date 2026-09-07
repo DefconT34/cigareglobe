@@ -25,7 +25,19 @@ et cela tient à ce que la liste y est *finie et officielle*.
 
 ---
 
-## 2. Le manque le plus systématique : les jumelles non cubaines
+## 2. ~~Le manque le plus systématique~~ — **TRAITÉ (migration `173`)**
+
+> **Neuf des dix ont été ajoutées.** L'atlas compte 129 maisons.
+> La dixième, **Sancho Panza non cubain**, n'a pas été créée : Scandinavian
+> Tobacco Group a annoncé en janvier 2026 le retrait de son tarif de Sancho
+> Panza et Los Statos Deluxe. Ouvrir une fiche de maison vivante pour une
+> marque qu'on cesse de vendre serait affirmer le contraire de ce qu'on sait.
+>
+> Deux des neuf ne sont pas des jumelles, et les fiches le disent : **Gispert**
+> et **Henry Clay** ne subsistent que hors de Cuba — c'est Cuba qui a lâché le
+> nom. Elles entrent sans suffixe de pays, puisqu'il n'y a personne en face.
+
+### Ce que c'était (conservé pour mémoire)
 
 C'est le motif que l'atlas établit **sept fois** et laisse ouvert **huit fois**.
 

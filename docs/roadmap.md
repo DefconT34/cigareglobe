@@ -2900,3 +2900,63 @@ l'histoire de la maison passait par `bloc('')`, qui posait un `<h2></h2>` **vide
 Un titre de niveau deux sans texte n'est pas invisible — un lecteur d'écran
 l'annonce, et il ouvre une section qui ne dit pas de quoi elle parle. L'histoire
 se rend maintenant en `pg-chapo`, comme le fait déjà la fiche d'établissement.
+
+---
+
+## Les neuf jumelles non cubaines (migrations `172` et `173`)
+
+L'atlas documentait **sept fois** le motif « même nom, deux marques » et en
+laissait **dix** ouverts. Neuf sont ajoutées ; l'atlas compte **129 maisons**.
+
+**Le piège qui les avait cachées** : un recoupement par le nom les déclare
+« déjà présentes », puisque le nom cubain est en base. Faux positifs **de fond** —
+c'est ce qui avait laissé passer Trinidad USA jusqu'à ce qu'un lecteur le
+remarque.
+
+| Honduras | Rép. dominicaine |
+|---|---|
+| Bolívar Honduras | La Gloria Cubana Dominicaine |
+| El Rey del Mundo Honduras | H. Upmann Dominicain |
+| Saint Luis Rey Honduras | Henry Clay |
+| Gispert | Por Larrañaga Dominicain |
+| | Fonseca Dominicain |
+
+### Neuf, et non dix
+**Sancho Panza non cubain n'est pas créé** : STG a annoncé en janvier 2026 le
+retrait de son tarif de Sancho Panza et Los Statos Deluxe. Ouvrir une fiche de
+maison vivante pour une marque qu'on cesse de vendre serait affirmer le contraire
+de ce qu'on sait.
+
+### Deux qui ne sont pas des jumelles
+**Gispert** : ici c'est *Cuba* qui a lâché le nom — Habanos a arrêté en 2005,
+Altadis avait relancé dès 2003 au Honduras. **Henry Clay** : même cas. Toutes
+deux entrent sans suffixe, puisqu'il n'y a personne en face.
+
+### Ce qui fait la valeur du bloc : les renvois internes
+Trois fiches mènent à des maisons **déjà** dans l'atlas — La Gloria Cubana
+Dominicaine à **E.P. Carrillo** (le même homme, Ernesto Perez-Carrillo), Gispert à
+**La Flor de Copán** (la même usine), Fonseca Dominicain à **Quesada** (la même
+famille). Et El Rey del Mundo Honduras partage ses rouleurs avec Punch et Hoyo
+Honduras, chez HATSA.
+
+### Deux actionnariats périmés, trouvés en chemin (migration `172`)
+L'atlas affirmait **deux fois** qu'Imperial Brands possède ce qu'il a vendu en
+octobre 2020 : la moitié d'Habanos (passée à **Allied Cigar Corporation**) sur la
+page de Cuba, et Altadis USA (passée à **Gemstone Investment Holding**) sur la
+fiche Romeo y Julieta USA. Dans les six langues, depuis presque six ans.
+
+**Aucun contrôle ne pouvait le voir** : `marques_check` vérifie qu'une affirmation
+est *sourçable*, pas qu'elle est encore *vraie* ; les contrôles i18n comparent les
+langues entre elles, et les six disaient la même chose fausse. Un fait daté ne se
+démode pas d'un coup — il reste juste, puis devient faux sans rien changer à sa
+forme. On écrit désormais la **date** avec le fait.
+
+### Deux garde-fous, encore
+`marques_check` a refusé « l'une des plus grandes manufactures au monde » pour la
+Tabacalera de García. C'était sourcé, mais les chiffres qui suivent — deux mille
+personnes, quarante millions de cigares par an — disent plus et se vérifient. Le
+classement est retiré, pas excepté.
+
+`i18n_fraicheur` a compté trente traductions sans empreinte : mon sceau excluait
+les gammes `[]`. Or `Capitol` porte « [] » **et cinq sceaux** — le sceau dit que la
+traduction correspond au français, et « [] » traduit « [] » exactement.
