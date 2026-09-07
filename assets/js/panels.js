@@ -408,7 +408,20 @@ function _renderPanel(c) {
   // articles le disaient déjà ; seul le titre prétendait autre chose.
   // Les entrées marquées `cape` sortent donc des deux premières listes
   // pour former la troisième (migration 023).
-  var brands = c.brands || [];
+  // UNE ENTREE SANS NOM VIDAIT LA PAGE ENTIERE. brandCard() appelle
+  // `b.name.replace(...)` ; sur une entree sans `name`, la TypeError
+  // interrompt la construction du innerHTML, et le panneau du pays
+  // restait BLANC — production, revenus, climat, sols compris. Un
+  // JSON_REMOVE mal cible (migration 175) avait laisse un objet
+  // orphelin dans les marques dominicaines, et la page ne montrait
+  // plus rien du tout.
+  //
+  // La donnee est reparee par la migration 178, mais le filtre reste :
+  // une liste de vingt-quatre vignettes ne doit pas pouvoir emporter
+  // les huit blocs qui la precedent.
+  var brands = (c.brands || []).filter(function(b) {
+    return b && typeof b.name === 'string' && b.name.trim() !== '';
+  });
   var cape   = brands.filter(function(b) { return b.cape; });
   var iconic = brands.filter(function(b) { return b.iconic && !b.cape; });
   var other  = brands.filter(function(b) { return !b.iconic && !b.cape; });

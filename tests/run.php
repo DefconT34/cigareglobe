@@ -4091,6 +4091,62 @@ section('Une maison peut vivre hors d un pays producteur');
 }
 
 // ════════════════════════════════════════════════════════
+section('Aucune marque annoncee sans nom');
+
+// UNE VIGNETTE EMPORTAIT HUIT BLOCS. Sur le globe, cliquer la
+// Republique dominicaine ouvrait un panneau VIDE : titre et drapeau
+// affiches, corps blanc. La cause tenait a UNE entree du tableau JSON
+// `producer_countries.brands` privee de sa cle `name` par un
+// JSON_REMOVE mal cible (migration 175, reparee par la 178).
+//
+// brandCard() fait `b.name.replace(...)` ; la TypeError interrompait la
+// construction du innerHTML — une seule concatenation, du badge de rang
+// jusqu'aux marques. Production, revenus, recolte, climat, sols,
+// regions, varietes et tabacaleras disparaissaient avec elle.
+//
+// coherence_check ne pouvait pas le voir : il verifie que chaque maison
+// de la table `brands` est ANNONCEE par son pays, jamais l'inverse.
+{
+    $pdoN = test_pdo();
+    // ── Le cliquet, sur la base de developpement ────────
+    // Le decor de test ne porte qu'un pays ; on mesure la ou les
+    // dix-huit fiches vivent.
+    try {
+        $pdoR = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
+                        . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $muettes = [];
+        foreach ($pdoR->query('SELECT id, brands FROM producer_countries') as $r) {
+            foreach ((array)json_decode((string)$r['brands'], true) as $i => $b) {
+                if (!is_array($b) || trim((string)($b['name'] ?? '')) === '') {
+                    $muettes[] = $r['id'] . '[' . $i . ']';
+                }
+            }
+        }
+        eq('marques annoncees : aucune entree sans nom', [], $muettes);
+    } catch (Throwable $e) {
+        check('marques annoncees : base de developpement lisible', false, $e->getMessage());
+    }
+
+    // ── La sonde sait-elle en trouver une ? ─────────────
+    // CONTRE-EPREUVE : sans elle, une boucle cassee rendrait toujours
+    // zero, et le cliquet passerait sur une base entierement muette.
+    $sonde = function (string $json): array {
+        $out = [];
+        foreach ((array)json_decode($json, true) as $i => $b) {
+            if (!is_array($b) || trim((string)($b['name'] ?? '')) === '') $out[] = $i;
+        }
+        return $out;
+    };
+    check('marques annoncees : une entree privee de son nom est vue',
+          $sonde('[{"name":"Bonne"},{"desc":"orpheline","iconic":false}]') === [1]);
+    check('marques annoncees : un nom vide aussi',
+          $sonde('[{"name":"  ","desc":"blanche"}]') === [0]);
+    check('marques annoncees : et rien a dire quand tout va bien',
+          $sonde('[{"name":"Bonne"},{"name":"Autre"}]') === []);
+}
+
+// ════════════════════════════════════════════════════════
 section('La fiche de pays sert ce que la base contient');
 
 // LE MEME DEFAUT, UN CRAN PLUS LOIN. Apres la page de marque, un
