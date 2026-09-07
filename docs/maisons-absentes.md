@@ -1,6 +1,15 @@
 # Les maisons que l'atlas ne porte pas encore
 
-*Recensement approfondi du 7 septembre 2026. L'atlas compte alors **130 maisons**
+*Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
+`180`**. L'atlas compte **137 maisons** dans 18 pays producteurs.*
+
+> **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
+> Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
+> Blends et Forged Cigar Company. **69 restent.** Le recensement complet, avec les
+> six maisons canariennes et les dix européennes découvertes à la troisième
+> passe, est ci-dessous.
+
+*Version d'origine : l'atlas comptait alors **130 maisons**
 dans **18 pays producteurs**. Ce document remplace une première version, faite le
 même jour avant les migrations 171 à 175 — elle est conservée sous
 `maisons-absentes.v1.md`.*

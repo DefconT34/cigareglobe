@@ -3104,3 +3104,47 @@ Comme pour les drapeaux de la `168`, aucun outil local ne pouvait attraper ceci 
 la base de développement est juste. `tools/prevol.php` porte désormais un constat
 **bloquant** sur les tableaux `brands` mal formés, avec une remédiation qui dit
 quoi faire — réécrire en toutes lettres, sans fonction `JSON_*`.
+
+---
+
+## Les sept maisons mères (migration `180`)
+
+**L'atlas portait une douzaine de marques sans jamais nommer qui les fait.**
+Davidoff, Avo, The Griffin's, Camacho et Zino Platinum sont d'un même groupe
+suisse ; Atabey, Byron et Bandolero d'un même homme ; Flor de Selva d'une maison
+hondurienne fondée par une femme. Aucun de ces propriétaires n'avait de fiche.
+
+C'est le même défaut que les huit colonnes muettes, mais à l'échelle d'une
+entreprise : la donnée existait, elle n'était nommée nulle part.
+
+| maison | ce que l'atlas portait déjà d'elle |
+|---|---|
+| **Oettinger Davidoff** (Suisse, 1875) | Davidoff, Avo, The Griffin's, Camacho, Zino Platinum |
+| **Villiger Söhne** (Suisse, 1888) | Villiger |
+| **Burger Söhne** (Suisse, 1864) | Dannemann |
+| **Selected Tobacco** (Costa Rica, 2012) | Atabey, Byron, Bandolero |
+| **Maya Selva Cigars** (Honduras, 1995) | Flor de Selva |
+| **Boutique Blends** (Rép. dom., 2011) | — *(Aging Room, Swag)* |
+| **Forged Cigar Company** (USA, 2021) | Cohiba USA, Punch Honduras, Bolívar Honduras… |
+
+### Trois sont suisses, et la Suisse n'est pas productrice
+Elles sont rattachées à `switzerland`, **pays d'adresses** de l'atlas. C'est le
+chemin de code qu'a ouvert Le Fagot Cigar en Côte d'Ivoire — `page_marque()` joint
+`lounge_countries` — et que la campagne éprouve depuis. `coherence_check` n'exige
+d'annonce que pour les pays producteurs.
+
+### La leçon de la 179 appliquée
+Les quatre tableaux `producer_countries.brands` modifiés ici sont posés **entiers,
+en littéral**. Aucune fonction `JSON_*` : c'est ce qui avait vidé la page de la
+République dominicaine sur MariaDB.
+
+### Forged n'est pas une manufacture, et sa fiche le dit
+Société de **distribution**, créée le 13 janvier 2021 par Scandinavian Tobacco
+Group. Sa fiche explique aussi pourquoi l'atlas ne porte **pas** de Sancho Panza
+non cubain : le rebattage de février 2026 l'a retiré du tarif avec Los Statos
+Deluxe.
+
+### Trois superlatifs refusés
+`marques_check` et `i18n_superlatif_check` ont refusé « troisième producteur
+mondial » en allemand et en arabe, et « sa première boutique » en chinois — des
+superlatifs que le français ne porte pas. Reformulés en ordinal, pas exceptés.
