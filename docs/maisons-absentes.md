@@ -1,7 +1,7 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`184`**. L'atlas compte **146 maisons** dans 18 pays producteurs.*
+`185`**. L'atlas compte **152 maisons** dans 18 pays producteurs.*
 
 > **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
 > Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
@@ -22,7 +22,13 @@
 > « une maison est basée là » avec « ce pays produit », et se trompait sur
 > ses quatre lignes vivantes.
 >
-> **60 restent.** Le recensement complet, avec les maisons européennes
+> **Et six boutiques nicaraguayennes** (migration `185`) — Dunbarton, RoMa
+> Craft, Viaje, Room101, L'Atelier et La Aroma de Cuba. **Cinq des six n'ont
+> pas d'usine** : elles composent et font rouler chez Joya de Nicaragua,
+> A.J. Fernández, My Father ou Aganorsa. Le modèle n'est plus l'exception, il
+> est devenu la règle de la scène boutique.
+>
+> **54 restent.** Le recensement complet, avec les maisons européennes
 > découvertes à la troisième passe, est ci-dessous.
 
 *Version d'origine : l'atlas comptait alors **130 maisons**
@@ -78,7 +84,7 @@ et recoupée sur une source qui se met à jour.
 
 ---
 
-## Les 60 maisons absentes, par pays
+## Les 54 maisons absentes, par pays
 
 ### République dominicaine — 15
 | maison | qui |
@@ -95,16 +101,16 @@ et recoupée sur une source qui se met à jour.
 | **Zino** | Davidoff |
 | **Swag** · **Oliveros** · **Arsen** · **Star Cigar** | plus petites |
 
-### Nicaragua — 20
+### Nicaragua — 14
 | maison | qui |
 |---|---|
-| **Dunbarton Tobacco & Trust** | Steve Saka — Sobremesa, Mi Querida |
-| **RoMa Craft Tobac** | CroMagnon, Aquitaine, Intemperance |
-| **Southern Draw** | Robert Holt |
-| **Viaje** | Andre Farkas, 2008 |
-| **Room101** | Matt Booth, 2009 |
-| **L'Atelier** | Pete Johnson, 2012 — le même que Tatuaje |
-| **La Aroma de Cuba** | reblendée par Pepin García, 2009 |
+| ~~Dunbarton Tobacco & Trust~~ | **FAIT** — migration `185` |
+| ~~RoMa Craft Tobac~~ | **FAIT** — migration `185` |
+| ~~Viaje~~ | **FAIT** — migration `185` |
+| ~~Room101~~ | **FAIT** — migration `185` |
+| ~~L'Atelier~~ | **FAIT** — migration `185` |
+| ~~La Aroma de Cuba~~ | **FAIT** — migration `185` |
+| **Southern Draw** | Robert et Sharon Holt, **2014** (pas 2015) ; roulée chez A.J. Fernández, Estelí |
 | **Padilla** | Ernesto Padilla |
 | **HVC** · **Fratello** · **Curivari** · **Black Label Trading** · **La Barba** · **Protocol** · **Regius** · **Cornelius & Anthony** · **262** · **Emilio** · **Nick's Sticks** | scène boutique |
 | ~~Los Statos~~ | retirée du tarif STG en 2026 — **ne pas créer** |

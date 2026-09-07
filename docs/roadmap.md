@@ -3336,3 +3336,64 @@ disait 45. Le garde-fou a servi tout de suite, et contre moi.*
 ### Reste de la liste des maisons absentes
 **60**, dont la scène boutique nicaraguayenne et dominicaine (une vingtaine de
 fiches courtes), et la question éditoriale du cigare de machine européen.
+
+---
+
+## Migration `185` — La scène boutique nicaraguayenne, premier lot
+
+**152 marques**, 18 pays producteurs, 862 assertions, 0 échec, huit contrôles
+verts, 7 430 sceaux à jour.
+
+| maison | qui | où elle fait rouler |
+|---|---|---|
+| **Dunbarton Tobacco & Trust** | Steve Saka, 2015, ex-président de Drew Estate | Joya de Nicaragua et NACSA |
+| **RoMa Craft Tobac** | Rosales et Martin, 2012 | **son propre atelier**, NicaSueño |
+| **Viaje** | Andre Farkas, 2008 | Aganorsa |
+| **Room101** | Matt Booth, 2009 | A.J. Fernández, Joya, **et HATSA au Honduras** |
+| **L'Atelier** | Pete Johnson, 2012 — le même que Tatuaje | My Father |
+| **La Aroma de Cuba** | nom cubain des années 1880, refait en 2009 | My Father |
+
+### Ce que le lot dit d'un seul coup
+**Cinq de ces six maisons n'ont pas d'usine.** Elles composent et font rouler
+ailleurs — chez quatre manufactures que l'atlas porte déjà. Avec Crowned Heads
+et Warped, déjà présentes, le modèle n'est plus l'exception : c'est la règle de
+la scène boutique. Et il brouille la lecture du drapeau, parce que le cigare
+qu'on tient sort d'un atelier dont le nom ne figure nulle part sur la boîte.
+
+RoMa Craft est l'exception, et son histoire dit pourquoi : les premiers
+CroMagnon ont été roulés **dans le garage** de l'assembleur Esteban Disla en
+2010 ; l'atelier NicaSueño a été bâti l'année suivante.
+
+### Une production éclatée, écrite plutôt que tue
+Room101 sort de **trois** manufactures, dans **deux** pays. La fiche est
+nicaraguayenne parce que l'atlas classe par le lieu principal — et elle le dit,
+au lieu de laisser croire à une origine unique.
+
+### Winston Churchill, refusé une deuxième fois
+Le matériel commercial de La Aroma de Cuba le compte parmi ses premiers
+fumeurs, à l'époque cubaine — exactement comme celui de Vargas aux Canaries,
+refusé à la migration `182`. La fiche le **rapporte à qui l'affirme** et ne le
+reprend pas à son compte. Les notes de presse sont écartées de même, faute de
+`source_url`, et « la seule marque boutique fabriquée exclusivement chez
+A.J. Fernández » n'est pas repris : c'est un rang, pas un fait.
+
+### Trois reprises, dont une qu'aucun outil ne pouvait voir
+| ce qui a été vu | par qui | ce qui a été fait |
+|---|---|---|
+| « Green River Sucker One » entre guillemets, lu comme une parole prêtée | `marques_check` | c'est un nom de cultivar, mais le contrôle a raison sur la forme — guillemets retirés dans les six langues |
+| quatre superlatifs chinois contre deux au français chez L'Atelier, et un « أكثر » arabe là où le français dit « plus direct » | `i18n_superlatif_check` | reformulés |
+| **« des cinq autres de ce lot »** | *personne* | « ce lot » est le découpage du fichier de migration, pas une notion du site : le processus de travail avait fui dans le texte publié. Trouvé en relisant le rendu réel |
+
+Ce troisième cas est le plus instructif : aucun contrôle ne peut voir qu'une
+phrase est correcte, sourcée, traduite — et incompréhensible pour qui la lit.
+
+### La leçon de la `184`, appliquée avant écriture
+Les six `founded` ont été comptés **avant** insertion, et tiennent tous sous 49
+caractères. `coherence_check` refuse désormais toute valeur qui tombe pile sur
+la capacité de sa colonne.
+
+### Reste de la liste des maisons absentes
+**54**. Prochain lot possible au Nicaragua : Southern Draw (Robert et Sharon
+Holt, **2014** — le recensement disait 2015), Padilla, HVC, Fratello,
+Curivari, Black Label Trading. Puis la scène dominicaine : Aging Room,
+Tabacalera La Palma, La Palina, Kristoff, Caldwell.
