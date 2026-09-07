@@ -4876,6 +4876,37 @@ section('Les mentions legales ne parlent qu\'au visiteur');
     // passerait les quatre assertions ci-dessus.
     check('marques : rien a dire quand le tableau est sain',
           prevol_constat_brands([]) === null);
+
+    // ── LES PERMISSIONS DE LA RACINE SERVIE ──────────────
+    // LE SITE ENTIER A REPONDU 403, et le message d'Apache ne parlait
+    // pas de permissions : « Server unable to read htaccess file,
+    // denying access to be safe ». Apache refuse par securite quand il
+    // ne peut pas LIRE un .htaccess — il ne peut pas savoir ce que ce
+    // fichier lui aurait interdit.
+    //
+    // La cause : `rsync -a` recopie les permissions de la SOURCE, et le
+    // clone cPanel est en 700. .cpanel.yml porte `--chmod=D755,F644`
+    // justement pour cela. Le piege est la commande rsync RECOPIEE A LA
+    // MAIN, sans le drapeau — elle marche, elle ne dit rien, et elle
+    // ferme le site.
+    check('permissions : un chemin illisible est vu',
+          prevol_constat_droits(['/.htaccess (0600)']) !== null);
+    check('permissions : et le constat bloque',
+          (prevol_constat_droits(['/.htaccess (0600)'])['niveau'] ?? '') === 'bloquant');
+    // Le constat doit citer le message d'Apache MOT POUR MOT : c'est
+    // par cette phrase, et par elle seule, qu'on cherchera.
+    check('permissions : le constat cite le message d Apache',
+          str_contains(prevol_constat_droits(['/x (0700)'])['dit'] ?? '',
+                       'unable to read htaccess'));
+    // Et la remediation doit nommer le drapeau manquant, sans quoi la
+    // meme commande sera retapee la fois suivante.
+    check('permissions : la remediation nomme --chmod',
+          str_contains(prevol_constat_droits(['/x (0700)'])['remede'] ?? '', '--chmod'));
+    check('permissions : et le constat dit d ou vient le 700',
+          str_contains(prevol_constat_droits(['/x (0700)'])['dit'] ?? '', 'rsync -a'));
+    // CONTRE-EPREUVE.
+    check('permissions : rien a dire quand tout est lisible',
+          prevol_constat_droits([]) === null);
 }
 
 // ════════════════════════════════════════════════════════

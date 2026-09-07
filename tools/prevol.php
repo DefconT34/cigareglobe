@@ -284,6 +284,81 @@ function prevol_constat_brands(array $mauvais): ?array {
 }
 
 /**
+ * Des permissions qu'Apache ne peut pas lire.
+ *
+ * LE SITE ENTIER RÉPOND 403, ET LE MESSAGE NE PARLE PAS DE PERMISSIONS :
+ *
+ *   « You don't have permission to access this resource.
+ *     Server unable to read htaccess file, denying access to be safe »
+ *
+ * Apache refuse par sécurité quand il ne peut pas LIRE un `.htaccess` :
+ * il ne peut pas savoir ce que ce fichier lui aurait interdit, donc il
+ * interdit tout. Le contenu est intact, les fichiers sont à leur place,
+ * la base est juste — et le site est noir.
+ *
+ * ── LA CAUSE EST TOUJOURS LA MÊME ────────────────────────
+ * `rsync -a` recopie les permissions de la SOURCE. Le clone de cPanel
+ * est en 700. Sans `--chmod=D755,F644`, `public_html` et son contenu
+ * héritent de 700, et le serveur web — qui n'est pas le propriétaire —
+ * ne peut plus rien lire.
+ *
+ * `.cpanel.yml` porte ce drapeau et le commente. Le piège est la
+ * commande rsync RECOPIÉE À LA MAIN, tapée dans un terminal sans
+ * relire le fichier de déploiement : elle marche, elle ne dit rien, et
+ * elle ferme le site. C'est ainsi que c'est arrivé.
+ *
+ * ── POURQUOI CE CONTRÔLE, ET PAS UN TEST LOCAL ───────────
+ * Les permissions du dépôt de développement n'ont aucun rapport avec
+ * celles de `public_html`. Comme les drapeaux et les tableaux `brands`
+ * avant lui, ce défaut n'est visible que d'ici.
+ *
+ * On regarde le bit de lecture des AUTRES (`o+r`), et `o+x` pour les
+ * dossiers — c'est exactement ce dont Apache a besoin.
+ */
+function prevol_droits_illisibles(string $racine): array {
+    $fautifs = [];
+
+    $voir = function (string $chemin, bool $dossier) use (&$fautifs) {
+        if (!file_exists($chemin)) return;
+        $mode = @fileperms($chemin);
+        if ($mode === false) return;
+        $attendu = $dossier ? 05 : 04;          // o+rx pour un dossier, o+r pour un fichier
+        if (($mode & $attendu) !== $attendu) {
+            $fautifs[] = basename(dirname($chemin)) . '/' . basename($chemin)
+                       . ' (' . substr(sprintf('%o', $mode), -4) . ')';
+        }
+    };
+
+    // La racine servie et les .htaccess qui la gouvernent. Un seul
+    // illisible suffit à fermer la branche entière.
+    $voir($racine, true);
+    foreach (['', 'backend', 'tools', 'assets', 'uploads'] as $sous) {
+        $d = $racine . ($sous === '' ? '' : '/' . $sous);
+        $voir($d, true);
+        $voir($d . '/.htaccess', false);
+    }
+    // Les points d'entrée : sans eux, le 403 devient un 404 tout aussi
+    // muet.
+    foreach (['index.php', 'page.php', 'backend/api.php'] as $f) $voir($racine . '/' . $f, false);
+
+    return $fautifs;
+}
+
+function prevol_constat_droits(array $fautifs): ?array {
+    if (!$fautifs) return null;
+    return prevol_constat('bloquant', 'permissions',
+        count($fautifs) . ' chemin(s) qu\'Apache ne peut pas lire : '
+      . implode(', ', array_slice($fautifs, 0, 6))
+      . '. Le serveur répond 403 sur TOUT le site — « Server unable to read htaccess '
+      . 'file, denying access to be safe » — alors que les fichiers sont intacts. '
+      . 'Cause habituelle : un `rsync -a` lancé à la main SANS `--chmod=D755,F644`, '
+      . 'qui recopie le 700 du clone cPanel sur la racine servie.',
+        'chmod 755 <racine> && find <racine> -type d -exec chmod 755 {} + '
+      . '&& find <racine> -type f -exec chmod 644 {} + '
+      . '— puis redéployer par cPanel → Git Version Control, qui exécute .cpanel.yml et son --chmod.');
+}
+
+/**
  * Le cron des rappels donne-t-il encore signe de vie ?
  *
  * POURQUOI CE CONTRÔLE EXISTE. Un cron qui cesse de tourner n'échoue
@@ -483,6 +558,14 @@ function prevol_controles(array $e): array {
     // finit par ne plus être lu.
     $insc = prevol_constat_inscriptions($e['inscriptions'], $e['inscriptions_attente']);
     if ($insc !== null) $c[] = $insc;
+
+    // Les permissions de la racine servie. Sur Windows, `fileperms()`
+    // ne rend pas de bits POSIX exploitables : le contrôle ne vaut que
+    // là où il sert, c'est-à-dire sur le serveur.
+    if (DIRECTORY_SEPARATOR === '/') {
+        $dr = prevol_constat_droits(prevol_droits_illisibles(realpath(PREVOL_RACINE) ?: PREVOL_RACINE));
+        if ($dr !== null) $c[] = $dr;
+    }
 
     // Les drapeaux, sur la base que le serveur sert vraiment.
     try {

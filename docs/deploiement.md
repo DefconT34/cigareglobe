@@ -64,6 +64,41 @@ cd ~/repositories/cigareglobe && git pull          # 1. le dépôt
 mysql --default-character-set=utf8mb4 -u <user> -p <base> < sql/migrations/<n>.sql
 ```
 
+### ⚠ La recopie passe par cPanel, JAMAIS par un rsync tapé à la main
+
+L'étape 2 exécute `.cpanel.yml`, qui porte **`--chmod=D755,F644`**. Ce
+drapeau n'est pas cosmétique : `rsync -a` recopie les permissions de la
+**source**, et le clone de cPanel est en `700`. Un rsync recopié à la main
+sans ce drapeau pose `700` sur `public_html`, et Apache — qui n'est pas
+propriétaire des fichiers — ne peut plus rien lire.
+
+Le symptôme ne parle pas de permissions, ce qui fait perdre le plus de
+temps :
+
+```
+Forbidden — You don't have permission to access this resource.
+Server unable to read htaccess file, denying access to be safe
+```
+
+Apache refuse **tout le site** parce qu'il ne peut pas lire un
+`.htaccess` : ne sachant pas ce que ce fichier lui aurait interdit, il
+interdit. Les fichiers sont intacts, la base est juste, le site est noir.
+
+**C'est arrivé.** Une commande rsync donnée de mémoire, sans relire
+`.cpanel.yml`. Réparation :
+
+```bash
+chmod 755 <racine> && find <racine> -type d -exec chmod 755 {} + \
+  && find <racine> -type f -exec chmod 644 {} +
+```
+
+`prevol.php` porte désormais le constat `permissions`, **bloquant**, qui
+vérifie le bit de lecture des autres sur la racine servie, les cinq
+`.htaccess` et les trois points d'entrée. C'est le seul outil qui tourne
+sur le serveur, donc le seul d'où ce défaut soit visible — les
+permissions du dépôt de développement n'ont aucun rapport avec celles de
+`public_html`.
+
 **Le code d'abord, la migration ensuite.** La règle vient d'un cas réel :
 la migration 149 vide la colonne `maps_url`, dont l'ancien code se sert
 pour afficher le bouton « Google Maps ». Appliquée avant la recopie, elle
