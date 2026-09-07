@@ -552,6 +552,52 @@ foreach ([['brands', 'founded'], ['brands', 'factory'],
     } catch (Throwable $e) { /* colonne absente : rien a verifier */ }
 }
 
+// ── 7. Une marque annoncee qui n'a de fiche nulle part ───
+//
+// `producer_countries.brands` est un tableau JSON ECRIT A LA MAIN dans
+// les migrations — la regle des migrations 179 a 186 l'exige, parce que
+// les fonctions JSON_* ne se comportent pas pareil sur MySQL et sur
+// MariaDB. Ecrire a la main protege du moteur, pas de la faute de
+// frappe : un nom mal orthographie donne une carte de marque qui
+// n'ouvre sur rien, et rien ne le signale.
+//
+// On verifie donc que chaque nom annonce correspond a une fiche —
+// N'IMPORTE OU, pas forcement dans le meme pays.
+//
+// ── POURQUOI « PAS FORCEMENT DANS LE MEME PAYS » ────────
+//
+// Le Cameroun est dans cet atlas un pays DE FEUILLE, pas de roulage :
+// ses quatre marques — Arturo Fuente Hemingway, CAO Cameroon, Oliva
+// Serie G et Meerapfel — sont toutes roulees ailleurs, sous une cape
+// camerounaise. Meerapfel est donc rattachee au Cameroun ET annoncee
+// par la Republique dominicaine, ou ses cigares se roulent. Les deux
+// sont vrais, et exiger l'egalite des deux listes casserait ce modele.
+//
+// Le controle porte donc sur l'EXISTENCE de la fiche, pas sur son pays.
+$annoncees = $absentes = 0;
+foreach ($db->query("SELECT `id`, `brands` FROM `producer_countries`") as $pays) {
+    $liste = json_decode((string)$pays['brands'], true);
+    if (!is_array($liste)) continue;
+    foreach ($liste as $entree) {
+        $nom = trim((string)($entree['name'] ?? ''));
+        if ($nom === '') continue;          // le controle des entrees sans nom est ailleurs
+        $annoncees++;
+        $q = $db->prepare("SELECT COUNT(*) FROM `brands` WHERE `name` = ?");
+        $q->execute([$nom]);
+        if ((int)$q->fetchColumn() === 0) {
+            $absentes++;
+            $defauts[] = sprintf(
+                '%s annonce « %s » mais aucune fiche de marque ne porte ce nom — '
+              . 'la carte du globe n\'ouvre sur rien',
+                $pays['id'], $nom);
+        }
+    }
+}
+// Un controle qui ne trouve rien A LIRE passerait pour un controle vert.
+if ($annoncees === 0) {
+    $defauts[] = 'producer_countries.brands : aucune marque annoncee lue — le controle n\'a rien verifie';
+}
+
 // ── Rapport ──────────────────────────────────────────────
 
 echo "CigarOdyssey — coherence entre champs\n\n";

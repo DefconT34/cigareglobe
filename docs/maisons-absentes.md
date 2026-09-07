@@ -1,7 +1,7 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`185`**. L'atlas compte **152 maisons** dans 18 pays producteurs.*
+`186`**. L'atlas compte **158 maisons** dans 18 pays producteurs.*
 
 > **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
 > Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
@@ -28,7 +28,12 @@
 > A.J. Fernández, My Father ou Aganorsa. Le modèle n'est plus l'exception, il
 > est devenu la règle de la scène boutique.
 >
-> **54 restent.** Le recensement complet, avec les maisons européennes
+> **Et six dominicaines** (migration `186`) — Tabacalera Palma, Aging Room,
+> Swag, Kristoff, Caldwell et Casa Cuevas. Ce lot fait l'inverse du
+> nicaraguayen : il **nomme trois fabriques** que l'atlas citait sans jamais
+> leur donner de fiche.
+>
+> **48 restent.** Le recensement complet, avec les maisons européennes
 > découvertes à la troisième passe, est ci-dessous.
 
 *Version d'origine : l'atlas comptait alors **130 maisons**
@@ -84,22 +89,23 @@ et recoupée sur une source qui se met à jour.
 
 ---
 
-## Les 54 maisons absentes, par pays
+## Les 48 maisons absentes, par pays
 
-### République dominicaine — 15
+### République dominicaine — 8
 | maison | qui |
 |---|---|
-| ~~Diamond Crown~~ | **FAIT** — migration `181` |
-| ~~Cuesta-Rey~~ | **FAIT** — migration `181` |
-| **Aging Room** | Rafael Nodal ; faite par Jochy Blanco, Tabacalera La Palma, Tamboril |
-| **Boutique Blends** | Rafael Nodal — *la maison* derrière Aging Room et Swag |
-| **Tabacalera La Palma** | Jochy Blanco — l'usine qui fait aussi le Trinidad Santiago |
-| **La Palina** | Bill Paley, relancée en 2010 |
-| **Kristoff** | Glen Case, 2004 |
-| **Caldwell Cigar Co.** | Robert Caldwell |
-| **Casa Cuevas** · **Nomad** · **Gurkha** · **Paul Garmirian** | |
+| ~~Diamond Crown~~ · ~~Cuesta-Rey~~ | **FAIT** — migration `181` |
+| ~~Boutique Blends~~ | **FAIT** — migration `180` |
+| ~~Tabacalera Palma~~ | **FAIT** — migration `186`. Le nom exact est *Tabacalera Palma* ; « La Palma » est celui de la **zone franche** qu'elle occupe |
+| ~~Aging Room~~ · ~~Swag~~ | **FAIT** — migration `186` |
+| ~~Kristoff~~ · ~~Caldwell Cigar Co.~~ · ~~Casa Cuevas~~ | **FAIT** — migration `186` |
+| ~~Oliveros~~ | **N'EST PAS UNE MAISON** — c'est une étiquette de Boutique Blends. Dit sur la fiche Swag |
+| ⚠ **La Palina** | **à trancher, pas à faire.** Bill Paley, relancée en 2010 — mais elle se fabrique au Honduras, au Nicaragua, en Rép. dominicaine **et** à Miami chez El Titan de Bronze. Aucun lieu principal ne se dégage ; lui en inventer un serait refaire l'erreur de Nicoya |
+| **Nomad** | Fred Rewey — production à vérifier avant de la classer |
+| **Gurkha** | faite à la Tabacalera Las Lavas, celle de Casa Cuevas |
+| **Paul Garmirian** | PG Cigars |
 | **Zino** | Davidoff |
-| **Swag** · **Oliveros** · **Arsen** · **Star Cigar** | plus petites |
+| **Arsen** · **Star Cigar** | plus petites |
 
 ### Nicaragua — 14
 | maison | qui |

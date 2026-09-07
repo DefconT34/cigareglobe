@@ -4910,6 +4910,35 @@ section('Les mentions legales ne parlent qu\'au visiteur');
 }
 
 // ════════════════════════════════════════════════════════
+section('Une marque annoncee qui n\'a de fiche nulle part');
+
+// `producer_countries.brands` est un tableau JSON ECRIT A LA MAIN dans
+// les migrations 179 a 186 — la regle l'exige, parce que les fonctions
+// JSON_* ne se comportent pas pareil sur MySQL et sur MariaDB. Ecrire a
+// la main protege du moteur, PAS DE LA FAUTE DE FRAPPE : un nom mal
+// orthographie donne une carte de marque qui n'ouvre sur rien.
+//
+// Le controle vit dans coherence_check, qui a besoin de la base. On
+// eprouve ici la regle : un nom annonce doit exister DANS `brands`,
+// n'importe ou — pas forcement dans le meme pays.
+$fiches = ['Casa Cuevas', 'Meerapfel', 'Aging Room'];
+$existe = static fn(string $nom): bool => in_array($nom, $fiches, true);
+
+check('annonce : un nom exact est reconnu',        $existe('Casa Cuevas'));
+check('annonce : une faute de frappe ne l est pas', !$existe('Casa Cuevaz'));
+
+// LE POINT QUI COMPTE, ET QUI A FAILLI ETRE TRAITE COMME UN DEFAUT.
+// Le Cameroun est dans cet atlas un pays DE FEUILLE, pas de roulage :
+// ses quatre marques sont toutes roulees ailleurs, sous cape
+// camerounaise. Meerapfel est donc rattachee au Cameroun ET annoncee
+// par la Republique dominicaine, ou ses cigares se roulent. Les deux
+// sont vrais. Un controle qui exigerait l'egalite des deux listes
+// casserait ce modele — il porte donc sur l'EXISTENCE de la fiche, pas
+// sur son pays.
+check('annonce : une fiche d un AUTRE pays compte quand meme',
+      $existe('Meerapfel'));
+
+// ════════════════════════════════════════════════════════
 section('Une phrase coupee net par la largeur de sa colonne');
 
 // CE QUI EST ARRIVE. La fiche Nicoya affichait « production au

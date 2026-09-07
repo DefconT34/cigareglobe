@@ -3397,3 +3397,77 @@ la capacité de sa colonne.
 Holt, **2014** — le recensement disait 2015), Padilla, HVC, Fratello,
 Curivari, Black Label Trading. Puis la scène dominicaine : Aging Room,
 Tabacalera La Palma, La Palina, Kristoff, Caldwell.
+
+---
+
+## Migration `186` — La scène boutique dominicaine
+
+**158 marques**, 18 pays producteurs, 865 assertions, 0 échec, huit contrôles
+verts, 7 490 sceaux à jour.
+
+| maison | qui |
+|---|---|
+| **Tabacalera Palma** | la fabrique elle-même, 1936 — José Arnaldo Blanco II |
+| **Aging Room** | Rafael Nodal, 2011, chez Jochy Blanco |
+| **Swag** | l'autre marque de Boutique Blends |
+| **Kristoff** | Glen Case, 2004 |
+| **Caldwell Cigar Co.** | Robert Caldwell, 2014 |
+| **Casa Cuevas** | la famille Cuevas, Tabacalera Las Lavas |
+
+### Ce lot fait l'inverse du précédent
+Le lot nicaraguayen (`185`) montrait des maisons **sans usine**. Celui-ci
+**nomme trois fabriques** que l'atlas citait déjà sans jamais leur donner de
+fiche : Tabacalera Palma, Tabacalera Las Lavas et Tabacalera von Eicken. Trois
+adresses derrière une bonne partie du catalogue dominicain.
+
+Tabacalera Palma reçoit sa propre fiche parce qu'elle est la plus ancienne des
+trois — 1936 — et parce que **quatre marques de cet atlas en dépendent** :
+Aging Room, Swag, la Matilde, et le Trinidad Santiago d'Altadis.
+
+### Un nœud resserré
+La migration `180` avait créé `Boutique Blends` en annonçant qu'elle portait
+Aging Room et Swag. Les deux marques existent enfin, et le renvoi fonctionne
+dans les deux sens. **Rafael Nodal apparaît désormais quatre fois** dans
+l'atlas. Et **Oliveros**, que le recensement listait comme une maison absente,
+n'en est pas une : c'est une étiquette de Boutique Blends.
+
+### La Palina écartée délibérément
+Le recensement la classait en République dominicaine. Elle se fabrique au
+Honduras, au Nicaragua, en République dominicaine **et** à Miami chez El Titan
+de Bronze. Aucun lieu principal ne se dégage, et lui en inventer un serait
+refaire l'erreur de Nicoya (`183`). **Elle attend une décision, pas une
+approximation.**
+
+### La traduction avait fabriqué un classement qui n'existe pas
+`marques_check` a vu « رقم 1 » dans l'arabe d'Aging Room et l'a lu comme une
+note de presse. C'était **« Bin No. 1 »**, un nom de produit, que la traduction
+avait rendu en chiffres arabes. Le nom reste désormais en caractères latins.
+
+C'est un défaut de traduction d'un genre nouveau dans ce dépôt : le français ne
+disait rien de faux, et la version arabe affirmait un rang.
+
+`i18n_superlatif_check` a par ailleurs vu quatre rangs de trop, dont un
+« die nächste » allemand — une forme en `-ste` lue comme un superlatif là où le
+français dit « suivante ».
+
+### Un écart trouvé en vérifiant, qui n'en était pas un
+Le panneau dominicain annonce **Meerapfel**, dont la fiche est rattachée au
+**Cameroun**. Ce n'est pas un défaut : le Cameroun est dans cet atlas un pays
+**de feuille**, pas de roulage — ses quatre marques sont toutes roulées
+ailleurs sous une cape camerounaise. Les deux rattachements sont vrais.
+
+Mais rien ne protégeait `producer_countries.brands` d'une **faute de frappe**,
+et ces tableaux sont écrits à la main depuis la migration `179` — parce que les
+fonctions `JSON_*` divergent entre MySQL et MariaDB. Écrire à la main protège
+du moteur, pas de la coquille.
+
+`coherence_check` vérifie donc désormais que chaque nom annoncé correspond à une
+fiche — **n'importe où**, pas forcément dans le même pays, sans quoi le modèle
+camerounais casserait. Éprouvé en injectant « Casa Cuevaz » : le contrôle l'a
+vu, et s'est tu une fois la faute retirée.
+
+### Reste de la liste des maisons absentes
+**48**. Au Nicaragua : Southern Draw, Padilla, HVC, Fratello, Curivari, Black
+Label Trading. En République dominicaine, il ne reste que des cas particuliers —
+La Palina à trancher, Nomad à vérifier, Gurkha (faite chez Las Lavas), Paul
+Garmirian, Zino.
