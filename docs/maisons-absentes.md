@@ -1,7 +1,7 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`181`**. L'atlas compte **139 maisons** dans 18 pays producteurs.*
+`182`**. L'atlas compte **145 maisons** dans 18 pays producteurs.*
 
 > **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
 > Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
@@ -13,8 +13,12 @@
 > a été corrigée dans la foulée : elle nomme les deux marques en prose et son
 > champ `gamme` ne porte plus l'entrée Diamond Crown, qui faisait doublon.
 >
-> **67 restent.** Le recensement complet, avec les six maisons canariennes et
-> les dix européennes découvertes à la troisième passe, est ci-dessous.
+> **Et les six Canaries** (migration `182`) — Dos Santos, Montealto, Puros
+> Artesanos Julio, Finca Tabaquera El Sitio, Canaritos et Kolumbus. L'archipel
+> passe de deux fiches à huit, et **plus aucune maison canarienne ne manque**.
+>
+> **61 restent.** Le recensement complet, avec les dix maisons européennes
+> découvertes à la troisième passe, est ci-dessous.
 
 *Version d'origine : l'atlas comptait alors **130 maisons**
 dans **18 pays producteurs**. Ce document remplace une première version, faite le
@@ -69,7 +73,7 @@ et recoupée sur une source qui se met à jour.
 
 ---
 
-## Les 69 maisons absentes, par pays
+## Les 61 maisons absentes, par pays
 
 ### République dominicaine — 15
 | maison | qui |
@@ -111,10 +115,17 @@ et recoupée sur une source qui se met à jour.
 Bandolero, dont l'atlas porte les trois marques sans nommer qui les fait ·
 **Chaman** · **Vegas de Santiago**
 
-### Canaries — 2
-**Puros Artesanos Julio** (Breña Alta, La Palma, plantation familiale) ·
-**Montealto** (La Palma, depuis 1918). L'atlas ne porte que Montecruz et Vargas
-pour un pays producteur entier.
+### Canaries — 0 ✅
+**FAIT** — migration `182`. Six maisons ajoutées : **Dos Santos** (Gran Canaria,
+1921), **Montealto** (Breña Alta, 1917/1918), **Puros Artesanos Julio** (2000),
+**Finca Tabaquera El Sitio** (2005), **Canaritos** (Güímar, Tenerife) et
+**Kolumbus**. L'archipel passe de deux à huit fiches.
+
+La recherche a aussi rendu ce que les deux fiches existantes taisaient :
+`Vargas.founded` disait « La Palma, Îles Canaries » — un lieu dans un champ de
+date. C'est 1925, Santa Cruz de La Palma, Enrique Vargas de Paz et son frère
+Felipe. Et la fiche de pays ignorait le **mildiou bleu de 1967**, qui a détruit
+les plantations de La Palma : il reste des ateliers, il n'y a plus d'industrie.
 
 ### États-Unis — 3
 **Ferio Tego** (a repris le portefeuille Nat Sherman) · **7-20-4** (Kurt Kendall,
@@ -191,8 +202,10 @@ Un atlas du cigare **premium roulé à la main** n'a pas à porter :
    révélé une variante du défaut : la confusion ligne/marque prise à l'envers,
    deux marques de plein droit réduites à une ligne du champ `gamme` de leur
    maison mère — et l'une des deux n'y était même pas.
-3. **Les Canaries** — deux maisons pour un pays producteur qui n'en a que deux.
-   Puros Artesanos Julio cultive sa propre plantation à La Palma.
+3. ~~**Les Canaries**~~ — **FAIT**, migration `182`. Six maisons, et le chantier
+   a rendu plus que des fiches : deux sociétés presque homonymes séparées, une
+   colonne muette réparée chez Vargas, et le mildiou bleu de 1967 enfin écrit
+   sur la fiche de pays.
 4. **Nicoya (Australie)** — un continent de plus, et une maison unique.
 5. **La scène boutique nicaraguayenne et dominicaine** — Dunbarton, RoMa Craft,
    Southern Draw, Viaje, Caldwell, La Palina, Room101, Kristoff. Au fil de l'eau :

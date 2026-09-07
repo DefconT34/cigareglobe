@@ -3200,3 +3200,62 @@ de l'énoncer. Même traitement que les notes de presse sans `source_url`.
 **67**, dont : les six canariennes (Dos Santos/La Regenta, Canaritos, El Sitio,
 Kolumbus, Puros Artesanos Julio, Montealto), Nicoya en Australie, et la scène
 boutique nicaraguayenne et dominicaine.
+
+---
+
+## Migration `182` — Les six maisons canariennes
+
+**145 marques**, 18 pays producteurs, 850 assertions, 0 échec, huit contrôles
+verts, 7 360 sceaux à jour. **Plus aucune maison canarienne ne manque.**
+
+Les Canaries étaient le pays producteur le plus pauvre de l'atlas : deux fiches
+pour un archipel qui **cultive et roule au même endroit** — ce que presque aucun
+autre endroit d'Europe ne fait. Elles passent de deux à huit.
+
+| maison | où | ce qu'elle apporte |
+|---|---|---|
+| **Dos Santos** | Las Palmas de Gran Canaria, 1921 | la seule qui ne soit pas de La Palma ; quatre générations, et des volumes qui disent ce qu'elle est vraiment |
+| **Montealto** | Breña Alta, 1917/1918 | la plus ancienne fabrique encore en activité de l'archipel |
+| **Finca Tabaquera El Sitio** | Breña Alta, 2005 | un champ avant d'être une marque : seule à cultiver sa cape sous bâches |
+| **Puros Artesanos Julio** | Breña Alta, 2000 | la plantation est en face de l'atelier |
+| **Kolumbus** | La Palma | longfiller intégralement palmero, vieilli en caves de cèdre |
+| **Canaritos** | Güímar, Tenerife | l'autre modèle canarien : shortfiller, feuille importée |
+
+### L'homonymie qui piégeait la fiche de pays
+`tabacaleras` portait « Compañía Insular Tabacalera » comme s'il n'y en avait
+qu'une. Il y en a **deux**, à quarante ans et une mer d'écart : celle de
+Benjamín Menéndez (Gran Canaria, 1961, le Montecruz) et la **Compañía Insular de
+Tabaco de La Palma** (Breña Alta, 1917/1918, le Montealto). La fiche Montealto
+écrit la distinction en toutes lettres — même les répertoires d'entreprises
+confondent les deux.
+
+### Une colonne muette, et un fait manquant
+`Vargas.founded` disait « La Palma, Îles Canaries » : **un lieu dans un champ de
+date**, donc rien. C'est 1925, Santa Cruz de La Palma, Enrique Vargas de Paz et
+son frère Felipe.
+
+Et `notes` s'arrêtait à l'exil cubain de 1960, en taisant ce qui explique l'état
+actuel de l'archipel : **le mildiou bleu a détruit les plantations de La Palma en
+1967.** Il reste des ateliers ; il n'y a plus d'industrie. Les six fiches ne se
+lisent pas sans cela.
+
+### Trois garde-fous ont refusé le premier jet — aucun n'a été excepté
+| contrôle | ce qu'il a vu | ce qui a été fait |
+|---|---|---|
+| `marques_check` | El Sitio citait « Cigar Journal » dans **douze colonnes**, sans `source_url` vers le classement | mention retirée |
+| `coherence_check` | `regions` annonçait trois lieux sans zone derrière ; `varieties` annonçait « Breña » sans fiche | deux vraies zones créées (49, 50) ; Santa Cruz retirée (mêmes coordonnées que « La Palma ») ; Breña retirée — c'est le nom que Kolumbus donne à la feuille palmera, qui a déjà sa fiche |
+| `i18n_superlatif_check` | deux traductions affirmaient un rang que le français ne porte pas | le chinois de Dos Santos et un « más que » espagnol chez Kolumbus, reformulés |
+
+### La fiche Kolumbus dit ce qu'elle ne sait pas
+Trois amis l'ont fondée ; la maison ne publie ni leur nom ni son année, et
+l'atlas ne les invente pas — même traitement que la variété du tabac de Fagot.
+En revanche elle porte un fait qu'aucune autre n'a : le règlement européen
+**Track & Trace**, écrit contre le trafic de cigarettes et étendu au cigare,
+chiffré par zigarren.zone à plus de soixante-dix mille francs suisses
+d'investissement et **une année entière sans aucune exportation**. C'est le genre
+de raison pour laquelle une scène disparaît sans que personne l'ait décidé.
+
+### Reste de la liste des maisons absentes
+**61**, dont Nicoya (Australie), la scène boutique nicaraguayenne et dominicaine,
+et la tradition européenne (Pays-Bas, Belgique) — qui change la nature de
+l'atlas et mérite d'être décidée, pas subie.
