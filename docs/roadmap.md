@@ -3259,3 +3259,80 @@ de raison pour laquelle une scène disparaît sans que personne l'ait décidé.
 **61**, dont Nicoya (Australie), la scène boutique nicaraguayenne et dominicaine,
 et la tradition européenne (Pays-Bas, Belgique) — qui change la nature de
 l'atlas et mérite d'être décidée, pas subie.
+
+---
+
+## Migrations `183` et `184` — Nicoya, et huit phrases coupées net
+
+**146 marques**, 18 pays producteurs, 862 assertions, 0 échec, huit contrôles
+verts.
+
+### `183` — Nicoya : une recommandation de ce dépôt, infirmée
+
+`docs/maisons-absentes.md` annonçait « **Australie — Nicoya Cigars — un
+continent de plus** ». C'était **faux**, et la vérification l'établit sans
+ambiguïté : la culture commerciale du tabac a cessé en Australie en **octobre
+2006**, à Myrtleford, d'où venaient 95 % de la récolte nationale, et elle y est
+**illégale** depuis.
+
+Nicoya ne contient donc pas un gramme de tabac australien et ne peut pas en
+contenir. C'est une marque australienne — Gerard Hayes, 2016, autofinancée —
+roulée à Estelí chez **A.J. Fernández**, que l'atlas porte déjà. Sa fiche est
+**nicaraguayenne**, comme Casdagli est costaricienne et Diamond Crown
+dominicaine : l'atlas classe une marque par le lieu où le cigare est fait.
+
+**La confusion valait pour quatre lignes, pas une.** Le tableau « ce qui
+étendrait la carte » portait aussi Pays-Bas, Belgique et Allemagne comme des
+pays à ouvrir — alors qu'ils sont **déjà** des pays d'adresses de l'atlas. La
+vraie question n'était pas « faut-il ouvrir un pays ? » mais « **l'atlas
+porte-t-il le cigare de machine ?** ». Le document est corrigé.
+
+Le prix australien est écrit sur la fiche parce qu'il ne tient pas au cigare :
+une pièce autour de 50 AUD, la boîte de vingt autour de 1 000. C'est l'accise
+qui parle.
+
+### `184` — Huit phrases coupées net, en ligne depuis des mois
+
+**Trouvé en écrivant la fiche Nicoya.** Elle affichait « production au
+Nicaragu ». La chaîne faisait 51 caractères, `brands.founded` est un
+`varchar(50)`, et MySQL l'a tronquée **sans rien dire** — l'INSERT sort en
+succès.
+
+En vérifiant, **huit autres fiches** étaient dans le même état :
+
+| marque | ce qu'on lisait | ce qui manquait |
+|---|---|---|
+| **Suerdieck** | « fermée en 2 » | **l'année de fermeture, 2000** |
+| **Crowned Heads** | « (production au Nicarag » | la parenthèse n'était jamais fermée |
+| **La Aurora** | « République Domi » | |
+| **Juan Clemente** | « Rép. dominicain » | |
+| **Bering** | « au Honduras dep » | depuis 1990 |
+| **Warped** | « et en Florid » | |
+| **The Griffin's** | « pour un club de Genève ou » | |
+| **Meerapfel** | « cape du Cameroun, » | virgule en suspens |
+
+**Pourquoi rien ne l'a vu.** La valeur est une chaîne valide. La fiche
+s'affiche, le rendu est correct, les sceaux sont à jour, `i18n_fraicheur`
+compte 100 %. L'anomalie n'est **que dans le sens**, et seulement pour qui lit
+la phrase jusqu'au bout.
+
+**Rien n'a été inventé** : chaque phrase se reconstitue depuis sa propre fiche.
+Le cas de Suerdieck est le plus net — `founded` avait perdu l'année, mais
+`factory` disait « usine fermée en 2000 ».
+
+**Le contrôle qui l'aurait vu** est désormais dans `coherence_check` : un texte
+libre dont la longueur tombe **pile** sur la capacité de sa colonne n'y tombe
+pas par hasard. La largeur est lue dans `INFORMATION_SCHEMA` plutôt qu'écrite en
+dur — la colonne peut être élargie un jour. Il couvre `brands.founded`,
+`brands.factory`, `brands.name` et `lounges.name`.
+
+Un faux positif reste possible : une phrase peut mesurer exactement cinquante
+caractères. Le remède est alors d'un mot — reformuler.
+
+*Note : le test « la mesure est en caractères, pas en octets » a d'abord échoué
+sur une erreur d'arithmétique de ma part — j'avais compté 44 là où la base
+disait 45. Le garde-fou a servi tout de suite, et contre moi.*
+
+### Reste de la liste des maisons absentes
+**60**, dont la scène boutique nicaraguayenne et dominicaine (une vingtaine de
+fiches courtes), et la question éditoriale du cigare de machine européen.

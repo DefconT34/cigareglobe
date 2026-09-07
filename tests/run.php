@@ -4910,6 +4910,53 @@ section('Les mentions legales ne parlent qu\'au visiteur');
 }
 
 // ════════════════════════════════════════════════════════
+section('Une phrase coupee net par la largeur de sa colonne');
+
+// CE QUI EST ARRIVE. La fiche Nicoya affichait « production au
+// Nicaragu ». La chaine faisait 51 caracteres, brands.founded est un
+// varchar(50), et MySQL l'a tronquee SANS RIEN DIRE — l'INSERT sort en
+// succes. HUIT AUTRES fiches etaient dans le meme etat, en ligne depuis
+// des mois, toutes coupees en plein mot. Suerdieck y avait perdu son
+// annee de fermeture.
+//
+// AUCUN CONTROLE NE POUVAIT LE VOIR : la valeur est une chaine valide,
+// la fiche s'affiche, les sceaux sont a jour. L'anomalie n'est que dans
+// le SENS.
+//
+// Le controle vit dans coherence_check, qui a besoin de la base. On
+// eprouve ici la REGLE elle-meme, sans base : une valeur dont la
+// longueur egale la capacite est suspecte, une valeur plus courte ne
+// l'est pas.
+$suspecte = static function (string $v, int $large): bool {
+    return mb_strlen($v) === $large;
+};
+
+check('troncature : une valeur pile a la capacite est suspecte',
+      $suspecte('1892 — Cruz das Almas, Bahia, Brésil · fermée en 2', 50));
+check('troncature : une valeur plus courte ne l est pas',
+      !$suspecte('1892 — Cruz das Almas, Bahia · fermée en 2000', 50));
+// LE PIEGE MULTIOCTET. « — », « é » et « · » comptent pour UN caractere
+// dans un varchar mais pour plusieurs octets. Un controle ecrit avec
+// strlen() aurait declare suspecte une phrase de 40 caracteres accentues
+// et laisse passer les huit vraies.
+check('troncature : la mesure est en caracteres, pas en octets',
+      mb_strlen('1892 — Cruz das Almas, Bahia · fermée en 2000') === 45
+      && strlen('1892 — Cruz das Almas, Bahia · fermée en 2000') > 45);
+// Et les neuf valeurs reparees doivent toutes garder une marge.
+foreach (['1905 — Tampa ; produit au Honduras depuis 1990',
+          '2011 — Nashville, Tennessee ; sans usine propre',
+          '1982 — Santiago de los Caballeros, Rép. dom.',
+          '1903 — Santiago de los Caballeros, Rép. dom.',
+          'Famille marchande depuis 1876 — cape du Cameroun',
+          '1892 — Cruz das Almas, Bahia · fermée en 2000',
+          '1984 — Rép. dominicaine, pour un club genevois',
+          '2007 — Miami ; Nicaragua et Floride',
+          '2016 — maison australienne, roulée au Nicaragua'] as $v) {
+    check('troncature : « ' . mb_substr($v, 0, 22) . '… » tient sous la limite',
+          mb_strlen($v) < 50);
+}
+
+// ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 
 // Un test qui ecrit dans la base APPLICATIVE ne se voit pas : il passe,

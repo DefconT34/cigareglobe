@@ -1,7 +1,7 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`182`**. L'atlas compte **145 maisons** dans 18 pays producteurs.*
+`184`**. L'atlas compte **146 maisons** dans 18 pays producteurs.*
 
 > **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
 > Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
@@ -17,7 +17,12 @@
 > Artesanos Julio, Finca Tabaquera El Sitio, Canaritos et Kolumbus. L'archipel
 > passe de deux fiches à huit, et **plus aucune maison canarienne ne manque**.
 >
-> **61 restent.** Le recensement complet, avec les dix maisons européennes
+> **Et Nicoya** (migration `183`) — mais **pas** comme ce document l'annonçait.
+> Voir l'encadré de « Ce qui étendrait la carte » : la section confondait
+> « une maison est basée là » avec « ce pays produit », et se trompait sur
+> ses quatre lignes vivantes.
+>
+> **60 restent.** Le recensement complet, avec les maisons européennes
 > découvertes à la troisième passe, est ci-dessous.
 
 *Version d'origine : l'atlas comptait alors **130 maisons**
@@ -73,7 +78,7 @@ et recoupée sur une source qui se met à jour.
 
 ---
 
-## Les 61 maisons absentes, par pays
+## Les 60 maisons absentes, par pays
 
 ### République dominicaine — 15
 | maison | qui |
@@ -143,13 +148,37 @@ New Hampshire) · **Cuban Crafters** (Miami)
 
 ## Ce qui étendrait la carte
 
-| pays absent | maison | note |
+> ### ⚠ Cette section était fausse sur ses quatre lignes vivantes
+>
+> Elle confondait **« une maison est basée là »** avec **« ce pays produit »**.
+> Ce ne sont pas les mêmes choses, et l'atlas les sépare depuis toujours : un
+> **pays producteur** cultive du tabac, un **pays d'adresses** en accueille les
+> maisons et les caves.
+>
+> **Australie, Pays-Bas, Belgique et Allemagne sont DÉJÀ des pays d'adresses de
+> l'atlas.** Aucun des quatre n'a jamais été un pays producteur à ouvrir. Une
+> maison qui y siège se rattache à ce pays d'adresses — c'est le chemin qu'a
+> ouvert Le Fagot Cigar en Côte d'Ivoire, et qu'ont emprunté les trois maisons
+> suisses de la migration `180`.
+>
+> Le cas de l'Australie est le plus net, et il est vérifiable : **la culture
+> commerciale du tabac y a cessé en octobre 2006**, à Myrtleford, d'où venaient
+> 95 % de la récolte nationale, et elle y est **illégale** depuis. Nicoya ne
+> contient pas un gramme de tabac australien et ne peut pas en contenir : c'est
+> une marque australienne roulée à Estelí chez A.J. Fernández, et sa fiche est
+> donc **nicaraguayenne** (migration `183`).
+
+| pays | maison | ce qu'il en est réellement |
 |---|---|---|
-| ~~Mozambique~~ | ~~Bongani~~ | **FAIT** — migration `174`, 18ᵉ pays producteur |
-| **Australie** | **Nicoya Cigars** | fondée en 2015, seule maison australienne |
-| **Pays-Bas** | Ritmeester, Willem II, Agio, De Olifant | tradition européenne, machine |
-| **Belgique** | J. Cortès, Neos | J. Cortès possède Oliva depuis 2016 |
-| **Allemagne** | Woermann | l'atlas a Dannemann, rattachée au Brésil |
+| ~~Mozambique~~ | ~~Bongani~~ | **FAIT** — migration `174`, 18ᵉ pays producteur, et celui-là cultive vraiment |
+| ~~Australie~~ | ~~Nicoya Cigars~~ | **FAIT autrement** — migration `183`. Pays d'adresses, pas producteur : plus aucune culture depuis 2006 |
+| **Pays-Bas** | Ritmeester, Willem II, Agio, De Olifant | pays **d'adresses** déjà présent ; maisons de cigarillos, machine |
+| **Belgique** | J. Cortès, Neos | pays **d'adresses** déjà présent ; J. Cortès possède Oliva depuis 2016 |
+| **Allemagne** | Woermann | pays **d'adresses** déjà présent ; l'atlas a Dannemann, rattachée au Brésil |
+
+Ces trois-là restent à décider — non pas « faut-il ouvrir un pays ? », la
+question était mal posée, mais **« l'atlas porte-t-il le cigare de machine ? »**.
+C'est un choix éditorial, et il mérite d'être fait, pas subi.
 
 ---
 
@@ -206,7 +235,11 @@ Un atlas du cigare **premium roulé à la main** n'a pas à porter :
    a rendu plus que des fiches : deux sociétés presque homonymes séparées, une
    colonne muette réparée chez Vargas, et le mildiou bleu de 1967 enfin écrit
    sur la fiche de pays.
-4. **Nicoya (Australie)** — un continent de plus, et une maison unique.
+4. ~~**Nicoya (Australie)**~~ — **FAIT**, migration `183`, mais **pas comme
+   annoncé ici**. Ce n'était pas « un continent de plus » : l'Australie ne
+   cultive plus de tabac depuis 2006, et la fiche est nicaraguayenne. La même
+   erreur valait pour trois autres lignes — voir l'encadré de « Ce qui
+   étendrait la carte ».
 5. **La scène boutique nicaraguayenne et dominicaine** — Dunbarton, RoMa Craft,
    Southern Draw, Viaje, Caldwell, La Palina, Room101, Kristoff. Au fil de l'eau :
    ce sont des fiches courtes, mais nombreuses.

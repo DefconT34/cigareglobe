@@ -504,6 +504,54 @@ if (is_file($dump)) {
     $updatesDump = $vus;
 }
 
+// ── 6. Une phrase coupee net par la largeur de sa colonne ─
+//
+// CE QUI EST ARRIVE, ET COMMENT ON S'EN EST APERCU. La fiche Nicoya
+// affichait « production au Nicaragu ». La chaine faisait 51 caracteres,
+// `brands.founded` est un varchar(50), et MySQL l'a tronquee SANS RIEN
+// DIRE — l'INSERT sort en succes.
+//
+// En verifiant, HUIT AUTRES fiches etaient dans le meme etat, toutes
+// coupees en plein mot, en ligne depuis des mois :
+//
+//   Crowned Heads  « (production au Nicarag »   parenthese jamais fermee
+//   Suerdieck      « fermee en 2 »              L'ANNEE ETAIT PERDUE
+//   La Aurora      « Republique Domi »
+//   Warped, Bering, Juan Clemente, Meerapfel, The Griffin's
+//
+// AUCUN CONTROLE NE POUVAIT LE VOIR. La valeur est une chaine valide,
+// la fiche s'affiche, les sceaux sont a jour, le rendu est correct : il
+// n'y a d'anomalie que dans le SENS, et seulement pour qui lit la phrase
+// jusqu'au bout.
+//
+// LE SIGNAL EST LA LONGUEUR EXACTE. Un texte libre qui tombe pile sur la
+// capacite de sa colonne n'y tombe pas par hasard. On lit donc la
+// largeur dans INFORMATION_SCHEMA plutot que de l'ecrire ici : la
+// colonne peut etre elargie un jour, et le controle doit suivre.
+//
+// Le faux positif est possible — une phrase peut mesurer exactement 50
+// caracteres — mais il est rare, et le remede est d'un mot : reformuler.
+foreach ([['brands', 'founded'], ['brands', 'factory'],
+          ['brands', 'name'],   ['lounges', 'name']] as [$table, $colonne]) {
+    try {
+        $q = $db->prepare(
+            "SELECT CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS
+              WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?");
+        $q->execute([$table, $colonne]);
+        $large = (int)$q->fetchColumn();
+        if ($large <= 0) continue;
+
+        $r = $db->query("SELECT `$colonne` FROM `$table`
+                          WHERE CHAR_LENGTH(`$colonne`) = $large");
+        foreach ($r as $ligne) {
+            $defauts[] = sprintf(
+                '%s.%s : « %s » fait exactement %d caracteres, la capacite de la colonne — '
+              . 'la phrase a probablement ete tronquee a l\'ecriture, sans erreur',
+                $table, $colonne, $ligne[$colonne], $large);
+        }
+    } catch (Throwable $e) { /* colonne absente : rien a verifier */ }
+}
+
 // ── Rapport ──────────────────────────────────────────────
 
 echo "CigarOdyssey — coherence entre champs\n\n";
