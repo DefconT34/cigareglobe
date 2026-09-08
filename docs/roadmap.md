@@ -3674,3 +3674,59 @@ vérifiant cette chaîne qu'on a trouvé la contradiction Dannemann.
 ### Une reprise
 `i18n_superlatif_check` a vu un superlatif chinois de trop chez La Palina.
 Reformulé.
+
+---
+
+## Migration `190` — Le cercle Eiroa, et deux ateliers d'Estelí
+
+**166 marques**, 865 assertions, 0 échec, huit contrôles verts.
+
+| maison | qui | où |
+|---|---|---|
+| **CLE Cigar Company** | Christian Eiroa, 2012 | Danlí, Honduras |
+| **Asylum** | Tom Lazuka et Christian Eiroa, 2012 | NACSA, Estelí — **nicaragua** |
+| **Oscar Valladares** | Oscar et Hector Valladares, Bayron Duarte, 2012 | Danlí, Honduras |
+| **Micallef** | Al Micallef et la famille Gómez Sánchez, 2016 | fabrique 1934, Estelí — **nicaragua** |
+
+**Quatre fiches et non six.** Don Tomas, HPC et 777 n'ont pas été assez
+documentées pour être écrites. Mieux vaut quatre fiches sourcées que six dont
+deux tiennent sur des pages de détaillants.
+
+### La consigne « qui fait quoi » rend le plus sur ce lot
+Les quatre maisons ne sont pas isolées : ce sont des **chaînes de personnes**, et
+chaque maillon a déjà sa fiche dans cet atlas.
+
+**Le cercle Eiroa, sur trois générations**
+- **Generoso J. Eiroa** quitte l'Espagne pour Cuba ; ferme de tabac à Pinar del Río
+- **Julio Eiroa** travaille avec Angel Oliva, fonde sa ferme dans la vallée de Jamastran — c'est lui d'**Aladino**, que l'atlas porte
+- **Christian Eiroa** possède **Camacho** avec son père et la **vend à Davidoff en 2008** — Camacho et Oettinger Davidoff sont dans l'atlas, et c'est la même histoire vue des deux bouts ; il fonde CLE en juillet 2012 et Asylum avec Tom Lazuka
+
+**La chaîne Micallef, sur trois générations aussi**
+- **Pedro F. Gómez** roulait chez **H. Upmann**, à La Havane
+- sa belle-fille travaillait chez **Partagás**
+- ses petits-fils **Joel et Edel** tiennent la fabrique 1934 d'Estelí
+
+**L'équipe Valladares, formée ailleurs**
+- Oscar : neuf ans chez **Rocky Patel** · Bayron Duarte : vingt ans entre **General Cigar** et **Oliva**
+
+### ⚠ Quatrième et cinquième erreur de pays du recensement
+`docs/maisons-absentes.md` classait **Asylum et Micallef au Honduras**. Les deux
+sont fausses. Asylum sort principalement de la NACSA à Estelí ; Micallef de la
+fabrique 1934 d'Estelí, où le Honduras n'apparaît que dans la **tripe**.
+
+Après Nicoya, La Palina et Padilla, cela fait **cinq**. Le motif ne varie pas :
+la nationalité ou le domicile du fondateur pris pour le lieu de fabrication. Le
+document porte désormais cet avertissement **en tête de sa méthode**, avec le
+tableau des cinq cas.
+
+Une date corrigée au passage : Oscar Valladares est de **2012**, pas 2013 —
+comme Southern Draw était de 2014 et non 2015.
+
+### Un cinéma devenu fabrique
+La fabrique Aladino de Danlí, où se fait la part hondurienne d'Asylum, **était un
+cinéma**, et il appartenait au grand-père de Christian Eiroa. Elle a par ailleurs
+été l'une des premières installations tabacoles certifiées par Bayer CropScience.
+
+### Une reprise
+`i18n_superlatif_check` a vu un « أفضل » arabe chez Oscar Valladares là où le
+français dit « se lit mieux ». Reformulé.

@@ -1,7 +1,7 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`189`**. L'atlas compte **162 maisons** dans 18 pays producteurs. La migration
+`190`**. L'atlas compte **166 maisons** dans 18 pays producteurs. La migration
 `187` en a retiré trois — la règle « aucun cigare de machine » appliquée à
 l'existant — et la `188` en a ajouté six.*
 
@@ -44,7 +44,11 @@ l'existant — et la `188` en a ajouté six.*
 > **négociant sans fabrique**, qui fait rouler chez cinq partenaires dont trois
 > ont déjà leur fiche ici.
 >
-> **41 restent.** Le recensement complet est ci-dessous ; la tradition
+> **Et le cercle Eiroa** (migration `190`) — CLE, Asylum, Oscar Valladares et
+> Micallef. Quatre fiches et non six : Don Tomas, HPC et 777 n'ont pas été
+> assez documentées pour être écrites.
+>
+> **37 restent.** Le recensement complet est ci-dessous ; la tradition
 > européenne en est sortie, elle est hors périmètre.
 
 ---
@@ -96,6 +100,23 @@ Trois sources ont été recoupées **à la machine** contre les 130 maisons en b
 **L'atlas n'est pas un sous-ensemble de Cigar Aficionado.** Il porte sept maisons
 que l'index de CA ne nomme pas : Perdomo, Crowned Heads, Warped, Espinosa,
 Mombacho, Capitol et Foundation. Chaque source a ses trous.
+
+### ⚠ Le piège le plus coûteux : le pays du fondateur n'est pas le pays du cigare
+
+**Ce document s'est trompé de pays cinq fois**, et toujours pour la même raison :
+la nationalité ou le domicile du fondateur pris pour le lieu de fabrication.
+
+| maison | ce que le document disait | ce qui est vrai |
+|---|---|---|
+| **Nicoya** | Australie, « un continent de plus » | l'Australie ne cultive plus depuis 2006 ; roulée à Estelí |
+| **La Palina** | République dominicaine | négociant sans fabrique ; son apex sort de Miami |
+| **Padilla** | Nicaragua | son Padilla Miami est roulé Calle Ocho |
+| **Asylum** | Honduras | principalement la NACSA, à Estelí |
+| **Micallef** | Honduras | fabrique 1934, à Estelí ; le Honduras n'est que dans la tripe |
+
+**La règle de l'atlas est constante : on classe par le lieu où le cigare est
+FAIT.** Pas par le passeport, pas par le siège social, pas par l'origine de la
+feuille. Et quand la production est éclatée, la fiche l'écrit.
 
 ### ⚠ Deux pièges qui ont chacun coûté une erreur
 
@@ -156,7 +177,7 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 
 ---
 
-## Les 41 maisons absentes, par pays
+## Les 37 maisons absentes, par pays
 
 ### République dominicaine — 7
 | maison | qui |
@@ -174,7 +195,7 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 | **Zino** | Davidoff |
 | **Arsen** · **Star Cigar** | plus petites |
 
-### Nicaragua — 9
+### Nicaragua — 7
 | maison | qui |
 |---|---|
 | ~~Dunbarton Tobacco & Trust~~ | **FAIT** — migration `185` |
@@ -188,11 +209,18 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 | **HVC** · **Fratello** · **Curivari** · **Black Label Trading** · **La Barba** · **Protocol** · **Regius** · **Cornelius & Anthony** · **262** · **Emilio** · **Nick's Sticks** | scène boutique |
 | ~~Los Statos~~ | retirée du tarif STG en 2026 — **ne pas créer** |
 
-### Honduras — 9
-**Asylum** (Tom Lazuka et Christian Eiroa) · **CLE** (Christian Luis Eiroa, 2012) ·
-**Maya Selva** (*la maison* derrière Flor de Selva et Villa Zamorano) ·
-**Oscar Valladares** · **Micallef** · **Don Tomas** (Danlí, Estélo Padrón) ·
-**HPC** · **777** · ~~Sancho Panza non cubain~~ *(retirée du tarif)*
+### Honduras — 3
+~~CLE~~ · ~~Oscar Valladares~~ — **FAIT**, migration `190`.
+~~Maya Selva~~ — **FAIT**, migration `180`.
+~~Asylum~~ et ~~Micallef~~ — **FAIT**, migration `190`, mais **sous `nicaragua`** :
+Asylum sort principalement de la NACSA à Estelí (le reste de la fabrique Aladino
+à Danlí), et Micallef de la fabrique 1934 des Gómez Sánchez à Estelí — le
+Honduras n'apparaît que dans sa tripe.
+
+Restent : **Don Tomas** (Danlí) · **HPC** · **777** ·
+~~Sancho Panza non cubain~~ *(retirée du tarif)*. Les trois **n'ont pas été
+écrites faute de sources suffisantes** — mieux vaut une fiche absente qu'une
+fiche qui tient sur une page de détaillant.
 
 ### Costa Rica — 3
 **Selected Tobacco** — Nelson Alfonso, *la maison* derrière Atabey, Byron **et**
