@@ -1,7 +1,7 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`188`**. L'atlas compte **161 maisons** dans 18 pays producteurs. La migration
+`189`**. L'atlas compte **162 maisons** dans 18 pays producteurs. La migration
 `187` en a retiré trois — la règle « aucun cigare de machine » appliquée à
 l'existant — et la `188` en a ajouté six.*
 
@@ -40,8 +40,35 @@ l'existant — et la `188` en a ajouté six.*
 > écrites**. Deux d'entre elles ont fini par avoir leur propre fabrique : le
 > modèle sans usine n'est pas toujours un état définitif.
 >
-> **42 restent.** Le recensement complet est ci-dessous ; la tradition
+> **Et La Palina** (migration `189`) — sous `usa`, après recherche : c'est un
+> **négociant sans fabrique**, qui fait rouler chez cinq partenaires dont trois
+> ont déjà leur fiche ici.
+>
+> **41 restent.** Le recensement complet est ci-dessous ; la tradition
 > européenne en est sortie, elle est hors périmètre.
+
+---
+
+## ⚠ La consigne durable : nommer qui fait quoi
+
+**Demande du propriétaire de l'atlas.** Une fiche de marque doit dire les
+**collaborations** et le **rôle de chacun** : qui compose, qui roule, qui
+possède, qui distribue. Ce n'est pas un ornement — c'est souvent le seul moyen
+de comprendre ce qu'on tient.
+
+La scène premium est faite de ces partages. Sur les fiches récentes :
+
+| maison | son rôle | qui roule pour elle |
+|---|---|---|
+| **La Palina** | négociant : possède son tabac, ses produits finis et ses marques, **aucune fabrique** | El Titan de Bronze (Miami), PDR (Rép. dom.), Raíces Cubanas (Honduras), A.J. Fernández (Nicaragua), Graycliff (Bahamas) |
+| **Aging Room** | Rafael Nodal compose | Jochy Blanco fabrique — **et ils sont associés**, ce qui n'est pas la règle |
+| **Room101** | Matt Booth dessine, STG possède | A.J. Fernández, Joya de Nicaragua, HATSA |
+| **Dunbarton** | Steve Saka compose et signe | Joya de Nicaragua, NACSA |
+| **Southern Draw** | les Holt composent | A.J. Fernández, **et lui seul** |
+
+Le contrôle de cohérence de cette chaîne a déjà servi : c'est en la vérifiant
+qu'on a trouvé **deux fiches de l'atlas qui se contredisaient** sur le
+propriétaire de Dannemann (migration `189`).
 
 *Version d'origine : l'atlas comptait alors **130 maisons**
 dans **18 pays producteurs**. Ce document remplace une première version, faite le
@@ -108,10 +135,13 @@ qui sort est le *produit* de machine, pas le récit qui l'explique.
 **Cette règle ferme aussi la question européenne** (voir plus bas) : Pays-Bas,
 Belgique et Allemagne n'étaient candidats que par des maisons de cigarillos.
 
-⚠ **Un cas reste à trancher : Dannemann.** Sa fiche raconte cent cinquante ans à
-São Félix da Cachoeira et le terroir du Recôncavo, mais sa gamme décrit trois
-cigarillos. Le Brésil ne compte que quatre fiches : la retirer est une décision
-de **pays**, pas de produit.
+**Le cas Dannemann est tranché** (migration `189`). Le groupe fait les deux,
+mais **pas au même endroit** : São Félix da Cachoeira, au Brésil, est la
+fabrique de **longfillers roulés main** par des *charuteiras* ; les cigarillos
+sortent de Lübbecke, en Allemagne, et des ateliers suisses de Brissago et
+Reinach. La fiche porte la maison brésilienne — **elle reste**. Ce qui est sorti,
+ce sont les deux entrées de cigarillos de sa gamme, Speciale et Pierrot (ce
+dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 
 ---
 
@@ -126,9 +156,9 @@ de **pays**, pas de produit.
 
 ---
 
-## Les 42 maisons absentes, par pays
+## Les 41 maisons absentes, par pays
 
-### République dominicaine — 8
+### République dominicaine — 7
 | maison | qui |
 |---|---|
 | ~~Diamond Crown~~ · ~~Cuesta-Rey~~ | **FAIT** — migration `181` |
@@ -137,7 +167,7 @@ de **pays**, pas de produit.
 | ~~Aging Room~~ · ~~Swag~~ | **FAIT** — migration `186` |
 | ~~Kristoff~~ · ~~Caldwell Cigar Co.~~ · ~~Casa Cuevas~~ | **FAIT** — migration `186` |
 | ~~Oliveros~~ | **N'EST PAS UNE MAISON** — c'est une étiquette de Boutique Blends. Dit sur la fiche Swag |
-| ⚠ **La Palina** | **à trancher, pas à faire.** Bill Paley, relancée en 2010 — mais elle se fabrique au Honduras, au Nicaragua, en Rép. dominicaine **et** à Miami chez El Titan de Bronze. Aucun lieu principal ne se dégage ; lui en inventer un serait refaire l'erreur de Nicoya |
+| ~~La Palina~~ | **FAIT** — migration `189`, **sous `usa`**. La recherche a tranché : la maison se décrit comme un **négociant**, sans fabrique, et fait rouler chez cinq partenaires. Le Goldie et deux autres gammes sortent de Miami |
 | **Nomad** | Fred Rewey — production à vérifier avant de la classer |
 | **Gurkha** | faite à la Tabacalera Las Lavas, celle de Casa Cuevas |
 | **Paul Garmirian** | PG Cigars |

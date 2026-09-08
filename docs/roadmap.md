@@ -3600,3 +3600,77 @@ quatre contre trois au français. Reformulé.
 Regius, Cornelius & Anthony, 262, Emilio, Nick's Sticks, Viaje… Au Honduras,
 neuf maisons entières n'ont pas encore été touchées : Asylum, CLE, Maya Selva,
 Oscar Valladares, Micallef, Don Tomas, HPC, 777.
+
+---
+
+## Migration `189` — Qui fait quoi : Dannemann corrigée, La Palina tranchée
+
+**162 marques**, 865 assertions, 0 échec, huit contrôles verts.
+
+Deux demandes, et une **consigne durable** : nommer les collaborations entre
+maisons et le rôle de chacune.
+
+### 1. Dannemann : la réponse était en deux temps
+La question posée était « à retirer si ce sont des cigarillos faits à la
+machine ». **Le groupe fait les deux, mais pas au même endroit :**
+
+| site | ce qu'il produit |
+|---|---|
+| **São Félix da Cachoeira, Bahia** | **longfiller roulé main**, par des *charuteiras* |
+| Lübbecke, Allemagne | cigarillos, machine |
+| Brissago et Reinach, Suisse | cigarillos et cigares de spécialité |
+
+La fiche porte la maison brésilienne, celle du Recôncavo, qui roule à la main.
+**Elle reste.** Ce qui sort, ce sont les **deux entrées de cigarillos** de son
+champ `gamme` — Speciale et Pierrot, ce dernier « aromatisé vanille ou cerise ».
+Il reste la Premium, réécrite pour dire ce qu'elle est. Même partage que chez
+J.C. Newman à la `187` : le produit de machine sort, la maison reste.
+
+### ⚠ Et une contradiction entre deux fiches de l'atlas
+**Trouvée en vérifiant la chaîne de propriété — exactement ce que la consigne
+demandait de faire.**
+
+- `Dannemann` disait : « rachat par le groupe **Swisher International** »
+- `Burger Söhne` disait : « en 1988, elle rachète **Dannemann GmbH** à Lübbecke »
+
+C'est Burger Söhne qui a raison : `dannemann-group.com` déclare le groupe suisse
+et familial. Swisher International est une société américaine étrangère à cette
+chaîne — elle figure en revanche à juste titre sur la fiche **Bering**, qu'elle a
+bien possédée.
+
+**Aucun contrôle ne pouvait le voir** : deux affirmations vraies séparément,
+fausses ensemble. Corrigé dans les six langues, avec le `SELECT` de contrôle des
+six `REPLACE`.
+
+### 2. La Palina : la recherche a donné mieux que la réponse attendue
+Écartée délibérément à la `186`, faute de lieu principal. La recherche a tranché
+et a livré la clé : **la maison se décrit elle-même comme un négociant**. Elle ne
+possède aucune fabrique, mais elle possède son tabac, ses produits finis et ses
+marques.
+
+| gamme | qui la roule |
+|---|---|
+| **Goldie** (par **un seul** rouleur) et **Mr. Sam** | El Titan de Bronze, Miami |
+| **Classic** | PDR Cigars, Rép. dominicaine |
+| **El Diario**, **Maduro** | Raíces Cubanas, Honduras |
+| **Nicaragua Oscuro** | A.J. Fernández, Nicaragua |
+| **1896** | Graycliff, Bahamas |
+
+**Trois de ces cinq partenaires ont déjà leur fiche dans cet atlas**, et la fiche
+les nomme. `country_id` = `usa` : le Goldie et deux autres gammes sortent de
+Miami — même raisonnement que Padilla à la `188`.
+
+Le récit vaut d'être noté : Samuel Paley fonde la marque en 1896 et la baptise du
+prénom de sa femme, **Goldie**. Son fils vend les cigares par la radio, prend en
+1928 le contrôle du réseau qui diffusait l'émission, quitte le cigare et fait de
+**CBS** ce qu'elle est devenue. Le petit-fils relance le nom en 2010 — et le
+Goldie porte toujours le prénom de l'arrière-grand-mère.
+
+### La consigne « qui fait quoi » entre au recensement
+`docs/maisons-absentes.md` porte désormais une section dédiée, avec le tableau
+des rôles pour les maisons récentes. Ce n'est pas un ornement : c'est en
+vérifiant cette chaîne qu'on a trouvé la contradiction Dannemann.
+
+### Une reprise
+`i18n_superlatif_check` a vu un superlatif chinois de trop chez La Palina.
+Reformulé.
