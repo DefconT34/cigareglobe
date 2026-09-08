@@ -1,9 +1,9 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`187`**. L'atlas compte **155 maisons** dans 18 pays producteurs — trois de
-moins qu'à la migration `186`, parce que la règle « aucun cigare de machine » a
-été appliquée à l'existant.*
+`188`**. L'atlas compte **161 maisons** dans 18 pays producteurs. La migration
+`187` en a retiré trois — la règle « aucun cigare de machine » appliquée à
+l'existant — et la `188` en a ajouté six.*
 
 > **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
 > Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
@@ -35,8 +35,13 @@ moins qu'à la migration `186`, parce que la règle « aucun cigare de machine �
 > nicaraguayen : il **nomme trois fabriques** que l'atlas citait sans jamais
 > leur donner de fiche.
 >
-> **48 restent.** Le recensement complet, avec les maisons européennes
-> découvertes à la troisième passe, est ci-dessous.
+> **Et six de plus** (migration `188`) — Southern Draw, HVC, Fratello, Curivari,
+> Black Label Trading et Padilla, **vérifiées roulées main avant d'être
+> écrites**. Deux d'entre elles ont fini par avoir leur propre fabrique : le
+> modèle sans usine n'est pas toujours un état définitif.
+>
+> **42 restent.** Le recensement complet est ci-dessous ; la tradition
+> européenne en est sortie, elle est hors périmètre.
 
 *Version d'origine : l'atlas comptait alors **130 maisons**
 dans **18 pays producteurs**. Ce document remplace une première version, faite le
@@ -121,7 +126,7 @@ de **pays**, pas de produit.
 
 ---
 
-## Les 48 maisons absentes, par pays
+## Les 42 maisons absentes, par pays
 
 ### République dominicaine — 8
 | maison | qui |
@@ -139,7 +144,7 @@ de **pays**, pas de produit.
 | **Zino** | Davidoff |
 | **Arsen** · **Star Cigar** | plus petites |
 
-### Nicaragua — 14
+### Nicaragua — 9
 | maison | qui |
 |---|---|
 | ~~Dunbarton Tobacco & Trust~~ | **FAIT** — migration `185` |
@@ -148,8 +153,8 @@ de **pays**, pas de produit.
 | ~~Room101~~ | **FAIT** — migration `185` |
 | ~~L'Atelier~~ | **FAIT** — migration `185` |
 | ~~La Aroma de Cuba~~ | **FAIT** — migration `185` |
-| **Southern Draw** | Robert et Sharon Holt, **2014** (pas 2015) ; roulée chez A.J. Fernández, Estelí |
-| **Padilla** | Ernesto Padilla |
+| ~~Southern Draw~~ · ~~HVC~~ · ~~Fratello~~ · ~~Curivari~~ · ~~Black Label Trading~~ | **FAIT** — migration `188` |
+| ~~Padilla~~ | **FAIT** — migration `188`, mais **sous `usa`** : son Padilla Miami est roulé à El Titan de Bronze, dans la Petite Havane. Le recensement la classait ici à tort |
 | **HVC** · **Fratello** · **Curivari** · **Black Label Trading** · **La Barba** · **Protocol** · **Regius** · **Cornelius & Anthony** · **262** · **Emilio** · **Nick's Sticks** | scène boutique |
 | ~~Los Statos~~ | retirée du tarif STG en 2026 — **ne pas créer** |
 

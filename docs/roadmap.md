@@ -3538,3 +3538,65 @@ prise ici.
 Elles restent dans le `sql/contenu.sql` du commit précédent et dans l'historique
 Git. Le journal de modération dit lesquelles et pourquoi — pour qu'on ne les
 recrée pas par inadvertance.
+
+---
+
+## Migration `188` — La scène boutique, second lot
+
+**161 marques**, 18 pays producteurs, 865 assertions, 0 échec, huit contrôles
+verts, 7 500 sceaux à jour.
+
+| maison | qui | où elle fait rouler |
+|---|---|---|
+| **Southern Draw** | Robert et Sharon Holt, 2014 | A.J. Fernández — **un seul atelier** |
+| **HVC Cigars** | Reinier Lorenzo, 2011 | Aganorsa, puis **sa propre fabrique depuis 2021** |
+| **Fratello** | Omar de Frias, ingénieur NASA, 2013 | Joya de Nicaragua |
+| **Curivari** | Andreas Throuvalas, 2003 | Estelí — la maison ne nomme pas sa fabrique |
+| **Black Label Trading Co.** | James et Angela Brown, 2013 | **Fábrica Oveja Negra, la sienne depuis 2015** |
+| **Padilla** | Ernesto Padilla, 2003 | El Titan de Bronze, Miami — d'où `usa` |
+
+### La règle de la `187` appliquée en amont, pas seulement en aval
+**Les six ont été vérifiées roulées main avant d'être écrites.** Black Label
+Trading déclare « 100 % handmade » ; HVC revendique les méthodes traditionnelles
+à la main ; Curivari le procédé cubain et la triple coiffe. Aucune ne fait de
+cigarillo. La règle « aucun cigare de machine » n'est pas seulement un filtre de
+retrait — c'est d'abord un critère d'entrée.
+
+### Padilla est américaine, pas nicaraguayenne
+Le recensement la classait au Nicaragua. Son **Padilla Miami**, gamme
+emblématique, est roulé à **El Titan de Bronze**, dans la Petite Havane —
+l'atelier de Calle Ocho que l'atlas porte déjà sous `usa`. Le tabac est
+nicaraguayen, cultivé par Aganorsa, mais **l'atlas classe par le lieu où le
+cigare est fait** : règle de Casdagli, de Diamond Crown et de Nicoya.
+
+D'autres gammes viennent de Raíces Cubanas au Honduras et d'A.J. Fernández au
+Nicaragua. La fiche l'écrit, comme celle de Room101.
+
+C'est la **troisième** fois que le recensement se trompe de pays — après Nicoya
+et La Palina. Le motif est toujours le même : la nationalité du fondateur prise
+pour le lieu de fabrication.
+
+### Deux maisons ont fini par avoir des murs
+La migration `185` montrait cinq maisons sur six **sans usine**. Celle-ci montre
+la suite de l'histoire :
+
+- **HVC** a passé dix ans chez Aganorsa avant d'ouvrir sa fabrique à Estelí en
+  2021 ; partie très petite, elle produit aujourd'hui près d'un million de
+  cigares par an.
+- **Black Label Trading** a ouvert la Fábrica Oveja Negra en 2015, deux ans
+  après ses débuts — une fabrique conçue pour ressembler à un atelier d'artiste.
+
+**Le modèle sans usine n'est pas toujours un état définitif : c'est parfois une
+étape.** Southern Draw est le cas inverse et mérite d'être noté — elle ne fait
+rouler qu'à **un seul** endroit, quand Crowned Heads, Dunbarton et Room101 en
+emploient chacune plusieurs.
+
+### Une reprise
+`i18n_superlatif_check` a vu un superlatif chinois de trop chez Curivari —
+quatre contre trois au français. Reformulé.
+
+### Reste de la liste des maisons absentes
+**42**. Au Nicaragua il ne reste que la petite scène : La Barba, Protocol,
+Regius, Cornelius & Anthony, 262, Emilio, Nick's Sticks, Viaje… Au Honduras,
+neuf maisons entières n'ont pas encore été touchées : Asylum, CLE, Maya Selva,
+Oscar Valladares, Micallef, Don Tomas, HPC, 777.
