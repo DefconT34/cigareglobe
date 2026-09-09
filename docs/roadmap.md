@@ -4402,3 +4402,54 @@ Cinq lots, `195` à `200`. Au-delà des sources :
 **Rien, de ce chantier.** Le point faible de l'atlas reste ce qu'il était : les
 **7 975 traductions au statut `machine`, dont aucune n'a été relue par un
 humain**.
+
+---
+
+## Migration `201` — deux sources qui n'ont pas pris en production
+
+**182 marques**, 897 assertions, 0 échec, neuf contrôles verts, `prevol --autotest`
+53 cas.
+
+### Ce que la vérification après déploiement a trouvé
+Sur les **179 fiches annoncées par le globe, 177 servaient leur source en
+ligne**. Deux ne l'avaient pas : **Menendez Amerino** et **Vegas de Santiago**.
+
+Les deux sont remplies en développement depuis la `195`. Leurs voisines
+immédiates dans le **même `CASE`** — Cuban Crafters, De Los Reyes, Don Tomas,
+Dona Flor — ont bien la leur en ligne. Et en production, ces deux lignes portent
+exactement le même `founded` et le même `factory` qu'ici : **ce ne sont pas
+d'autres lignes.**
+
+### Ce que je ne sais pas
+**Pourquoi l'instruction les a manquées.** Le fichier de la `195` est sain,
+l'ordre des migrations est le bon, les deux noms sont en ASCII pur. Une hypothèse
+tient — un espace invisible dans `brands`.`name` côté production, que le rendu
+HTML avalerait sans rien montrer — mais **je n'ai pas d'accès à cette base pour
+la vérifier**, et je ne vais pas écrire une explication que je n'ai pas mesurée.
+
+La migration ne suppose donc rien : elle **vise par `TRIM`**, normalise le nom au
+passage, et se rejoue sans dommage.
+
+### Et surtout : le contrôle manquait
+**La campagne de tests vérifie la base de développement.** Elle affirme « aucune
+maison n'est sans source », et elle a raison — *sur cette base-là*. Elle ne dit
+rien de la base **servie**, et l'écart n'a été vu qu'en échantillonnant des pages
+à la main.
+
+C'est la limite structurelle de tout contrôle qui tourne sur le poste de travail :
+**une migration qui ne prend pas entièrement laisse une base juste ici et fausse
+là-bas, sans qu'aucun test ne bouge.**
+
+`tools/prevol.php` est le **seul outil de ce dépôt qui s'exécute sur le serveur**.
+La règle lui revient donc : il compte désormais les fiches servies sans source,
+**marques et établissements**. En **avertissement et non en blocage** — une fiche
+sans source est incomplète, pas cassée, et bloquer punirait le déploiement qui
+apporte justement le correctif.
+
+Six cas d'autotest l'éprouvent, dont la contre-épreuve sur base propre, le niveau
+du constat, et la liste longue qui doit dire le compte entier même en coupant les
+noms.
+
+```bash
+php tools/prevol.php    # à lancer SUR LE SERVEUR après chaque déploiement
+```

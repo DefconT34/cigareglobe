@@ -284,6 +284,64 @@ function prevol_constat_brands(array $mauvais): ?array {
 }
 
 /**
+ * Une maison servie sans sa source.
+ *
+ * ── POURQUOI CE CONTRÔLE VIT ICI, ET PAS DANS LA CAMPAGNE ─
+ * La campagne de tests vérifie la base de DÉVELOPPEMENT. Elle affirme
+ * « aucune maison n'est sans source », et elle a raison — sur cette
+ * base-là. Elle ne dit RIEN de la base servie.
+ *
+ * MESURÉ : après le déploiement des migrations 195 à 200, cent quatre-
+ * vingts fiches sur cent quatre-vingt-deux portaient leur source en
+ * ligne, et DEUX ne l'avaient pas — Menendez Amerino et Vegas de
+ * Santiago. Les mêmes deux lignes étaient remplies en développement.
+ * L'écart n'a été vu qu'en échantillonnant des pages à la main.
+ *
+ * C'est la limite structurelle de tout contrôle qui tourne sur le poste
+ * de travail : une migration qui ne prend pas entièrement laisse une
+ * base juste ici et fausse là-bas, sans qu'aucun test ne bouge.
+ *
+ * `prevol.php` est le SEUL outil de ce dépôt qui s'exécute sur le
+ * serveur. La règle « aucune fiche sans source » lui revient donc, pour
+ * les maisons comme pour les caves.
+ *
+ * ── AVERTISSEMENT, PAS BLOCAGE ───────────────────────────
+ * Une fiche sans source se sert quand même : elle est incomplète, pas
+ * cassée. Bloquer une mise en ligne pour cela punirait le déploiement
+ * qui apporte le correctif.
+ */
+function prevol_sans_source(PDO $db): array {
+    $out = ['brands' => [], 'lounges' => 0];
+    try {
+        $q = $db->query("SELECT `name` FROM `brands`
+                          WHERE TRIM(COALESCE(`source`,'')) = '' ORDER BY `name`");
+        foreach ($q as $r) $out['brands'][] = (string)$r['name'];
+    } catch (Throwable $e) { /* colonne absente : base anterieure a la 195 */ }
+    try {
+        $out['lounges'] = (int)$db->query(
+            "SELECT COUNT(*) FROM `lounges` WHERE TRIM(COALESCE(`source`,'')) = ''")->fetchColumn();
+    } catch (Throwable $e) { /* rien a compter */ }
+    return $out;
+}
+
+function prevol_constat_sans_source(array $sans): ?array {
+    $n = count($sans['brands']);
+    if ($n === 0 && $sans['lounges'] === 0) return null;
+    $dit = [];
+    if ($n > 0) {
+        $dit[] = $n . ' maison(s) servie(s) sans source : '
+               . implode(', ', array_slice($sans['brands'], 0, 6))
+               . ($n > 6 ? ', …' : '');
+    }
+    if ($sans['lounges'] > 0) $dit[] = $sans['lounges'] . ' établissement(s) sans source';
+    return prevol_constat('avertissement', 'sources',
+        implode(' ; ', $dit)
+      . '. La campagne de tests ne voit que la base de developpement : un ecart '
+      . 'entre les deux bases ne la fait pas echouer.',
+        'Rejouer la migration qui pose ces sources, puis relancer ce controle sur le serveur.');
+}
+
+/**
  * Des permissions qu'Apache ne peut pas lire.
  *
  * LE SITE ENTIER RÉPOND 403, ET LE MESSAGE NE PARLE PAS DE PERMISSIONS :
@@ -573,6 +631,8 @@ function prevol_controles(array $e): array {
         if ($dr !== null) $c[] = $dr;
         $br = prevol_constat_brands(prevol_brands_abimees(getDB()));
         if ($br !== null) $c[] = $br;
+        $ss = prevol_constat_sans_source(prevol_sans_source(getDB()));
+        if ($ss !== null) $c[] = $ss;
     } catch (Throwable $e2) { /* base injoignable : les autres constats le disent déjà */ }
     $c[] = prevol_constat('rappel', 'sauvegarde',
         'uploads/ et les tables personnelles ne sont dans aucun dépôt, par construction.',
@@ -768,9 +828,46 @@ function prevol_autotest(): int {
         $echecs++;
     }
 
+    // ── Les fiches servies sans source ───────────────────
+    // MESURE APRES DEPLOIEMENT : deux maisons sur 182 servaient sans
+    // source en ligne alors qu'elles etaient remplies en developpement.
+    // La campagne de tests ne pouvait pas le voir — elle lit la base
+    // d'ici. Ce controle-la tourne sur le serveur ; on eprouve donc sa
+    // logique de constat, la base en moins.
+    $sansSrc = [
+        ['base propre',      ['brands' => [],                        'lounges' => 0], false, ''],
+        ['une maison',       ['brands' => ['Menendez Amerino'],      'lounges' => 0], true,  'Menendez Amerino'],
+        ['deux maisons',     ['brands' => ['Menendez Amerino','Vegas de Santiago'], 'lounges' => 0], true, 'Vegas de Santiago'],
+        ['des caves seules', ['brands' => [],                        'lounges' => 7], true,  '7 établissement'],
+    ];
+    foreach ($sansSrc as [$nom, $entree, $doitLever, $motif]) {
+        $c = prevol_constat_sans_source($entree);
+        if ($doitLever && $c === null) {
+            printf("  ECHEC  %-18s aucun constat leve\n", 'sources ' . $nom); $echecs++;
+        } elseif (!$doitLever && $c !== null) {
+            printf("  ECHEC  %-18s constat leve sur une base propre\n", 'sources ' . $nom); $echecs++;
+        } elseif ($c !== null && $motif !== '' && !str_contains($c['dit'], $motif)) {
+            printf("  ECHEC  %-18s le constat ne nomme pas « %s »\n", 'sources ' . $nom, $motif); $echecs++;
+        }
+    }
+    // IL AVERTIT, IL NE BLOQUE PAS. Une fiche sans source est
+    // incomplete, pas cassee : bloquer la mise en ligne punirait le
+    // deploiement qui apporte justement le correctif.
+    $cSS = prevol_constat_sans_source(['brands' => ['X'], 'lounges' => 0]);
+    if (($cSS['niveau'] ?? '') !== 'avertissement') {
+        echo "  ECHEC  sources : le constat doit avertir, pas bloquer\n"; $echecs++;
+    }
+    // Au-dela de six noms, la liste se coupe plutot que de noyer le
+    // rapport — mais elle doit DIRE le compte entier.
+    $cLong = prevol_constat_sans_source(
+        ['brands' => ['A','B','C','D','E','F','G','H'], 'lounges' => 0]);
+    if (!str_contains($cLong['dit'], '8 maison') || !str_contains($cLong['dit'], '…')) {
+        echo "  ECHEC  sources : la liste longue ne dit pas le compte entier\n"; $echecs++;
+    }
+
     printf("prevol --autotest : %d cas, %d echec(s)\n",
            count($cas) + count($sources) + count($issues) + count($ages)
-         + count($inscr) + 4, $echecs);
+         + count($inscr) + count($sansSrc) + 6, $echecs);
     return $echecs === 0 ? 0 : 1;
 }
 
