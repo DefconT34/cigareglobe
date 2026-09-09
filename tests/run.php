@@ -5117,6 +5117,73 @@ check('tiret orphelin : la lecture est en caracteres, pas en octets',
       mb_substr('— Rép. dominicaine', 0, 1) === '—'
       && '— Rép. dominicaine'[0] !== '—');
 
+// ── Une fiche qui se contredit elle-meme sur sa date ─────
+//
+// BOLIVAR portait « 1901 — La Havane » dans son champ `founded` et
+// « Fondee en 1902 » dans la premiere phrase de SON PROPRE TEXTE.
+// habanos.com tranche pour 1902. La fiche se dementait a deux lignes
+// d'intervalle, en ligne depuis des mois — et aucun des deux controles
+// ci-dessus ne pouvait la voir : l'un mesure une longueur, l'autre une
+// premiere lettre, ni l'un ni l'autre ne LIT la valeur.
+//
+// Le controle vit dans coherence_check, qui a besoin de la base. On
+// eprouve ici la SONDE, sans base. La copie ci-dessous doit rester
+// identique a celle de l'outil : la derniere assertion du bloc le
+// verifie, sinon les deux derivent et le test ne mesure plus rien.
+$sondeFondation =
+    '/\b(?:fond[ée]e?s?|cr[ée][ée]e?s?)'
+  . '\s+(?:en|le\s+\d+\s+\w+)\s+(1[5-9]\d\d|20\d\d)\b/iu';
+
+check('date contradictoire : « Fondée en 1902 » est lue',
+      preg_match($sondeFondation, 'Bolívar est le cigare qui ne négocie pas. Fondée en 1902 et nommée', $m1) === 1
+      && (int)$m1[1] === 1902);
+check('date contradictoire : « créée en 1845 » aussi',
+      preg_match($sondeFondation, 'La maison, créée en 1845, roule encore rue Industria.') === 1);
+check('date contradictoire : la forme longue est lue',
+      preg_match($sondeFondation, 'fondée le 3 mars 1875 à La Havane') === 1);
+
+// LES TROIS PIEGES QUI ONT FAIT RETIRER DES VERBES DE LA SONDE.
+// L'essai grandeur nature signalait dix fiches ; NEUF ETAIENT DES FAUX
+// POSITIFS, et ces trois-la disent pourquoi.
+check('date contradictoire : « né en 1919 » n est PAS une fondation',
+      !preg_match($sondeFondation, 'Alejandro Robaina, né en 1919 dans la Vuelta Abajo'));
+check('date contradictoire : « lancée en 2010 » non plus',
+      !preg_match($sondeFondation, 'la Behike, lancée en 2010, a changé le haut de gamme'));
+check('date contradictoire : « ouverte en 1964 » non plus',
+      !preg_match($sondeFondation, 'la fabrique, ouverte en 1964, emploie trois cents personnes'));
+
+// LE PIEGE DE LA SONDE VIDE. La premiere version du motif enchainait
+// « en » et l'annee SANS SEPARATEUR : elle ne cherchait donc que
+// « en1902 », ne trouvait jamais rien, et rendait zero ecart sur une
+// base qui en portait un. Un controle vide se lit exactement comme un
+// controle vert.
+$sondeCassee = '/\b(?:fond[ée]e?s?)\s+(?:en)(1[5-9]\d\d)\b/iu';
+check('date contradictoire : la sonde sans separateur ne trouvait rien',
+      !preg_match($sondeCassee, 'Fondée en 1902'));
+check('date contradictoire : la sonde corrigee, elle, trouve',
+      preg_match($sondeFondation, 'Fondée en 1902') === 1);
+
+// LES ECARTS ASSUMES. Une expression reguliere ne sait pas QUI est
+// fonde dans une phrase : quatre fiches datent la fondation de
+// quelqu'un d'autre que la maison dont elles parlent. Chacune doit
+// porter sa raison — une exception sans raison ecrite n'est pas une
+// exception, c'est un controle desactive.
+$coherSrc = (string)@file_get_contents(PROJECT_ROOT . '/tools/coherence_check.php');
+check('date contradictoire : la sonde du test est celle de l outil',
+      str_contains($coherSrc, "'/\\b(?:fond[ée]e?s?|cr[ée][ée]e?s?)'")
+      && str_contains($coherSrc, "'\\s+(?:en|le\\s+\\d+\\s+\\w+)\\s+(1[5-9]\\d\\d|20\\d\\d)\\b/iu'"));
+check('date contradictoire : les ecarts assumes sont nommes et motives',
+      preg_match_all('/^\s*\'([^\']+)\'\s*=>\s*$/m', $coherSrc) >= 0
+      && str_contains($coherSrc, 'COHER_DATES_ASSUMEES')
+      && str_contains($coherSrc, 'Frank Llaneza'));
+// ET LE GARDE-FOU INVERSE : une exception qui ne sert plus doit sortir
+// de la liste, sinon elle couvrira un jour un vrai defaut.
+check('date contradictoire : une exception devenue inutile est signalee',
+      // Le fichier porte « d\'ecart » AVEC sa contre-oblique, puisque
+      // c'est du source PHP : on cherche donc le fragment qui precede
+      // l'echappement, pas la chaine telle qu'elle sera evaluee.
+      str_contains($coherSrc, 'ne produit plus d'));
+
 // ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 

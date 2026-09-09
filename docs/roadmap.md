@@ -4058,3 +4058,68 @@ trois mêmes cas sur la fiche de marque, contre-épreuve comprise.
 Les **105 maisons sans source**. Les remplir demande de retrouver, fiche par
 fiche, d'où venait un texte écrit avant que la colonne existe — c'est un
 chantier de relecture, pas une migration.
+
+---
+
+## Migration `196` — les vingt-sept cubaines, et une fiche qui se contredisait
+
+**182 marques**, 895 assertions, 0 échec, neuf contrôles verts.
+**Sources : 104 / 182** (78 restantes, contre 105 avant ce lot).
+
+Premier lot du chantier ouvert par la `195`. Les vingt-sept fiches cubaines sont
+le groupe le plus net : elles ont toutes une **page officielle chez leur
+propriétaire**.
+
+### La vérification a précédé la citation
+Le portefeuille annoncé sur `habanos.com` a été relevé **avant** de citer quoi
+que ce soit. Les vingt-six marques de la page « Marcas » plus **Quintero**
+(portefeuille volume, avec José L. Piedra et Vegueros) font exactement les
+vingt-sept fiches cubaines de l'atlas — aucune ne manque d'un côté ni de
+l'autre.
+
+### Et elle a trouvé une contradiction interne
+**Bolívar** portait « 1901 — La Havane » dans son champ `founded` et
+**« Fondée en 1902 »** dans la première phrase de **son propre texte**.
+`habanos.com` tranche : *« The Bolívar brand was created in 1902. »*
+
+**Aucun contrôle ne pouvait le voir** : une date dans un champ et une date dans
+une phrase sont deux chaînes valides, et rien ne les comparait. Le contrôle de
+troncature mesure une longueur, celui du tiret orphelin une première lettre — ni
+l'un ni l'autre ne *lit* la valeur. Même famille que la contradiction Dannemann
+de la `189`, sauf qu'ici **les deux affirmations étaient dans la même fiche**.
+
+### Une date gardée avec sa variance
+**Fonseca** : l'atlas dit 1892. `habanos.com` **ne donne pas d'année** et écrit
+« in the last decade of the 19th century » ; Wikipédia donne 1892, d'autres
+sources 1891. Les trois sont compatibles, et la fiche elle-même dit « depuis la
+fin du XIXe siècle ». On garde 1892 **et** on écrit la variance dans le champ
+`source` — c'est précisément à cela qu'il sert.
+
+### Un contrôle de plus, et trois façons de le rater
+`coherence_check` compare désormais l'année du champ `founded` à celle que le
+texte donne en toutes lettres. Le chemin pour y arriver vaut d'être écrit :
+
+1. **La première sonde était vide sans le dire.** Le motif enchaînait « en » et
+   l'année *sans séparateur* : il ne cherchait que « en1902 », ne trouvait jamais
+   rien, et rendait **zéro écart sur une base qui en portait un**. Le sondage qui
+   devait mesurer l'ampleur du défaut n'avait rien mesuré du tout. Un contrôle
+   vide se lit exactement comme un contrôle vert.
+2. **La deuxième était trop large.** Elle signalait dix fiches, dont **neuf faux
+   positifs**. Le plus parlant : Vegas Robaina, « né en 1919 » — c'est la
+   naissance d'**Alejandro Robaina**, pas la création de la marque. « Lancée en »
+   et « ouverte en » sont tombées pour le même motif : elles datent une gamme ou
+   un atelier. Il ne reste que *fondée en* et *créée en*.
+3. **Une expression régulière ne sait pas QUI est fondé dans une phrase.**
+   Quatre fiches datent la fondation de quelqu'un d'autre que la maison dont
+   elles parlent — la HATSA de Frank Llaneza chez El Rey del Mundo Honduras, par
+   exemple. Elles sont **nommées avec leur raison**, comme les fuseaux assumés
+   plus haut dans le même fichier. Et un garde-fou inverse signale toute
+   exception qui **cesse de servir** : sans lui, elle couvrirait un jour un vrai
+   défaut sur la même fiche.
+
+Douze assertions éprouvent la sonde sans base, dont la contre-épreuve de la
+version cassée.
+
+### Reste
+**78 maisons sans source** : 17 nicaraguayennes, 13 dominicaines, 12
+honduriennes, 8 américaines, et le reste par petits groupes.

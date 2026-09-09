@@ -627,6 +627,93 @@ foreach ($r as $ligne) {
         $ligne['founded'], $ligne['name']);
 }
 
+// ── 9. Une fiche qui se contredit elle-meme sur sa date ──
+//
+// BOLIVAR portait « 1901 — La Havane » dans son champ `founded` et
+// « Fondee en 1902 » dans la premiere phrase de son propre texte.
+// habanos.com tranche pour 1902. La fiche se demenrait a deux lignes
+// d'intervalle, en ligne depuis des mois.
+//
+// AUCUN CONTROLE NE POUVAIT LE VOIR : une date dans un champ et une
+// date dans une phrase sont deux chaines valides. Le controle de
+// troncature mesure une longueur, celui du tiret orphelin une premiere
+// lettre — ni l'un ni l'autre ne LIT la valeur.
+//
+// LA REGLE EST ETROITE, ET DOIT LE RESTER. On ne compare pas « toutes
+// les annees du texte » au champ : une histoire cite des rachats, des
+// relances, des lancements de gammes, et aucune de ces dates n'a a
+// figurer dans `founded`. On ne retient que « fondee en » et « creee
+// en ».
+//
+// « NEE EN » A ETE RETIRE DE LA LISTE, et l'essai le disait : la fiche
+// VEGAS ROBAINA porte « ne en 1919 » — c'est la naissance d'Alejandro
+// ROBAINA, pas la creation de la marque. Un verbe qui vaut pour une
+// personne comme pour une maison ne peut pas servir de sonde. « Lancee
+// en » et « ouverte en » sont tombes pour le meme motif : ils datent
+// une gamme ou un atelier, pas la maison.
+//
+// ⚠ LE `\s+` AVANT L'ANNEE N'EST PAS DECORATIF. La premiere version de
+// ce motif enchainait « en » et le groupe de l'annee sans separateur :
+// elle ne cherchait donc que « en1902 », ne trouvait jamais rien, et
+// rendait ZERO ECART sur une base qui en portait un. Le sondage qui a
+// servi a mesurer l'ampleur du defaut etait ainsi VIDE SANS LE DIRE —
+// la faute meme que le garde-fou de fin de bloc existe pour attraper.
+const COHER_FONDATION =
+    '/\b(?:fond[ée]e?s?|cr[ée][ée]e?s?)'
+  . '\s+(?:en|le\s+\d+\s+\w+)\s+(1[5-9]\d\d|20\d\d)\b/iu';
+
+// ── LES ECARTS ASSUMES ──────────────────────────────────
+//
+// Une expression reguliere ne sait pas QUI est fonde dans une phrase.
+// Ces quatre fiches datent la fondation de QUELQU'UN D'AUTRE que la
+// maison dont elles parlent, et elles ont raison de le faire. Chacune
+// est nommee avec son motif — comme les fuseaux assumes plus haut dans
+// ce fichier. Une exception sans raison ecrite n'est pas une exception,
+// c'est un controle desactive.
+const COHER_DATES_ASSUMEES = [
+    'El Rey del Mundo Honduras' =>
+        '1963 est la fondation de la HATSA par Frank Llaneza, pas celle de la marque',
+    'Menendez Amerino' =>
+        '1980 est la creation de la gamme Alonso Menendez, pas celle de la fabrique',
+    'Montecristo' =>
+        '1992 date une ligne du catalogue, pas la marque de 1935',
+    'Avo' =>
+        '1984 ne date pas la maison, qui parait en 1988',
+];
+
+$r = $db->query("SELECT `name`, `founded`, `history` FROM `brands`
+                  WHERE `founded` IS NOT NULL AND `history` IS NOT NULL");
+$lues = 0;
+$datesAssumees = [];
+foreach ($r as $ligne) {
+    if (!preg_match('/\b(1[5-9]\d\d|20\d\d)\b/', (string)$ligne['founded'], $mf)) continue;
+    if (!preg_match_all(COHER_FONDATION, (string)$ligne['history'], $mh)) continue;
+    $lues++;
+    $duTexte = array_values(array_unique(array_map('intval', $mh[1])));
+    if (in_array((int)$mf[1], $duTexte, true)) continue;
+    $nom = (string)$ligne['name'];
+    if (isset(COHER_DATES_ASSUMEES[$nom])) { $datesAssumees[$nom] = COHER_DATES_ASSUMEES[$nom]; continue; }
+    $defauts[] = sprintf(
+        'brands : « %s » se contredit sur sa date — le champ founded dit %d, '
+      . 'son propre texte dit %s',
+        $nom, (int)$mf[1], implode(' et ', $duTexte));
+}
+// UNE EXCEPTION QUI NE SERT PLUS EST UNE EXCEPTION QUI MENT. Si une
+// fiche nommee ici cesse de produire l'ecart — texte reecrit, champ
+// corrige —, la ligne doit sortir de la liste, sinon elle couvrira un
+// jour un vrai defaut sur la meme fiche.
+foreach (array_diff(array_keys(COHER_DATES_ASSUMEES), array_keys($datesAssumees)) as $inutile) {
+    $defauts[] = sprintf(
+        'coherence_check : « %s » est declaree ecart de date assume et ne produit plus d\'ecart — '
+      . 'retirer la ligne de COHER_DATES_ASSUMEES', $inutile);
+}
+// Un controle qui ne lit rien passerait pour un controle vert. La sonde
+// doit trouver de quoi comparer sur une base peuplee.
+if ($lues === 0 && (int)$db->query("SELECT COUNT(*) FROM `brands`")->fetchColumn() > 20) {
+    $defauts[] = 'brands : aucune phrase de fondation datee n\'a ete lue — '
+               . 'le controle des dates contradictoires n\'a rien verifie';
+}
+
 // ── Rapport ──────────────────────────────────────────────
 
 echo "CigarOdyssey — coherence entre champs\n\n";
@@ -638,6 +725,11 @@ if (!$defauts) {
     // deux comptes independants qui concordent. Un seul chiffre, donc.
     printf("  Les %d etiquettes de varietes ont chacune leur fiche, et reciproquement.\n",
            array_sum(array_map('count', $feuillesParPays)));
+    printf("  Les %d fiches qui datent leur fondation en toutes lettres disent la meme annee que leur champ.\n",
+           $lues - count($datesAssumees));
+    foreach ($datesAssumees as $nom => $pourquoi) {
+        echo "  $nom : ecart de date assume — $pourquoi\n";
+    }
     echo "  Aucun rang mondial non source n'est reapparu.\n";
     echo "  Le repli de la base dit la meme devise et le meme fuseau que l'ecran.\n";
     printf("  Les %d pays de data.pays.js concordent avec tzdata %s et ICU %s.\n",
