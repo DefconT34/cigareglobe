@@ -31,9 +31,17 @@
         },
         "altadisusa.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 4
         },
         "arturo-fuente.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "arturofuente.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "ashtoncigar.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -123,7 +131,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 68
+            "fiches": 77
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -137,13 +145,17 @@
             "dns": "resout",
             "fiches": 4
         },
+        "cigares.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 47
+            "fiches": 50
         },
         "cigaroa.com": {
             "dns": "resout",
@@ -171,7 +183,7 @@
         },
         "cigarworld.de": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 4
         },
         "circolodellunione.it": {
             "dns": "resout",
@@ -239,7 +251,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 31
+            "fiches": 34
         },
         "enthusiastreport.com": {
             "dns": "resout",
@@ -339,7 +351,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 20
+            "fiches": 23
         },
         "hilton.com": {
             "dns": "resout",
@@ -418,6 +430,10 @@
             "fiches": 1
         },
         "la-reserve.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "laaurora.com.do": {
             "dns": "resout",
             "fiches": 1
         },
@@ -603,7 +619,7 @@
         },
         "premiumcigars.org": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "procigar.com": {
             "dns": "resout",
@@ -611,7 +627,7 @@
         },
         "procigar.org": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "puertobanus.com": {
             "dns": "resout",
@@ -720,6 +736,10 @@
         "thecigarauthority.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "thecigarstore.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "theritzlondon.com": {
             "dns": "resout",

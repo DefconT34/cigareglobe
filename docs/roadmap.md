@@ -4183,3 +4183,68 @@ compte 198.
 ### Reste
 **61 maisons sans source** : 13 dominicaines, 12 honduriennes, 8 américaines,
 5 mexicaines, et le reste par groupes de un à quatre.
+
+---
+
+## Migration `198` — les treize dominicaines, et l'homme qui tient cinq fiches
+
+**182 marques**, 895 assertions, 0 échec, neuf contrôles verts.
+**Sources : 134 / 182** (48 restantes).
+
+### Le fil José Seijas
+Embauché par Consolidated Cigar en 1974, à vingt-quatre ans, il a dirigé la
+**Tabacalera de García** de La Romana comme maître assembleur puis
+vice-président. Il a composé ou supervisé :
+
+**Montecristo dominicain · Romeo y Julieta dominicain · VegaFina ·
+H. Upmann dominicain · Don Diego**
+
+**Cinq fiches de cet atlas, plus la sienne.** C'est lui qui, dans les années
+1980, a fait passer La Romana de la machine au roulage à la main. Il a quitté la
+manufacture début 2012 et fondé **Matilde** en 2013 avec ses fils Ricardo et
+Enrique, en reprenant le nom d'une fabrique de Santiago de 1876.
+
+**Il est mort en novembre 2024, à soixante-quatorze ans. La fiche Matilde ne le
+disait pas.** Elle le dit maintenant, dans les six langues — comme celle de
+Cuban Crafters dit la mort de Don Kiki Berger.
+
+### Une date qui mélangeait deux lieux
+**Don Diego** portait « années 1960 — La Romana ». Les deux moitiés sont vraies
+séparément et **fausses ensemble** : la marque est créée **en 1964 aux
+Canaries** — par l'exilé cubain Pepe García, en réponse à l'embargo — et sa
+production ne passe à **La Romana qu'en 1982**. Le texte de la fiche le disait
+déjà correctement ; c'est le champ de date qui mélangeait. Même faute que Dona
+Flor à la `193`.
+
+Et les Canaries sont un pays producteur de cet atlas : ce n'est pas un détail
+exotique, c'est un lien.
+
+### Deux dates précisées
+- **PDR Cigars** : « années 2000 » → **2004**, à Tamboril. La marque s'appelait
+  **Pinar del Río** — hommage à la région cubaine — avant d'être rebaptisée
+  **PDR** pour *Puros Dominican Republic*. Le changement de nom dit le changement
+  de revendication.
+- **VegaFina** : « années 1990 » → **1998**, année que la maison commémore
+  elle-même avec sa ligne « VegaFina 1998 ».
+
+### Ce qu'on ne touche pas
+**Montecristo dominicain** et **Romeo y Julieta dominicain** portent « depuis
+1960 — La Romana ». C'est imprécis, et **aucune source consultable** ne permet de
+dater proprement le passage de chaque nom à La Romana. On laisse en l'état
+plutôt que d'inventer une précision, et le champ `source` porte la réserve.
+
+### ⚠ Le contrôle des sources m'a pris en défaut
+J'avais cité **`quesadacigars.com`** pour la fiche Quesada.
+`tools/sources.php --verifier` l'a passé au DNS : **le domaine n'existe pas.**
+
+C'est exactement la faute que cet outil a été écrit pour attraper — vingt-huit
+domaines morts cités par soixante-quinze fiches, à l'époque. **Une source qui ne
+résout pas est pire qu'une source absente : elle donne l'apparence de la
+vérification.** Ligne réécrite sur `en.wikipedia.org`, `cigaraficionado.com` et
+`procigar.org`.
+
+Les cinq autres domaines nouveaux résolvent ; le sceau en compte 203.
+
+### Reste
+**48 maisons sans source** : 12 honduriennes, 8 américaines, 5 mexicaines, 4
+camerounaises, 4 costariciennes, et le reste par groupes de un à trois.
