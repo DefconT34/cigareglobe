@@ -430,6 +430,7 @@ travail principal des migrations `192` et `193`.
 | **Helix** | ligne de **General Cigar**, retirée du tarif en octobre 2024 | citée sur la fiche Bolívar Honduras |
 | **El Rico Habano** | marque d'**El Crédito**, 1970, Miami ; retirée en octobre 2024 | citée sur la fiche Bolívar Honduras |
 | **Siglo** | la série de vitoles du **Cohiba cubain** | la fiche Cohiba existe déjà |
+| **Black Swan** | une **série du détaillant CigarPage**, confiée à une manufacture différente à chaque édition | sur les fiches d'**Oliva**, **Rocky Patel**, **E.P. Carrillo** et **Joya de Nicaragua**, `194` |
 
 **Sept noms sur vingt-quatre.** C'est la proportion qu'il faut retenir avant
 d'ouvrir la prochaine liste : un recensement bien fait produit autant de
@@ -453,6 +454,35 @@ Un atlas du cigare **premium roulé à la main** n'a pas à porter :
 - **Kretek** : Djarum, Djarum Black — cigarette de clou de girofle.
 - **Exclusivités de détaillants** : 5 Vegas, 898 Collection, East Coast Rollers,
   Morro Castle, San Miguel — des marques de catalogue sans maison derrière.
+
+> ### ⚠ Le critère n'est pas « exclusivité de détaillant ». C'est « fabricant tu ».
+>
+> **Black Swan** l'a montré (migration `194`). Le nom appartient à **CigarPage**,
+> un détaillant américain — donc, à la lettre, une exclusivité de détaillant.
+> Mais ce n'est pas une marque de catalogue sans maison derrière : c'est une
+> **série dont chaque édition est confiée à une manufacture différente**, et les
+> quatre manufactures sont nommées et **ont déjà leur fiche ici**.
+>
+> | édition | maison | pays |
+> |---|---|---|
+> | 1 — 2023 | **Oliva** | Nicaragua |
+> | 2 — janvier 2024 | **Rocky Patel** | Honduras |
+> | 3 | **E.P. Carrillo** | Rép. dominicaine |
+> | 4 — 2025 | **Joya de Nicaragua** | Nicaragua |
+>
+> Black Swan n'a donc **pas de fiche** — une série de détaillant n'est pas une
+> maison —, mais **les quatre fiches disent chacune ce qu'elle a fait**, et
+> renvoient aux trois autres. Ce qui exclut 5 Vegas ou Morro Castle n'est pas
+> leur statut d'exclusivité : c'est que personne ne sait, ou ne dit, qui les
+> roule.
+>
+> **Elle n'est pas non plus dans le champ `gamme`**, et la distinction compte :
+> `gamme` porte le catalogue **propre** d'une maison. Le Black Swan est une
+> commande, en quantité limitée, vendue par un seul détaillant ; l'y ranger
+> dirait que la maison le propose, ce qui est faux. C'est la différence avec
+> l'**Orchant Seleccion** de Regius (migration `192`), qui *est* au `gamme`
+> parce que c'est une bague de détaillant posée sur un cigare que la maison fait
+> par ailleurs sous son propre nom.
 
 **Ce qui n'est PAS exclu** : le *shortfiller* roulé à la main. Canaritos, à
 Tenerife, roule à la main une tripe faite de morceaux de feuille ; sa fiche le

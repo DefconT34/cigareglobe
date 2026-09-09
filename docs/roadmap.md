@@ -3929,3 +3929,61 @@ arrive.**
 
 ### Reste
 **Rien.** `docs/maisons-absentes.md` est clos et ne propose plus de liste.
+
+---
+
+## Migration `194` — Black Swan : quatre maisons pour un nom qui n'est à aucune
+
+**182 marques** (aucune ajoutée), 872 assertions, 0 échec, neuf contrôles verts.
+
+Vérification demandée : **Black Swan n'était pas dans l'atlas — et n'y entrera
+pas sous forme de fiche.** Le nom appartient à **CigarPage**, un détaillant
+américain, qui en a fait une **série dont chaque édition est confiée à une
+manufacture différente** et bâtie sur un lot de tabac particulier trouvé chez
+elle.
+
+| édition | maison | pays | assemblage |
+|---|---|---|---|
+| 1 — 2023 | **Oliva** | Nicaragua | cape Connecticut Broadleaf, sous-cape équatorienne, tripe nicaraguayenne |
+| 2 — janvier 2024 | **Rocky Patel** | Honduras | cape corojo, sous-cape hondurienne, tripe hondurienne et nicaraguayenne |
+| 3 | **E.P. Carrillo** | Rép. dominicaine | — |
+| 4 — 2025 | **Joya de Nicaragua** | Nicaragua | cape criollo d'Équateur de semence cubaine, sous-cape habano nicaraguayenne, tripe longue de Jalapa et d'Estelí |
+
+**Les quatre avaient déjà leur fiche.** Chacune dit désormais ce qu'*elle* a
+fait et renvoie aux trois autres — c'est la consigne « qui fait quoi » appliquée
+à un cas où le nom sur la bague et la main qui roule ne sont pas de la même
+maison.
+
+### Ce que ce cas a corrigé dans la règle elle-même
+`docs/maisons-absentes.md` mettait hors périmètre les **exclusivités de
+détaillants** — 5 Vegas, 898 Collection, Morro Castle — en les qualifiant de
+« marques de catalogue **sans maison derrière** ». Black Swan est une
+exclusivité de détaillant **et** a quatre maisons derrière elle.
+
+**Le critère n'était donc pas le bon.** Ce n'est pas l'exclusivité qui exclut,
+c'est le **fabricant tu**. La règle est réécrite en ce sens.
+
+### Pas de fiche, et pas non plus dans le champ `gamme`
+La distinction compte : `gamme` porte le catalogue **propre** d'une maison. Le
+Black Swan est une **commande**, en quantité limitée, vendue par un seul
+détaillant — l'y ranger dirait que la maison le propose, ce qui est faux. Il va
+en prose, là où l'atlas écrit déjà qui fait quoi pour qui.
+
+C'est exactement la différence avec l'**Orchant Seleccion** de Regius
+(migration `192`), qui *est* au `gamme` : celui-là est une bague de détaillant
+posée sur un cigare que la maison fait par ailleurs sous son propre nom.
+
+### Rocky Patel est fichée `nicaragua`, et son Black Swan est hondurien
+Ce n'est pas une contradiction : son champ `factory` porte déjà « Toraño
+International, Danlí, Honduras + Estelí, Nicaragua ». Le paragraphe le rappelle,
+parce qu'**un pays de fiche désigne l'essentiel de la production, pas sa
+totalité** — nuance que les dix erreurs de pays du recensement rendaient
+nécessaire d'écrire noir sur blanc.
+
+### Ce que ces paragraphes refusent d'écrire
+Le détaillant **note ses propres cigares** et qualifie la série de rareté
+extrême. Rien de tout cela n'entre : ce sont des arguments de vente, pas des
+sources — même règle que pour les scores de presse sans `source_url`. Seuls les
+faits vérifiables sont repris : qui fabrique, où, avec quoi, et quand.
+
+**Tripe longue et roulé main vérifiés avant écriture** (règle `187`).
