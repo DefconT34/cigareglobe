@@ -69,6 +69,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "blindmanspuff.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "bocachicaabidjan.com": {
             "dns": "resout",
             "fiches": 1
@@ -111,7 +115,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 12
+            "fiches": 15
         },
         "cigar.com": {
             "dns": "resout",
@@ -119,7 +123,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 29
+            "fiches": 68
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -135,11 +139,11 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 45
+            "fiches": 47
         },
         "cigaroa.com": {
             "dns": "resout",
@@ -235,7 +239,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 12
+            "fiches": 31
         },
         "enthusiastreport.com": {
             "dns": "resout",
@@ -270,6 +274,10 @@
             "fiches": 5
         },
         "foodconfidential.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "foundationcigarcompany.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -323,7 +331,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 27
+            "fiches": 54
         },
         "hajenius.com": {
             "dns": "resout",
@@ -331,7 +339,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 14
+            "fiches": 20
         },
         "hilton.com": {
             "dns": "resout",
@@ -391,7 +399,7 @@
         },
         "jrcigars.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "jumeirah.com": {
             "dns": "resout",
@@ -571,7 +579,7 @@
         },
         "padron.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "parisyachtmarina.fr": {
             "dns": "resout",
@@ -582,6 +590,14 @@
             "fiches": 1
         },
         "pebblebeach.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "perdomocigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "plasenciacigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -751,7 +767,7 @@
         },
         "villigercigars.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "wentworthclub.com": {
             "dns": "resout",

@@ -4123,3 +4123,63 @@ version cassée.
 ### Reste
 **78 maisons sans source** : 17 nicaraguayennes, 13 dominicaines, 12
 honduriennes, 8 américaines, et le reste par petits groupes.
+
+---
+
+## Migration `197` — les dix-sept nicaraguayennes : une maison fermée, une fiche qui ne savait rien
+
+**182 marques**, 895 assertions, 0 échec, neuf contrôles verts.
+**Sources : 121 / 182** (61 restantes).
+
+Deuxième lot du chantier ouvert par la `195`. Comme pour les cubaines à la `196`,
+**la vérification a rendu plus que des citations.**
+
+### Mombacho a fermé, et l'atlas la décrivait au présent
+Le **9 juin 2023**, Cameron Heaps, fondateur de Mombacho, et Jared Michaeli,
+président de Favilli, ont annoncé la **fermeture définitive** de la maison et
+leur retrait du métier. Claudio Sgroi, président et maître assembleur, était
+parti en 2021 ; la demeure achetée en 2014 avait été convertie en lieu d'accueil
+de luxe, et la marque n'a pas retrouvé son marché.
+
+La fiche de l'atlas, elle, disait — **au présent, depuis trois ans** — « la
+maison roule là où passent les voyageurs, dans une demeure ancienne ouverte aux
+visiteurs ». Et le tableau du pays annonçait « l'atelier ouvert aux visiteurs ».
+
+Même défaut que Bolívar Honduras à la `193` : **une fiche juste le jour où elle a
+été écrite, fausse depuis, et qui n'a pas changé de forme en changeant de
+valeur.** Corrigée dans les six langues, plus le champ `founded` et la
+description du pays.
+
+### Capitol : la fiche disait ne rien savoir, et elle avait raison de le dire
+Elle déclarait explicitement ignorer l'année, l'atelier et les gammes, et
+laissait ses rubriques vides **en expliquant pourquoi**. C'était la bonne
+décision au moment où elle a été prise. La recherche menée pour ce lot a rendu
+ce qui manquait — et c'est un cas de collaboration exemplaire :
+
+| qui | quoi |
+|---|---|
+| **Rafael Nodal** | compose — celui d'Aging Room et de Boutique Blends, qui dirige aussi le produit chez Altadis USA |
+| **Plasencia** | fabrique, à Estelí, chez Nestor Plasencia |
+| **Tabacalera** | possède et distribue |
+
+Les deux premiers ont déjà leur fiche ici. Trois vitoles font tout le catalogue —
+Jack, Casino, Gala — et le thème des années 1920 vient du goût de Nodal pour le
+jazz, et pour Duke Ellington en particulier. **L'année de lancement reste non
+établie, et le champ le dit** — comme chez Kolumbus et Vegas de Santiago.
+
+### Une date posée, une variance écrite
+- **A.J. Fernandez** portait « années 2000 — Estelí ». C'est **2003**, la
+  fondation de la Tabacalera Fernández **avec six rouleurs**. Le texte de la
+  fiche ne porte aucune année : rien ne se contredit.
+- **Warped** : l'atlas dit 2007 ; Cigar Aficionado, dans son entretien avec Kyle
+  Gellis, écrit qu'il a lancé Warped **en 2009**, encore étudiant. On garde 2007
+  et le champ `source` porte l'écart — même traitement que Fonseca à la `196`.
+
+### Le sceau des sources
+Quatre domaines nouveaux — `blindmanspuff.com`, `foundationcigarcompany.com`,
+`perdomocigars.com`, `plasenciacigars.com` — **tous résolvent**. Le sceau en
+compte 198.
+
+### Reste
+**61 maisons sans source** : 13 dominicaines, 12 honduriennes, 8 américaines,
+5 mexicaines, et le reste par groupes de un à quatre.
