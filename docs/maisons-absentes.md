@@ -1,7 +1,7 @@
 # Les maisons que l'atlas ne porte pas encore
 
 *Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`190`**. L'atlas compte **166 maisons** dans 18 pays producteurs. La migration
+`191`**. L'atlas compte **170 maisons** dans 18 pays producteurs. La migration
 `187` en a retiré trois — la règle « aucun cigare de machine » appliquée à
 l'existant — et la `188` en a ajouté six.*
 
@@ -48,7 +48,11 @@ l'existant — et la `188` en a ajouté six.*
 > Micallef. Quatre fiches et non six : Don Tomas, HPC et 777 n'ont pas été
 > assez documentées pour être écrites.
 >
-> **37 restent.** Le recensement complet est ci-dessous ; la tradition
+> **Et quatre de plus** (migration `191`) — Ferio Tego, Paul Garmirian, Gurkha
+> et La Barba. Ce lot a été précédé d'une **vérification contre la base** : le
+> document annonçait 37 maisons absentes, il en restait 28.
+>
+> **24 restent.** Le recensement complet est ci-dessous ; la tradition
 > européenne en est sortie, elle est hors périmètre.
 
 ---
@@ -103,7 +107,7 @@ Mombacho, Capitol et Foundation. Chaque source a ses trous.
 
 ### ⚠ Le piège le plus coûteux : le pays du fondateur n'est pas le pays du cigare
 
-**Ce document s'est trompé de pays cinq fois**, et toujours pour la même raison :
+**Ce document s'est trompé de pays sept fois**, et toujours pour la même raison :
 la nationalité ou le domicile du fondateur pris pour le lieu de fabrication.
 
 | maison | ce que le document disait | ce qui est vrai |
@@ -113,10 +117,23 @@ la nationalité ou le domicile du fondateur pris pour le lieu de fabrication.
 | **Padilla** | Nicaragua | son Padilla Miami est roulé Calle Ocho |
 | **Asylum** | Honduras | principalement la NACSA, à Estelí |
 | **Micallef** | Honduras | fabrique 1934, à Estelí ; le Honduras n'est que dans la tripe |
+| **Gurkha** | République dominicaine | a **racheté** sa fabrique d'Estelí en mai 2017 |
+| **La Barba** | Nicaragua | a **quitté** le Honduras pour la Tabacalera William Ventura |
 
 **La règle de l'atlas est constante : on classe par le lieu où le cigare est
 FAIT.** Pas par le passeport, pas par le siège social, pas par l'origine de la
 feuille. Et quand la production est éclatée, la fiche l'écrit.
+
+### ⚠ Et un second réflexe : vérifier contre la BASE, pas contre ce document
+
+À la migration `191`, ce document annonçait **37 maisons absentes**. La base en
+disait **28**. Six figuraient encore alors qu'elles étaient faites — HVC,
+Fratello, Curivari, Black Label Trading (`188`) et Selected Tobacco (`180`) — et
+**Zino n'est pas une maison** mais une ligne d'Oettinger Davidoff, comme
+Oliveros est une étiquette de Boutique Blends.
+
+Un document de travail vieillit plus vite que la base qu'il décrit. **Il se
+relit contre elle, jamais l'inverse.**
 
 ### ⚠ Deux pièges qui ont chacun coûté une erreur
 
@@ -177,9 +194,9 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 
 ---
 
-## Les 37 maisons absentes, par pays
+## Les 24 maisons absentes, par pays
 
-### République dominicaine — 7
+### République dominicaine — 3
 | maison | qui |
 |---|---|
 | ~~Diamond Crown~~ · ~~Cuesta-Rey~~ | **FAIT** — migration `181` |
@@ -189,13 +206,13 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 | ~~Kristoff~~ · ~~Caldwell Cigar Co.~~ · ~~Casa Cuevas~~ | **FAIT** — migration `186` |
 | ~~Oliveros~~ | **N'EST PAS UNE MAISON** — c'est une étiquette de Boutique Blends. Dit sur la fiche Swag |
 | ~~La Palina~~ | **FAIT** — migration `189`, **sous `usa`**. La recherche a tranché : la maison se décrit comme un **négociant**, sans fabrique, et fait rouler chez cinq partenaires. Le Goldie et deux autres gammes sortent de Miami |
+| ~~Ferio Tego~~ · ~~Paul Garmirian~~ · ~~La Barba~~ | **FAIT** — migration `191` |
+| ~~Gurkha~~ | **FAIT** — migration `191`, mais **sous `nicaragua`** : elle a racheté sa propre fabrique à Estelí en mai 2017. Las Lavas produit aussi pour elle, mais l'usine qui lui appartient est nicaraguayenne |
+| ~~Zino~~ | **N'EST PAS UNE MAISON** — c'est une ligne d'Oettinger Davidoff, que sa fiche nomme déjà. Même cas qu'Oliveros |
 | **Nomad** | Fred Rewey — production à vérifier avant de la classer |
-| **Gurkha** | faite à la Tabacalera Las Lavas, celle de Casa Cuevas |
-| **Paul Garmirian** | PG Cigars |
-| **Zino** | Davidoff |
 | **Arsen** · **Star Cigar** | plus petites |
 
-### Nicaragua — 7
+### Nicaragua — 6
 | maison | qui |
 |---|---|
 | ~~Dunbarton Tobacco & Trust~~ | **FAIT** — migration `185` |
@@ -206,7 +223,8 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 | ~~La Aroma de Cuba~~ | **FAIT** — migration `185` |
 | ~~Southern Draw~~ · ~~HVC~~ · ~~Fratello~~ · ~~Curivari~~ · ~~Black Label Trading~~ | **FAIT** — migration `188` |
 | ~~Padilla~~ | **FAIT** — migration `188`, mais **sous `usa`** : son Padilla Miami est roulé à El Titan de Bronze, dans la Petite Havane. Le recensement la classait ici à tort |
-| **HVC** · **Fratello** · **Curivari** · **Black Label Trading** · **La Barba** · **Protocol** · **Regius** · **Cornelius & Anthony** · **262** · **Emilio** · **Nick's Sticks** | scène boutique |
+| ~~La Barba~~ | **FAIT** — migration `191`, mais **sous `dominican`** : elle a quitté la fabrique Aladino du Honduras pour la Tabacalera William Ventura, l'atelier de Caldwell |
+| **Protocol** · **Regius** · **Cornelius & Anthony** · **262** · **Emilio** · **Nick's Sticks** | scène boutique, à documenter |
 | ~~Los Statos~~ | retirée du tarif STG en 2026 — **ne pas créer** |
 
 ### Honduras — 3
@@ -222,10 +240,9 @@ Restent : **Don Tomas** (Danlí) · **HPC** · **777** ·
 écrites faute de sources suffisantes** — mieux vaut une fiche absente qu'une
 fiche qui tient sur une page de détaillant.
 
-### Costa Rica — 3
-**Selected Tobacco** — Nelson Alfonso, *la maison* derrière Atabey, Byron **et**
-Bandolero, dont l'atlas porte les trois marques sans nommer qui les fait ·
-**Chaman** · **Vegas de Santiago**
+### Costa Rica — 2
+~~Selected Tobacco~~ — **FAIT**, migration `180`. Restent **Chaman** et
+**Vegas de Santiago**.
 
 ### Canaries — 0 ✅
 **FAIT** — migration `182`. Six maisons ajoutées : **Dos Santos** (Gran Canaria,

@@ -3730,3 +3730,63 @@ cinéma**, et il appartenait au grand-père de Christian Eiroa. Elle a par aille
 ### Une reprise
 `i18n_superlatif_check` a vu un « أفضل » arabe chez Oscar Valladares là où le
 français dit « se lit mieux ». Reformulé.
+
+---
+
+## Migration `191` — Quatre maisons, et les ateliers qui les portent
+
+**170 marques**, 865 assertions, 0 échec, huit contrôles verts.
+
+| maison | qui | où |
+|---|---|---|
+| **Ferio Tego** | Michael Herklots et Brendon Scott, 2021 | Quesada (Licey) et Plasencia (Estelí) — **dominican** |
+| **Paul Garmirian** | 1990, Washington D.C. | O.K. Cigars, campus Tabadom — **dominican** |
+| **Gurkha** | relancée par Kaizad Hansotia | sa propre usine d'Estelí depuis 2017 — **nicaragua** |
+| **La Barba** | Tony Bellatto et Craig Rossi, 2013 | Tabacalera William Ventura — **dominican** |
+
+### ⚠ Avant d'écrire : vérifier contre la base, pas contre le document
+Le recensement annonçait **37 maisons absentes**. La base en disait **28**.
+
+Six y figuraient encore alors qu'elles étaient faites — HVC, Fratello, Curivari,
+Black Label Trading (`188`) et Selected Tobacco (`180`). Et **Zino n'est pas une
+maison** : c'est une ligne d'Oettinger Davidoff, que sa propre fiche nomme déjà,
+exactement comme Oliveros est une étiquette de Boutique Blends.
+
+*Un document de travail vieillit plus vite que la base qu'il décrit. Il se relit
+contre elle, jamais l'inverse.* Le document porte désormais cet avertissement.
+
+### ⚠ Sixième et septième erreur de pays
+- **Gurkha** était classée en République dominicaine. Elle a **racheté** sa
+  fabrique — l'American Caribbean Cigars, à Estelí — en **mai 2017**. Las Lavas
+  produit aussi pour elle, mais l'usine qui lui appartient est nicaraguayenne.
+- **La Barba** était classée au Nicaragua. Elle a **quitté le Honduras** : son
+  premier cigare sortait de la fabrique Aladino de Danlí, tout est passé depuis
+  à la Tabacalera William Ventura.
+
+Sept erreurs de pays au total, et le motif ne varie jamais.
+
+### « Qui fait quoi » : six partenaires déjà dans l'atlas
+- **Ferio Tego** est née de la fin de **Nat Sherman** : Altria a fermé sa
+  division cigare en 2020 après quatre-vingt-dix ans, et deux anciens de la
+  maison lui ont racheté les marques. **Quesada** fait le Metropolitan — qu'il
+  avait composé pour Nat Sherman au milieu des années 1990 — et deux Timeless ;
+  **Plasencia** fait les deux autres.
+- **Paul Garmirian** est roulé chez **O.K. Cigars**, la fabrique du groupe
+  Davidoff qui fait l'**Avo**, sur le campus **Tabadom** que l'atlas nomme déjà
+  chez Davidoff et The Griffin's. Une maison d'auteur roulée chez un industriel.
+- **La Barba** est passée d'**Aladino** — l'ancien cinéma de la famille Eiroa —
+  à l'atelier des **Ventura**, celui où **Caldwell** fait composer ses
+  assemblages.
+
+### Un récit attribué, pas repris
+Gurkha fait remonter son nom à **1887**, dans l'Inde britannique. Aucune source
+indépendante ne l'établit : la fiche l'attribue à la maison, comme elle l'a fait
+pour Alphonse XIII chez Cuesta-Rey et pour Churchill chez Vargas et La Aroma de
+Cuba.
+
+### Reste
+**24 maisons.** Au Nicaragua : Protocol, Regius, Cornelius & Anthony, 262,
+Emilio, Nick's Sticks. Ailleurs : Nomad, Arsen, Star Cigar, Don Tomas, HPC, 777,
+Chaman, Vegas de Santiago, Ferio Tego côté USA — non, faite —, 7-20-4, Cuban
+Crafters, Windsor, Wolf & Eagles, Le Cèdre, Menendez Amerino, et les quatre
+« sans pays fixe » à requalifier comme lignes.
