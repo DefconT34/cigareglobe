@@ -160,11 +160,20 @@
   /**
    * La légende des repères du globe.
    *
-   * Les marques sont DESSINÉES en CSS, et non décrites par des mots :
+   * Les symboles sont DESSINÉS en CSS, et non décrits par des mots :
    * « triangle violet » se cherche encore une fois l'écran revenu,
    * tandis qu'un triangle violet se reconnaît. La forme est la clé, pas
    * son nom — et la couleur d'un producteur lui étant propre, sa
    * pastille porte ici les trois teintes réellement employées.
+   *
+   * ── POURQUOI « SYMBOLE » ET NON « MARQUE » ──────────────
+   * Le texte disait « Chaque marque veut dire quelque chose ». Dans un
+   * atlas du cigare, MARQUE EST LE MOT DU SUJET : deux étapes plus tôt,
+   * le même didacticiel invite à chercher « un pays, une marque, un
+   * établissement » — et il s'agit là d'une marque de cigare. Le mot
+   * portait donc deux sens dans la même visite. L'espagnol était pire
+   * encore : son titre disait « las marcas del globo », et *marca* est
+   * le terme du métier. Symbole ne désigne rien d'autre.
    */
   function legende() {
     var lignes = ['prod', 'mixte', 'lounge', 'marche'];

@@ -2824,9 +2824,46 @@ section('Le didacticiel');
     $sansLegende = [];
     foreach (['prod', 'mixte', 'lounge', 'marche'] as $l) {
         if (empty($trad['fr']['tuto_leg_' . $l]))       $sansLegende[] = "texte $l";
-        if (!str_contains($css, '.tuto-m-' . $l))       $sansLegende[] = "marque $l";
+        if (!str_contains($css, '.tuto-m-' . $l))       $sansLegende[] = "symbole $l";
     }
-    eq('didacticiel : les quatre reperes ont texte et marque dessinee', [], $sansLegende);
+    eq('didacticiel : les quatre reperes ont texte et symbole dessine', [], $sansLegende);
+
+    // ── « MARQUE » EST LE MOT DU SUJET, PAS CELUI D'UN REPERE ──
+    //
+    // L'etape disait « Chaque marque veut dire quelque chose ». Dans un
+    // atlas du cigare, une MARQUE est une maison — et deux etapes plus
+    // tot, le meme didacticiel invite a chercher « un pays, une marque,
+    // un etablissement », ou le mot a son sens normal. Il portait donc
+    // DEUX SENS DANS LA MEME VISITE, a quatre ecrans d'intervalle.
+    //
+    // L'espagnol etait pire : son titre disait « las marcas del globo »,
+    // et *marca* est LE terme du metier dans cette langue.
+    //
+    // Ce cliquet interdit le retour du mot dans les six lignes de
+    // l'etape — titre, chapeau et legende. Il ne touche pas aux autres
+    // etapes : « une marque » y est juste.
+    $motDuSujet = ['fr' => '/\bmarques?\b/iu', 'es' => '/\bmarcas?\b/iu',
+                   'en' => '/\bbrands?\b/iu',  'de' => '/\bMarken?\b/u'];
+    $collisions = [];
+    foreach ($motDuSujet as $lg => $motif) {
+        foreach (['tuto_reperes_t', 'tuto_reperes_d', 'tuto_leg_prod',
+                  'tuto_leg_mixte', 'tuto_leg_lounge', 'tuto_leg_marche'] as $cle) {
+            $v = (string)($trad[$lg][$cle] ?? '');
+            if ($v !== '' && preg_match($motif, $v, $m)) $collisions[] = "$lg/$cle « {$m[0]} »";
+        }
+    }
+    eq('didacticiel : l etape des reperes n emploie pas le mot « marque »', [], $collisions);
+    // CONTRE-EPREUVE : la sonde doit reconnaitre la phrase d'origine.
+    // Sans elle, un motif qui ne declencherait jamais ferait passer
+    // n'importe quel texte.
+    check('didacticiel : la sonde reconnait la phrase d origine',
+          (bool)preg_match($motDuSujet['fr'], 'Chaque marque veut dire quelque chose :')
+          && (bool)preg_match($motDuSujet['es'], 'Las marcas del globo'));
+    // Et l'etape de RECHERCHE, elle, doit garder le mot : c'est la que
+    // « marque » veut dire maison, et le retirer serait la faute
+    // inverse.
+    check('didacticiel : l etape de recherche garde le mot, elle',
+          (bool)preg_match($motDuSujet['fr'], (string)($trad['fr']['tuto_chercher_d'] ?? '')));
 
     // Les teintes de la legende sont celles de la BASE, pas des
     // approximations : une legende qui ment est pire qu'une absente.
