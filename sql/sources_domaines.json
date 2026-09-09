@@ -25,6 +25,14 @@
             "dns": "resout",
             "fiches": 1
         },
+        "aladinocigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "alecbradley.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "altadis.com": {
             "dns": "resout",
             "fiches": 1
@@ -97,6 +105,14 @@
             "dns": "resout",
             "fiches": 1
         },
+        "camachocigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "caocigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "casadecampo.com.do": {
             "dns": "resout",
             "fiches": 1
@@ -131,7 +147,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 77
+            "fiches": 82
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -155,7 +171,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 50
+            "fiches": 54
         },
         "cigaroa.com": {
             "dns": "resout",
@@ -251,7 +267,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 34
+            "fiches": 38
         },
         "enthusiastreport.com": {
             "dns": "resout",
@@ -296,6 +312,10 @@
         "fourseasons.com": {
             "dns": "resout",
             "fiches": 3
+        },
+        "frommers.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "fullertonhotels.com": {
             "dns": "resout",
@@ -398,6 +418,10 @@
             "fiches": 1
         },
         "iwanries.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "jaimemontilla.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -529,6 +553,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "mayaselvacigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "menendezamerino.com": {
             "dns": "resout",
             "fiches": 2
@@ -542,6 +570,10 @@
             "fiches": 1
         },
         "micallefcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "mikescigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -619,7 +651,7 @@
         },
         "premiumcigars.org": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "procigar.com": {
             "dns": "resout",
@@ -729,6 +761,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "tampachanging.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "thebreakers.com": {
             "dns": "resout",
             "fiches": 1
@@ -739,7 +775,7 @@
         },
         "thecigarstore.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "theritzlondon.com": {
             "dns": "resout",
@@ -778,6 +814,10 @@
             "fiches": 1
         },
         "union-interalliee.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "us.davidoffgeneva.com": {
             "dns": "resout",
             "fiches": 1
         },

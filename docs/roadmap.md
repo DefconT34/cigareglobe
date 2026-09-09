@@ -4248,3 +4248,63 @@ Les cinq autres domaines nouveaux résolvent ; le sceau en compte 203.
 ### Reste
 **48 maisons sans source** : 12 honduriennes, 8 américaines, 5 mexicaines, 4
 camerounaises, 4 costariciennes, et le reste par groupes de un à trois.
+
+---
+
+## Migration `199` — les douze honduriennes : deux dates sans année, deux réserves écrites
+
+**182 marques**, 895 assertions, 0 échec, neuf contrôles verts.
+**Sources : 146 / 182** (36 restantes).
+
+### Deux champs de date qui ne portaient qu'un lieu
+**Baccarat** disait « Danlí, Honduras » et **La Flor de Copán** « Santa Rosa de
+Copán, Honduras ». Un lieu à la place d'une date — l'erreur corrigée chez Vargas
+à la `182` et chez Kolumbus à la `193`.
+
+**Le contrôle ajouté à la `193` ne les voyait pas, et c'est voulu** : il refuse
+un champ qui *commence par un séparateur*, pas un champ *sans année*, parce
+qu'une quinzaine de fiches n'ont pas d'année et le **disent**. Celles-ci ne le
+disaient pas : elles mettaient un lieu à la place. C'est une troisième forme du
+même défaut, et elle échappe encore à toute règle automatique.
+
+| | avant | après |
+|---|---|---|
+| **Baccarat** | Danlí, Honduras | 1871 revendiqué ; relancé en 1978 |
+| **La Flor de Copán** | Santa Rosa de Copán, Honduras | 1975 — Santa Rosa de Copán, Honduras |
+
+### Le fil Eiroa, encore
+**Baccarat était fait par Julio Eiroa**, père de Christian — celui d'**Aladino**,
+de **CLE** et d'**Asylum**, trois fiches de cet atlas. Davidoff a racheté la
+marque en 2008 avec **Camacho**, et elle sort aujourd'hui de la fabrique Camacho
+de Rancho Jamastran, à Danlí. **Quatre fiches se touchent sur cette ligne.**
+
+Et **La Flor de Copán** a un fondateur : **Jorge Bueso Arias**, qui a rapporté de
+Cuba la semence plantée à Yarguera. La manufacture naît en 1975 de *Tabacos
+Hondureños*, société de culture fondée une dizaine d'années plus tôt.
+
+### Deux réserves écrites, non tranchées
+- **Bering** : le champ `factory` dit « Danlí (Plasencia) ». Les sources disent
+  que Swisher, après avoir racheté Corral-Wodiska en 1985, a d'abord fait rouler
+  **sous contrat** à partir de 1990, puis **bâti sa propre fabrique** à Danlí au
+  milieu des années 1990. L'attribution à Plasencia daterait de la période du
+  contrat. Aucune source consultée ne la confirme ni ne la dément pour
+  aujourd'hui : **le champ reste, et la réserve est écrite.**
+- **Excalibur** : le champ dit 1983 ; les sources donnent la ligne comme née chez
+  Hoyo **dans les années 1970**, et devenue marque distincte **en 1992** selon
+  d'autres. Trois dates, aucune qui s'impose — l'écart est écrit.
+
+⚠ Ces mêmes sources rappellent que le **Bering de 1905 était un cigare de
+machine** à tripe longue. Celui d'aujourd'hui, hondurien, est roulé main : c'est
+lui que porte l'atlas, la règle `187` est respectée. La fiche gagnerait à écrire
+cette bascule un jour ; ce lot ne fait que la consigner.
+
+### ⚠ Deuxième domaine mort en deux lots
+J'avais cité **`mayaselva.com`** pour Flor de Selva. Le DNS dit qu'il **n'existe
+pas** ; le domaine de la maison est `mayaselvacigars.com`. Après
+`quesadacigars.com` à la `198`, cela fait **deux domaines inventés en deux
+lots** — et deux fois c'est le contrôle qui les a vus, pas moi. Le sceau compte
+maintenant 213 domaines, tous vérifiés.
+
+### Reste
+**36 maisons sans source** : 8 américaines, 5 mexicaines, 4 camerounaises,
+4 costariciennes, 3 équatoriennes, 3 philippines, et le reste par un ou deux.
