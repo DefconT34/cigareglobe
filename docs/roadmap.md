@@ -4308,3 +4308,97 @@ maintenant 213 domaines, tous vérifiés.
 ### Reste
 **36 maisons sans source** : 8 américaines, 5 mexicaines, 4 camerounaises,
 4 costariciennes, 3 équatoriennes, 3 philippines, et le reste par un ou deux.
+
+---
+
+## Migration `200` — le chantier des sources est clos
+
+**182 marques**, 897 assertions, 0 échec, neuf contrôles verts.
+
+| | sourcées | sans source |
+|---|---|---|
+| **caves** | 508 / 508 | 0 |
+| **maisons** | **182 / 182** | **0** |
+
+**230 domaines cités, aucun mort.** Pour la première fois, la doctrine « aucune
+fiche sans source » est vérifiable **des deux côtés** de l'atlas — et un cliquet
+de campagne l'y maintient : une marque ajoutée sans source fait désormais
+échouer les tests, avec sa contre-épreuve.
+
+### Une deuxième fiche qui se contredisait
+**Tabacalera** portait « 1782 — Manille » dans son champ `founded`, alors que le
+texte de **sa propre fiche** dit « En 1881, la Couronne espagnole dissout la Real
+Compañía de Filipinas ». 1782 est l'année du **monopole royal**, pas celle de la
+maison — fondée à Barcelone le 26 novembre 1881 par le marquis de Comillas.
+
+C'est la deuxième après Bolívar, et **la deuxième fois que la sonde des dates
+contradictoires passe à côté** : elle ne lit que « fondée en » et « créée en »,
+et cette fiche écrit « la Couronne dissout ». La sonde reste étroite — c'est ce
+qui la rend fiable — mais son angle mort est maintenant documenté deux fois.
+
+### Une date qui avait glissé d'une fiche à sa voisine
+**Temple Hall** disait « L'usine n'a pas survécu à 1988 ». **Faux**, et l'erreur
+vient d'une confusion entre les **deux histoires jamaïcaines** :
+
+| | ce qui s'est passé |
+|---|---|
+| **Royal Jamaica** | l'ouragan Gilbert détruit en 1988 la fabrique de Gore à Kingston et mille acres à May Pen |
+| **Temple Hall** | la fabrique a tenu **douze ans de plus** : General Cigar l'a fermée en **2000** et a transféré la production en République dominicaine |
+
+Deux fiches voisines, deux fins différentes, et la date de l'une avait glissé sur
+l'autre. Corrigé dans les six langues.
+
+### Le fil Menéndez — troisième occurrence du même genre
+**Montecruz** est l'œuvre de **Benjamin Menéndez**, fils d'Alonso — la famille
+qui faisait Montecristo et H. Upmann à Cuba. Il ouvre la Compañía Insular
+Tabacalera à Las Palmas en **1961** et y fait un cigare qui copie assumément le
+Montecristo, jusqu'aux épées croisées.
+
+L'atlas porte déjà **Menendez Amerino** au Brésil et **Montecristo** à Cuba :
+**trois fiches, trois pays, une même famille chassée de La Havane.** Après le fil
+Seijas (`198`) et le fil Eiroa (`199`), c'est le troisième réseau que ce chantier
+met au jour — et aucun n'était visible avant qu'on cherche les sources.
+
+Et l'arrêt **Menendez v. Faber, Coe and Gregg (1972)** a établi le droit des
+fabricants exilés à commercialiser leurs versions des marques qu'ils faisaient à
+Cuba : c'est le **fondement juridique** de toute une moitié de cet atlas — les
+homonymes non cubains de la migration `173`.
+
+### Deux domaines morts, attrapés AVANT écriture
+`casaturrent.com` et `nuevamatacapan.com` ne résolvent pas. Cette fois ils sont
+passés au DNS **avant** d'être cités, et non après — après deux lots où le
+contrôle avait dû me rattraper (`quesadacigars.com` à la `198`,
+`mayaselva.com` à la `199`).
+
+### Quatre réserves écrites, huit fiches de cape
+| fiche | réserve |
+|---|---|
+| **Suerdieck** | les sources datent la fin des activités de **décembre 1999** ; le champ dit 2000 |
+| **Carlos Toraño Panama** | aucune source ne date l'installation au Chiriquí ; le champ retient 2001 sans confirmation. Carlos Toraño est mort en février 2022 |
+| **Santa Clara 1830** | 1830 est **revendiqué**, l'atlas ne l'adopte pas |
+| **Toscano** | l'orage d'août 1815 est une **légende**, et les sources officielles la nomment ainsi |
+
+Et **huit fiches ne décrivent pas une maison mais une cape** — Arturo Fuente
+Maduro et Hemingway, CAO Cameroon et Black, Oliva Serie G et Connecticut
+Reserve, Ashton Cabinet, Perdomo Ecuador. Leur source le dit en toutes lettres,
+pour qu'on ne les lise pas comme des manufactures locales.
+
+### Ce que le chantier a produit en tout
+Cinq lots, `195` à `200`. Au-delà des sources :
+
+- **deux fiches qui se contredisaient** sur leur propre date (Bolívar, Tabacalera) ;
+- **une erreur de fait** (Temple Hall, 1988 au lieu de 2000) ;
+- **deux maisons fermées** que l'atlas décrivait au présent (Mombacho, Temple Hall) ;
+- **un décès** absent d'une fiche (José Seijas, Matilde) ;
+- **une fiche qui disait ne rien savoir** et qui sait maintenant (Capitol) ;
+- **six dates imprécises** posées (A.J. Fernandez, PDR, VegaFina, Baccarat, La Flor de Copán, Casa Turrent) ;
+- **une date qui mélangeait deux lieux** (Don Diego) ;
+- **trois lieux dans un champ de date** corrigés, et deux absences enfin déclarées ;
+- **trois réseaux de personnes** mis au jour — Seijas, Eiroa, Menéndez ;
+- **trois domaines morts** trouvés, dont deux par le contrôle et un par prudence ;
+- **un contrôle de plus** et **vingt-et-une assertions** nouvelles.
+
+### Reste
+**Rien, de ce chantier.** Le point faible de l'atlas reste ce qu'il était : les
+**7 975 traductions au statut `machine`, dont aucune n'a été relue par un
+humain**.

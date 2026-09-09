@@ -3971,6 +3971,39 @@ section('La fiche dit d ou elle vient');
         // developpement, ou les 408 fiches vivent.
         check('source : et la mesure sait en reperer une',
               in_array(1, $vus, true), implode(',', $vus));
+
+        // ── LE MEME CLIQUET, POUR LES MAISONS ───────────
+        // `brands` N'AVAIT PAS DE COLONNE `source` avant la migration
+        // 195 : la doctrine « aucune fiche sans source » etait
+        // verifiable pour les 508 caves et INVISIBLE pour les 182
+        // maisons, alors que les maisons sont ce que l'atlas ecrit le
+        // plus. Cent cinq d'entre elles sont parties de rien.
+        //
+        // Le chantier des migrations 195 a 200 les a toutes remplies —
+        // sans en inventer une seule : les sources ont ete reprises des
+        // en-tetes des migrations qui avaient ecrit les fiches, ou
+        // cherchees et VERIFIEES AU DNS quand elles manquaient. Deux
+        // domaines morts ont ete attrapes en route, et un troisieme lot
+        // les a passes au DNS avant ecriture plutot qu'apres.
+        //
+        // LE COMPTE EST A ZERO, ET DOIT Y RESTER. Une marque ajoutee
+        // sans source fait echouer la campagne — c'est le but.
+        $sansM = [];
+        foreach ($pdoR->query(
+            "SELECT `name` FROM `brands` WHERE TRIM(COALESCE(`source`,'')) = ''") as $r) {
+            $sansM[] = (string)$r['name'];
+        }
+        eq('source : aucune maison n\'est sans source', [], $sansM);
+        // CONTRE-EPREUVE, la meme que pour les caves : une requete
+        // cassee rendrait toujours zero, et se lirait comme un succes.
+        $pdo->exec("UPDATE `brands` SET `source` = '' WHERE `name` = 'Marque de test'");
+        $vusM = [];
+        foreach ($pdo->query(
+            "SELECT `name` FROM `brands` WHERE TRIM(COALESCE(`source`,'')) = ''") as $r) {
+            $vusM[] = (string)$r['name'];
+        }
+        check('source : et la mesure sait reperer une maison sans source',
+              in_array('Marque de test', $vusM, true), implode(',', $vusM));
         // Le cliquet ne vaut que s'il porte sur quelque chose : si le
         // jour venait ou plus aucune fiche n'est marquee, l'assertion
         // ci-dessus passerait sur un ensemble vide.
