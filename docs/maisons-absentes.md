@@ -256,17 +256,23 @@ date. C'est 1925, Santa Cruz de La Palma, Enrique Vargas de Paz et son frère
 Felipe. Et la fiche de pays ignorait le **mildiou bleu de 1967**, qui a détruit
 les plantations de La Palma : il reste des ateliers, il n'y a plus d'industrie.
 
-### États-Unis — 3
-**Ferio Tego** (a repris le portefeuille Nat Sherman) · **7-20-4** (Kurt Kendall,
-New Hampshire) · **Cuban Crafters** (Miami)
+### États-Unis — 2
+~~Ferio Tego~~ — **FAIT**, migration `191`, mais **sous `dominican`** : elle a
+repris le portefeuille Nat Sherman, et Quesada en fait la plus grande part.
+Restent **7-20-4** (Kurt Kendall, New Hampshire) et **Cuban Crafters** (Miami).
 
 ### Mexique — 1 · Indonésie — 1 · Brésil — 2
 **Windsor** (San Andres Southern Tobacco) · **Wolf & Eagles** ·
 **Le Cèdre**, **Menendez Amerino**
 
-### Sans pays fixe — 5
-**Forged Cigar Company** (la société de distribution de General Cigar, née en
-2021) · **Dunhill** · **Siglo** · **Helix** · **El Rico Habano**
+### Sans pays fixe — 4 ⚠ à requalifier avant d'écrire
+~~Forged Cigar Company~~ — **FAIT**, migration `180`.
+
+Restent **Dunhill**, **Siglo**, **Helix** et **El Rico Habano**. ⚠ **Ce ne sont
+probablement pas des maisons** : Siglo est une marque d'Altadis, Helix et El
+Rico Habano de General Cigar, et Dunhill a cessé ses cigares. Le même examen que
+pour Zino et Oliveros doit précéder toute écriture — et il finira peut-être par
+les faire sortir de cette liste plutôt que d'y entrer dans l'atlas.
 
 ---
 

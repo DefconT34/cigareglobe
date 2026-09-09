@@ -3785,8 +3785,14 @@ pour Alphonse XIII chez Cuesta-Rey et pour Churchill chez Vargas et La Aroma de
 Cuba.
 
 ### Reste
-**24 maisons.** Au Nicaragua : Protocol, Regius, Cornelius & Anthony, 262,
-Emilio, Nick's Sticks. Ailleurs : Nomad, Arsen, Star Cigar, Don Tomas, HPC, 777,
-Chaman, Vegas de Santiago, Ferio Tego côté USA — non, faite —, 7-20-4, Cuban
-Crafters, Windsor, Wolf & Eagles, Le Cèdre, Menendez Amerino, et les quatre
-« sans pays fixe » à requalifier comme lignes.
+**24 maisons**, et le compte est vérifié contre la base :
+
+| pays | reste |
+|---|---|
+| Nicaragua — 6 | Protocol, Regius, Cornelius & Anthony, 262, Emilio, Nick's Sticks |
+| Rép. dominicaine — 3 | Nomad, Arsen, Star Cigar |
+| Honduras — 3 | Don Tomas, HPC, 777 |
+| Costa Rica — 2 | Chaman, Vegas de Santiago |
+| États-Unis — 2 | 7-20-4, Cuban Crafters |
+| Mexique, Indonésie, Brésil — 4 | Windsor, Wolf & Eagles, Le Cèdre, Menendez Amerino |
+| « sans pays fixe » — 4 | Dunhill, Siglo, Helix, El Rico Habano — **à requalifier** : ce sont probablement des lignes, comme Zino et Oliveros |
