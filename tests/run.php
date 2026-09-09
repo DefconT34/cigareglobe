@@ -4985,6 +4985,48 @@ foreach (['1905 — Tampa ; produit au Honduras depuis 1990',
           mb_strlen($v) < 50);
 }
 
+// ── Le tiret orphelin en tete de champ ───────────────────
+//
+// L'AUTRE MANIERE D'ABIMER UN CHAMP DE DATE. `brands.founded` s'ecrit
+// « 1975 — Danli, Honduras » : une annee, un tiret cadratin, un lieu.
+// Trois fiches portaient « — Rep. dominicaine (Altadis USA) » :
+// L'ANNEE ATTENDUE AVANT LE TIRET MANQUAIT, et le tiret est reste seul
+// en tete. La valeur est une chaine valide, elle n'est pas tronquee,
+// elle tient sous la capacite — le controle de troncature ci-dessus
+// passait devant sans rien voir.
+//
+// LA REGLE EST ETROITE, ET ELLE DOIT LE RESTER. Une quinzaine de
+// fiches n'ont pas d'annee et le DISENT — Kolumbus : « Annee non
+// publiee — La Palma, Canaries », parce que la maison ne la publie pas
+// et que l'atlas ne l'invente pas. Ces fiches-la sont correctes. Ce
+// qu'on refuse, c'est la forme MUTILEE, pas l'absence assumee.
+$mutile = static function (string $v): bool {
+    $t = trim($v);
+    return $t === '' || in_array(mb_substr($t, 0, 1), ['—', '–', '-', '·', ',', ';', ':'], true);
+};
+
+check('tiret orphelin : « — Rép. dominicaine (Altadis USA) » est refuse',
+      $mutile('— Rép. dominicaine (Altadis USA)'));
+check('tiret orphelin : un champ vide ou blanc est refuse',
+      $mutile('') && $mutile('   '));
+check('tiret orphelin : la forme normale passe',
+      !$mutile('1975 — Danlí, créée par U.S. Tobacco'));
+// L'ABSENCE ASSUMEE N'EST PAS UNE MUTILATION. Ces trois-la disent qu'il
+// n'y a pas d'annee, au lieu de laisser un tiret parler a leur place.
+check('tiret orphelin : une absence assumee passe (Kolumbus)',
+      !$mutile('Année non publiée — La Palma, Canaries'));
+check('tiret orphelin : une absence assumee passe (Vegas de Santiago)',
+      !$mutile('Fondée par Marc Niehaus — date non établie'));
+check('tiret orphelin : les trois valeurs reparees passent',
+      !$mutile('Rép. dominicaine (Altadis USA)')
+      && !$mutile('Honduras (Altadis USA)'));
+// LE PIEGE MULTIOCTET, ENCORE. « — » est un tiret cadratin : trois
+// octets en UTF-8. Un controle ecrit avec $v[0] aurait compare le
+// PREMIER OCTET et laisse passer les trois fiches.
+check('tiret orphelin : la lecture est en caracteres, pas en octets',
+      mb_substr('— Rép. dominicaine', 0, 1) === '—'
+      && '— Rép. dominicaine'[0] !== '—');
+
 // ════════════════════════════════════════════════════════
 section('La campagne n\'a rien touche hors de sa base');
 

@@ -3796,3 +3796,136 @@ Cuba.
 | États-Unis — 2 | 7-20-4, Cuban Crafters |
 | Mexique, Indonésie, Brésil — 4 | Windsor, Wolf & Eagles, Le Cèdre, Menendez Amerino |
 | « sans pays fixe » — 4 | Dunhill, Siglo, Helix, El Rico Habano — **à requalifier** : ce sont probablement des lignes, comme Zino et Oliveros |
+
+---
+
+## Migrations `192` et `193` — le recensement est clos
+
+**182 marques**, 872 assertions, 0 échec, huit contrôles verts.
+
+Les vingt-quatre dernières maisons du recensement ont été traitées d'un bloc.
+**Onze seulement sont devenues des fiches** — plus une douzième qui n'était pas
+dans la liste.
+
+| sort | combien |
+|---|---|
+| écrites | 11 (+ **De Los Reyes Cigars**, née d'une requalification) |
+| requalifiées — ce ne sont pas des maisons | 7 |
+| non écrites, faute de sources | 6 |
+
+C'est le résultat principal, et il n'était pas prévisible : **plus d'un nom sur
+deux ne méritait pas d'entrée.**
+
+### `192` — Les commanditaires : sept marques, aucun atelier
+Protocol, Regius, Cornelius & Anthony, 262 Cigars, Emilio Cigars, Nomad, 7-20-4.
+Toutes sous `nicaragua`, et **aucune ne fabrique**. À elles seules elles nomment
+**onze ateliers**, dont sept ont déjà leur fiche ici.
+
+| maison | qui fait quoi |
+|---|---|
+| **Protocol** | deux policiers ; **La Zona** (Espinosa) avec Hector Alfonso Sr., puis **San Lotano** (A.J. Fernández) |
+| **Regius** | maison londonienne ; **Plasencia**, Estelí |
+| **Cornelius & Anthony** | **La Zona** pour l'essentiel, **El Titan de Bronze** à Miami pour la ligne Cornelius |
+| **262 Cigars** | **Tabacalera Carreras** (Craig Cunningham) et **TacaNicsa** (Eradio Pichardo) |
+| **Emilio Cigars** | **A.J. Fernández**, **My Father**, puis **Oveja Negra** (Black Label Trading) — trois fabriques, un seul nom sur la bague |
+| **Nomad** | **Tabacalera L&V** (Rép. dom.), **A.J. Fernández** et **Oveja Negra** |
+| **7-20-4** | **Tabacos de Oriente** (Néstor Plasencia, Honduras), puis **J. Fuego** à Estelí depuis juillet 2021 |
+
+**Une maison qui fait aussi de la machine.** Cornelius & Anthony est une filiale
+de **S&M Brands**, société familiale de Virginie qui fabrique des cigarettes et
+de petits cigares de machine. Rien de cela n'entre ici : la fiche porte le seul
+versant roulé main, et l'écrit — même partage qu'à la `187` chez J.C. Newman et
+qu'à la `189` chez Dannemann.
+
+### `193` — Ceux qui possèdent leur atelier
+Cuban Crafters, Vegas de Santiago, De Los Reyes Cigars, Menendez Amerino,
+Don Tomas. Le contrepoint exact du lot précédent : quatre possèdent leur
+manufacture, et **deux cultivent en plus leur propre tabac**.
+
+- **Vegas de Santiago** est la seule maison costaricienne qui cultive ce qu'elle
+  roule — Santiago de Puriscal, plus de mille cent mètres, plus de quatre-vingts
+  ans de plantations. Elle roule aussi des bagues de détaillants européens, dont
+  **Zechbauer**, la maison de Munich.
+- **De Los Reyes** tient les deux bouts : **Leo Reyes** cultive, **Nirka Reyes**
+  dirige l'atelier — qui fait ses marques *et* roule **Debonaire**,
+  **Fittipaldi** et **Patoro**.
+- **Menendez Amerino** fabrique **Dona Flor**, qui a sa propre fiche ici. Même
+  partage qu'entre Tabacalera Palma et Aging Room.
+- **Don Tomas** avait été écartée à la `190` « faute de sources suffisantes ».
+  La recherche menée pour ce lot en a trouvé : 1975, Danlí, créée par
+  **U.S. Tobacco**, roulée chez **HATSA** sous **Estélo Padrón** — le même
+  atelier et le même homme que la fiche Bolívar Honduras nommait déjà. Le refus
+  de la `190` était une prudence, pas un verdict.
+
+### Sept requalifications
+| nom | ce qu'il est |
+|---|---|
+| **Chaman** | gamme de Vegas de Santiago |
+| **Arsen** | marque de **De Los Reyes Cigars** — et cette requalification a fait *entrer* une vraie maison dans l'atlas |
+| **Nick's Sticks** | gamme de **Perdomo**, déjà présente, mais écrite au singulier |
+| **Dunhill** | licence de British American Tobacco, faite par General Cigar ; BAT a quitté le cigare mi-2018 |
+| **Helix** | ligne de General Cigar, retirée du tarif en octobre 2024 |
+| **El Rico Habano** | marque d'El Crédito, 1970, Miami ; retirée en octobre 2024 |
+| **Siglo** | la série de vitoles du Cohiba cubain — la fiche existe déjà |
+
+### Six non écrites, et le document dit pourquoi
+**Star Cigar** (notice promotionnelle sans fabrique ni date), **HPC** (un récit
+de marque, aucun fondateur, aucune fabrique nommée), **777**, **Windsor**,
+**Wolf & Eagles** (rien), **Le Cèdre** — il existe bien une marque brésilienne
+voisine, *Le Cigar*, mais ce n'est pas le même nom, et l'atlas n'écrit pas une
+fiche sur une ressemblance.
+
+### Trois erreurs de pays de plus — dix au total
+**Nomad** était donnée pour dominicaine : elle a commencé ainsi, mais l'essentiel
+de ses seize assemblages sort du Nicaragua depuis 2013. **7-20-4** était donnée
+pour américaine : le nom est une adresse de Manchester, mais rien n'a jamais été
+fabriqué dans le New Hampshire. **Cuban Crafters** était donnée pour américaine :
+le magasin est à Miami, la fabrique est à Estelí. Toujours le même motif.
+
+### Ce que la relecture a corrigé dans des fiches existantes
+- **Dona Flor** se disait faite « années 1990, à Cruz das Almas ». C'est **1982**,
+  et la fabrique est à **São Gonçalo dos Campos** : un **lieu de culture pris
+  pour un lieu de fabrication**. Trouvé en écrivant la fiche de la fabrique —
+  exactement comme la contradiction Dannemann à la `189`.
+- **Bolívar Honduras** a été retirée du tarif par Scandinavian Tobacco Group en
+  **octobre 2024**, avec El Rico Habano et Helix. La fiche le dit maintenant dans
+  les six langues. Le renseignement est venu d'un nom qu'on n'a *pas* écrit.
+- **Trois `founded` commençaient par un tiret orphelin** — « — Rép. dominicaine
+  (Altadis USA) » : l'année attendue devant manquait, et le tiret est resté seul.
+  H. Upmann Dominicain, Henry Clay, Saint Luis Rey Honduras.
+- **Kolumbus** portait un lieu dans son champ de date, l'erreur déjà corrigée
+  chez Vargas à la `182`.
+
+### Un contrôle de plus
+`coherence_check` refuse désormais un `founded` qui **commence par un
+séparateur**. La règle est volontairement étroite : elle **ne refuse pas un
+champ sans année**. Une quinzaine de fiches n'en ont pas et le *disent* —
+Kolumbus : « Année non publiée — La Palma, Canaries » —, parce que la maison ne
+la publie pas et que l'atlas ne l'invente pas. Ce qu'on refuse, c'est la forme
+mutilée, pas l'absence assumée. Sept assertions l'éprouvent, dont le piège
+multioctet : `« — »` fait trois octets, et un contrôle écrit avec `$v[0]`
+aurait laissé passer les trois fiches.
+
+### Trois reprises demandées par les garde-fous
+- `marques_check` a lu « intégralement artisanal » entre guillemets comme une
+  **parole prêtée** chez Menendez Amerino. Les guillemets sautent, la phrase
+  reste attribuée.
+- `i18n_superlatif_check` a trouvé six superlatifs absents du français. Chez
+  **Regius**, le superlatif était **dans la source** — « la ligne que le marché
+  britannique connaît *le mieux* » — et il avait essaimé en allemand, chinois et
+  arabe : c'est la source qui a été réécrite, pas seulement les traductions.
+- Deux écarts arabes restants sont des **homographes** : dans « trois mois en
+  chambre de cèdre », le mot lu comme un superlatif signifie *mois*. Figés au
+  cliquet, avec la raison écrite.
+
+### Une tension signalée, non corrigée
+La fiche **Casdagli** dit que le Costa Rica est un « pays sans terroir tabacole
+notable ». **Vegas de Santiago** y cultive son propre tabac depuis plus de
+quatre-vingts ans. La nouvelle fiche pose explicitement les deux — le pays des
+maisons sans terroir, et l'exception qui cultive — plutôt que de réécrire
+Casdagli, dont la phrase reste vraie au sens où le tabac costaricien n'est pas
+une référence internationale. **À relire si une troisième fiche costaricienne
+arrive.**
+
+### Reste
+**Rien.** `docs/maisons-absentes.md` est clos et ne propose plus de liste.

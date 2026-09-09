@@ -598,6 +598,35 @@ if ($annoncees === 0) {
     $defauts[] = 'producer_countries.brands : aucune marque annoncee lue — le controle n\'a rien verifie';
 }
 
+// ── 8. Un champ de date qui commence par un separateur ───
+//
+// `brands.founded` s'ecrit « 1975 — Danli, Honduras » : une annee, un
+// tiret cadratin, un lieu. Trois fiches portaient « — Rep. dominicaine
+// (Altadis USA) » : L'ANNEE ATTENDUE AVANT LE TIRET MANQUAIT, et le
+// tiret est reste tout seul en tete de champ.
+//
+// Rien ne pouvait le voir. La valeur est une chaine valide, elle n'est
+// pas tronquee, elle tient sous la capacite de la colonne — elle
+// s'affiche simplement comme une phrase qui commence par une ponctuation.
+//
+// Le controle est volontairement etroit : IL NE REFUSE PAS UN CHAMP
+// SANS ANNEE. Une quinzaine de fiches n'en ont pas et le disent
+// (Kolumbus : « Annee non publiee — La Palma, Canaries »), parce que
+// la maison ne la publie pas et que l'atlas ne l'invente pas. Ce qu'on
+// refuse ici, c'est la FORME MUTILEE : un separateur en tete, ou un
+// champ qui ne contient que de l'espace.
+$r = $db->query(
+    "SELECT `name`, `founded` FROM `brands`
+      WHERE `founded` IS NOT NULL
+        AND (TRIM(`founded`) = ''
+             OR LEFT(TRIM(`founded`), 1) IN ('—', '–', '-', '·', ',', ';', ':'))");
+foreach ($r as $ligne) {
+    $defauts[] = sprintf(
+        'brands.founded : « %s » (%s) commence par un separateur — '
+      . 'l\'annee attendue devant manque, et le tiret est reste seul',
+        $ligne['founded'], $ligne['name']);
+}
+
 // ── Rapport ──────────────────────────────────────────────
 
 echo "CigarOdyssey — coherence entre champs\n\n";

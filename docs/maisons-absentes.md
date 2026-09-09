@@ -1,9 +1,26 @@
 # Les maisons que l'atlas ne porte pas encore
 
-*Recensement approfondi du 7 septembre 2026, **mis à jour après la migration
-`191`**. L'atlas compte **170 maisons** dans 18 pays producteurs. La migration
+*Recensement approfondi du 7 septembre 2026, **clos par les migrations `192` et
+`193`**. L'atlas compte **182 maisons** dans 18 pays producteurs. La migration
 `187` en a retiré trois — la règle « aucun cigare de machine » appliquée à
 l'existant — et la `188` en a ajouté six.*
+
+> ## ✅ Ce recensement est clos
+>
+> **Il ne reste aucune maison à écrire.** Les vingt-quatre dernières ont été
+> traitées, mais **onze seulement sont devenues des fiches** :
+>
+> | sort | combien | lesquelles |
+> |---|---|---|
+> | **écrites** | 11 (+1) | migrations `192` et `193` — plus **De Los Reyes Cigars**, qui n'était pas dans la liste et qui en est sortie |
+> | **requalifiées** | 7 | ce ne sont pas des maisons : voir plus bas |
+> | **non écrites, faute de sources** | 6 | et le document dit lesquelles et pourquoi |
+>
+> Une liste de noms n'est pas une liste de fiches à faire. C'est le
+> résultat principal de ce recensement, et il n'était pas prévisible :
+> **plus d'un nom sur deux ne méritait pas d'entrée**, soit parce qu'il
+> désignait une ligne d'une maison déjà présente, soit parce qu'aucune source
+> vérifiable ne permettait d'écrire quoi que ce soit.
 
 > **Les sept maisons mères sont faites** (migration `180`) : Oettinger Davidoff,
 > Villiger Söhne, Burger Söhne, Selected Tobacco, Maya Selva Cigars, Boutique
@@ -52,7 +69,17 @@ l'existant — et la `188` en a ajouté six.*
 > et La Barba. Ce lot a été précédé d'une **vérification contre la base** : le
 > document annonçait 37 maisons absentes, il en restait 28.
 >
-> **24 restent.** Le recensement complet est ci-dessous ; la tradition
+> **Et sept commanditaires** (migration `192`) — Protocol, Regius, Cornelius &
+> Anthony, 262 Cigars, Emilio Cigars, Nomad et 7-20-4. **Aucune des sept n'a
+> d'usine** ; à elles seules elles nomment onze ateliers, dont sept ont déjà
+> leur fiche ici.
+>
+> **Et cinq qui fabriquent** (migration `193`) — Cuban Crafters, Vegas de
+> Santiago, De Los Reyes Cigars, Menendez Amerino et Don Tomas. Le contrepoint
+> exact du lot précédent : quatre possèdent leur manufacture, et deux cultivent
+> en plus leur propre tabac.
+>
+> **Zéro reste.** Le recensement complet est ci-dessous ; la tradition
 > européenne en est sortie, elle est hors périmètre.
 
 ---
@@ -194,9 +221,9 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 
 ---
 
-## Les 24 maisons absentes, par pays
+## Les 24 dernières, et ce qu'elles sont devenues
 
-### République dominicaine — 3
+### République dominicaine — 0 ✅
 | maison | qui |
 |---|---|
 | ~~Diamond Crown~~ · ~~Cuesta-Rey~~ | **FAIT** — migration `181` |
@@ -209,10 +236,11 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 | ~~Ferio Tego~~ · ~~Paul Garmirian~~ · ~~La Barba~~ | **FAIT** — migration `191` |
 | ~~Gurkha~~ | **FAIT** — migration `191`, mais **sous `nicaragua`** : elle a racheté sa propre fabrique à Estelí en mai 2017. Las Lavas produit aussi pour elle, mais l'usine qui lui appartient est nicaraguayenne |
 | ~~Zino~~ | **N'EST PAS UNE MAISON** — c'est une ligne d'Oettinger Davidoff, que sa fiche nomme déjà. Même cas qu'Oliveros |
-| **Nomad** | Fred Rewey — production à vérifier avant de la classer |
-| **Arsen** · **Star Cigar** | plus petites |
+| ~~Nomad~~ | **FAIT** — migration `192`, mais **sous `nicaragua`**. La production *était* à vérifier, et la vérification a tranché : premiers cigares dominicains à la Tabacalera L&V, puis l'essentiel des seize assemblages au Nicaragua depuis 2013 |
+| ~~Arsen~~ | **N'EST PAS UNE MAISON** — c'est une marque de **De Los Reyes Cigars**, fabrique de Santiago créée en 1995. La requalification a fait entrer **De Los Reyes** dans l'atlas (migration `193`) : un nom sort de la liste, une vraie maison y entre |
+| ~~Star Cigar~~ | **NON ÉCRITE** — la seule source suivie est une notice encyclopédique de facture promotionnelle (« l'un des 36 premiers fabricants mondiaux »), sans fabrique nommée ni date vérifiable. Mieux vaut une fiche absente qu'une fiche qui recopie une plaquette |
 
-### Nicaragua — 6
+### Nicaragua — 0 ✅
 | maison | qui |
 |---|---|
 | ~~Dunbarton Tobacco & Trust~~ | **FAIT** — migration `185` |
@@ -224,10 +252,12 @@ dernier « aromatisé vanille ou cerise »). Même partage que chez J.C. Newman.
 | ~~Southern Draw~~ · ~~HVC~~ · ~~Fratello~~ · ~~Curivari~~ · ~~Black Label Trading~~ | **FAIT** — migration `188` |
 | ~~Padilla~~ | **FAIT** — migration `188`, mais **sous `usa`** : son Padilla Miami est roulé à El Titan de Bronze, dans la Petite Havane. Le recensement la classait ici à tort |
 | ~~La Barba~~ | **FAIT** — migration `191`, mais **sous `dominican`** : elle a quitté la fabrique Aladino du Honduras pour la Tabacalera William Ventura, l'atelier de Caldwell |
-| **Protocol** · **Regius** · **Cornelius & Anthony** · **262** · **Emilio** · **Nick's Sticks** | scène boutique, à documenter |
+| ~~Protocol~~ · ~~Regius~~ · ~~Cornelius & Anthony~~ · ~~262~~ · ~~Emilio~~ | **FAIT** — migration `192`. Les cinq sans usine, et toutes documentées : la crainte que « la moitié soit trop peu documentée » ne s'est pas vérifiée |
+| ~~Nick's Sticks~~ | **N'EST PAS UNE MAISON** — c'est la gamme prix-doux de **Perdomo**, déjà présente dans son champ `gamme`, où elle était écrite « Nick's Stick » au singulier. Corrigée dans les six langues (migration `193`) |
+| ~~Cuban Crafters~~ | **FAIT** — migration `193`, mais **sous `nicaragua`** : le magasin est à Miami, la fabrique — la Tabacalera Estelí — est au Nicaragua |
 | ~~Los Statos~~ | retirée du tarif STG en 2026 — **ne pas créer** |
 
-### Honduras — 3
+### Honduras — 0 ✅
 ~~CLE~~ · ~~Oscar Valladares~~ — **FAIT**, migration `190`.
 ~~Maya Selva~~ — **FAIT**, migration `180`.
 ~~Asylum~~ et ~~Micallef~~ — **FAIT**, migration `190`, mais **sous `nicaragua`** :
@@ -235,14 +265,31 @@ Asylum sort principalement de la NACSA à Estelí (le reste de la fabrique Aladi
 à Danlí), et Micallef de la fabrique 1934 des Gómez Sánchez à Estelí — le
 Honduras n'apparaît que dans sa tripe.
 
-Restent : **Don Tomas** (Danlí) · **HPC** · **777** ·
-~~Sancho Panza non cubain~~ *(retirée du tarif)*. Les trois **n'ont pas été
-écrites faute de sources suffisantes** — mieux vaut une fiche absente qu'une
-fiche qui tient sur une page de détaillant.
+~~Don Tomas~~ — **FAIT**, migration `193`. La `190` l'avait écartée « faute de
+sources suffisantes » ; la recherche menée pour ce lot en a trouvé, et de bonnes :
+créée **en 1975 à Danlí par U.S. Tobacco**, une compagnie américaine, roulée chez
+**HATSA** sous **Estélo Padrón** — le même atelier et le même homme que la fiche
+Bolívar Honduras nommait déjà. Le refus de la `190` était une décision de
+prudence, pas un verdict : il suffisait de chercher mieux.
 
-### Costa Rica — 2
-~~Selected Tobacco~~ — **FAIT**, migration `180`. Restent **Chaman** et
-**Vegas de Santiago**.
+**HPC** et **777** restent non écrites, et cette fois le refus tient :
+
+| maison | ce que la recherche a rendu |
+|---|---|
+| **HPC** | Un récit de marque — la Fabrique royale de tabac de Santa Rosa de los Llanos, 1765 — et « des fabriques de Danlí » au pluriel. **Aucun fondateur, aucune date, aucune fabrique nommée.** Les seules pages suivies sont celle d'un détaillant britannique et celle d'un cabinet de conseil |
+| **777** | **Rien.** Aucune source ne rattache ce nom à une maison hondurienne identifiable |
+| ~~Sancho Panza non cubain~~ | retirée du tarif |
+
+### Costa Rica — 0 ✅
+~~Selected Tobacco~~ — **FAIT**, migration `180`.
+~~Vegas de Santiago~~ — **FAIT**, migration `193`. C'est **la seule maison du
+pays qui cultive ce qu'elle roule** : ses champs sont à Santiago de Puriscal, à
+plus de mille cent mètres, où l'on plante du tabac depuis plus de quatre-vingts
+ans. Elle roule aussi des bagues de détaillants européens, dont celles de
+**Zechbauer**, la maison de Munich.
+~~Chaman~~ — **N'EST PAS UNE MAISON** : c'est une **gamme de Vegas de
+Santiago**, nommée sur sa fiche. Le site de la maison lui consacre sa propre
+page, ce qui suffit à expliquer la confusion.
 
 ### Canaries — 0 ✅
 **FAIT** — migration `182`. Six maisons ajoutées : **Dos Santos** (Gran Canaria,
@@ -256,23 +303,49 @@ date. C'est 1925, Santa Cruz de La Palma, Enrique Vargas de Paz et son frère
 Felipe. Et la fiche de pays ignorait le **mildiou bleu de 1967**, qui a détruit
 les plantations de La Palma : il reste des ateliers, il n'y a plus d'industrie.
 
-### États-Unis — 2
+### États-Unis — 0 ✅
 ~~Ferio Tego~~ — **FAIT**, migration `191`, mais **sous `dominican`** : elle a
 repris le portefeuille Nat Sherman, et Quesada en fait la plus grande part.
-Restent **7-20-4** (Kurt Kendall, New Hampshire) et **Cuban Crafters** (Miami).
+~~7-20-4~~ — **FAIT**, migration `192`, mais **sous `nicaragua`**. Le nom est
+une adresse de Manchester — 724 Elm Street, la fabrique R.G. Sullivan ouverte en
+1874 et fermée en 1962 —, mais **rien n'a jamais été fabriqué dans le New
+Hampshire** : d'abord Tabacos de Oriente au Honduras, puis J. Fuego à Estelí
+depuis juillet 2021.
+~~Cuban Crafters~~ — **FAIT**, migration `193`, **sous `nicaragua`** : le
+magasin de la Petite Havane n'est pas la fabrique.
 
-### Mexique — 1 · Indonésie — 1 · Brésil — 2
-**Windsor** (San Andres Southern Tobacco) · **Wolf & Eagles** ·
-**Le Cèdre**, **Menendez Amerino**
+### Mexique — 0 ✅ · Indonésie — 0 ✅ · Brésil — 0 ✅
+~~Menendez Amerino~~ — **FAIT**, migration `193`. Et la fiche a corrigé l'atlas
+au passage : **Dona Flor** se disait faite « années 1990, à Cruz das Almas » —
+c'est 1982, et la fabrique est à **São Gonçalo dos Campos**. Cruz das Almas est
+là où pousse la mata fina qu'elle emploie : un **lieu de culture pris pour un
+lieu de fabrication**.
 
-### Sans pays fixe — 4 ⚠ à requalifier avant d'écrire
+Les trois autres n'ont pas été écrites, et le document dit pourquoi :
+
+| maison | ce que la recherche a rendu |
+|---|---|
+| **Windsor** (Mexique) | Rien. Aucune source ne rattache ce nom à un fabricant de San Andrés Tuxtla |
+| **Wolf & Eagles** (Indonésie) | Rien qu'une enseigne de boutique à Malang, dans la liste des points de vente d'une autre maison |
+| **Le Cèdre** (Brésil) | Rien sous ce nom. Il existe bien une marque brésilienne voisine — **Le Cigar**, Manufatura Tabaqueira LeCigar, fondée en 1997 par Arend Becker et Horst Schweers dans le Recôncavo —, mais **ce n'est pas le même nom**, et l'atlas n'écrit pas une fiche sur une ressemblance |
+
+### Sans pays fixe — 0 ✅ · les quatre étaient bien des lignes
 ~~Forged Cigar Company~~ — **FAIT**, migration `180`.
 
-Restent **Dunhill**, **Siglo**, **Helix** et **El Rico Habano**. ⚠ **Ce ne sont
-probablement pas des maisons** : Siglo est une marque d'Altadis, Helix et El
-Rico Habano de General Cigar, et Dunhill a cessé ses cigares. Le même examen que
-pour Zino et Oliveros doit précéder toute écriture — et il finira peut-être par
-les faire sortir de cette liste plutôt que d'y entrer dans l'atlas.
+**Le soupçon était fondé, et les quatre sortent de la liste** — comme Zino et
+Oliveros avant elles. Aucune n'est une maison :
+
+| nom | ce qu'il est réellement |
+|---|---|
+| **Dunhill** | Une **licence**. La marque appartient à British American Tobacco, qui a confié la fabrication à General Cigar — usines du Honduras, du Nicaragua et de République dominicaine — puis **a quitté le cigare et la pipe mi-2018** |
+| **Helix** | Une ligne de **General Cigar**, lancée en 2002, rachetée en 2004, faite au Honduras. **Retirée du tarif par Scandinavian Tobacco Group en octobre 2024** |
+| **El Rico Habano** | Une marque d'**El Crédito**, créée en 1970 à Miami par Ernesto Perez-Carrillo père — la maison de La Gloria Cubana, dont l'atlas porte déjà la fiche dominicaine. Arrêtée en 1994, reprise en 2001 par le fils, vendue à Swedish Match avec El Crédito en 1999, **retirée du tarif en octobre 2024** |
+| **Siglo** | **Aucune maison de ce nom.** Siglo est la série de vitoles du Cohiba cubain — Siglo I à VI —, et le Cohiba cubain a déjà sa fiche. La ligne du recensement venait d'une confusion |
+
+⚠ Cette requalification a eu un effet dans l'atlas : **Bolívar Honduras** est la
+troisième marque retirée du tarif par STG en octobre 2024, et sa fiche le dit
+désormais dans les six langues (migration `193`). Le renseignement est venu
+d'un nom qu'on n'a *pas* écrit.
 
 ---
 
@@ -342,6 +415,26 @@ visible.
 | **Perdomo** | Tierra del Sol |
 | **Maya Selva** | Villa Zamorano |
 
+### Et sept de plus, trouvées en clôturant le recensement
+
+Celles-là n'étaient pas dans l'index de Cigar Aficionado : elles étaient dans
+**ce document**, listées comme des maisons à écrire. Les identifier a été le
+travail principal des migrations `192` et `193`.
+
+| nom | ce qu'il est | où l'atlas le dit |
+|---|---|---|
+| **Chaman** | gamme de **Vegas de Santiago** | sur sa fiche, `193` |
+| **Arsen** | marque de **De Los Reyes Cigars** | sur sa fiche, `193` |
+| **Nick's Sticks** | gamme de **Perdomo** | déjà dans son `gamme` — le nom y était au singulier, corrigé `193` |
+| **Dunhill** | licence de **British American Tobacco**, faite par General Cigar ; BAT a quitté le cigare mi-2018 | nulle part : rien à écrire |
+| **Helix** | ligne de **General Cigar**, retirée du tarif en octobre 2024 | citée sur la fiche Bolívar Honduras |
+| **El Rico Habano** | marque d'**El Crédito**, 1970, Miami ; retirée en octobre 2024 | citée sur la fiche Bolívar Honduras |
+| **Siglo** | la série de vitoles du **Cohiba cubain** | la fiche Cohiba existe déjà |
+
+**Sept noms sur vingt-quatre.** C'est la proportion qu'il faut retenir avant
+d'ouvrir la prochaine liste : un recensement bien fait produit autant de
+requalifications que de fiches.
+
 ---
 
 ## Hors périmètre, et il faut le dire
@@ -386,8 +479,34 @@ entre la main et la machine, pas entre la feuille entière et le hachis.
    cultive plus de tabac depuis 2006, et la fiche est nicaraguayenne. La même
    erreur valait pour trois autres lignes — voir l'encadré de « Ce qui
    étendrait la carte ».
-5. **La scène boutique nicaraguayenne et dominicaine** — Dunbarton, RoMa Craft,
-   Southern Draw, Viaje, Caldwell, La Palina, Room101, Kristoff. Au fil de l'eau :
-   ce sont des fiches courtes, mais nombreuses.
-6. **La tradition européenne** — Pays-Bas et Belgique. Elle change la nature de
-   l'atlas (machine plutôt que roulé main) et mérite d'être décidée, pas subie.
+5. ~~**La scène boutique nicaraguayenne et dominicaine**~~ — **FAIT**,
+   migrations `185`, `186`, `188`, `190`, `192` et `193`.
+6. ~~**La tradition européenne**~~ — **CLOSE**, migration `187` : la question
+   n'était pas « faut-il ouvrir un pays ? » mais « l'atlas porte-t-il le cigare
+   de machine ? ». Non — et la règle vaut aussi pour l'existant.
+
+**Il n'y a pas de point 7.** Ce document a fait son travail et n'a plus de
+liste à proposer.
+
+---
+
+## Ce que ce recensement a corrigé dans l'atlas lui-même
+
+C'est son autre production, et elle n'était pas prévue. En cherchant des maisons
+absentes, on a trouvé des erreurs dans les fiches présentes.
+
+| ce qui était faux | corrigé par |
+|---|---|
+| **Dix erreurs de pays** — Nicoya, La Palina, Padilla, Asylum, Micallef, Gurkha, La Barba, Nomad, 7-20-4, Cuban Crafters. Toujours le même motif : l'adresse du fondateur prise pour le lieu de fabrication | `183` à `193` |
+| **Dannemann** disait « rachat par Swisher International » ; c'est Burger Söhne, en 1988 | `189` |
+| **Neuf `founded` coupés net** à cinquante caractères, en ligne depuis des mois | `184` |
+| **Trois `founded` commençant par un tiret orphelin** — l'année attendue devant manquait | `193` |
+| **Kolumbus** portait un lieu dans son champ de date, l'erreur déjà corrigée chez Vargas | `193` |
+| **Dona Flor** : lieu de culture pris pour lieu de fabrication, et décennie fausse | `193` |
+| **Bolívar Honduras** : retirée du tarif en octobre 2024, la fiche ne le disait pas | `193` |
+| **Perdomo** : « Nick's Stick » au singulier | `193` |
+| **Trois cigares de machine** encore présents | `187` |
+
+**Un document de travail vieillit plus vite que la base qu'il décrit.** Il se
+relit contre la base, jamais l'inverse — c'est la règle qui a fait passer
+« 37 maisons restantes » à 28, puis à 24, puis à zéro.
