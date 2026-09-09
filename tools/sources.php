@@ -71,7 +71,21 @@ function sources_resout(string $domaine): bool {
     return @checkdnsrr($domaine, 'A') || @checkdnsrr($domaine, 'AAAA');
 }
 
-/** Tous les domaines cités, et les fiches qui les citent. */
+/**
+ * Tous les domaines cités, et les fiches qui les citent.
+ *
+ * DEUX TABLES DEPUIS LA MIGRATION 195. `lounges` porte une colonne
+ * `source` depuis toujours ; `brands` n'en avait pas, et la doctrine
+ * « aucune fiche sans source » était donc vérifiable pour les caves et
+ * invisible pour les maisons. Elle en a une maintenant, et ce contrôle
+ * doit la lire — sans quoi il continuerait d'annoncer un chiffre juste
+ * sur une moitié du sujet.
+ *
+ * Les identifiants ne sont pas du même type : une cave a un entier, une
+ * marque a son NOM pour clé primaire. On les préfixe donc — « marque: »
+ * — plutôt que de les mélanger : deux espaces de noms dans un même
+ * tableau, et un identifiant qui dit de quelle table il vient.
+ */
 function sources_inventaire(PDO $db): array {
     $inv = [];
     foreach ($db->query("SELECT id, source FROM lounges WHERE source <> ''")->fetchAll(PDO::FETCH_ASSOC) as $r) {
@@ -79,8 +93,34 @@ function sources_inventaire(PDO $db): array {
             $inv[$d][] = (int)$r['id'];
         }
     }
+    // La colonne peut ne pas exister sur une base anterieure a la 195 :
+    // le controle doit continuer de servir, pas s'arreter.
+    try {
+        $q = $db->query("SELECT `name`, `source` FROM `brands`
+                          WHERE `source` IS NOT NULL AND `source` <> ''");
+        foreach ($q->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            foreach (sources_domaines_du_champ((string)$r['source']) as $d) {
+                $inv[$d][] = 'marque:' . $r['name'];
+            }
+        }
+    } catch (Throwable $e) { /* colonne absente : rien a lire */ }
     ksort($inv);
     return $inv;
+}
+
+/** Combien de fiches portent une source, table par table. */
+function sources_couverture(PDO $db): array {
+    $out = ['lounges' => [0, 0], 'brands' => [0, 0]];
+    $out['lounges'] = [
+        (int)$db->query("SELECT COUNT(*) FROM `lounges` WHERE `source` <> ''")->fetchColumn(),
+        (int)$db->query("SELECT COUNT(*) FROM `lounges`")->fetchColumn()];
+    try {
+        $out['brands'] = [
+            (int)$db->query("SELECT COUNT(*) FROM `brands`
+                              WHERE `source` IS NOT NULL AND `source` <> ''")->fetchColumn(),
+            (int)$db->query("SELECT COUNT(*) FROM `brands`")->fetchColumn()];
+    } catch (Throwable $e) { $out['brands'] = [0, 0]; }
+    return $out;
 }
 
 /** Le sceau versionné, ou null s'il n'existe pas encore. */
@@ -248,9 +288,22 @@ if (isset($opts['verifier'])) {
 }
 
 // ── État ─────────────────────────────────────────────────
+$couv = sources_couverture($db);
 printf("\nSOURCES CITÉES — %d domaines, %d fiches\n", count($inv),
-       (int)$db->query("SELECT COUNT(*) FROM lounges WHERE source <> ''")->fetchColumn());
+       $couv['lounges'][0] + $couv['brands'][0]);
 echo str_repeat('═', 62), "\n";
+// LE TROU EST UN CHIFFRE, PAS UN SILENCE. Cent cinq maisons sur 182
+// n'ont pas de source enregistree : leurs fiches ont ete ecrites avant
+// que la colonne existe, et personne n'a note d'ou elles venaient. En
+// leur fabriquer une pour faire propre serait exactement ce que cet
+// outil existe pour attraper. On affiche donc la couverture.
+foreach (['lounges' => 'caves', 'brands' => 'maisons'] as $t => $lib) {
+    [$avec, $tout] = $couv[$t];
+    if ($tout === 0) continue;
+    printf("  %-8s %4d / %-4d sourcees  (%d sans source)\n",
+           $lib, $avec, $tout, $tout - $avec);
+}
+echo "\n";
 if (!$sceau) { echo "Aucun sceau. Lancer --figer pour en établir un.\n"; exit(0); }
 
 $sans = sources_fiches_sans_source($inv, $sceau);

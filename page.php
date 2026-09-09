@@ -691,6 +691,35 @@ if ($db === null) {
                 $corps .= '</ul></section>';
             }
         }
+        // ── D'OÙ VIENT CETTE FICHE ──────────────────────────
+        // Même bloc que sur la fiche d'établissement, et pour la même
+        // raison : la doctrine du projet est « aucune fiche sans
+        // source », et servir la fiche en taisant sa source rend cette
+        // règle invérifiable par celui à qui elle est destinée.
+        //
+        // ELLE ÉTAIT VÉRIFIABLE POUR LES CAVES ET INVISIBLE POUR LES
+        // MAISONS. `lounges.source` existe depuis toujours ; `brands`
+        // n'avait pas de colonne du tout avant la migration 195 — alors
+        // que les maisons sont ce que l'atlas écrit le plus.
+        //
+        // CENT CINQ MAISONS SUR 182 N'EN ONT PAS, et le bloc ne s'écrit
+        // simplement pas pour elles. C'est voulu : leur source n'a
+        // jamais été enregistrée, et en fabriquer une pour faire propre
+        // serait exactement la faute que `tools/sources.php` a été écrit
+        // pour attraper. Le trou se lit dans cet outil, pas en prose
+        // vague au bas d'une fiche.
+        //
+        // La réserve « à vérifier » garde le sens qu'elle a chez les
+        // caves : ce n'est pas une source, c'est son absence déclarée,
+        // et on rend la mention TRADUITE plutôt que la note française.
+        $src = trim((string)($m['source'] ?? ''));
+        if ($src !== '') {
+            $reserve = (bool)preg_match('/^\s*(à|a)\s+v[ée]rifier\b/iu', $src);
+            $corps .= $reserve
+                ? '<p class="pg-reserve">⚠ ' . e(L('pg_source_reserve')) . '</p>'
+                : '<p class="pg-source">' . e(L('pg_source')) . ' : ' . e($src) . '</p>';
+        }
+
         if ($m['country_id'] && $m['pays_nom']) {
             $corps .= '<p class="pg-retour"><a href="' . e(page_url('pays', $m['country_id'], $lang)) . '">'
                     . e($m['pays_nom']) . ' →</a></p>';

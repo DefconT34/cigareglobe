@@ -80,6 +80,7 @@ CREATE TABLE `brands` (
   `pairings` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Accords: [{type, name, notes}]',
   `limited_eds` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Éditions limitées notables',
   `factory` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Tabacalera / manufacture',
+  `source` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'D''où vient la fiche. Texte libre, comme lounges.source.',
   `history_en` text COLLATE utf8mb4_unicode_ci COMMENT 'Histoire en anglais',
   `history_es` text COLLATE utf8mb4_unicode_ci COMMENT 'Histoire en espagnol',
   `history_de` text COLLATE utf8mb4_unicode_ci COMMENT 'Histoire en allemand',

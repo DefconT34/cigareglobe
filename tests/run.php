@@ -3806,6 +3806,59 @@ section('La fiche dit d ou elle vient');
     check('source : vide, aucune ligne n est posee',
           !str_contains($rv['body'], 'pg-source') && !str_contains($rv['body'], 'pg-reserve'));
 
+    // ── LA MEME REGLE, SUR LA FICHE DE MAISON ───────────
+    //
+    // `lounges.source` existait depuis toujours ; `brands` N'AVAIT PAS
+    // DE COLONNE DU TOUT avant la migration 195. La doctrine « aucune
+    // fiche sans source » etait donc verifiable pour les caves et
+    // invisible pour les maisons — alors que les maisons sont ce que
+    // l'atlas ecrit le plus : 182 fiches contre 508, mais des textes
+    // dix fois plus longs.
+    //
+    // On rejoue ici les trois memes cas sur la fiche de marque. Ce
+    // n'est pas une redite : les deux blocs sont deux branches
+    // distinctes de page.php, et un correctif applique a l'une ne suit
+    // pas l'autre. La contre-epreuve de la troisieme ligne compte
+    // autant que les deux premieres — CENT CINQ MAISONS SUR 182 n'ont
+    // pas de source, et pour elles le bloc ne doit rien poser.
+    $pdo->exec("UPDATE brands SET source = 'exemple-maison.test 2025' WHERE name = 'Marque de test'");
+    $rm = http('GET', $srvS . '/page.php?type=marque&id=marque-de-test&lang=fr', ['jar' => $cliS]);
+    eq('source marque : la fiche repond', 200, $rm['status']);
+    check('source marque : la citation est rendue',
+          str_contains($rm['body'], 'exemple-maison.test 2025'));
+    check('source marque : sous un libelle, pas nue',
+          (bool)preg_match('~class="pg-source">\s*Source\s*:~u', $rm['body']));
+
+    // Une citation NE SE TRADUIT PAS. Seul le libelle suit la langue —
+    // exactement comme sur la fiche de cave.
+    $rmd = http('GET', $srvS . '/page.php?type=marque&id=marque-de-test&lang=de', ['jar' => $cliS]);
+    check('source marque : le libelle suit la langue',
+          str_contains($rmd['body'], 'Quelle') && !str_contains($rmd['body'], '>Source :'));
+    check('source marque : mais la citation reste intacte',
+          str_contains($rmd['body'], 'exemple-maison.test 2025'));
+
+    // La reserve : ce n'est pas une source, c'est son absence declaree.
+    $pdo->exec("UPDATE brands
+                   SET source = 'à vérifier — aucune source publique ne recoupe cette maison'
+                 WHERE name = 'Marque de test'");
+    $rmr = http('GET', $srvS . '/page.php?type=marque&id=marque-de-test&lang=fr', ['jar' => $cliS]);
+    check('source marque : la reserve se voit',
+          str_contains($rmr['body'], 'pg-reserve'));
+    check('source marque : et ne se deguise pas en citation',
+          !str_contains($rmr['body'], 'pg-source'));
+    $rmr2 = http('GET', $srvS . '/page.php?type=marque&id=marque-de-test&lang=de', ['jar' => $cliS]);
+    check('source marque : la note francaise ne fuit pas',
+          !str_contains($rmr2['body'], 'recoupe cette maison')
+          && !str_contains($rmr2['body'], 'à vérifier'));
+
+    // CONTRE-EPREUVE. Sans elle, un rendu qui poserait le bloc a vide
+    // sur les cent cinq maisons sans source passerait tout ce qui
+    // precede.
+    $pdo->exec("UPDATE brands SET source = NULL WHERE name = 'Marque de test'");
+    $rmv = http('GET', $srvS . '/page.php?type=marque&id=marque-de-test&lang=fr', ['jar' => $cliS]);
+    check('source marque : nulle, aucune ligne n est posee',
+          !str_contains($rmv['body'], 'pg-source') && !str_contains($rmv['body'], 'pg-reserve'));
+
     // ── LE CLIQUET : une reserve ne decrit pas une offre ─
     // CE QUE RENDRE LA SOURCE VISIBLE A MONTRE. Les dix-huit fiches
     // marquees « a verifier » portaient une description qui affirmait

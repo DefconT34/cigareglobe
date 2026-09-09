@@ -3987,3 +3987,74 @@ sources — même règle que pour les scores de presse sans `source_url`. Seuls 
 faits vérifiables sont repris : qui fabrique, où, avec quoi, et quand.
 
 **Tripe longue et roulé main vérifiés avant écriture** (règle `187`).
+
+---
+
+## Migration `195` — `brands.source` : la discipline devient lisible
+
+**182 marques**, 881 assertions, 0 échec, dix contrôles verts.
+
+### Le manque
+`lounges` porte une colonne `source` depuis toujours, et **508 fiches sur 508**
+en remplissent une. `brands` **n'avait pas de colonne du tout**. La doctrine du
+projet — « aucune fiche sans source » — était donc vérifiable pour les caves et
+**invisible pour les maisons**, alors que les maisons sont ce que l'atlas écrit
+le plus : moins de fiches, mais des textes dix fois plus longs.
+
+### Ce qui est rempli, et ce qui ne l'est pas
+| | sourcées | sans source |
+|---|---|---|
+| **caves** | 508 / 508 | 0 |
+| **maisons** | **77 / 182** | **105** |
+
+**Aucune source n'est inventée.** Les soixante-dix-sept sont reprises des
+**en-têtes des migrations** qui ont écrit ces fiches — `171`, `173`, `174`,
+`176`, `180` à `194` —, où elles étaient déjà consignées **en commentaire, hors
+de portée du lecteur**. Cette migration ne fait que les déplacer du commentaire
+vers la base.
+
+**Les cent cinq autres restent à `NULL`, et c'est le point.** Leur source n'a
+jamais été enregistrée. En fabriquer une pour faire propre serait exactement la
+faute que `tools/sources.php` a été écrit pour attraper — vingt-huit domaines
+cités qui n'existaient pas, par soixante-quinze fiches. **Une source absente est
+honnête ; une source inventée donne l'apparence de la vérification.**
+
+Le trou est donc **un chiffre, pas un silence** : `tools/sources.php` l'affiche
+table par table à chaque exécution.
+
+### Les cinquante-deux nouveaux domaines résolvent tous
+`tools/sources.php --verifier` a passé au DNS les cinquante-deux domaines
+qu'apporte cette migration. **Aucun n'est inexistant** — c'est ce qui autorisait
+à les figer au sceau, qui compte désormais 194 domaines.
+
+### Deux précisions que le champ écrit lui-même
+- **Oliva, Rocky Patel, E.P. Carrillo et Joya de Nicaragua** ne reçoivent une
+  source **que pour leur paragraphe Black Swan** (migration `194`). Le reste de
+  leur fiche est antérieur et sans source enregistrée : le champ le dit mot pour
+  mot, plutôt que de laisser croire que la citation couvre la fiche entière.
+- **Fonseca** est *la* fiche où une source périmée a produit une erreur — la
+  `173` l'a donnée pour dominicaine sur la foi d'une liste Wikipédia qui n'avait
+  pas suivi le rachat de décembre 2019, et la `175` l'a corrigée. Son champ
+  `source` raconte les deux.
+
+### Ce que le champ n'est pas
+Ce n'est pas un `source_url` : c'est du **texte libre**, comme chez `lounges`.
+Il porte des domaines, des titres d'articles, parfois une mention non
+électronique. `tools/sources.php` en extrait les domaines et vérifie qu'ils
+résolvent — **il mesure la traçabilité, pas la véracité**.
+
+Le préfixe « à vérifier » y garde le sens qu'il a chez les caves : ce n'est pas
+une source, c'est son absence déclarée, et la page rend une **réserve traduite**
+au lieu de la citation française.
+
+### Le rendu
+`page.php` sert le bloc sur la fiche de maison comme sur la fiche de cave —
+citation rendue telle quelle, libellé traduit, et **rien du tout** quand la
+colonne est vide. Ce sont **deux branches distinctes** du fichier : un correctif
+appliqué à l'une ne suit pas l'autre, d'où huit assertions qui rejouent les
+trois mêmes cas sur la fiche de marque, contre-épreuve comprise.
+
+### Reste
+Les **105 maisons sans source**. Les remplir demande de retrouver, fiche par
+fiche, d'où venait un texte écrit avant que la colonne existe — c'est un
+chantier de relecture, pas une migration.

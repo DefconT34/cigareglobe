@@ -243,6 +243,7 @@ function page_marque(PDO $db, string $slug, string $lang): ?array {
         // `limited_eds` n'a pas de colonnes traduites : c'est une liste
         // de noms propres d'éditions, qui ne se traduisent pas.
         $q = $db->prepare("SELECT b.name, b.founded, b.factory, b.country_id, b.limited_eds,
+                                  b.source,
                                   " . page_col('history', $lang) . "     AS history,
                                   " . page_col('gamme', $lang) . "       AS gamme,
                                   " . page_col('pairings', $lang) . "    AS pairings,
