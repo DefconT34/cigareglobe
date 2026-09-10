@@ -355,6 +355,16 @@ const REVUES_ADMISES = [
     'Excalibur|history|de' => 'idem, en allemand',
     'Excalibur|history|zh' => 'idem, en chinois — 雪茄爱好者 y designe bien la revue',
     'Excalibur|history|ar' => 'idem, en arabe',
+    // De Los Reyes : la revue est nommee parce que la revendication est
+    // FORTE — premiere plantation du pays a cultiver le Piloto Cubano.
+    // Une affirmation pareille sans son auteur serait pire qu'une
+    // affirmation absente.
+    'De Los Reyes Cigars|history|fr' => 'attribue a Cigar Aficionado la primaute de Navarrete sur le Piloto Cubano',
+    'De Los Reyes Cigars|history|en' => 'idem, en anglais',
+    'De Los Reyes Cigars|history|es' => 'idem, en espagnol',
+    'De Los Reyes Cigars|history|de' => 'idem, en allemand',
+    'De Los Reyes Cigars|history|zh' => 'idem, en chinois',
+    'De Los Reyes Cigars|history|ar' => 'idem, en arabe',
 ];
 
 /**
@@ -452,6 +462,8 @@ const AFFIRMATIONS_HISTORIQUES = [
         'rapporte les mots de la maison sur son propre atelier — « alors connu sous le nom de Vegas Santiago » — parce que c’est cet aveu qui établit le lien entre deux fiches de cet atlas',
     'Vegas de Santiago|history|0' =>
         'reprend la même parole de Casdagli, attribuée à Casdagli, pour établir qui roule quoi à Puriscal',
+    'De Los Reyes Cigars|history|0' =>
+        'nomme Cigar Aficionado comme auteur d’une revendication forte — la première plantation du pays à cultiver le Piloto Cubano — au lieu de la reprendre à son compte',
 ];
 
 // Les trois champs narratifs et la clé où ils rangent leur texte. Le

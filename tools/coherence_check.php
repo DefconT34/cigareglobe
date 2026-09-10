@@ -679,6 +679,8 @@ const COHER_DATES_ASSUMEES = [
         '1992 date une ligne du catalogue, pas la marque de 1935',
     'Avo' =>
         '1984 ne date pas la maison, qui parait en 1988',
+    'De Los Reyes Cigars' =>
+        '1961 est la creation de la ferme de Navarrete par Leo Reyes ; la fabrique, elle, ouvre en 1995',
 ];
 
 $r = $db->query("SELECT `name`, `founded`, `history` FROM `brands`
