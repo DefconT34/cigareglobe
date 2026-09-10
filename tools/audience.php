@@ -30,7 +30,24 @@ if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 require_once __DIR__ . '/../backend/config.php';
 require_once __DIR__ . '/../backend/audience.php';
 
-/** Le rapport tient sur une fenêtre glissante. */
+/**
+ * Le rapport tient sur une fenêtre glissante.
+ *
+ * ⚠ LA VALEUR EST INSÉRÉE DANS LE SQL, ET C'EST VOULU. Un paramètre lié
+ * dans `INTERVAL ? DAY` ne se comporte pas pareil sur MySQL et sur
+ * MariaDB — le serveur tourne sous MariaDB, la machine de
+ * développement sous MySQL, et la première version de ce rapport
+ * mourait sur le serveur APRÈS avoir imprimé son en-tête, sans un mot,
+ * `display_errors` étant coupé en production.
+ *
+ * C'est la même famille de piège que les fonctions `JSON_*`, que les
+ * migrations de ce dépôt s'interdisent depuis la 179 pour exactement
+ * cette raison.
+ *
+ * L'insertion est sûre : la valeur est bornée entre 1 et 365 et
+ * convertie en entier ci-dessous. Rien de ce qui vient de la ligne de
+ * commande n'atteint la requête.
+ */
 function audience_fenetre(array $argv): int {
     $i = array_search('--jours', $argv, true);
     $n = ($i !== false && isset($argv[$i + 1])) ? (int)$argv[$i + 1] : 30;
@@ -121,18 +138,16 @@ try { $db->query("SELECT 1 FROM `audience` LIMIT 1"); } catch (Throwable $e) {
 printf("CigarOdyssey — audience, %d derniers jours\n", $jours);
 printf("  base : %s\n\n", DB_NAME);
 
-$p = $db->prepare(
+$p = $db->query(
     "SELECT COUNT(*) AS vues,
             COUNT(DISTINCT `empreinte`) AS visiteurs,
             COUNT(DISTINCT `jour`) AS jours_actifs
        FROM `audience`
-      WHERE `robot` = 0 AND `jour` >= (CURDATE() - INTERVAL ? DAY)");
-$p->execute([$jours]);
+      WHERE `robot` = 0 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)");
 $h = $p->fetch(PDO::FETCH_ASSOC);
 
-$p2 = $db->prepare("SELECT COUNT(*) FROM `audience`
-                     WHERE `robot` = 1 AND `jour` >= (CURDATE() - INTERVAL ? DAY)");
-$p2->execute([$jours]);
+$p2 = $db->query("SELECT COUNT(*) FROM `audience`
+                     WHERE `robot` = 1 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)");
 $robots = (int)$p2->fetchColumn();
 
 // LE CAS QU'IL FAUT NOMMER : zéro. Un rapport qui affiche « 0 » sans
@@ -154,17 +169,17 @@ echo "\n";
 
 $sections = [
     'PAGES LES PLUS VUES' => "SELECT CONCAT(`type`, ' · ', `chemin`) AS k, COUNT(*) n
-                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL ? DAY)
+                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)
                             GROUP BY k ORDER BY n DESC LIMIT 12",
     'D\'OU ILS VIENNENT'  => "SELECT COALESCE(`referent`, '(acces direct ou inconnu)') AS k, COUNT(*) n
-                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL ? DAY)
+                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)
                             GROUP BY k ORDER BY n DESC LIMIT 10",
     'LANGUES'             => "SELECT `lang` AS k, COUNT(*) n
-                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL ? DAY)
+                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)
                             GROUP BY k ORDER BY n DESC",
 ];
 foreach ($sections as $titre => $sql) {
-    $q = $db->prepare($sql); $q->execute([$jours]);
+    $q = $db->query($sql);
     $lignes = $q->fetchAll(PDO::FETCH_ASSOC);
     if (!$lignes) continue;
     echo $titre . "\n";
@@ -173,10 +188,9 @@ foreach ($sections as $titre => $sql) {
 }
 
 if (in_array('--robots', $argv, true)) {
-    $q = $db->prepare("SELECT CONCAT(`type`,' · ',`chemin`) AS k, COUNT(*) n
-                         FROM `audience` WHERE `robot`=1 AND `jour` >= (CURDATE() - INTERVAL ? DAY)
-                     GROUP BY k ORDER BY n DESC LIMIT 15");
-    $q->execute([$jours]);
+    $q = $db->query("SELECT CONCAT(`type`,' · ',`chemin`) AS k, COUNT(*) n
+                       FROM `audience` WHERE `robot`=1 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)
+                   GROUP BY k ORDER BY n DESC LIMIT 15");
     echo "CE QUE LES EXPLORATEURS ONT LU\n";
     foreach ($q as $l) printf("  %-52s %5d\n", mb_substr((string)$l['k'], 0, 52), (int)$l['n']);
     echo "\n";
