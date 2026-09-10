@@ -24,6 +24,7 @@
 --   favorites           listes privées
 --   votes               votes sur les contributions
 --   moderation_log      journal de modération
+--   audience            vues de pages, propres au serveur qui les a reçues
 --   suggestions         remarques envoyées par la boîte à suggestions
 --   forum_topics        discussions
 --   forum_posts         messages

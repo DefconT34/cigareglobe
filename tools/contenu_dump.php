@@ -79,6 +79,11 @@ const CONTENU_EXCLUES = [
     'favorites'        => 'listes privées',
     'votes'            => 'votes sur les contributions',
     'moderation_log'   => 'journal de modération',
+    // La mesure d'audience appartient au serveur qui l'a recueillie :
+    // elle n'a aucun sens versionnée, et la verser ferait voyager des
+    // empreintes de visiteurs dans un dépôt Git — même irréversibles,
+    // même expirées à minuit, elles n'ont rien à y faire.
+    'audience'         => 'vues de pages, propres au serveur qui les a reçues',
     // Une suggestion porte parfois une adresse électronique, et
     // toujours la parole de quelqu'un : elle se sauvegarde, elle ne se
     // versionne pas.

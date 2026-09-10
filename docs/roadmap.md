@@ -4466,3 +4466,79 @@ démentie vaut moins que rien.
 
 **Vérifié en production, cache cassé : 179 fiches annoncées, 179 avec leur
 source, aucune en échec.**
+
+---
+
+## Migration `203` — de quoi savoir si quelqu'un vient
+
+**917 assertions, 0 échec.** `audience --autotest` : 0 échec.
+
+### Le constat qui a ouvert ce chantier
+**Le site n'avait aucune mesure.** Ni Google Analytics, ni Plausible, ni Matomo,
+ni compteur maison. « Je n'ai pas encore d'audience » n'était donc pas un
+constat, mais **une absence de constat** : trois cents visiteurs par mois arrivés
+par la recherche auraient été invisibles.
+
+### Pourquoi pas Google Analytics
+Le portique d'âge de ce site porte ce commentaire, et il fait doctrine :
+
+> « il ne pose pas de cookie. Le choix vit dans localStorage [...] et pas une
+> ligne de plus dans une bannière de consentement »
+
+Poser GA4, c'est un cookie, donc une bannière, donc **un obstacle de plus entre
+un visiteur et une fiche — sur un site qui n'a pas encore de visiteurs**. Et
+c'est confier à un tiers la seule chose qu'on cherche à savoir.
+
+### Ce qui est enregistré, et ce qui ne l'est pas
+| enregistré | pas enregistré |
+|---|---|
+| date, type de page, chemin, langue | **aucune adresse IP** |
+| **domaine** référent (`google.com`) | jamais l'URL de recherche, qui porte la requête tapée |
+| drapeau robot | aucun user-agent complet, aucun cookie |
+
+**L'empreinte mérite son paragraphe.** Pour compter des *visiteurs* et non des
+pages, il faut distinguer deux lectures sans identifier personne. On stocke douze
+caractères de `SHA256(sel_du_jour + ip + ua)`, où le sel dérive d'`ADMIN_KEY` et
+de la date :
+
+- **irréversible** — l'IP n'est pas retrouvable ;
+- **non corrélable** — le sel change à minuit, donc personne n'est suivi d'un
+  jour sur l'autre ;
+- **inutile volée** — sans `ADMIN_KEY`, la table ne dit rien.
+
+Sans `ADMIN_KEY`, aucune empreinte n'est fabriquée : mieux vaut compter des pages
+sans pouvoir compter des personnes qu'une empreinte prévisible.
+
+### Trois décisions qui font mentir un rapport, et leurs contre-épreuves
+1. **Le référent.** Une URL de résultats porte la requête tapée — un nom, une
+   adresse, une maladie. On ne garde que l'hôte.
+2. **Les robots.** Un site neuf reçoit surtout des explorateurs ; les mêler aux
+   lecteurs donnerait une courbe flatteuse et fausse. Ils sont **séparés, pas
+   supprimés** — et trois vrais navigateurs servent de contre-épreuve, parce
+   qu'une règle trop gourmande les classerait en robots et le rapport ne
+   montrerait plus personne.
+3. **La 404 n'est pas une visite.** La mesure est posée *après* la résolution :
+   vérifié en direct, sept requêtes dont une introuvable donnent huit vues et
+   zéro pour la 404.
+
+### Ce que cette mesure ne verra pas, et le dit
+Le `.htaccess` pose une heure de cache sur le HTML, l'hébergeur répond
+`max-age=300`. **Une page servie depuis un cache n'atteint pas PHP.** Les
+chiffres sont un **plancher** — et `tools/audience.php` le répète à chaque
+exécution. C'est le même cache qui m'avait fait croire à un défaut de sources à
+la `201` ; cette fois il est nommé dans l'outil plutôt que découvert après coup.
+
+Sur l'accueil, la mesure est posée **avant** la branche de cache-fichier
+d'`index.php` — sinon la page la plus visitée aurait été comptée une fois par
+heure et non une fois par visiteur.
+
+### Search Console
+`VERIF_GOOGLE` et `VERIF_BING` dans le `.env` posent les balises de vérification.
+Vides par défaut, aucune balise n'est rendue. Le jeton n'est pas un secret, mais
+il change de compte en compte et n'a rien à faire dans le code.
+
+### Ce que le garde-fou du dépôt a attrapé
+`contenu_dump.php` a refusé de tourner tant que la table `audience` n'était ni
+versée ni exclue **avec une raison écrite**. Elle est exclue : cette mesure
+appartient au serveur qui l'a recueillie, et verser des empreintes de visiteurs
+dans un dépôt Git — même irréversibles, même expirées à minuit — n'a aucun sens.

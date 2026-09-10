@@ -5150,6 +5150,90 @@ check('tiret orphelin : la lecture est en caracteres, pas en octets',
       mb_substr('— Rép. dominicaine', 0, 1) === '—'
       && '— Rép. dominicaine'[0] !== '—');
 
+// ════════════════════════════════════════════════════════
+section('La mesure d audience');
+
+// LE SITE N AVAIT AUCUNE MESURE — ni Google Analytics, ni Plausible, ni
+// compteur maison. « Je n ai pas d audience » n etait donc pas un
+// constat mais une absence de constat.
+//
+// GA4 aurait pose un cookie, donc une banniere de consentement, donc un
+// obstacle de plus entre un visiteur et une fiche — sur un site qui n en
+// a pas encore. Le portique d age de ce site a deja tranche la
+// question : « il ne pose pas de cookie [...] pas une ligne de plus dans
+// une banniere de consentement ». On mesure donc de premiere main.
+//
+// Ce bloc eprouve les TROIS DECISIONS qui font mentir un rapport
+// d audience quand elles sont mal prises. Il n a pas besoin de base :
+// ce sont des fonctions pures.
+require_once PROJECT_ROOT . '/backend/audience.php';
+{
+    // ── 1. Du referent, on ne garde que le DOMAINE ──────
+    // UNE URL DE RECHERCHE PORTE LA REQUETE TAPEE. La conserver, ce
+    // serait stocker ce que quelqu un cherchait — un nom, une adresse,
+    // une maladie — dans une table qui n a aucune raison de le savoir.
+    eq('audience : le domaine du referent est retenu', 'google.com',
+       audience_domaine('https://www.google.com/search?q=cigare+padron'));
+    check('audience : la requete tapee ne survit pas',
+          !str_contains((string)audience_domaine('https://google.com/search?q=un+secret'), 'secret'));
+    eq('audience : le www est retire', 'reddit.com',
+       audience_domaine('https://www.reddit.com/r/cigars/comments/xyz'));
+    eq('audience : un referent vide ne donne rien', null, audience_domaine(''));
+    eq('audience : une chaine qui n est pas une URL non plus', null, audience_domaine('bonjour'));
+
+    // ── 2. Robots et personnes, jamais melanges ─────────
+    // Un site neuf recoit SURTOUT des explorateurs. Les compter avec
+    // les lecteurs donnerait une courbe flatteuse et fausse — c est
+    // exactement l erreur qu on cherche a ne pas commettre en posant
+    // une mesure.
+    foreach (['Googlebot/2.1', 'Mozilla/5.0 (compatible; bingbot/2.0)',
+              'curl/8.4.0', 'facebookexternalhit/1.1', 'AhrefsBot/7.0'] as $ua) {
+        check('audience : robot reconnu — ' . mb_substr($ua, 0, 24), audience_robot($ua));
+    }
+    // CONTRE-EPREUVES : de vrais navigateurs. Une regle trop gourmande
+    // les classerait en robots, et le rapport ne montrerait plus
+    // personne — panne silencieuse et parfaitement credible.
+    foreach (['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36',
+              'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Version/17.0 Mobile Safari/604.1',
+              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Gecko/20100101 Firefox/121.0'] as $ua) {
+        check('audience : personne et non robot — ' . mb_substr($ua, 0, 20), !audience_robot($ua));
+    }
+    check('audience : un agent vide compte comme robot', audience_robot(''));
+
+    // ── 3. Distinguer sans identifier ───────────────────
+    // C est la propriete qui rend la mesure acceptable sans
+    // consentement : on compte des personnes distinctes SANS pouvoir
+    // dire qui, ni suivre quiconque d un jour a l autre.
+    if (ADMIN_KEY !== '') {
+        $j1 = '2026-09-10'; $j2 = '2026-09-11';
+        $a = audience_empreinte('1.2.3.4', 'UA', $j1);
+        check('audience : l empreinte est stable dans la journee',
+              $a === audience_empreinte('1.2.3.4', 'UA', $j1));
+        check('audience : deux visiteurs ne se confondent pas',
+              $a !== audience_empreinte('1.2.3.5', 'UA', $j1));
+        // LE POINT CENTRAL : le sel change a minuit, donc le meme
+        // visiteur est ILLISIBLE le lendemain. Sans cela, on suivrait
+        // des personnes dans le temps — ce qu on refuse.
+        check('audience : le meme visiteur est illisible le lendemain',
+              $a !== audience_empreinte('1.2.3.4', 'UA', $j2));
+        check('audience : douze caracteres, et l adresse n y est pas',
+              strlen((string)$a) === 12 && !str_contains((string)$a, '1.2.3'));
+    }
+    // Sans cle, on ne fabrique PAS d empreinte previsible : mieux vaut
+    // compter des pages sans pouvoir compter des personnes.
+    check('audience : sans ADMIN_KEY, aucune empreinte n est fabriquee',
+          ADMIN_KEY !== '' || audience_empreinte('1.2.3.4', 'UA', '2026-09-10') === null);
+
+    // ── 4. La mesure ne doit jamais casser la page ──────
+    // Une mesure qui fait echouer le site qu elle mesure est pire que
+    // pas de mesure. `audience_noter` avale tout, y compris une base
+    // absente.
+    $sansBase = null;
+    try { audience_noter(null, 'marque', 'marque/padron', 'fr'); $sansBase = true; }
+    catch (Throwable $e) { $sansBase = false; }
+    check('audience : sans base, elle se tait au lieu d echouer', $sansBase === true);
+}
+
 // ── Une fiche qui se contredit elle-meme sur sa date ─────
 //
 // BOLIVAR portait « 1901 — La Havane » dans son champ `founded` et

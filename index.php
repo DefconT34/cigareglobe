@@ -309,6 +309,18 @@ $pageCache = __DIR__ . '/backend/cache/page_' . $lang . '_'
                     . '|' . (int)($sujetOk['id'] ?? 0)
                     . '|' . (string)$canonEntite), 0, 12) . '.html';
 
+// ── La mesure, AVANT la branche de cache ─────────────────
+// PLACÉE ICI EXPRÈS. La ligne suivante sert un fichier déjà rendu et
+// sort : mesurer après elle laisserait la page d'accueil — la plus
+// visitée — comptée une fois par heure et non une fois par visiteur.
+//
+// Reste l'angle mort qu'aucun code PHP ne peut combler : une réponse
+// servie par le cache du NAVIGATEUR ou d'un intermédiaire n'atteint pas
+// ce fichier. Les chiffres sont un plancher, et `tools/audience.php` le
+// répète à chaque exécution.
+require_once __DIR__ . '/backend/audience.php';
+try { audience_noter(getDB(), 'accueil', 'accueil', $lang); } catch (Throwable $e) {}
+
 if (is_file($pageCache) && filemtime($pageCache) >= $empreinte) {
     header('Content-Type: text/html; charset=utf-8');
     cache_public(300);

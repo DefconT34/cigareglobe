@@ -882,6 +882,19 @@ if ($db === null) {
     }
 }
 
+// ── La mesure ────────────────────────────────────────────
+// POSÉE ICI, ET PAS PLUS HAUT. À ce point la résolution est faite : on
+// sait si la page existe. Compter avant, ce serait compter les 404 et
+// les adresses tapées au hasard comme des visites.
+//
+// Elle ne compte donc QUE les pages réellement servies, et le fait
+// sans cookie, sans tiers et sans conserver d'adresse IP — voir
+// backend/audience.php, qui ne peut pas faire échouer cette page.
+if ($h1 !== '') {
+    require_once __DIR__ . '/backend/audience.php';
+    audience_noter($db, $type, $type . '/' . $id, $lang);
+}
+
 // ── Introuvable ──────────────────────────────────────────
 if ($h1 === '') {
     http_response_code(404);
@@ -926,6 +939,11 @@ if (empty($noindex)) { cache_public(300); } else { cache_jamais(); }
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e($titre) ?></title>
 <meta name="description" content="<?= e($desc) ?>">
+<?php if (defined('VERIF_GOOGLE') && VERIF_GOOGLE !== ''): ?>
+<meta name="google-site-verification" content="<?= e(VERIF_GOOGLE) ?>">
+<?php endif; if (defined('VERIF_BING') && VERIF_BING !== ''): ?>
+<meta name="msvalidate.01" content="<?= e(VERIF_BING) ?>">
+<?php endif; ?>
 <?php if (!empty($noindex)): ?><meta name="robots" content="noindex">
 <?php else: ?><link rel="canonical" href="<?= e($urlIci) ?>">
 <?php foreach ($LANGUES as $l): ?>

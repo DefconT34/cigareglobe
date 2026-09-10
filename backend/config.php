@@ -54,6 +54,17 @@ define('TRUSTED_AFTER_APPROVED', (int)env('TRUSTED_AFTER_APPROVED', '5'));
 
 // ── Administration ────────────────────────────────────────
 define('ADMIN_KEY',   env('ADMIN_KEY', ''));
+
+// ── Vérification de propriété par les moteurs ───────────
+// Google Search Console et Bing Webmaster demandent de prouver qu'on
+// possède le domaine, par une balise `meta` dans le `<head>`. Le jeton
+// n'est pas un secret — il est public par construction — mais il n'a
+// rien à faire dans le code : il change de compte en compte, et un
+// jeton codé en dur suivrait le dépôt chez qui le cloneraît.
+//
+// Vide par défaut : aucune balise n'est alors posée.
+define('VERIF_GOOGLE', trim((string)env('VERIF_GOOGLE', '')));
+define('VERIF_BING',   trim((string)env('VERIF_BING',   '')));
 define('ADMIN_EMAIL', env('ADMIN_EMAIL', 'vous@example.com'));
 
 // ── Proxys de confiance ───────────────────────────────────

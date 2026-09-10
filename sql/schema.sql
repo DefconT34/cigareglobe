@@ -67,6 +67,29 @@ CREATE TABLE `auth_attempts` (
 DROP TABLE IF EXISTS `brands`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+--
+-- Mesure d'audience : de premiere main, sans cookie et sans tiers.
+-- Aucune adresse IP n'y est stockee ; `empreinte` est douze caracteres
+-- d'un hachage sale a la journee, irreversible et non correlable d'un
+-- jour a l'autre. Voir sql/migrations/203 et backend/audience.php.
+--
+CREATE TABLE `audience` (
+  `id`        bigint unsigned NOT NULL AUTO_INCREMENT,
+  `vu_le`     datetime NOT NULL,
+  `jour`      date NOT NULL,
+  `type`      varchar(24) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `chemin`    varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lang`      char(2) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'fr',
+  `referent`  varchar(120) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'DOMAINE seul',
+  `robot`     tinyint(1) NOT NULL DEFAULT 0,
+  `empreinte` char(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `k_jour` (`jour`),
+  KEY `k_type` (`type`),
+  KEY `k_robot` (`robot`),
+  KEY `k_jour_empreinte` (`jour`, `empreinte`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE `brands` (
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `country_id` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
