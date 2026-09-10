@@ -143,7 +143,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 17
+            "fiches": 18
         },
         "cigar.com": {
             "dns": "resout",
@@ -229,6 +229,10 @@
             "dns": "resout",
             "fiches": 5
         },
+        "coronacigar.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "correiobraziliense.com.br": {
             "dns": "resout",
             "fiches": 2
@@ -246,6 +250,10 @@
             "fiches": 1
         },
         "diariodeavisos.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "dopanama.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -632,6 +640,10 @@
         "neptunecigar.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "newsroompanama.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "nyc.com": {
             "dns": "resout",

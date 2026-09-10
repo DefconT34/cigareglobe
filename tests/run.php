@@ -5308,6 +5308,120 @@ require_once PROJECT_ROOT . '/backend/audience.php';
           str_contains($admin, 'Langues des lecteurs')
        && str_contains($admin, 'Langues que les explorateurs ont lues'));
 
+    // ── 9. LA RECHERCHE GLOBALE NE TROUVAIT AUCUNE MAISON ──
+    //
+    // Signale par un lecteur : « je ne retrouve pas la marque Saga,
+    // celle qui produit le Blend N7 ». Mesure dans le navigateur, le
+    // defaut etait bien plus large que cela : « saga », « padron » et
+    // « davidoff » rendaient CHACUN ZERO RESULTAT. Aucune des 181
+    // maisons, aucun des 408 etablissements verifies. Seuls les pays
+    // sortaient.
+    //
+    // TROIS CAUSES, TOUTES DANS LE MEME FICHIER.
+    //
+    // 1. `BRANDS_DB` et `LOUNGES` sont VIDES quand l index se
+    //    construit : data.amorce.js les declare a {} et le chargement
+    //    paresseux ne les remplit qu au clic, une fiche a la fois.
+    //    L index n avait jamais rien a lire. D ou l action
+    //    `data.php?action=recherche`, qui ne rend que des noms.
+    //
+    // 2. Les mots-cles d un pays faisaient `concat(c.brands).join(' ')`
+    //    sur un tableau d OBJETS : le resultat etait « [object Object] »
+    //    repete. Le repli qui aurait pu sauver la recherche de marque —
+    //    la trouver par son pays — ne marchait pas non plus.
+    //
+    // 3. Aucun repli d accents : « padron » ne trouvait pas « Padron »
+    //    avec son accent. Sur un atlas hispanophone, c est disqualifiant.
+    $js = (string)@file_get_contents(PROJECT_ROOT . '/assets/js/search.js');
+    $dp = (string)@file_get_contents(PROJECT_ROOT . '/backend/data.php');
+
+    check('recherche : l action qui sert l index existe',
+          str_contains($dp, 'function action_recherche')
+       && (bool)preg_match("/'recherche'\s*=>\s*action_recherche/", $dp));
+    check('recherche : elle rend les marques ET les etablissements',
+          (bool)preg_match('/FROM\s+brands/i', $dp) && str_contains($dp, "'marques' =>")
+       && str_contains($dp, "'lounges' =>"));
+    check('recherche : search.js la demande',
+          str_contains($js, "action=recherche"));
+    // Et il la demande A L OUVERTURE, pas au chargement de la page :
+    // l amorce doit rester legere, c est toute la raison de data.amorce.js.
+    check('recherche : l index est demande a l ouverture de la boite',
+          (bool)preg_match('/function openSearch\(\)[\s\S]{0,1200}chargerIndexServi\(\)/', $js));
+
+    // LES GAMMES SONT INDEXEES. C est par elles qu on retrouve les
+    // VINGT-SEPT lignes que le recensement a repliees dans la fiche de
+    // leur fabrique — Saga et Arsen chez De Los Reyes, Chaman chez Vegas
+    // de Santiago, Zino chez Oettinger Davidoff. Sans cela, le travail
+    // de rattachement est fait en base et defait a l ecran.
+    check('recherche : les noms de gamme entrent dans l index',
+          str_contains($js, 'lignes') && str_contains($dp, "'g' => \$lignes"));
+    check('recherche : le resultat dit QUELLE ligne a repondu',
+          str_contains($js, 'var touchee'));
+
+    // Le repli d accents, des deux cotes — replier un seul cote ne sert
+    // a rien.
+    check('recherche : les accents sont replies', str_contains($js, 'function _pli'));
+    check('recherche : la frappe est repliee elle aussi',
+          (bool)preg_match('/var q = _pli\(/', $js));
+    check('recherche : et les libelles compares le sont',
+          str_contains($js, '_pli(item.label)'));
+    check('recherche : plus aucun .toLowerCase() pour comparer',
+          substr_count($js, '.toLowerCase()') === 1);   // le seul est DANS _pli
+
+    // Le [object Object] : on verifie que les noms sont extraits.
+    check('recherche : les marques annoncees par un pays donnent leur nom',
+          str_contains($js, 'var annoncees')
+       && !preg_match('/concat\(c\.brands\s*\|\|\s*\[\]\)/', $js));
+
+    // ── Saga, le cas qui a ouvert ce chantier ───────────
+    // La serie s appelle BLEND NO. 7, et la fiche ecrivait « Blend »
+    // tout court : le lecteur cherchait le bon nom, c est l atlas qui
+    // portait l approximation.
+    // ⚠ CES CONTROLES LISENT LA BASE APPLICATIVE, PAS LA BASE DE TEST.
+    // La campagne travaille sur une copie jetable, qui ne porte pas le
+    // contenu des migrations : interroger test_pdo() ici rendait zero
+    // ligne et faisait echouer cinq assertions sur une base pourtant
+    // juste. C est le meme piege que le controle final sur les langues
+    // servies, qui ouvre sa propre connexion pour la meme raison.
+    try {
+        $appli = new PDO(
+            sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', DB_HOST, DB_PORT, DB_NAME),
+            DB_USER, DB_PASS,
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
+        );
+        $g = (string)$appli->query("SELECT gamme FROM brands WHERE name = 'De Los Reyes Cigars'")
+                           ->fetchColumn();
+        check('saga : la serie est nommee Blend No. 7', str_contains($g, 'Saga Blend No. 7'));
+        check('saga : et la gamme Saga reste, elle n est pas remplacee',
+              (bool)preg_match('/"name":\s*"Saga"/', $g));
+
+        // ── Le Panama a de nouveau une maison, et elle est sourcee ──
+        // La 204 l avait laisse vide faute de source ; la 205 l ecrit sur
+        // un article de presse date.
+        $n = (int)$appli->query("SELECT COUNT(*) FROM brands WHERE country_id = 'panama'")
+                        ->fetchColumn();
+        check('panama : le pays a au moins une maison', $n >= 1);
+        $src = (string)$appli->query("SELECT source FROM brands WHERE name = 'Joyas de Panama'
+                                       OR name LIKE 'Joyas de Panam%'")->fetchColumn();
+        check('panama : la maison cite une source de presse datee',
+              str_contains($src, 'newsroompanama.com') && str_contains($src, '2025'));
+        // ET AUCUN NOM DE GAMME INVENTE : c est la promesse de la 205.
+        $gj = (string)$appli->query("SELECT gamme FROM brands WHERE name LIKE 'Joyas de Panam%'")
+                            ->fetchColumn();
+        check('panama : aucune gamme inventee pour la maison', trim($gj) === '[]');
+        // Plus aucune trace de la fiche inventee, nulle part.
+        $t = (int)$appli->query("SELECT COUNT(*) FROM habanos_presence
+                                  WHERE country_id = 'panama'
+                                    AND (COALESCE(ownership,'') LIKE '%Toran%'
+                                      OR COALESCE(marques_officielles,'') LIKE '%Toran%'
+                                      OR COALESCE(factories,'') LIKE '%Toran%')")->fetchColumn();
+        check('panama : la fiche inventee ne survit pas dans habanos_presence', $t === 0);
+    } catch (Throwable $e) {
+        // Base applicative injoignable : on le dit, on ne fait pas
+        // passer le controle en silence.
+        check('saga / panama : base applicative lisible — ' . $e->getMessage(), false);
+    }
+
     // ── Les balises de verification des moteurs ─────────
     //
     // DEUX PIEGES, ET J AI MIS LES DEUX PIEDS DEDANS.

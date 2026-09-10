@@ -8,16 +8,99 @@
 // ── Index de recherche construit une fois ────────────────
 var _index = null;
 
+// ════════════════════════════════════════════════════════
+// L'INDEX SERVI — sans lui, la recherche ne trouvait AUCUNE maison
+// ────────────────────────────────────────────────────────
+// MESURÉ DANS LE NAVIGATEUR, et c'est ce qui a ouvert ce chantier :
+// « saga », « padron » et « davidoff » rendaient chacun ZÉRO résultat.
+// Pas seulement Saga — AUCUNE des 181 maisons, et aucun des 508
+// établissements.
+//
+// La cause n'était pas le score ni les mots-clés : `BRANDS_DB` et
+// `LOUNGES` sont VIDES au moment où l'index se construit.
+// `data.amorce.js` les déclare à `{}` et le chargement paresseux ne
+// les remplit qu'au clic, une fiche à la fois. L'index n'avait donc
+// jamais rien à lire. Seuls les pays sortaient, parce qu'eux sont
+// chargés d'emblée.
+//
+// Second défaut, au même endroit : les mots-clés d'un pays faisaient
+// `[].concat(c.brands).join(' ')` sur un tableau d'OBJETS
+// `{name, desc, iconic}`. Le résultat était « [object Object] »
+// répété dix fois. Le repli qui aurait pu sauver la recherche de
+// marque — la trouver par son pays — ne fonctionnait pas non plus.
+//
+// D'où cette petite requête dédiée : elle ne rend que des noms, elle
+// est demandée à la PREMIÈRE OUVERTURE de la boîte et pas au
+// chargement de la page, et l'index se reconstruit quand elle arrive.
+// ════════════════════════════════════════════════════════
+var _servi = null;      // { marques: [...], lounges: [...] } une fois chargé
+var _servi_promesse = null;
+
+function chargerIndexServi() {
+  if (_servi_promesse) return _servi_promesse;
+  var base = (typeof DATA_API !== 'undefined' && DATA_API) ? DATA_API
+           : ((window.CG_BACKEND_BASE || '') + '/data.php');
+  _servi_promesse = fetch(base + '?action=recherche&lang=' + (window.currentLang || 'fr'))
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(d) {
+      if (!d || !d.marques) return null;
+      _servi = d;
+      _index = null;          // à reconstruire, il a maintenant de quoi
+      return d;
+    })
+    .catch(function() {
+      // UNE RECHERCHE NE DOIT JAMAIS CASSER LA PAGE. Sans l'index
+      // servi, on retombe sur ce que la mémoire du navigateur porte
+      // déjà — les pays, et les fiches que le lecteur a ouvertes.
+      return null;
+    });
+  return _servi_promesse;
+}
+
+/**
+ * Replie les accents, et c'est indispensable ici.
+ *
+ * MESURÉ : « padron » rendait ZÉRO résultat alors que la fiche existe —
+ * elle s'appelle « Padrón ». Le même piège attend Toraño, Bolívar,
+ * Cohíba, Perdomo… et tous les noms de villes du catalogue
+ * d'établissements. Personne ne tape les accents dans une boîte de
+ * recherche, et un atlas hispanophone sans repli d'accents est un atlas
+ * qu'on ne peut pas interroger.
+ *
+ * NFD sépare la lettre de son signe, le filtre retire le signe. Le ñ
+ * devient n, le í devient i. On l'applique AUX DEUX CÔTÉS — la frappe
+ * et l'index — sans quoi le repli ne sert à rien.
+ */
+function _pli(s) {
+  s = String(s == null ? '' : s).toLowerCase();
+  try { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  catch (e) { return s; }   // navigateur sans normalize() : on dégrade, on ne casse pas
+}
+
+/** Le pays d'un identifiant, producteur ou pays de lounges. */
+function paysDe(id) {
+  return (COUNTRIES || []).find(function(c){ return c.id === id; })
+      || (LOUNGE_COUNTRIES || []).find(function(c){ return c.id === id; })
+      || { id: id, name: id, flag: '🏠' };
+}
+
 function buildIndex() {
   if (_index) return _index;
   _index = [];
 
   // Pays producteurs
   (COUNTRIES || []).forEach(function(c) {
+    // `c.brands` est un tableau d'OBJETS { name, desc, iconic } : le
+    // concaténer tel quel donnait « [object Object] » dix fois. On en
+    // tire les noms, ce qui permet aussi de trouver un pays par une
+    // maison qu'il annonce.
+    var annoncees = (Array.isArray(c.brands) ? c.brands : []).map(function(b) {
+      return (b && typeof b === 'object') ? String(b.name || '') : String(b || '');
+    });
     _index.push({
       type: 'country', id: c.id, label: c.name,
       sub: c.region, flag: c.flag,
-      keywords: [c.name, c.region, c.id].concat(c.brands||[]).join(' ').toLowerCase(),
+      keywords: _pli([c.name, c.region, c.id].concat(annoncees).join(' ')),
       data: c
     });
   });
@@ -29,7 +112,7 @@ function buildIndex() {
     _index.push({
       type: 'lounge-country', id: lc.id, label: lc.name,
       sub: 'Caves & Lounges', flag: lc.flag,
-      keywords: (lc.name + ' ' + lc.id + ' lounge cave cigare').toLowerCase(),
+      keywords: _pli(lc.name + ' ' + lc.id + ' lounge cave cigare'),
       data: lc
     });
   });
@@ -39,10 +122,38 @@ function buildIndex() {
     _index.push({
       type: 'market', id: m.id, label: m.name,
       sub: t('tip_market').replace('{n}', m.rank).replace('— ', ''), flag: m.flag,
-      keywords: (m.name + ' marché consommateur').toLowerCase(),
+      keywords: _pli(m.name + ' marché consommateur'),
       data: m
     });
   });
+
+  // ── Les 181 maisons et les 508 établissements ──────────
+  // Ils viennent de l'index servi quand il est là. Sinon on retombe sur
+  // `BRANDS_DB` / `LOUNGES`, qui ne portent que ce que le lecteur a
+  // déjà ouvert — mieux que rien, et c'était tout ce qu'il y avait.
+  if (_servi) {
+    _servi.marques.forEach(function(m) {
+      var country = paysDe(m.p);
+      _index.push({
+        type: 'brand', id: m.n, label: m.n, lignes: m.g || [],
+        sub: (country.flag || '') + ' ' + country.name + ' · ' + (m.f || ''),
+        flag: '🏷',
+        keywords: _pli(m.n + ' ' + country.name + ' ' + (m.g || []).join(' ')
+                 + ' marque cigare'),
+        data: { brand: null, country: country, name: m.n }
+      });
+    });
+    _servi.lounges.forEach(function(l) {
+      var country = paysDe(l.p);
+      _index.push({
+        type: 'lounge', id: l.p + ':' + l.n, label: l.n,
+        sub: (l.v ? l.v + ' · ' : '') + country.name, flag: country.flag,
+        keywords: _pli(l.n + ' ' + l.v + ' ' + country.name + ' lounge cave'),
+        data: { lounge: { name: l.n, city: l.v }, country: country }
+      });
+    });
+    return _index;
+  }
 
   // Lounges (établissements)
   Object.entries(LOUNGES || {}).forEach(function([cid, list]) {
@@ -53,20 +164,44 @@ function buildIndex() {
       _index.push({
         type: 'lounge', id: cid + ':' + l.name, label: l.name,
         sub: l.city + ' · ' + country.name, flag: country.flag,
-        keywords: (l.name + ' ' + l.city + ' ' + (l.type||'') + ' ' + country.name + ' lounge cave').toLowerCase(),
+        keywords: _pli(l.name + ' ' + l.city + ' ' + (l.type||'') + ' ' + country.name + ' lounge cave'),
         data: { lounge: l, country: country }
       });
     });
   });
 
   // Marques
+  //
+  // ── LES GAMMES SONT INDEXÉES, ET C'EST INDISPENSABLE ───
+  //
+  // Chercher « Saga » ne rendait RIEN. La marque existe pourtant dans
+  // l'atlas : c'est une gamme de De Los Reyes Cigars, nommée dans sa
+  // fiche avec ses séries — dont Blend No. 7. Mais les mots-clés ne
+  // portaient que le nom de la maison, son pays, et LES CENT PREMIERS
+  // CARACTÈRES de son historique. « Saga » apparaît au troisième
+  // paragraphe : hors de portée.
+  //
+  // Le défaut touchait tout un modèle de cet atlas. Le recensement a
+  // délibérément replié VINGT-SEPT lignes prises pour des maisons dans
+  // la fiche de leur fabrique — Arsen chez De Los Reyes, Chaman chez
+  // Vegas de Santiago, Zino chez Oettinger Davidoff, Oliveros chez
+  // Boutique Blends. Ce sont exactement les noms qu'un lecteur tape, et
+  // aucun n'était trouvable. Le travail de rattachement était fait dans
+  // la base et défait dans la recherche.
   Object.entries(BRANDS_DB || {}).forEach(function([name, b]) {
     var country = (COUNTRIES||[]).find(function(c){ return c.id===b.country; }) || { flag:'🥃', name:b.country };
+    // `gamme` est un tableau d'objets { name, story, ... }. Il peut être
+    // absent, nul, ou déjà une chaîne selon la fiche : on ne suppose
+    // rien, une recherche ne doit jamais casser sur une donnée creuse.
+    var lignes = (Array.isArray(b.gamme) ? b.gamme : [])
+      .map(function(g) { return g && g.name ? String(g.name) : ''; })
+      .filter(function(n) { return n !== ''; });
     _index.push({
-      type: 'brand', id: name, label: name,
+      type: 'brand', id: name, label: name, lignes: lignes,
       sub: country.flag + ' ' + country.name + ' · ' + (b.founded||''),
       flag: '🏷',
-      keywords: (name + ' ' + country.name + ' ' + (b.history||'').slice(0,100) + ' marque cigare').toLowerCase(),
+      keywords: _pli(name + ' ' + country.name + ' ' + lignes.join(' ') + ' '
+               + (b.history||'').slice(0,100) + ' marque cigare'),
       data: { brand: b, country: country, name: name }
     });
   });
@@ -78,15 +213,17 @@ function buildIndex() {
 function search(query, maxResults) {
   maxResults = maxResults || 8;
   if (!query || query.trim().length < 2) return [];
-  var q = query.trim().toLowerCase();
+  // La frappe est repliee comme l'index : « padron » doit trouver
+  // « Padrón ». Replier un seul cote ne servirait a rien.
+  var q = _pli(query.trim());
   var idx = buildIndex();
 
   return idx
     .map(function(item) {
       var score = 0;
       // Correspondance exacte en début = score max
-      if (item.label.toLowerCase().startsWith(q))   score = 100;
-      else if (item.label.toLowerCase().includes(q)) score = 80;
+      if (_pli(item.label).startsWith(q))   score = 100;
+      else if (_pli(item.label).includes(q)) score = 80;
       else if (item.keywords.includes(q))            score = 50;
       else {
         // Recherche par mots
@@ -100,7 +237,22 @@ function search(query, maxResults) {
     .filter(function(r){ return r.score > 0; })
     .sort(function(a, b){ return b.score - a.score; })
     .slice(0, maxResults)
-    .map(function(r){ return r.item; });
+    .map(function(r) {
+      var it = r.item;
+      // ── DIRE POURQUOI CE RÉSULTAT RÉPOND ───────────────
+      // Taper « Saga » et voir « De Los Reyes Cigars » sans un mot
+      // d'explication se lit comme une erreur de la recherche. Quand la
+      // correspondance vient d'une GAMME et non du nom de la maison, la
+      // ligne trouvée est affichée devant : « Saga · 🇩🇴 … ».
+      if (it.type !== 'brand' || !it.lignes || !it.lignes.length) return it;
+      if (_pli(it.label).includes(q)) return it;
+      var touchee = it.lignes.find(function(n){ return _pli(n).includes(q); });
+      if (!touchee) return it;
+      // Copie : l'index est construit UNE FOIS et réutilisé à chaque
+      // frappe. Écrire dans l'item y laisserait la mention d'une
+      // recherche précédente.
+      return Object.assign({}, it, { sub: _esc(touchee) + ' · ' + it.sub });
+    });
 }
 
 // ── Action au clic sur un résultat ───────────────────────
@@ -285,6 +437,17 @@ function openSearch() {
   // Invalider l'index si les lounges ont été chargés depuis
   _index = null;
   buildIndex();
+  // ── Et demander l'index servi, une seule fois ──────────
+  // Il arrive après coup : si le lecteur a déjà tapé quelque chose, on
+  // relance SA recherche plutôt que de le laisser devant un « aucun
+  // résultat » périmé. C'est le cas courant sur une connexion lente,
+  // où l'on tape plus vite que le réseau ne répond.
+  chargerIndexServi().then(function(d) {
+    if (!d || !_searchOpen) return;
+    var i = document.getElementById('search-input');
+    var q = i ? i.value.trim() : '';
+    if (q.length >= 2) i.dispatchEvent(new Event('input', { bubbles: true }));
+  });
 }
 
 function closeSearch() {

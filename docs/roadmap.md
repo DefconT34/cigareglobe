@@ -4833,3 +4833,110 @@ bien dans le Chiriquí, sur les pentes du Volcán Barú, et les fiches de feuill
 (`panama-habano`, `panama-corojo`) sont correctement sourcées sur Chiriquí et
 Sortova. Mais **aucune source ne nomme Boquete comme zone tabacole** : à trancher
 si une source le permet un jour.
+
+---
+
+## « Je ne retrouve pas la marque Saga » — et la recherche ne trouvait rien
+
+**964 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 234
+domaines. Migration **205** et correction du code de recherche.
+
+Un lecteur a signalé deux choses : il ne retrouvait pas Saga, *celle qui produit
+le Blend N°7*, et le Panama n'avait plus de maison. La première a ouvert un
+défaut bien plus large que le signalement.
+
+### Mesuré dans le navigateur : aucune maison n'était trouvable
+
+| Frappe | Avant | Après |
+| --- | --- | --- |
+| `saga` | *(rien)* | De Los Reyes Cigars — **Saga ·** 🇩🇴 |
+| `blend no. 7` | *(rien)* | De Los Reyes Cigars — **Saga Blend No. 7 ·** 🇩🇴 |
+| `padron` | *(rien)* | Padrón 🇳🇮 |
+| `davidoff` | *(rien)* | Davidoff 🇩🇴 |
+| `arsen` | *(rien)* | De Los Reyes Cigars — **Arsen ·** 🇩🇴 |
+| `abidjan` | *(rien)* | les trois établissements d'Abidjan |
+
+Pas seulement Saga : **aucune des 181 maisons, aucun des 408 établissements
+vérifiés.** Seuls les pays sortaient. **Trois causes**, toutes dans
+`assets/js/search.js` :
+
+1. **L'index n'avait rien à lire.** `BRANDS_DB` et `LOUNGES` sont déclarés à
+   `{}` par `data.amorce.js`, et le chargement paresseux ne les remplit **qu'au
+   clic, une fiche à la fois**. La recherche indexait deux objets vides.
+2. **`[object Object]`, dix fois.** Les mots-clés d'un pays faisaient
+   `concat(c.brands).join(' ')` sur un tableau d'**objets**
+   `{name, desc, iconic}`. Le repli qui aurait pu sauver la recherche de marque
+   — la trouver par son pays — ne fonctionnait pas non plus.
+3. **Aucun repli d'accents.** `padron` ne trouvait pas `Padrón`. Sur un atlas
+   dont la moitié des noms portent un accent espagnol, c'est disqualifiant.
+
+### Ce qui répare
+Une action dédiée, `data.php?action=recherche`, qui ne rend **que des noms** —
+181 maisons avec leur pays et leurs gammes, 408 établissements avec leur ville :
+62 Ko brut, demandés **à la première ouverture de la boîte**, pas au chargement
+de la page. L'amorce reste légère, ce qui était toute la raison de
+`data.amorce.js`.
+
+Les **noms de gamme entrent dans l'index**, et c'est ce qui rattrape un modèle
+entier de cet atlas : le recensement a délibérément replié **vingt-sept lignes**
+prises pour des maisons dans la fiche de leur fabrique — Saga et Arsen chez De
+Los Reyes, Chaman chez Vegas de Santiago, Zino chez Oettinger Davidoff, Oliveros
+chez Boutique Blends. Ce sont exactement les noms qu'un lecteur tape, et
+**aucun n'était trouvable** : le travail de rattachement était fait en base et
+défait à l'écran.
+
+Et quand la correspondance vient d'une gamme, le résultat **le dit** :
+« Saga · 🇩🇴 Rép. Dominicaine ». Taper « Saga » et voir « De Los Reyes Cigars »
+sans un mot d'explication se lit comme une erreur de la recherche.
+
+### Saga Blend No. 7
+La fiche écrivait « Golden Age, **Blend**, Short Tales ». La série s'appelle
+**Blend No. 7**, et c'est sous ce nom qu'on la cherche : le lecteur avait le bon
+nom, c'est l'atlas qui portait l'approximation. Elle devient une entrée de gamme
+à elle — cape brésilienne dite Cobra de la ferme Reyes, sous-cape Habano
+dominicaine, tripe dominicaine et centraméricaine, trois formats.
+
+### Le Panama retrouve une maison — vingt-quatre heures après
+La 204 avait retiré une fiche inventée et n'avait rien mis à la place, faute de
+source : *« mes sources sont un site touristique et une notice de guide »*.
+C'était la bonne décision au moment où je l'ai prise, et elle n'a pas tenu un
+jour — parce que chercher dans la bonne direction a fini par donner du
+journalisme.
+
+`newsroompanama.com` a publié le **14 septembre 2025** un article qui nomme la
+fondatrice, le mois, le lieu, la technique et la reprise par le fils :
+**Joyas de Panamá**, fondée par **Miriam Padilla** en février 1986 à La Pintada,
+Coclé — première fabrique de cigares permanente du pays, roulage entièrement à
+la main sur semence cubaine. Padilla avait été directrice de production chez
+Gilberto Oliva avant de monter la sienne. L'atelier s'est arrêté en 2023 (covid,
+puis sa retraite) ; son fils **Braulio Zurita** l'a rouvert et le dirige.
+
+**`gamme` reste à `[]`.** La maison ne publie aucun nom de ligne vérifiable, et
+quatorze fiches de cet atlas sont dans ce cas. En inventer serait répéter
+exactement la faute retirée la veille.
+
+### Sortová existe dans deux provinces
+La feuille `panama-habano` affirmait que **tout** le tabac panaméen vient du
+Chiriquí. La presse panaméenne place le tabac de Joyas de Panamá dans le
+**Coclé** — La Pintada, Sonadora, Sortová. Or il existe aussi un Sortová dans le
+district de Bugaba, au Chiriquí. Les deux feuilles nomment désormais la
+divergence au lieu de choisir ; laisser « tout » remettait une contradiction
+interne dans l'atlas, la veille du jour où elle venait d'en être retirée.
+
+### Trois garde-fous ont refusé cette migration
+- **`i18n_fraicheur`** : cinq cases vides — la `gamme` de Joyas valait `[]` en
+  français et `NULL` ailleurs. « Vide » dit qu'on sait qu'il n'y a rien ;
+  « absent » dit qu'on n'a pas regardé.
+- **`i18n_superlatif_check`**, deux fois : « 第一家 » en chinois et
+  « am meisten » en allemand affirmaient plus que le français, qui attribue la
+  formule à la presse. Retirés, pas justifiés.
+- **`coherence_check`** avait déjà exigé, à la 204, qu'un pays n'annonce que des
+  maisons ayant une fiche. L'annonce du Panama redevient légitime parce que la
+  fiche existe.
+
+### Et une erreur de ma part dans les tests
+J'ai d'abord interrogé `test_pdo()` — la base **de test**, une copie jetable qui
+ne porte pas le contenu des migrations. Cinq assertions ont échoué sur une base
+pourtant juste. Le contrôle final sur les langues servies ouvre sa propre
+connexion **pour cette raison exacte** ; je ne l'avais pas lu avant d'écrire à
+côté.

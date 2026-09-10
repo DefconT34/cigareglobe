@@ -11,6 +11,7 @@
 //   GET ?action=feuille&id=X   → détail d'une feuille
 //   GET ?action=market&id=X    → détail d'un marché
 //   GET ?action=all            → tout d'un coup (fallback)
+//   GET ?action=recherche      → l'index de la recherche globale (noms seuls)
 // ════════════════════════════════════════════════════════
 
 require_once __DIR__ . '/config.php';
@@ -93,6 +94,7 @@ try {
         'feuille' => action_feuille($db),
         'market'  => action_market($db),
         'all'     => action_all($db),
+        'recherche' => action_recherche($db),
         default   => (function(){ http_response_code(404); jout(err('unknown_action', 'Action inconnue')); })(),
     };
 } catch (Throwable $e) {
@@ -698,6 +700,53 @@ function action_market(PDO $db): void {
     $m['rank'] = (int)$m['rank_num']; unset($m['rank_num']);
 
     jout(['market' => $m]);
+}
+
+// ════════════════════════════════════════════════════════
+// ── Recherche : l'index, et rien que l'index ─────────────
+//
+// LE DÉFAUT QUE CETTE ACTION RÉPARE. La recherche globale
+// (assets/js/search.js) construisait son index à partir de `BRANDS_DB`
+// et de `LOUNGES` — deux objets que `data.amorce.js` laisse VIDES, et
+// que le chargement paresseux ne remplit qu'au clic, une fiche à la
+// fois. Conséquence mesurée dans le navigateur : « saga », « padron »
+// et « davidoff » rendaient ZÉRO résultat. Aucune des 181 maisons et
+// aucun des 508 établissements n'était trouvable par son nom. Seuls
+// les pays l'étaient, parce qu'eux sont chargés d'emblée.
+//
+// POURQUOI UNE ACTION À PART, ET NON `all`. `all` renvoie les fiches
+// entières — historiques, gammes, présences Habanos : plusieurs
+// centaines de kilo-octets, alors qu'une recherche n'a besoin que de
+// noms. Celle-ci ne renvoie QUE de quoi apparier une frappe, et elle
+// est demandée à la première ouverture de la boîte, pas au chargement
+// de la page : l'amorce reste légère.
+//
+// Les clés sont courtes à dessein (`n`, `p`, `g`, `v`) : répétées 689
+// fois, les noms complets pèseraient plus que les données.
+// ════════════════════════════════════════════════════════
+function action_recherche(PDO $db): void {
+    $marques = [];
+    foreach ($db->query("SELECT name, country_id, founded, gamme FROM brands ORDER BY name") as $b) {
+        // Les NOMS de gamme, et rien d'autre : c'est par eux qu'on
+        // retrouve une ligne repliée dans la fiche de sa fabrique —
+        // Saga chez De Los Reyes, Arsen chez De Los Reyes, Chaman chez
+        // Vegas de Santiago. Le recensement en a replié vingt-sept.
+        $lignes = [];
+        foreach ((array)parse_json_field($b['gamme']) as $g) {
+            $n = is_array($g) ? trim((string)($g['name'] ?? '')) : '';
+            if ($n !== '') $lignes[] = $n;
+        }
+        $marques[] = ['n' => $b['name'], 'p' => $b['country_id'],
+                      'f' => (string)$b['founded'], 'g' => $lignes];
+    }
+
+    $lounges = [];
+    foreach ($db->query("SELECT country_id, name, city FROM lounges
+                          WHERE is_verified = 1 ORDER BY country_id, name") as $l) {
+        $lounges[] = ['n' => $l['name'], 'v' => (string)$l['city'], 'p' => $l['country_id']];
+    }
+
+    jout(['marques' => $marques, 'lounges' => $lounges]);
 }
 
 // ── All : tout en un seul appel (fallback / preload) ─────
