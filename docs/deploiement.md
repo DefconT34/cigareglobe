@@ -362,3 +362,43 @@ comme une chaîne littérale. Aucun moteur ne peut interpréter de travers
 `tools/prevol.php` porte un constat **bloquant** sur les tableaux `brands` mal
 formés — c'est le seul outil qui tourne sur le serveur, donc le seul d'où la
 divergence est visible.
+
+---
+
+## Search Console et Bing : la vérification de propriété
+
+Les deux moteurs demandent de prouver qu'on possède le domaine. Le jeton n'est
+pas un secret — il est public par construction — mais il change de compte en
+compte : il vit donc dans le `.env` du serveur, jamais dans le dépôt.
+
+```
+VERIF_GOOGLE=le_jeton_donné_par_Google
+VERIF_BING=le_jeton_donné_par_Bing
+```
+
+**Coller le jeton SEUL, pas la balise entière.** Google affiche
+`<meta name="google-site-verification" content="ABC…" />` ; ce qui va dans le
+`.env`, c'est uniquement le contenu de `content`. Le code pose la balise.
+
+### ⚠ Deux pièges, rencontrés tous les deux
+
+1. **La balise doit être posée par `index.php` autant que par `page.php`.** Les
+   moteurs vérifient **la page d'accueil**, servie par `index.php`. Une balise
+   posée seulement dans `page.php` échouerait à la vérification tout en étant
+   bien présente dans le code — introuvable seulement à l'adresse contrôlée.
+
+2. **La clé du cache d'accueil porte les jetons.** `index.php` sert l'accueil
+   depuis un cache-fichier dont la clé est faite de dates de modification.
+   Éditer le `.env` ne touche aucun fichier source : sans cette précaution, le
+   cache aurait continué à servir une accueil sans balise, indéfiniment.
+
+Six assertions de la campagne tiennent ces deux points.
+
+### Vérifier depuis l'extérieur
+
+```bash
+curl -s "https://thecigarodyssey.com/?_=$(date +%s)" | grep -o 'google-site-verification[^>]*'
+```
+
+Puis, dans Search Console, soumettre le plan de site :
+`https://thecigarodyssey.com/sitemap.xml`

@@ -304,7 +304,14 @@ if (is_file(langues_fichier())) $empreinte = max($empreinte, filemtime(langues_f
 // la page générique et sa clé, ce qui interdit à un tiers de créer des
 // fichiers de cache à volonté.
 $pageCache = __DIR__ . '/backend/cache/page_' . $lang . '_'
+// LA CLE DU CACHE PORTE AUSSI LES JETONS DE VERIFICATION. Sans cela,
+// poser VERIF_GOOGLE dans le .env ne changerait aucun fichier source :
+// l'empreinte plus haut est faite de DATES DE MODIFICATION, et le cache
+// continuerait a servir une accueil SANS la balise. La verification
+// echouerait, la balise serait pourtant dans le code, et on chercherait
+// longtemps.
            . substr(sha1(racine() . '|' . (int)$pretty
+                    . '|' . VERIF_GOOGLE . '|' . VERIF_BING
                     . '|' . ($marqueOk['name'] ?? '')
                     . '|' . (int)($sujetOk['id'] ?? 0)
                     . '|' . (string)$canonEntite), 0, 12) . '.html';
@@ -391,7 +398,17 @@ $remplacements = [
     '<title>CigarOdyssey — The World\'s Premium Cigar Atlas</title>'
         => '<title>' . $e($titre) . '</title>',
     '<meta name="description" content="CigarOdyssey — The World\'s Premium Cigar Atlas">'
-        => '<meta name="description" content="' . $e($desc) . '">',
+        // ── LES BALISES DE VERIFICATION VONT ICI AUSSI ──
+        // Google Search Console et Bing verifient LA PAGE D'ACCUEIL.
+        // Or l'accueil est servi par ce fichier, pas par page.php :
+        // poser la balise uniquement la-bas aurait fait echouer la
+        // verification sans que rien ne l'explique — la balise dans le
+        // code, et introuvable a l'adresse controlee.
+        => '<meta name="description" content="' . $e($desc) . '">'
+         . (VERIF_GOOGLE !== '' ? "
+" . '<meta name="google-site-verification" content="' . $e(VERIF_GOOGLE) . '">' : '')
+         . (VERIF_BING   !== '' ? "
+" . '<meta name="msvalidate.01" content="' . $e(VERIF_BING) . '">' : ''),
     '<link rel="canonical" href="https://thecigarodyssey.com/">'
         => '<link rel="canonical" href="' . $e($urlIci) . "\">\n" . $alternates,
     '<meta property="og:locale" content="fr_FR">'

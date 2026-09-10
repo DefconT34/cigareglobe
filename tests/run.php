@@ -5232,6 +5232,39 @@ require_once PROJECT_ROOT . '/backend/audience.php';
     try { audience_noter(null, 'marque', 'marque/padron', 'fr'); $sansBase = true; }
     catch (Throwable $e) { $sansBase = false; }
     check('audience : sans base, elle se tait au lieu d echouer', $sansBase === true);
+
+    // ── Les balises de verification des moteurs ─────────
+    //
+    // DEUX PIEGES, ET J AI MIS LES DEUX PIEDS DEDANS.
+    //
+    // 1. La balise n avait ete posee que dans page.php. Or Google
+    //    Search Console et Bing verifient LA PAGE D ACCUEIL, servie par
+    //    index.php : la verification aurait echoue alors que la balise
+    //    etait bien dans le code, introuvable seulement a l adresse
+    //    controlee.
+    //
+    // 2. index.php sert l accueil depuis un CACHE-FICHIER dont la cle
+    //    est faite de dates de modification. Poser le jeton dans le
+    //    .env ne touche aucun fichier source : le cache aurait continue
+    //    de servir une accueil sans balise, indefiniment. La cle porte
+    //    donc les jetons.
+    $idx = (string)@file_get_contents(PROJECT_ROOT . '/index.php');
+    $pg  = (string)@file_get_contents(PROJECT_ROOT . '/page.php');
+    check('verification : la balise est posee par index.php aussi',
+          str_contains($idx, 'google-site-verification'));
+    check('verification : et par page.php',
+          str_contains($pg, 'google-site-verification'));
+    check('verification : Bing est traite comme Google',
+          str_contains($idx, 'msvalidate.01') && str_contains($pg, 'msvalidate.01'));
+    // LE POINT CENTRAL : sans les jetons dans la cle du cache, tout le
+    // reste est inutile sur la page qui compte.
+    check('verification : la cle du cache d accueil porte les jetons',
+          (bool)preg_match('/\$pageCache\s*=.*?VERIF_GOOGLE.*?VERIF_BING/su', $idx));
+    check('verification : rien n est pose quand le .env est vide',
+          str_contains($idx, "VERIF_GOOGLE !== ''") && str_contains($pg, "VERIF_GOOGLE !== ''"));
+    check('verification : les jetons viennent du .env, pas du code',
+          str_contains((string)@file_get_contents(PROJECT_ROOT . '/backend/config.php'),
+                       "env('VERIF_GOOGLE'"));
 }
 
 // ── Une fiche qui se contredit elle-meme sur sa date ─────
