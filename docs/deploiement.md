@@ -62,6 +62,40 @@ donc **trois** gestes, et leur ordre n'est pas libre :
 cd ~/repositories/cigareglobe && git pull          # 1. le dépôt
 # 2. la recopie : cPanel → Git™ Version Control → Deploy HEAD Commit
 mysql --default-character-set=utf8mb4 -u <user> -p <base> < sql/migrations/<n>.sql
+php ~/public_html/tools/prevol.php                # 4. le contrôle, SUR LE SERVEUR
+```
+
+### ⚠ Le quatrième geste n'est pas facultatif
+
+`prevol.php` est le **seul outil de ce dépôt qui lit la base servie**. La
+campagne de tests, elle, vérifie la base de développement : une migration
+qui ne prendrait pas entièrement laisserait une base juste ici et fausse
+là-bas **sans qu'aucun test ne bouge**.
+
+### ⚠⚠ Et la vérification par le Web se heurte à un cache de 5 minutes
+
+Le serveur répond `Cache-Control: public, max-age=300`. Une page demandée
+juste après la migration peut donc être servie **telle qu'elle était
+avant** — contenu d'hier, en-têtes d'aujourd'hui, aucun indice visible.
+
+**C'est arrivé, et cela a coûté une migration inutile** (la `201`) : deux
+fiches paraissaient servies sans leur source, la source était en base
+depuis six migrations, et seules les requêtes suivantes — hors cache —
+l'ont montré. La sonde qui a tranché n'était pas une page mais la base
+elle-même :
+
+```bash
+mysql -u <user> -p <base> -e "SELECT acteur_nom, COUNT(*) FROM moderation_log WHERE acteur_nom LIKE 'migration 2%' GROUP BY acteur_nom ORDER BY acteur_nom;"
+```
+
+Chaque migration écrit sa trace dans `moderation_log` : ce tableau dit
+**exactement** lesquelles ont tourné sur la base servie, et il ne ment
+pas, lui.
+
+Pour contrôler une page malgré le cache, il faut le casser :
+
+```bash
+curl -sH 'Cache-Control: no-cache' "https://thecigarodyssey.com/marque/<slug>?_=$(date +%s)" | grep -c pg-source
 ```
 
 ### ⚠ La recopie passe par cPanel, JAMAIS par un rsync tapé à la main

@@ -4405,51 +4405,64 @@ humain**.
 
 ---
 
-## Migration `201` — deux sources qui n'ont pas pris en production
+## Migration `201` — une migration inutile, et pourquoi je l'ai écrite
 
-**182 marques**, 897 assertions, 0 échec, neuf contrôles verts, `prevol --autotest`
-53 cas.
+**⚠ Cette section a été réécrite : la version d'origine affirmait un défaut qui
+n'existait pas.**
 
-### Ce que la vérification après déploiement a trouvé
-Sur les **179 fiches annoncées par le globe, 177 servaient leur source en
-ligne**. Deux ne l'avaient pas : **Menendez Amerino** et **Vegas de Santiago**.
+### Ce que j'ai cru voir
+Après le déploiement des migrations `194` à `200`, deux fiches — **Menendez
+Amerino** et **Vegas de Santiago** — paraissaient servies sans leur source. J'en
+ai conclu à une migration qui n'aurait pas pris entièrement, et j'ai écrit la
+`201` pour réparer.
 
-Les deux sont remplies en développement depuis la `195`. Leurs voisines
-immédiates dans le **même `CASE`** — Cuban Crafters, De Los Reyes, Don Tomas,
-Dona Flor — ont bien la leur en ligne. Et en production, ces deux lignes portent
-exactement le même `founded` et le même `factory` qu'ici : **ce ne sont pas
-d'autres lignes.**
+### Ce qui était vrai
+**Rien de cela.** Les deux sondes lancées sur la base servie l'ont montré sans
+ambiguïté :
 
-### Ce que je ne sais pas
-**Pourquoi l'instruction les a manquées.** Le fichier de la `195` est sain,
-l'ordre des migrations est le bon, les deux noms sont en ASCII pur. Une hypothèse
-tient — un espace invisible dans `brands`.`name` côté production, que le rendu
-HTML avalerait sans rien montrer — mais **je n'ai pas d'accès à cette base pour
-la vérifier**, et je ne vais pas écrire une explication que je n'ai pas mesurée.
+| sonde | ce qu'elle a dit |
+|---|---|
+| `SELECT acteur_nom, COUNT(*) FROM moderation_log …` | les migrations `195` à `201` y sont **toutes**, et complètes |
+| `SELECT name, HEX(name), CHAR_LENGTH(source) …` | `4D656E…6F` — **aucun caractère invisible** ; sources de **156** et **202** caractères |
 
-La migration ne suppose donc rien : elle **vise par `TRIM`**, normalise le nom au
-passage, et se rejoue sans dommage.
+**Les sources étaient en base depuis la `195`.** La `201` n'a rien réparé : elle
+a réécrit deux valeurs identiques.
 
-### Et surtout : le contrôle manquait
-**La campagne de tests vérifie la base de développement.** Elle affirme « aucune
-maison n'est sans source », et elle a raison — *sur cette base-là*. Elle ne dit
-rien de la base **servie**, et l'écart n'a été vu qu'en échantillonnant des pages
-à la main.
+### La vraie cause
+Le serveur répond **`Cache-Control: public, max-age=300`**. Mes vérifications par
+le Web, lancées dans les minutes suivant la migration, ont lu des pages **rendues
+avant elle** — contenu d'avant, en-têtes d'aujourd'hui, aucun indice visible.
+Refaites en cassant le cache, les mêmes requêtes rendent **179 fiches sur 179**
+avec leur bloc source.
 
-C'est la limite structurelle de tout contrôle qui tourne sur le poste de travail :
-**une migration qui ne prend pas entièrement laisse une base juste ici et fausse
-là-bas, sans qu'aucun test ne bouge.**
+### Ce que j'ai mal fait
+1. **Conclure à un défaut de données sur la foi de pages Web**, sans vérifier que
+   je lisais l'état courant.
+2. **Écrire la migration corrective avant d'avoir la mesure** qui l'aurait rendue
+   inutile — alors que les deux sondes qui tranchent tiennent en deux lignes, et
+   que je les ai rédigées *après*.
+3. **Consigner au journal une hypothèse non vérifiée.** Le journal doit porter ce
+   qui est mesuré, pas ce qui est supposé. La migration `202` l'y rectifie.
 
-`tools/prevol.php` est le **seul outil de ce dépôt qui s'exécute sur le serveur**.
-La règle lui revient donc : il compte désormais les fiches servies sans source,
-**marques et établissements**. En **avertissement et non en blocage** — une fiche
-sans source est incomplète, pas cassée, et bloquer punirait le déploiement qui
-apporte justement le correctif.
+### Ce qui reste, et qui est bon
+Le contrôle ajouté à **`tools/prevol.php`** — le compte des fiches servies sans
+source, marques et établissements. Il lit **la base servie**, sur le serveur, et
+il est donc **insensible au cache HTTP qui m'a trompé**. Six cas d'autotest
+l'éprouvent. C'est la seule chose utile que cet épisode a produite, et elle reste.
 
-Six cas d'autotest l'éprouvent, dont la contre-épreuve sur base propre, le niveau
-du constat, et la liste longue qui doit dire le compte entier même en coupant les
-noms.
+`docs/deploiement.md` porte désormais **le quatrième geste** — lancer
+`prevol.php` sur le serveur après chaque déploiement — et l'avertissement sur le
+cache de cinq minutes, avec la sonde `moderation_log` qui dit quelles migrations
+ont réellement tourné.
 
-```bash
-php tools/prevol.php    # à lancer SUR LE SERVEUR après chaque déploiement
-```
+---
+
+## Migration `202` — la rectification au journal
+
+Aucune donnée changée. Trois affirmations fausses de la `201` sont corrigées dans
+`moderation_log`, avec la vraie cause et la liste de ce que j'ai mal fait. Le
+journal de modération est la trace d'audit de cet atlas : y laisser une hypothèse
+démentie vaut moins que rien.
+
+**Vérifié en production, cache cassé : 179 fiches annoncées, 179 avec leur
+source, aucune en échec.**
