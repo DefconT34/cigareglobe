@@ -4596,3 +4596,27 @@ pas taire. Elles en sont retirées ; `index.php` les *ajoute* désormais, ou pas
 
 Un cliquet de la campagne interdit le retour de `/og-image.jpg` en dur dans les
 deux points d'entrée — et il m'a repris une fois pendant ce chantier.
+
+### Reprise — la carte de pays se répétait
+
+La première version portait « Cuba » en titre **et** « C U B A » en bas. Le
+dessin vient des **établissements**, où la ligne du haut est le nom du lieu et
+celle du bas le pays ; pour un pays, les deux sont la même chose. Un doublon sur
+la seule image que verra celui qui n'a pas encore cliqué.
+
+Les deux lignes portent désormais ce que l'atlas **sait** du pays :
+
+| | avant | après |
+|---|---|---|
+| sous-titre | *(vide)* | `27 maisons · 9 caves` |
+| ligne du bas | `C U B A` | `PAYS PRODUCTEUR` / `CAVES ET LOUNGES` |
+
+Deux cartes de pays ne se ressemblent plus, et chacune dit quelque chose.
+
+**Le singulier n'est pas une coquetterie** : « 1 maisons » sur une carte de
+partage se voit longtemps, parce que les réseaux mettent ces images en cache et
+qu'un déploiement ne les corrige pas. Cinq assertions le tiennent, plus deux qui
+vérifient que la garde de `ph_ville()` — celle qui efface un sous-titre répétant
+le nom — empêche le doublon de revenir.
+
+`--pays` refait les 95 cartes de pays sans toucher aux 182 cartes de maisons.
