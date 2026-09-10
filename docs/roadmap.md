@@ -4542,3 +4542,57 @@ il change de compte en compte et n'a rien à faire dans le code.
 versée ni exclue **avec une raison écrite**. Elle est exclue : cette mesure
 appartient au serveur qui l'a recueillie, et verser des empreintes de visiteurs
 dans un dépôt Git — même irréversibles, même expirées à minuit — n'a aucun sens.
+
+---
+
+## `vignettes.php` — l'image qu'on voit AVANT de cliquer
+
+**929 assertions, 0 échec.**
+
+### Le constat, et il est pire que ce que j'annonçais
+Je vous avais dit que « les 738 pages partagent une seule vignette ». **C'était
+faux, et dans le mauvais sens** : elles déclaraient toutes `og:image` vers
+`/og-image.jpg`, **un fichier qui n'existe pas** — ni dans le dépôt, ni sur le
+serveur, où il répond **404**.
+
+Autrement dit, depuis le premier jour, **chaque lien de ce site partagé sur
+WhatsApp, LinkedIn, X ou Slack affichait une carte sans image**. Et rien ne
+pouvait le signaler : *une balise qui pointe dans le vide est une balise
+parfaitement valide.*
+
+### Ce qui existait déjà, et que je n'avais pas regardé
+`tools/placeholders.php` fabrique depuis longtemps une **carte par
+établissement** — fond presque noir, cigare dessiné, nom, ville, pays, signature.
+475 existent, dont une vraie photographie (la façade du lounge d'Abidjan). Elles
+étaient là, servies nulle part dans les aperçus.
+
+### Ce que j'ai ajouté
+`tools/vignettes.php` **réemploie le dessin de `placeholders.php`** — même
+palette, même police, même cigare — au format des réseaux, **1200 × 630** :
+
+| | combien |
+|---|---|
+| `uploads/og/defaut.jpg` | le repli |
+| `uploads/og/marque-<slug>.jpg` | 182 |
+| `uploads/og/pays-<id>.jpg` | 95 |
+
+Les établissements gardent leur carte existante — **on ne la refait pas, et
+surtout on ne l'écrase pas** : l'une d'elles est une vraie photo.
+
+### La règle qui sort du défaut
+**On ne déclare une image que si le fichier existe.** `page_vignette()` prend une
+liste de candidats et rend le premier présent sur le disque, ou `null` — et
+l'appelant n'écrit alors **aucune balise**. Une carte sans visuel vaut mieux
+qu'une carte cassée.
+
+Cela compte double ici : **`uploads/` est exclu du déploiement**, donc une carte
+engendrée sur le poste de développement n'existera jamais en production tant que
+l'outil n'y aura pas tourné.
+
+### Et le gabarit ne fige plus rien
+`index.html` portait les deux balises en dur. **C'est ce qui rendait le défaut
+inguérissable** : une balise figée dans le gabarit est une balise qu'on ne peut
+pas taire. Elles en sont retirées ; `index.php` les *ajoute* désormais, ou pas.
+
+Un cliquet de la campagne interdit le retour de `/og-image.jpg` en dur dans les
+deux points d'entrée — et il m'a repris une fois pendant ce chantier.

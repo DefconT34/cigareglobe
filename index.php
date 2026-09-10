@@ -111,7 +111,14 @@ $titre  = tr('seo_title');
 $desc   = tr('seo_description');
 $altImg = tr('seo_image_alt');
 $urlIci = url_langue($lang);
-$image  = racine() . '/og-image.jpg';
+// LA VIGNETTE. `/og-image.jpg` etait declaree par index.html sur toutes
+// les pages : CE FICHIER N'EXISTE PAS, il rend 404 en production. Chaque
+// lien partage affichait donc une carte sans image. On sert desormais
+// une carte reelle, et RIEN si le fichier manque — `uploads/` n'etant
+// pas deploye, une carte engendree ici peut manquer la-bas.
+require_once __DIR__ . '/backend/pages_lib.php';
+$image = page_vignette(['uploads/og/defaut.jpg']);
+$image = $image === null ? null : racine() . $image;
 
 // ── Aperçu propre à une marque (?brand=Cohiba) ────────────
 // Partager l'histoire d'une maison doit ressembler à partager un
@@ -162,6 +169,10 @@ if ($marqueOk) {
     $desc   = $extrait;
     $altImg = $marqueOk['name'];
     $urlIci = url_langue($lang) . '?brand=' . rawurlencode($marqueOk['name']);
+    // La carte de la maison, si elle a ete engendree sur CE serveur.
+    $vg = page_vignette([page_vignette_nom('marque', (string)$marqueOk['name']),
+                         'uploads/og/defaut.jpg']);
+    $image = $vg === null ? null : racine() . $vg;
 }
 
 // ── Aperçu d'une discussion (?sujet=42) ───────────────────
@@ -413,8 +424,19 @@ $remplacements = [
         => '<link rel="canonical" href="' . $e($urlIci) . "\">\n" . $alternates,
     '<meta property="og:locale" content="fr_FR">'
         => '<meta property="og:locale" content="' . LOCALES[$lang] . '">',
+    // LES BALISES D'IMAGE SONT AJOUTEES ICI, PAS REMPLACEES. index.html
+    // n'en porte plus aucune : une balise figee dans le gabarit est une
+    // balise qu'on ne peut pas taire, et c'est ainsi que /og-image.jpg a
+    // pu pointer dans le vide pendant des mois. Sans fichier sur CE
+    // serveur, aucune balise n'est ecrite.
     '<meta property="og:url" content="https://thecigarodyssey.com/">'
-        => '<meta property="og:url" content="' . $e($urlIci) . '">',
+        => '<meta property="og:url" content="' . $e($urlIci) . '">'
+         . ($image === null ? '' :
+            "
+" . '<meta property="og:image" content="' . $e($image) . '">'
+          . "
+" . '<meta name="twitter:image" content="' . $e($image) . '">'),
+
     // Une discussion est un ÉCRIT daté, signé, qui ne change plus :
     // « article » le dit, « website » désigne le site entier. Les
     // agrégateurs et les cartes d'aperçu s'en servent pour choisir leur

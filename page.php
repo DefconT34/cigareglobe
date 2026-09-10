@@ -956,8 +956,30 @@ if (empty($noindex)) { cache_public(300); } else { cache_jamais(); }
 <meta property="og:url" content="<?= e($urlIci) ?>">
 <meta property="og:title" content="<?= e($titre) ?>">
 <meta property="og:description" content="<?= e($desc) ?>">
-<meta property="og:image" content="<?= e($racine) ?>/og-image.jpg">
+<?php
+// ── LA VIGNETTE, ET SEULEMENT SI ELLE EXISTE ────────────
+// Cette balise pointait vers `/og-image.jpg` sur les 738 pages du site.
+// CE FICHIER N'EXISTE PAS — il rend 404 en production. Chaque lien
+// partagé sur WhatsApp, LinkedIn ou X affichait donc une carte sans
+// image, depuis toujours, sans que rien ne puisse le signaler : une
+// balise qui pointe dans le vide est une balise valide.
+//
+// On sert maintenant la carte de la fiche, et on ne déclare RIEN quand
+// il n'y a pas de fichier — `uploads/` n'étant pas déployé, une carte
+// engendrée ici peut parfaitement manquer là-bas.
+$vignette = page_vignette(array_filter([
+    $type === 'marque' && $h1 !== '' ? page_vignette_nom('marque', $h1) : null,
+    $type === 'pays'   && $id !== '' ? page_vignette_nom('pays', $id)   : null,
+    $type === 'cave'   && !empty($c['photo']) ? 'uploads/lounges/' . (int)($c['id'] ?? 0) . '/' . $c['photo'] : null,
+    'uploads/og/defaut.jpg',
+]));
+if ($vignette !== null): ?>
+<meta property="og:image" content="<?= e($racine . $vignette) ?>">
+<meta name="twitter:image" content="<?= e($racine . $vignette) ?>">
 <meta name="twitter:card" content="summary_large_image">
+<?php else: ?>
+<meta name="twitter:card" content="summary">
+<?php endif; ?>
 <?php endif; ?>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥃</text></svg>">
 <link rel="stylesheet" href="<?= e(page_actif('assets/css/themes.css')) ?>">

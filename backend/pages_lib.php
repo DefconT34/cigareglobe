@@ -220,6 +220,11 @@ function page_cave(PDO $db, int $id, string $lang): ?array {
     $q = $db->prepare("SELECT l.id, l.name, l.city, l.type, l.phone, l.price, l.hours,
                               l.website, l.instagram, l.lat, l.lon,
                               l.rating, l.rating_count, l.source,
+                              -- La carte de l'etablissement : c'est elle qui
+                              -- part dans l'apercu quand on partage le lien.
+                              (SELECT p.filename FROM lounge_photos p
+                                WHERE p.lounge_id = l.id AND p.is_primary = 1
+                                  AND p.is_approved = 1 LIMIT 1) AS photo,
                               " . page_col('description', $lang) . " AS description,
                               l.country_id, COALESCE(pc.name, lc.name) AS pays_nom,
                               COALESCE(pc.flag, lc.flag) AS pays_drapeau
@@ -430,4 +435,39 @@ function page_habanos(PDO $db, string $countryId, string $lang): ?array {
                          FROM habanos_presence WHERE country_id = ? LIMIT 1");
     $q->execute([$countryId]);
     return $q->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
+/**
+ * La vignette d'une fiche — celle qui s'affiche quand on partage.
+ *
+ * ── CE QUI A OUVERT CE CHANTIER ──────────────────────────
+ * Les 738 pages du site déclaraient toutes `og:image` vers
+ * `/og-image.jpg`. Ce fichier N'EXISTE PAS — ni dans le dépôt, ni sur
+ * le serveur, où il répond 404. Chaque lien partagé sur WhatsApp,
+ * LinkedIn ou X affichait donc une carte SANS IMAGE, depuis toujours,
+ * sans que rien ne le signale : une balise qui pointe dans le vide est
+ * une balise valide.
+ *
+ * ── D'OÙ VIENT LA RÈGLE DE CETTE FONCTION ───────────────
+ * On ne déclare une image QUE SI LE FICHIER EXISTE. C'est la leçon
+ * exacte du défaut ci-dessus, et elle compte double ici : `uploads/`
+ * est exclu du déploiement (voir .cpanel.yml), donc les images d'un
+ * serveur ne sont jamais celles d'un autre. Un chemin qui existe en
+ * développement peut parfaitement manquer en production.
+ *
+ * Sans image trouvée, on rend null — et l'appelant n'écrit AUCUNE
+ * balise. Une carte sans visuel vaut mieux qu'une carte cassée.
+ */
+function page_vignette(array $candidats): ?string {
+    foreach ($candidats as $rel) {
+        $rel = trim((string)$rel);
+        if ($rel === '') continue;
+        if (is_file(__DIR__ . '/../' . ltrim($rel, '/'))) return '/' . ltrim($rel, '/');
+    }
+    return null;
+}
+
+/** Le nom de fichier d'une vignette de marque ou de pays. */
+function page_vignette_nom(string $type, string $cle): string {
+    return 'uploads/og/' . $type . '-' . page_slug($cle) . '.jpg';
 }

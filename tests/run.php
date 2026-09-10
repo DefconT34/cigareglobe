@@ -5265,6 +5265,39 @@ require_once PROJECT_ROOT . '/backend/audience.php';
     check('verification : les jetons viennent du .env, pas du code',
           str_contains((string)@file_get_contents(PROJECT_ROOT . '/backend/config.php'),
                        "env('VERIF_GOOGLE'"));
+
+    // ── La vignette de partage ──────────────────────────
+    //
+    // LES 738 PAGES DECLARAIENT `og:image` VERS /og-image.jpg, ET CE
+    // FICHIER N EXISTE PAS. Il rend 404 en production. Chaque lien
+    // partage sur WhatsApp, LinkedIn ou X affichait donc une carte SANS
+    // IMAGE, depuis le premier jour — et rien ne pouvait le signaler :
+    // une balise qui pointe dans le vide est une balise valide.
+    //
+    // La regle qui en sort : on ne declare une image QUE si le fichier
+    // existe. Elle compte double parce que `uploads/` est exclu du
+    // deploiement — une carte engendree ici peut manquer la-bas.
+    check('vignette : un fichier absent ne donne aucune balise',
+          page_vignette(['uploads/og/ceci-nexiste-pas.jpg']) === null);
+    check('vignette : le premier candidat qui existe l emporte',
+          page_vignette(['uploads/og/absent.jpg', 'tools/vignettes.php']) === '/tools/vignettes.php');
+    check('vignette : sans candidat, rien', page_vignette([]) === null);
+    // Le nom du fichier suit les MEMES regles que l adresse de la page.
+    // Sinon la fiche « Partagás » chercherait une carte que l outil n a
+    // pas ecrite, et retomberait en silence sur celle par defaut.
+    eq('vignette : le nom suit le slug de l adresse',
+       'uploads/og/marque-partagas.jpg', page_vignette_nom('marque', 'Partagás'));
+    // ET LE CLIQUET : plus aucun /og-image.jpg code en dur dans les deux
+    // points d entree. C est ce chemin-la qui rendait 404.
+    $ogDur = [];
+    foreach (['index.php', 'page.php'] as $f) {
+        $src = (string)@file_get_contents(PROJECT_ROOT . '/' . $f);
+        if (preg_match('~content="[^"]*/og-image\.jpg"~', $src)) $ogDur[] = $f;
+    }
+    eq('vignette : plus de /og-image.jpg code en dur', [], $ogDur);
+    check('vignette : les deux points d entree passent par page_vignette',
+          str_contains((string)@file_get_contents(PROJECT_ROOT . '/index.php'), 'page_vignette(')
+       && str_contains((string)@file_get_contents(PROJECT_ROOT . '/page.php'), 'page_vignette('));
 }
 
 // ── Une fiche qui se contredit elle-meme sur sa date ─────
