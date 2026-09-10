@@ -98,7 +98,8 @@ $moi  = current_user($db);   // null si l'accès vient de la clé
 // Tout ce qui n'y figure pas relève de la modération courante, ouverte
 // aux deux portées.
 $DOMAINE_ACTION = ['langues_save' => 'langues', 'role_set' => 'membres'];
-$DOMAINE_ONGLET = ['langues' => 'langues', 'membres' => 'membres'];
+$DOMAINE_ONGLET = ['langues' => 'langues', 'membres' => 'membres',
+                   'audience' => 'audience'];
 
 // Actions POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -416,6 +417,26 @@ if ($tab === 'suggestions') {
 // registre, et il vaut mieux qu'il sache qu'il est tenu.
 $journal_rows = [];
 $journal_n    = 0;
+// ── Audience ─────────────────────────────────────────────
+// LES COMPTES NE SONT PAS REFAITS ICI. Ils viennent des mêmes fonctions
+// que `tools/audience.php` : deux jeux de requêtes finiraient par
+// donner deux chiffres différents pour la même question, sans qu'on
+// sache lequel croire.
+$aud_jours = 7; $aud_prete = false; $aud = []; $aud_pages = [];
+$aud_referents = []; $aud_langues = []; $aud_robots = [];
+if ($tab === 'audience') {
+    require_once __DIR__ . '/audience.php';
+    $aud_jours = audience_jours($_GET['jours'] ?? 7);
+    $aud_prete = audience_prete($db);
+    if ($aud_prete) {
+        $aud           = audience_resume($db, $aud_jours);
+        $aud_pages     = audience_classement($db, $aud_jours, 'pages', 15);
+        $aud_referents = audience_classement($db, $aud_jours, 'referents', 10);
+        $aud_langues   = audience_classement($db, $aud_jours, 'langues', 10);
+        $aud_robots    = audience_classement($db, $aud_jours, 'robots', 10);
+    }
+}
+
 if ($tab === 'journal') {
     try {
         $journal_rows = $db->query(
@@ -1047,6 +1068,14 @@ html{transition:background .25s,color .25s}
 
   <div class="divider"></div>
   <div class="nav-section">Registre</div>
+
+  <?php if (portee_autorise($scope, 'audience')): ?>
+  <a class="nav-item <?= $tab==='audience' ? 'active' : '' ?>"
+     href="?tab=audience">
+    <span class="ni-icon">&#9737;</span>
+    <span class="ni-label">Audience</span>
+  </a>
+  <?php endif; ?>
 
   <!-- Ouvert aux deux portées : voir le commentaire du chargement. -->
   <a class="nav-item <?= $tab==='journal' ? 'active' : '' ?>"
@@ -1927,6 +1956,110 @@ html{transition:background .25s,color .25s}
 <?php endif; ?>
 
 <!-- ── JOURNAL ────────────────────────────────────────── -->
+<?php elseif ($tab === 'audience'): ?>
+<div class="page-header">
+  <div>
+    <div class="page-title">Audience</div>
+    <div class="page-subtitle">
+      Mesure de première main — sans cookie, sans tiers, sans adresse IP conservée.
+      Les mêmes chiffres que <code>php tools/audience.php</code>.
+    </div>
+  </div>
+  <div>
+    <?php foreach ([1 => '24 h', 7 => '7 jours', 30 => '30 jours', 90 => '90 jours'] as $j => $lbl): ?>
+      <a class="btn <?= $aud_jours === $j ? 'btn-primary' : '' ?>"
+         href="?tab=audience&amp;jours=<?= $j ?>"><?= $lbl ?></a>
+    <?php endforeach; ?>
+  </div>
+</div>
+
+<?php if (!$aud_prete): ?>
+<div class="empty-state">
+  <div class="empty-icon">◈</div>
+  <div class="empty-text">La table <code>audience</code> n’existe pas</div>
+  <div class="ct-city" style="margin-top:8px">
+    Jouer <code>sql/migrations/203_la_mesure_daudience.sql</code> sur cette base.
+  </div>
+</div>
+<?php elseif ($aud['vues'] === 0 && $aud['robots'] === 0): ?>
+<div class="empty-state">
+  <div class="empty-icon">◈</div>
+  <div class="empty-text">Aucune vue enregistrée sur la période</div>
+  <!-- Un zéro sans explication se lit comme une panne de l'outil. -->
+  <div class="ct-city" style="margin-top:8px">
+    La mesure vient peut-être d’être posée — ou cette page lit une base
+    qui n’est pas celle que visitent les lecteurs.
+  </div>
+</div>
+<?php else: ?>
+<div class="dashboard" style="overflow-y:auto;flex:1;">
+
+  <div class="kpi-grid">
+    <div class="kpi kpi-accent">
+      <div class="kpi-label">Pages vues</div>
+      <div class="kpi-value"><?= $aud['vues'] ?></div>
+      <div class="kpi-sub">robots exclus</div>
+    </div>
+    <div class="kpi kpi-green">
+      <div class="kpi-label">Visiteurs distincts</div>
+      <div class="kpi-value"><?= $aud['visiteurs'] ?></div>
+      <div class="kpi-sub">approximation quotidienne, jamais un suivi</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Jours avec au moins une vue</div>
+      <div class="kpi-value"><?= $aud['jours_actifs'] ?></div>
+      <div class="kpi-sub">sur <?= $aud_jours ?></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Passages de robots</div>
+      <div class="kpi-value"><?= $aud['robots'] ?></div>
+      <div class="kpi-sub">comptés à part, jamais mêlés</div>
+    </div>
+  </div>
+
+  <!-- ── CE QUE CETTE PAGE NE MESURE PAS ────────────────
+       L'outil en ligne de commande le répète à chaque exécution. Un
+       tableau de bord qui affiche un nombre SANS sa réserve est pire
+       qu'un terminal qui l'écrit : on finit par croire le nombre. -->
+  <div class="ct-city" style="margin:14px 2px 22px;line-height:1.6">
+    ⚠ Ces nombres sont un <b>plancher</b>. Une page servie depuis un cache
+    n’atteint pas PHP et n’est pas comptée — le HTML est gardé une heure par le
+    <code>.htaccess</code>, cinq minutes par l’hébergeur. La première visite de
+    chacun est vue ; les relectures dans l’heure ne le sont pas.
+  </div>
+
+  <?php
+    $tables = [
+      'Pages les plus vues' => [$aud_pages, 'Aucune page vue'],
+      'D’où ils viennent'   => [$aud_referents, 'Aucun référent'],
+      'Langues'             => [$aud_langues, 'Aucune langue'],
+      'Ce que les explorateurs ont lu' => [$aud_robots, 'Aucun passage de robot'],
+    ];
+    foreach ($tables as $titre => [$lignes, $vide]):
+  ?>
+  <div style="margin-bottom:26px">
+    <div class="nav-section" style="padding-left:2px"><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php if (!$lignes): ?>
+      <div class="ct-city" style="padding:6px 2px"><?= htmlspecialchars($vide, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php else: ?>
+    <div class="table-scroll"><table class="contrib-table">
+      <thead><tr><th style="width:80%">Quoi</th><th>Vues</th></tr></thead>
+      <tbody>
+      <?php foreach ($lignes as $l): ?>
+        <tr>
+          <td><?= htmlspecialchars((string)$l['k'], ENT_QUOTES, 'UTF-8') ?></td>
+          <td><?= (int)$l['n'] ?></td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table></div>
+    <?php endif; ?>
+  </div>
+  <?php endforeach; ?>
+
+</div>
+<?php endif; ?>
+
 <?php elseif ($tab === 'journal'): ?>
 <?php
   $ACT = [

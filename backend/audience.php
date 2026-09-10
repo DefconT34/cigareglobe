@@ -124,3 +124,82 @@ function audience_noter(?PDO $db, string $type, string $chemin, string $lang): v
         // la page qu'elle mesure.
     }
 }
+
+// ════════════════════════════════════════════════════════
+// LA LECTURE — une seule implémentation, deux affichages
+// ────────────────────────────────────────────────────────
+// Ces fonctions servent À LA FOIS `tools/audience.php` (le terminal) et
+// l'onglet Audience de `backend/admin.php` (le navigateur).
+//
+// POURQUOI PAS DEUX JEUX DE REQUÊTES. Ce dépôt s'interdit les doubles
+// implémentations depuis longtemps — une seule fabrique d'adresses, un
+// seul portique d'âge — et pour une raison précise : deux fabriques
+// finissent toujours par diverger. Ici, la divergence donnerait deux
+// chiffres différents pour la même question, sans qu'on sache lequel
+// croire. C'est pire que pas de mesure.
+//
+// ⚠ LA FENÊTRE EST INSÉRÉE DANS LE SQL, ET C'EST VOULU. Un paramètre
+// lié dans `INTERVAL ? DAY` ne se comporte pas pareil sur MySQL et sur
+// MariaDB : la première version de ce rapport mourait sur le serveur
+// après avoir imprimé son en-tête, sans un mot. La valeur passe donc
+// par audience_jours(), qui la borne et la convertit en entier — rien
+// de ce qui vient de l'extérieur n'atteint la requête.
+// ════════════════════════════════════════════════════════
+
+/** Une fenêtre de lecture sûre : entre 1 et 365 jours, toujours entière. */
+function audience_jours(mixed $n): int {
+    return max(1, min(365, (int)$n));
+}
+
+/** La table existe-t-elle ? Une base d'avant la migration 203 n'en a pas. */
+function audience_prete(?PDO $db): bool {
+    if (!$db instanceof PDO) return false;
+    try { $db->query("SELECT 1 FROM `audience` LIMIT 1"); return true; }
+    catch (Throwable $e) { return false; }
+}
+
+/** Les quatre chiffres du haut. */
+function audience_resume(PDO $db, int $jours): array {
+    $j = audience_jours($jours);
+    $h = $db->query(
+        "SELECT COUNT(*) AS vues,
+                COUNT(DISTINCT `empreinte`) AS visiteurs,
+                COUNT(DISTINCT `jour`) AS jours_actifs
+           FROM `audience`
+          WHERE `robot` = 0 AND `jour` >= (CURDATE() - INTERVAL $j DAY)")
+        ->fetch(PDO::FETCH_ASSOC) ?: [];
+    $robots = (int)$db->query(
+        "SELECT COUNT(*) FROM `audience`
+          WHERE `robot` = 1 AND `jour` >= (CURDATE() - INTERVAL $j DAY)")->fetchColumn();
+    return [
+        'vues'         => (int)($h['vues'] ?? 0),
+        'visiteurs'    => (int)($h['visiteurs'] ?? 0),
+        'jours_actifs' => (int)($h['jours_actifs'] ?? 0),
+        'robots'       => $robots,
+    ];
+}
+
+/**
+ * Un classement : pages, référents, langues, ou ce que lisent les robots.
+ *
+ * Le nom de la vue vient d'une LISTE FERMÉE, jamais de l'appelant : ni
+ * l'URL de l'administration ni la ligne de commande n'écrivent de SQL.
+ */
+function audience_classement(PDO $db, int $jours, string $quoi, int $limite = 12): array {
+    $j = audience_jours($jours);
+    $l = max(1, min(100, $limite));
+    $vues = [
+        'pages'     => ["CONCAT(`type`, ' · ', `chemin`)", 0],
+        'referents' => ["COALESCE(`referent`, '(acces direct ou inconnu)')", 0],
+        'langues'   => ["`lang`", 0],
+        'robots'    => ["CONCAT(`type`, ' · ', `chemin`)", 1],
+    ];
+    if (!isset($vues[$quoi])) return [];
+    [$expr, $robot] = $vues[$quoi];
+    $q = $db->query(
+        "SELECT $expr AS k, COUNT(*) AS n
+           FROM `audience`
+          WHERE `robot` = $robot AND `jour` >= (CURDATE() - INTERVAL $j DAY)
+       GROUP BY k ORDER BY n DESC, k ASC LIMIT $l");
+    return $q->fetchAll(PDO::FETCH_ASSOC);
+}

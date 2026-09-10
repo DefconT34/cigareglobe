@@ -31,27 +31,15 @@ require_once __DIR__ . '/../backend/config.php';
 require_once __DIR__ . '/../backend/audience.php';
 
 /**
- * Le rapport tient sur une fenêtre glissante.
+ * La fenêtre demandée en ligne de commande.
  *
- * ⚠ LA VALEUR EST INSÉRÉE DANS LE SQL, ET C'EST VOULU. Un paramètre lié
- * dans `INTERVAL ? DAY` ne se comporte pas pareil sur MySQL et sur
- * MariaDB — le serveur tourne sous MariaDB, la machine de
- * développement sous MySQL, et la première version de ce rapport
- * mourait sur le serveur APRÈS avoir imprimé son en-tête, sans un mot,
- * `display_errors` étant coupé en production.
- *
- * C'est la même famille de piège que les fonctions `JSON_*`, que les
- * migrations de ce dépôt s'interdisent depuis la 179 pour exactement
- * cette raison.
- *
- * L'insertion est sûre : la valeur est bornée entre 1 et 365 et
- * convertie en entier ci-dessous. Rien de ce qui vient de la ligne de
- * commande n'atteint la requête.
+ * Le bornage et la conversion vivent dans `audience_jours()`, côté
+ * bibliothèque : l'onglet d'administration s'en sert aussi, et deux
+ * bornages finiraient par diverger.
  */
 function audience_fenetre(array $argv): int {
     $i = array_search('--jours', $argv, true);
-    $n = ($i !== false && isset($argv[$i + 1])) ? (int)$argv[$i + 1] : 30;
-    return max(1, min(365, $n));
+    return audience_jours(($i !== false && isset($argv[$i + 1])) ? $argv[$i + 1] : 30);
 }
 
 /**
@@ -130,7 +118,10 @@ $jours = audience_fenetre($argv);
 try { $db = getDB(); } catch (Throwable $e) {
     echo "Base injoignable : " . $e->getMessage() . "\n"; exit(1);
 }
-try { $db->query("SELECT 1 FROM `audience` LIMIT 1"); } catch (Throwable $e) {
+// La garde vit dans la bibliothèque, comme les comptes : cet outil ne
+// doit contenir AUCUNE requête sur `audience`, sinon il finirait par
+// diverger de l'onglet d'administration qui lit les mêmes chiffres.
+if (!audience_prete($db)) {
     echo "La table `audience` n'existe pas : jouer sql/migrations/203_la_mesure_daudience.sql\n";
     exit(1);
 }
@@ -138,21 +129,12 @@ try { $db->query("SELECT 1 FROM `audience` LIMIT 1"); } catch (Throwable $e) {
 printf("CigarOdyssey — audience, %d derniers jours\n", $jours);
 printf("  base : %s\n\n", DB_NAME);
 
-$p = $db->query(
-    "SELECT COUNT(*) AS vues,
-            COUNT(DISTINCT `empreinte`) AS visiteurs,
-            COUNT(DISTINCT `jour`) AS jours_actifs
-       FROM `audience`
-      WHERE `robot` = 0 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)");
-$h = $p->fetch(PDO::FETCH_ASSOC);
-
-$p2 = $db->query("SELECT COUNT(*) FROM `audience`
-                     WHERE `robot` = 1 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)");
-$robots = (int)$p2->fetchColumn();
+$h      = audience_resume($db, $jours);
+$robots = $h['robots'];
 
 // LE CAS QU'IL FAUT NOMMER : zéro. Un rapport qui affiche « 0 » sans
 // rien dire laisse croire à une panne de l'outil.
-if ((int)$h['vues'] === 0 && $robots === 0) {
+if ($h['vues'] === 0 && $robots === 0) {
     echo "  Aucune vue enregistree sur la periode.\n\n";
     echo "  Ce n'est pas forcement une absence de visiteurs :\n";
     echo "   · la migration 203 vient peut-etre d'etre jouee ;\n";
@@ -167,33 +149,29 @@ printf("  %-22s %6d\n", 'jours avec au moins 1', (int)$h['jours_actifs']);
 printf("  %-22s %6d   (comptes a part, jamais melanges)\n", 'passages de robots', $robots);
 echo "\n";
 
-$sections = [
-    'PAGES LES PLUS VUES' => "SELECT CONCAT(`type`, ' · ', `chemin`) AS k, COUNT(*) n
-                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)
-                            GROUP BY k ORDER BY n DESC LIMIT 12",
-    'D\'OU ILS VIENNENT'  => "SELECT COALESCE(`referent`, '(acces direct ou inconnu)') AS k, COUNT(*) n
-                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)
-                            GROUP BY k ORDER BY n DESC LIMIT 10",
-    'LANGUES'             => "SELECT `lang` AS k, COUNT(*) n
-                                FROM `audience` WHERE `robot`=0 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)
-                            GROUP BY k ORDER BY n DESC",
-];
-foreach ($sections as $titre => $sql) {
-    $q = $db->query($sql);
-    $lignes = $q->fetchAll(PDO::FETCH_ASSOC);
+$sections = ['PAGES LES PLUS VUES' => 'pages',
+             "D'OU ILS VIENNENT"  => 'referents',
+             'LANGUES'            => 'langues'];
+foreach ($sections as $titre => $quoi) {
+    $lignes = audience_classement($db, $jours, $quoi, $quoi === 'langues' ? 20 : 12);
     if (!$lignes) continue;
-    echo $titre . "\n";
-    foreach ($lignes as $l) printf("  %-52s %5d\n", mb_substr((string)$l['k'], 0, 52), (int)$l['n']);
-    echo "\n";
+    echo $titre . "
+";
+    foreach ($lignes as $l) printf("  %-52s %5d
+", mb_substr((string)$l['k'], 0, 52), (int)$l['n']);
+    echo "
+";
 }
 
 if (in_array('--robots', $argv, true)) {
-    $q = $db->query("SELECT CONCAT(`type`,' · ',`chemin`) AS k, COUNT(*) n
-                       FROM `audience` WHERE `robot`=1 AND `jour` >= (CURDATE() - INTERVAL $jours DAY)
-                   GROUP BY k ORDER BY n DESC LIMIT 15");
-    echo "CE QUE LES EXPLORATEURS ONT LU\n";
-    foreach ($q as $l) printf("  %-52s %5d\n", mb_substr((string)$l['k'], 0, 52), (int)$l['n']);
-    echo "\n";
+    echo "CE QUE LES EXPLORATEURS ONT LU
+";
+    foreach (audience_classement($db, $jours, 'robots', 15) as $l) {
+        printf("  %-52s %5d
+", mb_substr((string)$l['k'], 0, 52), (int)$l['n']);
+    }
+    echo "
+";
 }
 
 echo "Ces nombres sont un PLANCHER : une page servie depuis un cache\n";

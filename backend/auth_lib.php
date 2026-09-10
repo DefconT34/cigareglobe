@@ -258,6 +258,10 @@ const PORTEE_ADMIN_SEULEMENT = [
     'membres'         => 'la liste des comptes et l’attribution des rôles',
     'export'          => 'l’export de tous les établissements',
     'photo_supprimer' => 'la suppression définitive d’une photo',
+    // L'audience est une donnée d'EXPLOITATION, pas de modération :
+    // un modérateur juge des contributions, il n'a pas à savoir
+    // combien de monde vient ni par quel chemin.
+    'audience'        => 'la mesure d’audience',
 ];
 
 /** Cette portée peut-elle agir sur ce domaine ? */

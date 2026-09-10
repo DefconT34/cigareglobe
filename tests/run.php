@@ -5233,6 +5233,53 @@ require_once PROJECT_ROOT . '/backend/audience.php';
     catch (Throwable $e) { $sansBase = false; }
     check('audience : sans base, elle se tait au lieu d echouer', $sansBase === true);
 
+    // ── 5. La fenetre de lecture ────────────────────────
+    // Elle est INSEREE DANS LE SQL, pas liee : un parametre dans
+    // « INTERVAL ? DAY » ne se comporte pas pareil sur MySQL et sur
+    // MariaDB, et le rapport mourait sur le serveur apres avoir imprime
+    // son en-tete, sans un mot. C est donc le bornage qui tient lieu de
+    // garde.
+    eq('audience : la fenetre est bornee en bas', 1, audience_jours(0));
+    eq('audience : et en haut', 365, audience_jours(9999));
+    eq('audience : une valeur normale passe', 7, audience_jours(7));
+    // LE POINT QUI COMPTE : rien de ce qui vient de l exterieur ne peut
+    // atteindre la requete, puisque tout devient un entier.
+    eq('audience : une chaine hostile devient un entier', 1, audience_jours('1; DROP TABLE audience'));
+    eq('audience : un texte sans chiffre aussi', 1, audience_jours('abc'));
+
+    // ── 6. UNE SEULE IMPLEMENTATION DES COMPTES ─────────
+    // L outil en ligne de commande et l onglet d administration lisent
+    // les MEMES fonctions. Deux jeux de requetes finiraient par donner
+    // deux chiffres differents pour la meme question, sans qu on sache
+    // lequel croire — c est la raison pour laquelle ce depot n a qu une
+    // fabrique d adresses et qu un portique d age.
+    $cli   = (string)@file_get_contents(PROJECT_ROOT . '/tools/audience.php');
+    $admin = (string)@file_get_contents(PROJECT_ROOT . '/backend/admin.php');
+    check('audience : l outil ne refait pas ses propres requetes',
+          !preg_match('/FROM\s+`?audience`?/i', $cli));
+    check('audience : l onglet non plus',
+          !preg_match('/FROM\s+`?audience`?/i', $admin));
+    check('audience : les deux passent par les memes fonctions',
+          str_contains($cli, 'audience_resume(') && str_contains($admin, 'audience_resume(')
+       && str_contains($cli, 'audience_classement(') && str_contains($admin, 'audience_classement('));
+
+    // ── 7. L onglet est reserve a l administration ──────
+    // L audience est une donnee d EXPLOITATION, pas de moderation : un
+    // moderateur juge des contributions, il n a pas a savoir combien de
+    // monde vient ni par quel chemin.
+    check('audience : le domaine est declare reserve',
+          isset(PORTEE_ADMIN_SEULEMENT['audience']));
+    check('audience : un moderateur ne passe pas',
+          !portee_autorise('moderation', 'audience'));
+    check('audience : l administration passe',
+          portee_autorise('admin', 'audience'));
+    check('audience : un visiteur sans portee non plus',
+          !portee_autorise(null, 'audience'));
+    // Et le menu comme la garde lisent la MEME liste : sans cela, le
+    // menu proposerait ce que la garde refuse.
+    check('audience : l onglet figure dans la liste des domaines gardes',
+          (bool)preg_match("/DOMAINE_ONGLET\s*=.*'audience'\s*=>\s*'audience'/s", $admin));
+
     // ── Les balises de verification des moteurs ─────────
     //
     // DEUX PIEGES, ET J AI MIS LES DEUX PIEDS DEDANS.

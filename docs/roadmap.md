@@ -4620,3 +4620,42 @@ vérifient que la garde de `ph_ville()` — celle qui efface un sous-titre rép�
 le nom — empêche le doublon de revenir.
 
 `--pays` refait les 95 cartes de pays sans toucher aux 182 cartes de maisons.
+
+---
+
+## Onglet Audience dans l'administration
+
+**942 assertions, 0 échec.**
+
+Lire le rapport demandait une session SSH. Un chiffre qu'on ne peut pas regarder
+sans ouvrir un terminal est un chiffre qu'on ne regarde pas — et c'est
+l'habitude qui compte, pas le tableau.
+
+### Une seule implémentation des comptes
+Les fonctions de lecture — `audience_resume()`, `audience_classement()`,
+`audience_jours()`, `audience_prete()` — vivent dans `backend/audience.php` et
+servent **à la fois** l'outil en ligne de commande et l'onglet.
+
+**Aucun des deux ne contient de requête sur `audience`**, et trois assertions
+l'interdisent. C'est la règle que ce dépôt applique déjà au portique d'âge et à
+la fabrique d'adresses : *deux fabriques finissent toujours par diverger*. Ici,
+la divergence donnerait deux chiffres différents pour la même question, sans
+qu'on sache lequel croire — pire que pas de mesure.
+
+### Réservé à l'administration
+`audience` rejoint `PORTEE_ADMIN_SEULEMENT`. **Un modérateur juge des
+contributions ; il n'a pas à savoir combien de monde vient ni par quel chemin.**
+Le menu masque l'onglet, et la garde le refuse — le menu n'est pas une serrure.
+
+### La page dit ce qu'elle ne mesure pas
+L'outil en ligne de commande répète à chaque exécution que les chiffres sont un
+plancher à cause du cache. L'onglet le répète aussi, en évidence sous les
+compteurs. **Un tableau de bord qui affiche un nombre sans sa réserve est pire
+qu'un terminal qui l'écrit** : on finit par croire le nombre.
+
+Et le zéro est nommé : « aucune vue enregistrée » s'accompagne des deux raisons
+possibles, parce qu'un zéro muet se lit comme une panne de l'outil.
+
+### Ce qu'on ne montre jamais
+Les empreintes. Des agrégats, uniquement — ces douze caractères ne servent qu'à
+compter, les afficher changerait la nature de ce qu'on stocke.
