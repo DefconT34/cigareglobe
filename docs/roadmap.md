@@ -4659,3 +4659,45 @@ possibles, parce qu'un zéro muet se lit comme une panne de l'outil.
 ### Ce qu'on ne montre jamais
 Les empreintes. Des agrégats, uniquement — ces douze caractères ne servent qu'à
 compter, les afficher changerait la nature de ce qu'on stocke.
+
+---
+
+## Les langues que les moteurs explorent
+
+**947 assertions, 0 échec.** `audience --autotest` : 0 échec.
+
+Le premier rapport à sept jours ne pouvait pas répondre à la question qui
+commande la suite. Le classement `langues` **ne compte que les lecteurs** — les
+robots en sont exclus, comme partout ailleurs dans cette mesure, et c'est juste :
+les mêler donnerait une courbe flatteuse et fausse. Mais sur un site sans
+audience, les lecteurs sont trop peu pour dire quoi que ce soit. **Sur 339 vues à
+sept jours, 16 visiteurs et un seul jour actif ; 92 passages de robots.**
+
+Or la question qui décide de la surface linguistique n'est pas « dans quelle
+langue lisent les gens » : c'est **quelles langues les moteurs explorent**. C'est
+elle qui dira si les six versions sont indexées, et donc si les **7 975
+traductions automatiques jamais relues** sont un actif ou un risque à l'échelle.
+
+La colonne `lang` était enregistrée pour les robots depuis la migration 203. Il
+ne manquait que la vue pour la lire : ``'langues_robots' => ["`lang`", 1]``, une
+ligne dans la liste fermée de `audience_classement()`.
+
+### Deux tableaux de langues, et c'est voulu
+| Tableau | Population | Ce qu'il répond |
+| --- | --- | --- |
+| Langues des lecteurs | robots exclus | qui lit quoi — muet tant qu'il n'y a personne |
+| Langues que les explorateurs ont lues | robots seuls | quelles versions sont indexées |
+
+Les deux portent des titres distincts, dans le terminal comme dans l'onglet :
+« Langues » affiché deux fois ferait **trancher la surface linguistique sur le
+mauvais chiffre**. Deux assertions tiennent la séparation — l'une vérifie que la
+nouvelle vue ne montre que les robots, l'autre que l'ancienne continue de les
+exclure.
+
+L'onglet ajoute sous chaque tableau ce que sa population signifie ; le terminal
+donne des pourcentages et signale explicitement le cas « plusieurs langues
+explorées », qui est celui qui change la décision.
+
+```bash
+php ~/public_html/tools/audience.php --jours 7 --robots
+```

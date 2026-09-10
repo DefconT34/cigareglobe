@@ -151,7 +151,7 @@ echo "\n";
 
 $sections = ['PAGES LES PLUS VUES' => 'pages',
              "D'OU ILS VIENNENT"  => 'referents',
-             'LANGUES'            => 'langues'];
+             'LANGUES DES LECTEURS' => 'langues'];
 foreach ($sections as $titre => $quoi) {
     $lignes = audience_classement($db, $jours, $quoi, $quoi === 'langues' ? 20 : 12);
     if (!$lignes) continue;
@@ -172,6 +172,35 @@ if (in_array('--robots', $argv, true)) {
     }
     echo "
 ";
+
+    // LA LIGNE QUI DECIDE DE LA SURFACE LINGUISTIQUE. Le bloc LANGUES
+    // plus haut ne compte que les humains ; sur un site neuf ils sont
+    // trop peu pour dire quoi que ce soit. Ce sont les MOTEURS dont il
+    // faut savoir quelles langues ils explorent : c'est ce qui dira si
+    // les six versions sont indexees, et donc si les 7 975 traductions
+    // automatiques jamais relues sont un actif ou un risque.
+    $lr = audience_classement($db, $jours, 'langues_robots', 20);
+    if ($lr) {
+        echo "LES LANGUES QUE LES EXPLORATEURS ONT LUES
+";
+        $total = array_sum(array_column($lr, 'n'));
+        foreach ($lr as $l) {
+            printf("  %-52s %5d   %3d %%
+", (string)$l['k'], (int)$l['n'],
+                   $total > 0 ? (int)round(100 * $l['n'] / $total) : 0);
+        }
+        echo "
+";
+        if (count($lr) > 1) {
+            echo "  Plusieurs langues explorees : les versions traduites SONT
+";
+            echo "  parcourues par les moteurs. Voir docs/roadmap.md sur le
+";
+            echo "  risque des traductions automatiques a l'echelle.
+
+";
+        }
+    }
 }
 
 echo "Ces nombres sont un PLANCHER : une page servie depuis un cache\n";

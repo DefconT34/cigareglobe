@@ -193,6 +193,15 @@ function audience_classement(PDO $db, int $jours, string $quoi, int $limite = 12
         'referents' => ["COALESCE(`referent`, '(acces direct ou inconnu)')", 0],
         'langues'   => ["`lang`", 0],
         'robots'    => ["CONCAT(`type`, ' · ', `chemin`)", 1],
+        // ── LA VUE QUI DECIDE, ET QUI MANQUAIT ──────────
+        // `langues` ne compte QUE les humains, par construction : les
+        // robots en sont exclus comme partout ailleurs. Or la question
+        // qui commande la surface linguistique du site n'est pas
+        // « dans quelle langue lisent les gens » — ils sont trop peu —
+        // mais « QUELLES LANGUES LES MOTEURS EXPLORENT ». Sans cette
+        // vue, le rapport ne pouvait pas y repondre, alors que la
+        // colonne etait enregistree pour les robots aussi.
+        'langues_robots' => ["`lang`", 1],
     ];
     if (!isset($vues[$quoi])) return [];
     [$expr, $robot] = $vues[$quoi];

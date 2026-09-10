@@ -423,7 +423,7 @@ $journal_n    = 0;
 // donner deux chiffres différents pour la même question, sans qu'on
 // sache lequel croire.
 $aud_jours = 7; $aud_prete = false; $aud = []; $aud_pages = [];
-$aud_referents = []; $aud_langues = []; $aud_robots = [];
+$aud_referents = []; $aud_langues = []; $aud_robots = []; $aud_lg_robots = [];
 if ($tab === 'audience') {
     require_once __DIR__ . '/audience.php';
     $aud_jours = audience_jours($_GET['jours'] ?? 7);
@@ -434,6 +434,11 @@ if ($tab === 'audience') {
         $aud_referents = audience_classement($db, $aud_jours, 'referents', 10);
         $aud_langues   = audience_classement($db, $aud_jours, 'langues', 10);
         $aud_robots    = audience_classement($db, $aud_jours, 'robots', 10);
+        // Les langues que les MOTEURS explorent. Le tableau des langues
+        // ci-dessus ne compte que les lecteurs, et sur un site neuf ils
+        // sont trop peu pour dire quoi que ce soit : c'est ici que se
+        // lit la question de la surface linguistique.
+        $aud_lg_robots = audience_classement($db, $aud_jours, 'langues_robots', 10);
     }
 }
 
@@ -2029,16 +2034,29 @@ html{transition:background .25s,color .25s}
   </div>
 
   <?php
+    // DEUX TABLEAUX DE LANGUES, ET C'EST VOULU. Celui des lecteurs
+    // répond « qui lit quoi » ; sur un site sans audience il ne dit
+    // rien. Celui des explorateurs répond « quelles versions les
+    // moteurs indexent » — c'est celui-là qui décide de la surface
+    // linguistique. Les confondre serait trancher sur le mauvais.
     $tables = [
-      'Pages les plus vues' => [$aud_pages, 'Aucune page vue'],
-      'D’où ils viennent'   => [$aud_referents, 'Aucun référent'],
-      'Langues'             => [$aud_langues, 'Aucune langue'],
-      'Ce que les explorateurs ont lu' => [$aud_robots, 'Aucun passage de robot'],
+      'Pages les plus vues' => [$aud_pages, 'Aucune page vue', ''],
+      'D’où ils viennent'   => [$aud_referents, 'Aucun référent', ''],
+      'Langues des lecteurs' => [$aud_langues, 'Aucune langue',
+        'Les lecteurs seulement. Robots exclus, comme partout ailleurs.'],
+      'Ce que les explorateurs ont lu' => [$aud_robots, 'Aucun passage de robot', ''],
+      'Langues que les explorateurs ont lues' => [$aud_lg_robots, 'Aucune langue explorée',
+        'Les moteurs seulement. Plusieurs langues ici veut dire que les '
+        . 'versions traduites sont parcourues — donc indexées, avec ce que '
+        . 'cela implique pour les traductions automatiques jamais relues.'],
     ];
-    foreach ($tables as $titre => [$lignes, $vide]):
+    foreach ($tables as $titre => [$lignes, $vide, $note]):
   ?>
   <div style="margin-bottom:26px">
     <div class="nav-section" style="padding-left:2px"><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php if ($note): ?>
+      <div class="ct-city" style="padding:2px 2px 8px"><?= htmlspecialchars($note, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
     <?php if (!$lignes): ?>
       <div class="ct-city" style="padding:6px 2px"><?= htmlspecialchars($vide, ENT_QUOTES, 'UTF-8') ?></div>
     <?php else: ?>

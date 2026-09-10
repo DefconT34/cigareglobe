@@ -5280,6 +5280,34 @@ require_once PROJECT_ROOT . '/backend/audience.php';
     check('audience : l onglet figure dans la liste des domaines gardes',
           (bool)preg_match("/DOMAINE_ONGLET\s*=.*'audience'\s*=>\s*'audience'/s", $admin));
 
+    // ── 8. LES LANGUES DES ROBOTS, SEPAREES DE CELLES DES LECTEURS ──
+    // Le classement `langues` ne compte QUE les humains — les robots en
+    // sont exclus comme partout ailleurs, et c est juste. Mais sur un
+    // site neuf les lecteurs sont trop peu pour dire quoi que ce soit,
+    // et la question qui commande la surface linguistique n est pas
+    // « dans quelle langue lisent les gens » : c est « QUELLES LANGUES
+    // LES MOTEURS EXPLORENT ». La colonne etait enregistree pour les
+    // robots aussi ; il ne manquait que la vue pour la lire.
+    $lib = (string)@file_get_contents(PROJECT_ROOT . '/backend/audience.php');
+    check('audience : la vue des langues explorees existe',
+          (bool)preg_match("/'langues_robots'\s*=>\s*\[\"`lang`\"\s*,\s*1\]/", $lib));
+    // LA PROPRIETE QUI REND LES DEUX TABLEAUX LISIBLES : l un exclut les
+    // robots, l autre ne montre qu eux. S ils venaient a compter la meme
+    // population, on trancherait la langue sur un chiffre qui ne repond
+    // pas a la question posee.
+    check('audience : les langues des lecteurs restent sans robots',
+          (bool)preg_match("/'langues'\s*=>\s*\[\"`lang`\"\s*,\s*0\]/", $lib));
+    check('audience : l outil affiche les langues explorees sous --robots',
+          str_contains($cli, "'langues_robots'")
+       && str_contains($cli, 'LES LANGUES QUE LES EXPLORATEURS ONT LUES'));
+    check('audience : l onglet les charge aussi',
+          str_contains($admin, "'langues_robots'"));
+    // Et les deux tableaux portent des titres DISTINCTS : « Langues »
+    // tout court, affiche deux fois, ferait prendre l un pour l autre.
+    check('audience : les deux tableaux de langues sont nommes a part',
+          str_contains($admin, 'Langues des lecteurs')
+       && str_contains($admin, 'Langues que les explorateurs ont lues'));
+
     // ── Les balises de verification des moteurs ─────────
     //
     // DEUX PIEGES, ET J AI MIS LES DEUX PIEDS DEDANS.
