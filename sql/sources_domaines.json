@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-09-09",
+    "fige_le": "2026-09-10",
     "domaines": {
         "21club.com": {
             "dns": "resout",
@@ -127,7 +127,7 @@
         },
         "casdaglicigars.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "casinomadrid.es": {
             "dns": "resout",
@@ -143,7 +143,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 18
+            "fiches": 17
         },
         "cigar.com": {
             "dns": "resout",
@@ -151,7 +151,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 104
+            "fiches": 103
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -179,7 +179,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 60
+            "fiches": 58
         },
         "cigaroa.com": {
             "dns": "resout",
@@ -299,7 +299,7 @@
         },
         "famous-smoke.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "feriotego.com": {
             "dns": "resout",
@@ -910,6 +910,10 @@
             "fiches": 1
         },
         "yelp.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "zechbauer.de": {
             "dns": "resout",
             "fiches": 1
         },

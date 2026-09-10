@@ -344,6 +344,17 @@ const RANGS_ADMIS = [
 const REVUES_ADMISES = [
     'Quintero|celebrities|zh' =>
         '雪茄爱好者 y designe des amateurs de cigares, pas la revue homonyme',
+    // Excalibur, dans les six langues. La revue n'est pas invoquee pour
+    // se parer d'une note : elle est NOMMEE COMME SOURCE d'une date que
+    // les autres sources contredisent. Sans elle, la fiche affirmerait
+    // 1981 sans dire d'ou elle le tient — exactement ce que faisait le
+    // 1983 que cette migration retire.
+    'Excalibur|history|fr' => 'nomme Cigar Aficionado comme source de la date de 1981, contre 1992 chez Cigar Advisor',
+    'Excalibur|history|en' => 'idem, en anglais',
+    'Excalibur|history|es' => 'idem, en espagnol',
+    'Excalibur|history|de' => 'idem, en allemand',
+    'Excalibur|history|zh' => 'idem, en chinois — 雪茄爱好者 y designe bien la revue',
+    'Excalibur|history|ar' => 'idem, en arabe',
 ];
 
 /**
@@ -432,6 +443,15 @@ const CITATIONS_SOURCEES = [
 const AFFIRMATIONS_HISTORIQUES = [
     'El Rey del Mundo|celebrities|0' =>
         'rapporte un slogan de 1848 en le désignant comme réclame, sans le reprendre à son compte',
+    // Les trois fiches réécrites par la migration 204. Dans chacune, la
+    // citation N'EST PAS un ornement : c'est la pièce qui rend le fait
+    // vérifiable, et la retirer rendrait la fiche moins sûre, pas plus.
+    'Excalibur|history|0' =>
+        'cite Cigar Aficionado et Cigar Advisor pour NOMMER une divergence de date (1970s / 1981 / 1992) au lieu de trancher en silence, et rapporte Dan Blumenthal, alors président de Villazon, sur la raison d’être de la marque',
+    'Casdagli|history|0' =>
+        'rapporte les mots de la maison sur son propre atelier — « alors connu sous le nom de Vegas Santiago » — parce que c’est cet aveu qui établit le lien entre deux fiches de cet atlas',
+    'Vegas de Santiago|history|0' =>
+        'reprend la même parole de Casdagli, attribuée à Casdagli, pour établir qui roule quoi à Puriscal',
 ];
 
 // Les trois champs narratifs et la clé où ils rangent leur texte. Le
@@ -640,8 +660,22 @@ foreach ($db->query("SELECT name, scores, celebrities, gamme, pairings, history$
             }
 
             // ── Paroles prêtées ─────────────────────────
+            //
+            // CITATIONS_SOURCEES EST INUTILISABLE POUR `history`. Elle
+            // est indexée par `$qui`, qui vaut le nom d'une personne
+            // dans `gamme` ou `celebrities` — mais toujours « récit »
+            // dans un historique. Y déclarer « récit » exempterait les
+            // 181 fiches d'un coup ; c'est pourquoi l'exemption passe
+            // ici par AFFIRMATIONS_HISTORIQUES, nommée fiche par fiche
+            // et motivée, comme le reste de ce contrôle.
+            //
+            // Ce qu'on veut autoriser est précisément ce que la règle
+            // cherche : une parole ATTRIBUÉE à quelqu'un, tirée d'une
+            // source nommée dans le champ `source`. Ce qu'on continue
+            // de refuser est la citation flottante, dont personne ne
+            // peut dire d'où elle vient.
             $extrait = parole_pretee($s);
-            if ($extrait === '' || isset(CITATIONS_SOURCEES[$qui])) continue;
+            if ($extrait === '' || $exempt || isset(CITATIONS_SOURCEES[$qui])) continue;
             $defauts[] = sprintf('%s : %s « %s » prête une parole — « %s… »',
                                  $r['name'], $champ, $qui, mb_substr(trim($extrait), 0, 42));
         }

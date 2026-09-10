@@ -4701,3 +4701,135 @@ explorées », qui est celui qui change la décision.
 ```bash
 php ~/public_html/tools/audience.php --jours 7 --robots
 ```
+
+---
+
+## Les dettes nommées — et ce qu'elles cachaient
+
+**947 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 231
+domaines, `contenu.sql` régénéré. Migration **204**.
+
+La feuille de route portait cinq petites dettes : quatre réserves écrites dans
+des champs `source` et une tension entre deux fiches du Costa Rica. **Deux
+n'étaient pas des réserves mais des symptômes.**
+
+### Ce qui se lève sans rien changer
+**Bering.** La réserve disait qu'aucune source ne confirmait l'attribution
+« (Plasencia) ». Or `jaimemontilla.com`, **déjà citée par la fiche**, écrit qu'en
+2002 Swisher a vendu *la marque et l'usine* à Nestor Plasencia — et le corps de
+la fiche le disait aussi, en toutes lettres. J'avais écrit une réserve contre un
+fait que mes deux propres textes portaient. Défaut de lecture, pas manque de
+source.
+
+**Suerdieck.** « Décembre 1999 » et « 2000 » ne se contredisent pas : l'activité
+cesse fin 1999, la dernière usine de Cruz das Almas ferme en 2000 avec cent
+licenciements. Deux moments, pas deux versions.
+
+### Excalibur — une histoire entièrement fausse
+La fiche attribuait la marque à **Villiger Söhne**, à **Hendrik Kelner** et aux
+plantations **Eiroa**, puis sa revente à **Altadis**. C'est une confusion de
+noms : *Villiger* (le suisse) pour **Villazon** (le tampeño de Frank Llaneza).
+Rien ne relie Kelner ni les Eiroa à cette marque, et l'acheteur de 1997 est
+**General Cigar**, pour 81,4 M$.
+
+Et la même invention vivait dans `celebrities`, où une anecdote prêtait une
+attitude à **Heinrich Villiger**, personne réelle et nommée. Réécrire
+l'historique sans nettoyer ce champ aurait laissé la fiche se contredire un écran
+plus bas.
+
+Ce que disent les sources : Excalibur naît d'un **empêchement de marque**, pas
+d'une idée de style — Villazon ne pouvait pas utiliser le nom Hoyo de Monterrey
+hors des États-Unis. *« Comme nous ne pouvons pas utiliser Hoyo de Monterrey,
+nous avons développé une marque appelée Excalibur, que nous vendons en Allemagne
+et en Angleterre »*, Dan Blumenthal, alors président de Villazon.
+
+La date de 1983 n'avait **aucune source**. Elle passe à 1981 (*Cigar
+Aficionado*, mai 2021 : la ligne « turns 40 this year »), et la fiche **écrit
+désormais la divergence** — 1970s / 1981 / 1992 — au lieu de trancher en
+silence. La fabrique passe de « Manufactura de Puros Jamastran S.A. », que rien
+n'établit, à la **HATSA de Danlí**.
+
+### Le Panama était inventé de bout en bout
+La réserve ne portait que sur une date. La vérification a montré qu'**aucune
+source n'établit qu'un cigare Toraño ait jamais été fabriqué au Panama**, ni
+qu'un tabac de Chiriquí soit entré dans un de leurs assemblages. Le « 2001 » du
+champ datait le lancement de la ligne *Exodus 1959*, pas une installation.
+
+En retirant la fiche, `habanos_presence` s'est trouvée porter la même invention,
+**avec des chiffres** : un PDG (« Carlos Toraño (pionnier) »), un chiffre
+d'affaires (« ~$12M USD »), un effectif (« 500+ »), une fabrique à Volcán fondée
+en 2001, et « La Palina Panama » — maison réelle, mais pas panaméenne. **Un
+chiffre inventé est pire qu'un champ vide : il se cite.** Tout cela est NULL ou
+documenté désormais.
+
+| Avant | Après |
+| --- | --- |
+| Carlos Toraño Panama, « pionnier du cigare panaméen premium » | fiche supprimée |
+| Terroir à Boquete, 1 200–1 800 m, employé dans l'Exodus 1959 | rien — aucune source |
+| ~$12M USD, 500+ employés, PDG Carlos Toraño | NULL |
+| « Production artisanale croissance » | « Artisanale, très réduite » |
+
+Ce qui est documenté prend la place : mars 1981, **Gilberto Oliva et Nestor
+Plasencia** portent des semences cubaines à Coclé ; la Coclé Tobacco Factory
+ouvre à Peñonomé la même année, Tabacos Panamá S.A. à La Pintada en 1984, et
+**Miriam Padilla** fonde **Joyas de Panamá** en février 1986. Industrie
+largement effondrée depuis — un reportage de 2025 trouve les ateliers à l'arrêt.
+
+**Aucune fiche de maison n'est écrite en remplacement**, et le pays ne l'annonce
+pas non plus dans `brands` : le contrôle 7 de `coherence_check` refuse à juste
+titre un nom qui ouvre une carte sur rien. Mes sources sur Joyas de Panamá sont
+un site touristique et une notice de guide ; en écrire une fiche complète
+répéterait exactement la faute corrigée ici. **Le Panama est donc le premier pays
+de cet atlas sans aucune maison** — un état honnête, pas un accident.
+
+### Costa Rica — la tension tranchée par un fait, pas par un arbitrage
+La fiche Casdagli disait le Costa Rica « sans terroir tabacole notable » ; la
+fiche Vegas de Santiago décrit, dans le même pays, une maison qui cultive son
+tabac à plus de 1 100 m depuis plus de quatre-vingts ans.
+
+**Les deux maisons sont au même endroit.** Casdagli écrit elle-même que sa
+coopération « avec Tabacos de Costa Rica S.A., *alors connue sous le nom de Vegas
+Santiago*, a commencé en 2012 », et que Villa Casdagli est faite là sous la
+conduite du maître assembleur **Olman Guzmán**. Zechbauer, de son côté, présente
+**Olman León Guzmán** comme le chef de la fabrique Vegas de Santiago et dit le
+tabac cultivé sur ces pentes depuis plus de 80 ans. Même lieu, même homme, même
+altitude.
+
+La phrase à corriger n'était donc pas une nuance : **elle niait l'existence du
+terroir à l'endroit exact où la maison fait rouler ses cigares.** Ce qui survit
+de l'idée de départ est dit autrement — la *feuille* de Casdagli vient d'ailleurs
+(Pérou, Nicaragua, Équateur, Rép. dominicaine, cape et sous-cape équatoriennes).
+
+Le champ `factory` nommait « Tabacalera Aragón », introuvable dans les sources de
+la maison. Ce sont **IGM, à San José** (Daughters of the Wind, Cypher 3311) et
+**Tabacos de Costa Rica, à Puriscal** (Villa Casdagli). Et la fiche porte
+désormais sa date : fondée en **1997** sous le nom de *Bespoke Cigars*, rebaptisée
+au **printemps 2018**.
+
+### Deux garde-fous ont fait leur travail, et un a été étendu
+`coherence_check` a refusé la ligne orpheline de `traductions.sql` et la carte
+Panama qui n'aurait ouvert sur rien. `i18n_fraicheur` a exigé les sceaux du pays
+et de `habanos_presence`. `i18n_superlatif_check` a refusé un « der sein
+liebster » allemand que le français ne portait pas.
+
+`marques_check` refusait les trois citations nouvelles. L'exemption est passée
+par `AFFIRMATIONS_HISTORIQUES`, **nommée fiche par fiche et motivée** — parce que
+`CITATIONS_SOURCEES` est indexée par `$qui`, qui vaut toujours « récit » dans un
+historique : y déclarer « récit » aurait exempté les 181 fiches d'un coup. Ce
+qu'on autorise est précisément ce que la règle cherche : une parole **attribuée**,
+tirée d'une source nommée dans le champ `source`. La citation flottante reste
+refusée.
+
+### Et une fuite trouvée en passant
+`moderation_log.detail` est un `varchar(255)` **qui tronque en silence** : les
+quatre entrées de la 202 et les quatre de la 203 font toutes *exactement* 255
+caractères — coupées en pleine phrase sans qu'un mot le signale. J'y suis tombé
+au premier essai de la 204, huit entrées sur onze. Le contrôle en fin de
+migration refuse désormais de passer si une entrée atteint la limite.
+
+### Ce qui reste tiède au Panama
+`production_zones` annonce **Boquete — « microclimat d'altitude »**. Boquete est
+bien dans le Chiriquí, sur les pentes du Volcán Barú, et les fiches de feuilles
+(`panama-habano`, `panama-corojo`) sont correctement sourcées sur Chiriquí et
+Sortova. Mais **aucune source ne nomme Boquete comme zone tabacole** : à trancher
+si une source le permet un jour.
