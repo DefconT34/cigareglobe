@@ -4940,3 +4940,58 @@ ne porte pas le contenu des migrations. Cinq assertions ont échoué sur une bas
 pourtant juste. Le contrôle final sur les langues servies ouvre sa propre
 connexion **pour cette raison exacte** ; je ne l'avais pas lu avant d'écrire à
 côté.
+
+---
+
+## Décision : les six langues restent ouvertes — 11 septembre 2026
+
+**Point 3 de l'ordre convenu, tranché.** L'ordre était : mesurer → réparer la
+diffusion → trancher la surface linguistique → structurer. Les deux premiers
+sont faits ; celui-ci se décide sur les chiffres ci-dessous, pas sur une
+intuition.
+
+### Ce que le rapport d'audience a dit (7 jours, lu le 11 septembre)
+
+| Langue | Passages de robots | Part |
+| --- | --- | --- |
+| fr | 815 | 34 % |
+| en | 334 | 14 % |
+| es | 319 | 13 % |
+| zh | 318 | 13 % |
+| de | 299 | 13 % |
+| ar | 296 | 12 % |
+
+**2 381 passages de robots** contre 92 la semaine précédente — ×26 depuis la
+soumission du plan de site. Les cinq traductions sont balayées à ~300 passages
+chacune : **un balayage systématique**. Les 7 690 traductions automatiques
+jamais relues sont en cours d'indexation. Google a envoyé ses **5 premiers
+visiteurs** ; les lecteurs sont français à 98 % (fr 393, en 7, ar 3, de 3, es 2),
+ce qui ne dit rien de la demande — seulement que l'audience n'existe pas encore.
+
+### La décision, et ses raisons
+**Les six langues restent ouvertes.**
+
+1. **Fermer maintenant, c'est jeter l'indexation au moment où elle commence.**
+   Retirer une langue du plan de site et des hreflang remet son compteur à zéro.
+2. **Le risque « contenu généré à l'échelle » vise le contenu mince.** Le
+   contenu de l'atlas est unique et sourcé fiche par fiche ; une traduction
+   machine d'un texte substantiel n'est pas un texte vide.
+3. **Les dérives mécaniques sont tenues** par quatre contrôles —
+   `i18n_langue_check`, `i18n_superlatif_check`, `i18n_divergence`,
+   `i18n_melange_check` — qui ont refusé trois textes cette semaine même.
+4. **Les lecteurs étant français, fermer ne gagne rien aujourd'hui** et supprime
+   le seul chemin vers les autres.
+
+### La condition, et le filet
+- **Condition** : avant toute démarche vers des professionnels — la piste
+  retenue pour la monétisation —, faire relire par un locuteur **un échantillon
+  de 30 fiches par langue**. « 0 relue par un humain » reste le seul chiffre qui
+  engage quelqu'un, et un acheteur espagnol jugera l'espagnol.
+- **Filet** : l'onglet *Langues* de l'administration ferme une langue en un
+  clic, sans rien supprimer. Une langue qui s'avère mauvaise à la relecture se
+  ferme le jour même.
+
+### Ce qui reste de l'ordre convenu
+Le point 4 — **structurer** (société, hébergement, monétisation) — attend une
+audience mesurée, pas des robots. Rien à faire tant que les visiteurs distincts
+se comptent en dizaines.
