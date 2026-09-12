@@ -5247,3 +5247,45 @@ les six langues avant application, comme les Top 25 du lot 2b.
 **Lot suivant (4c)** : Jas Sum Kral, Fable, Jake Wyatt, Hiram & Solomon, Epic,
 Chogüí, Principle, Casa 1910, Bombay Tobak. Puis le **lot 5**, les
 requalifications dans les gammes existantes (dont Nomad → Ezra Zion).
+
+---
+
+## Lot 4c — les isolées de quatre pays
+
+**965 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 252
+domaines. Migration **213**. L'atlas passe à **216 maisons**.
+
+Sept maisons sans usine, rangées par le pays où elles sont roulées :
+
+| pays | maisons | chez |
+| --- | --- | --- |
+| **Nicaragua** | Fable | Nica Sueño (RoMa Craft), puis Córdoba & Morales depuis oct. 2025 |
+| **Honduras** | Jake Wyatt | Tabacalera San Jerónimo, Danlí, depuis 2026 |
+| **Rép. dominicaine** | Hiram & Solomon, Epic, Chogüí, Principle | PDR · von Eicken (la fabrique de Kristoff) · Manufactura Rivas · KBF |
+| **Costa Rica** | Bombay Tobak (MBombay) | Tabacos de Costa Rica, Puriscal |
+
+**Deux maisons reportées, chacune pour une raison écrite** : Jas Sum Kral a
+quitté Tabacalera Aragón le 11 octobre 2024 et n'a jamais nommé sa nouvelle
+fabrique ; Casa 1910, dit la presse en mars 2026, ne divulgue pas quelle
+fabrique mexicaine roule ses cigares, et ses deux lignes faites ailleurs sont
+arrêtées. Sans fabrique nommée, pas de fiche — la règle qui a écarté
+Dissident et Sagrado.
+
+**Deux divergences écrites au lieu d'être tranchées** : Jake Wyatt disait
+posséder une fabrique (Casamorabo) ; la presse établit en 2026 que tout
+part chez San Jerónimo après des ateliers dominicains — la fiche attribue
+l'affirmation à la maison et classe au Honduras. Principle : ~2011 au
+recensement, 2013 par la devise de la maison.
+
+**Six renvois rendus réciproques** : PDR → Hiram & Solomon, KBF →
+Principle, Kristoff → Epic (même fabrique), De Los Reyes → Chogüí (tabacs
+de Leo Reyes), Warped → Chogüí (Venture 1492), RoMa Craft → Fable. Et
+**Vegas de Santiago reçoit un paragraphe** en six langues : MBombay est la
+troisième marque de l'atlas roulée à Puriscal.
+
+Deux garde-fous : `coherence_check` a vu trois `founded` à cinquante
+caractères (raccourcis), `i18n_superlatif_check` un « أندر » arabe là où le
+français dit « plus rare qu'on ne le croit » — reformulé.
+
+**Lot suivant (5)** : les requalifications dans les gammes existantes —
+dix-neuf lignes du recensement, dont Nomad → Ezra Zion.

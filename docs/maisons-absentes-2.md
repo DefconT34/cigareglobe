@@ -78,9 +78,9 @@ avant d'écrire.
 | ~~**Serino Cigar Co.**~~ | **FAIT** — migration 212 · 2016 | sans usine — **chez La Corona Cigars S.A.** (Omar González-Alemán), Estelí | Carson et Tony Serino, père et fils | cigaraficionado.com, cigardojo.com |
 | ~~**Stolen Throne**~~ | **FAIT** — migration 212 · 2019 | sans usine — **chez Noel Rojas**, Tabacalera Flor de San Luis | Richard « Lee » Marsh, Virginie | cigarlifeguy.com, smallbatchcigar.com |
 | ~~**Ezra Zion**~~ | **FAIT** — migration 212 · juillet 2012 | sans usine — **chez Noel Rojas** *(à confirmer : la presse dit « des fabriques respectées au Nicaragua et en Rép. dominicaine »)* | Chris Kelly et Kyle Hoover, Texas. ⚠ **Propriétaire de Nomad depuis septembre 2018** — Nomad a sa fiche ; elle doit le dire | cigar-coop.com, blindmanspuff.com |
-| **Jas Sum Kral** | *(à vérifier)* | sans usine — Tabacalera Aragón 2018–oct. 2024, **nouvelle fabrique à nommer** | Riste Ristevski ; le nom veut dire « je suis roi » en macédonien | cigar-coop.com, cigarinspector.com, jassumkral.com |
+| **Jas Sum Kral** *(REPORTÉE — migration 213 : a quitté Tabacalera Aragón le 11 oct. 2024 sans jamais nommer sa nouvelle fabrique ; sans fabrique nommée, pas de fiche)* | *(à vérifier)* | sans usine — Tabacalera Aragón 2018–oct. 2024, **nouvelle fabrique à nommer** | Riste Ristevski ; le nom veut dire « je suis roi » en macédonien | cigar-coop.com, cigarinspector.com, jassumkral.com |
 | ~~**Sindicato Cigar Group**~~ | **FAIT** — migration 212 · 2013 | sans usine — **chez Casa Fernández (Aganorsa)** | Fondée par un groupe de **détaillants** devenus propriétaires de marque. ⚠ Pas une série de catalogue comme Black Swan : une société avec un portefeuille — la fiche doit poser la distinction | cigar-coop.com, cigardojo.com |
-| **Fable Cigars** | *(à vérifier)* | sans usine — Nica Sueño (RoMa Craft) puis **Córdoba & Morales**, Estelí | Sean Kremenetski et Mitul Shah ; ligne Fourth Prime ; a quitté puis regagné le marché | halfwheel.com |
+| ~~**Fable Cigars**~~ | **FAIT** — migration 213 · 2016, revenue en oct. 2025 | sans usine — Nica Sueño (RoMa Craft) puis **Córdoba & Morales**, Estelí | Sean Kremenetski et Mitul Shah ; ligne Fourth Prime ; a quitté puis regagné le marché | halfwheel.com |
 | ~~**Miami Cigar & Co.**~~ — Nestor Miranda | **FAIT** — migration 210 | sans usine — **chez My Father** (Collection) et **La Aurora** (Private Reserve) | Nestor et Mariana Miranda ; 40 000 cigares distribués la première année, plus de 20 millions aujourd'hui ; **distributeur de La Aurora aux États-Unis**. Fabrication principale au Nicaragua → classée ici, comme Nomad | cigaraficionado.com, halfwheel.com |
 | **Ortega Cigars** *(REPORTÉE — migration 212 : seule trace récente, un catalogue de détaillant annonçant le retour du Cubao, sans date ; activité non établie)* | 2012 | sans usine — **chez My Father** (Serie D) | Eddie Ortega, après la dissolution d'EO Brands avec Erik **Espinosa** (qui a sa fiche) ; distribution reprise par Quality Importers en 2016 | stogieguys.com, halfwheel.com |
 
@@ -92,7 +92,7 @@ avant d'écrire.
 | ~~**Reyes Family Cigars**~~ — Puros Aliados | **FAIT** — migration 207 · Danlí 1990 | **usine propre** — Danlí, ~5 millions de cigares par an | Rolando Reyes Sr. (1923–2012), fabrique confisquée à Cuba. ⚠ **Cuba Aliados, Puros Indios et Roly ont été vendues à Oliva en août 2021 — les marques, pas l'usine** ; leur fabrication est passée au Nicaragua. La maison continue avec Premier, Classic, Vintage, Cienfuegos et le travail à façon (**Kafie jusqu'en 2017**). La fiche **Oliva** doit porter les trois marques | cigaraficionado.com (6 août 2021), halfwheel.com |
 | ~~**Cavalier Genève**~~ | **FAIT** — migration 209 · 2016 (dix ans en mars 2026) | **usine propre** — Fábrica Centroamericana de Tabaco S.A., Danlí | Sébastien Decoppet, Genevois. Dix ans en 2025 (Cigar Aficionado). Classée Honduras : la fabrique, pas Genève | cigaraficionado.com, cigarlifeguy.com |
 | ~~**Kafie 1901**~~ | **FAIT** — migration 209, **mais sous `dominican`** : l'usine de Danlí a fermé en novembre 2021 (ouragans, pandémie) et toute la production est chez **La Aurora**. Le pays est celui où l'on roule aujourd'hui — onzième erreur de ce type rattrapée avant écriture | Puros Aliados 2013–2017, usine propre 2017–2021 | Dr. Gaby Kafie ; Kafie Trading Co. distribue aussi Tabacos San Jerónimo | halfwheel.com, kafiecigars.com |
-| **Jake Wyatt Cigar Co.** | ~2020 | Danlí — *(à vérifier : usine propre ou partenaire)* | Neil Garcia et Gerard Abajian ; le nom vient des prénoms de leurs fils | halfwheel.com, jakewyattcigars.com |
+| ~~**Jake Wyatt Cigar Co.**~~ | **FAIT** — migration 213 · février 2020 · **Honduras**, Tabacalera San Jerónimo depuis 2026 | Danlí — *(à vérifier : usine propre ou partenaire)* | Neil Garcia et Gerard Abajian ; le nom vient des prénoms de leurs fils | halfwheel.com, jakewyattcigars.com |
 | ~~**Blanco Cigars**~~ | **FAIT** — migration 211, **sous `nicaragua`** : la source dit « handmade in Nicaragua at the Plasencia Cigars factory » — douzième erreur de pays rattrapée, la deuxième avant écriture | Cesar A. Blanco, son frère Francisco et son fils David, l'assembleur | blancocigars.com, neptunecigar.com |
 | **Ramón Bueso** *(à vérifier)* | marque 2012 | sans usine — **chez Flor de Copán**, Danlí | Assembleur hondurien connu ; ⚠ vérifier que ce n'est pas une exclusivité de détaillant — les pages trouvées sont celles d'un club d'abonnement | cigarmonthclub.com |
 
@@ -107,25 +107,25 @@ avant d'écrire.
 | ~~**Blackbird Cigar Co.**~~ | **FAIT** — migration 209 · 2016 ; toute la feuille de Tabacalera Palma | **usine propre** — Blackbird Dominicana | Jonas Santana, maître cigarier ; siège à Hialeah, Floride | smokingpipes.com, cigarlifeguy.com |
 | ~~**Debonaire House**~~ | **FAIT** — migration 211 | sans usine — **chez De Los Reyes**, sous la supervision du fondateur | Phil Zanghi, avec Daniel Sinclair. ⚠ **Nommée dans la fiche De Los Reyes** comme travail à façon — sans fiche | cigar-coop.com, halfwheel.com |
 | ~~**Patoro**~~ | **FAIT** — migration 211 | sans usine — **chez De Los Reyes** | Patrick J. Martin, **Suisse** — même modèle que les trois maisons suisses de la migration 180, et classée comme elles au pays de fabrication. Nommée dans la fiche De Los Reyes | patoro.com, cigaraficionado.com, halfwheel.com |
-| **Principle Cigars** | ~2011 | sans usine — **chez KBF**, et Casa Carrillo pour certaines | Darren Cioffi, marchand d'art ; « art & cigar » | cigarjournal.com, halfwheel.com, principletrading.com |
-| **Hiram & Solomon** | *(à vérifier)* | sans usine — **chez PDR** depuis juin 2022 | Fouad et Romy Kashouty ; marque d'inspiration maçonnique (Hiram Abiff, Salomon) | cigar-coop.com, halfwheel.com, cigarsnobmag.com |
-| **Epic Cigars** | 2010 | sans usine — **chez Charles Fairmorn**, Santiago | Dean Parsons | epiccigars.com, cigarinspector.com |
+| ~~**Principle Cigars**~~ | **FAIT** — migration 213 · 2013 (devise de la maison), pas 2011 | sans usine — **chez KBF**, et Casa Carrillo pour certaines | Darren Cioffi, marchand d'art ; « art & cigar » | cigarjournal.com, halfwheel.com, principletrading.com |
+| ~~**Hiram & Solomon**~~ | **FAIT** — migration 213 · 2015 | sans usine — **chez PDR** depuis juin 2022 | Fouad et Romy Kashouty ; marque d'inspiration maçonnique (Hiram Abiff, Salomon) | cigar-coop.com, halfwheel.com, cigarsnobmag.com |
+| ~~**Epic Cigars**~~ | **FAIT** — migration 213 · 2010 | sans usine — **chez Charles Fairmorn**, Santiago | Dean Parsons | epiccigars.com, cigarinspector.com |
 | ~~**ADVentura**~~ | **FAIT** — migration 211 · 2016 | sans usine — **chez Tabacalera William Ventura** | Henderson Ventura (co-maître assembleur) et **Marcel Knobel**, détaillant et sommelier suisse — une collaboration à nommer des deux côtés | adventuracigars.com, smokingpipes.com |
 | ~~**Freud Cigar Co.**~~ | **FAIT** — migration 211 | sans usine — **chez Tabacalera William Ventura** | Luis Torres et David Stadnyk, New York ; ligne SuperEgo | cigaraficionado.com, cigar-coop.com, freudcigars.com |
-| **Chogüí** | 2014 | sans usine — **chez Francisco « Chico » Rivas** | Víctor Nicolás ; d'abord réservée au marché dominicain ; **dormante puis revenue** (Cigar Aficionado) | cigaraficionado.com, halfwheel.com |
+| ~~**Chogüí**~~ | **FAIT** — migration 213 · 2014 | sans usine — **chez Francisco « Chico » Rivas** | Víctor Nicolás ; d'abord réservée au marché dominicain ; **dormante puis revenue** (Cigar Aficionado) | cigaraficionado.com, halfwheel.com |
 
 ### Mexique — 2
 
 | maison | fondée | fabrique | ce qu'il faut savoir | sources |
 |---|---|---|---|---|
 | ~~**Te-Amo**~~ | **ÉTAIT DÉJÀ DANS L'ATLAS, sous « Te Amo »** — mon test cherchait le trait d'union et ne repliait pas les tirets ; la recherche du site non plus, c'est corrigé. La fiche existante (texte de première génération, fabrique « Tabacos San Andrés » que rien n'établit, date 1963) est **réécrite** par la migration 210 : 1966 selon Alberto Turrent lui-même, Nueva Matacapan, Altadis | Créée par Alberto Turrent, quatrième génération ; **propriété d'Altadis depuis 2000** (fusion Consolidated Cigar), toujours faite par les Turrent. Même cas que Bolívar Honduras chez STG : une marque de groupe faite dans l'usine d'une famille qui a sa fiche (**Casa Turrent**) | halfwheel.com, cigaraficionado.com, altadisusa.com |
-| **Casa 1910** | 2021 | San Andrés — *(fabrique à nommer)* | Manolo Santiago, ancien de la distribution Habanos au Mexique ; puros 100 % mexicains | casa1910.com, cigarsmokerclub.com |
+| **Casa 1910** *(REPORTÉE — migration 213 : la presse écrit en mars 2026 que la maison ne divulgue pas sa fabrique mexicaine ; Soldadera et Cavalry, faites ailleurs, arrêtées)* | 2021 | San Andrés — *(fabrique à nommer)* | Manolo Santiago, ancien de la distribution Habanos au Mexique ; puros 100 % mexicains | casa1910.com, cigarsmokerclub.com |
 
 ### Costa Rica — 1
 
 | maison | fondée | fabrique | ce qu'il faut savoir | sources |
 |---|---|---|---|---|
-| **Bombay Tobak** — MBombay | mai 2014 | sans usine — **chez Tabacos de Costa Rica**, Puriscal | Mel Shah, propriétaire du Fame Lounge de Palm Springs. ⚠ **C'est l'atelier de Vegas de Santiago**, celui qui roule Villa Casdagli : une **troisième** marque sort de Puriscal, et la fiche Vegas de Santiago doit la nommer | cigaraficionado.com, cigar-coop.com, halfwheel.com |
+| ~~**Bombay Tobak**~~ — MBombay | **FAIT** — migration 213 · mai 2014 · **Vegas de Santiago la nomme désormais** | sans usine — **chez Tabacos de Costa Rica**, Puriscal | Mel Shah, propriétaire du Fame Lounge de Palm Springs. ⚠ **C'est l'atelier de Vegas de Santiago**, celui qui roule Villa Casdagli : une **troisième** marque sort de Puriscal, et la fiche Vegas de Santiago doit la nommer | cigaraficionado.com, cigar-coop.com, halfwheel.com |
 
 ---
 
@@ -228,7 +228,7 @@ C'est l'autre production d'un recensement, et elle n'est jamais prévue.
 |---|---|
 | **Oliva** | Possède Cuba Aliados, Puros Indios et Roly depuis août 2021 ; fabrication passée du Honduras au Nicaragua |
 | **Nomad** | Vendue par Fred Rewey à **Ezra Zion** en septembre 2018 — *(vérifier ce que la fiche dit)* |
-| **Vegas de Santiago** | Roule aussi **MBombay** (Bombay Tobak), pas seulement Villa Casdagli et Zechbauer |
+| ~~**Vegas de Santiago**~~ | **FAIT (213)** — roule aussi MBombay (Bombay Tobak), pas seulement Villa Casdagli et Zechbauer |
 | **De Los Reyes** | Debonaire et Patoro y sont nommées — elles auront leur fiche, et le renvoi doit être réciproque |
 | **CAO** | Tim Ozgener, fils du fondateur, a créé Ozgener Family Cigars en 2022 |
 | **Black Label Trading** | Black Works Studio est sa seconde marque, même fabrique |

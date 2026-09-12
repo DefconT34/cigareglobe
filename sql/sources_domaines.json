@@ -171,7 +171,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 116
+            "fiches": 117
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -199,7 +199,7 @@
         },
         "cigarlifeguy.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 5
         },
         "cigaroa.com": {
             "dns": "resout",
@@ -435,7 +435,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 44
+            "fiches": 50
         },
         "hilton.com": {
             "dns": "resout",
@@ -757,6 +757,10 @@
             "dns": "resout",
             "fiches": 4
         },
+        "principletrading.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "procigar.com": {
             "dns": "resout",
             "fiches": 2
@@ -978,6 +982,10 @@
             "fiches": 1
         },
         "westin.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "wina-mp.pl": {
             "dns": "resout",
             "fiches": 1
         },
