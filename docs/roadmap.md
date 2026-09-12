@@ -5346,3 +5346,23 @@ geste avant — `git status --short` doit être vide —, le geste après —
 `diff -rq` entre le clone et `public_html` —, la sonde depuis l'extérieur
 — l'en-tête `Last-Modified` —, et l'ordre complet réécrit avec ce
 cinquième geste. La cause reste une hypothèse, et la note le dit.
+
+---
+
+## Troisième recensement des maisons absentes — 12 septembre 2026
+
+`docs/maisons-absentes-3.md`. ≈ 950 noms testés contre la base, différents
+des 210 du second ; une quarantaine recherchés un par un. **≈ 20 maisons à
+écrire**, dont **cinq qui étendent la carte** — Graycliff (Bahamas, 1997,
+Avelino Lara), Fábrica de Tabaco Estrela (Açores, 1882, l'atelier main
+d'EMT — qui a fondé Constella avec Luciano en avril 2025), Don Collins
+(Porto Rico, 1991), Tabaqueria de Filipinas (1993), Great Wall (Chine,
+Shifang, 1918, roulé main). Puis huit nicaraguayennes (Esteban Carreras et
+NACSA à usine propre ; La Sirena, Patina, Powstanie, Paul Stulac, Reinado,
+Amendola chez des fabriques nommées), cinq dominicaines (Balmoral, Don
+Lucas, Las Cumbres, Hammer + Sickle, Cabal), deux costariciennes (Brun del
+Ré, El Septimo). Un lot 5 bis de requalifications — Sosa → A.J. Fernández,
+Toraño → General Cigar, Villa Zamorano → Maya Selva, Havana Club →
+Villiger, et une soixantaine de lignes. Trouvailles sur Luciano, La Palina,
+Miami Cigar, Mombacho, Asylum, Villiger, Arturo Fuente. Ordre recommandé :
+lot 6 (la carte), 7 (Nicaragua/Costa Rica), 8 (dominicaines), 5 bis.
