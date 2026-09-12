@@ -5177,3 +5177,35 @@ vérifie.
 la recherche replie. Le prochain test le fera.
 
 **Lot suivant (4)** : la scène sans usine, par fabrique de rattachement.
+
+---
+
+## Lot 4a — la scène sans usine, chez Plasencia, De Los Reyes et William Ventura
+
+**965 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 243
+domaines. Migration **211**. L'atlas passe à **203 maisons**.
+
+Sept maisons qui composent et font rouler ailleurs, rangées par la fabrique qui
+les roule — parce que chacune renvoie à une fiche que les lots précédents ont
+posée :
+
+| chez | maisons |
+| --- | --- |
+| **Plasencia** (Estelí) | 1502, Crux, Blanco |
+| **De Los Reyes** (Santiago) | Debonaire House, Patoro |
+| **William Ventura** (Tamboril) | ADVentura, Freud |
+
+**Une douzième erreur de pays évitée** : le recensement classait Blanco au
+Honduras, « pays principal à trancher ». La source tranche — roulée au
+Nicaragua chez Plasencia, cousins de la famille depuis quatre-vingts ans.
+
+**Le nom d'Eiroa revient une septième fois** : C.L.E. distribue l'édition
+américaine de la Serie P de Patoro. Et les renvois de De Los Reyes vers
+Debonaire et Patoro deviennent réciproques.
+
+Deux garde-fous : `coherence_check` a vu un `founded` tronqué à cinquante
+caractères (raccourci), `marques_check` une revue nommée pour dater une
+divergence — reformulée en « la presse du métier » plutôt qu'exemptée.
+
+**Lot suivant (4b)** : chez Rojas (Stolen Throne, Ezra Zion), chez My Father
+(Ortega), chez Pichardo (Ozgener), et les isolées.

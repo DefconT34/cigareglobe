@@ -21,6 +21,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "adventuracigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "alacivette.com": {
             "dns": "resout",
             "fiches": 1
@@ -85,6 +89,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "blancocigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "blindmanspuff.com": {
             "dns": "resout",
             "fiches": 1
@@ -143,7 +151,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 21
+            "fiches": 24
         },
         "cigar.com": {
             "dns": "resout",
@@ -151,7 +159,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 111
+            "fiches": 114
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -159,7 +167,7 @@
         },
         "cigardojo.com": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 6
         },
         "cigares.com": {
             "dns": "resout",
@@ -175,7 +183,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 59
+            "fiches": 60
         },
         "cigarlifeguy.com": {
             "dns": "resout",
@@ -232,6 +240,14 @@
         "correiobraziliense.com.br": {
             "dns": "resout",
             "fiches": 2
+        },
+        "cruxcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cuencacigars.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "dannemann-group.com": {
             "dns": "resout",
@@ -311,7 +327,7 @@
         },
         "finetobacconyc.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "flavoredtimes.com": {
             "dns": "resout",
@@ -361,6 +377,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "globalpremiumcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "goafricaonline.com": {
             "dns": "resout",
             "fiches": 2
@@ -403,7 +423,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 37
+            "fiches": 41
         },
         "hilton.com": {
             "dns": "resout",
@@ -486,6 +506,10 @@
             "fiches": 3
         },
         "kgc.jp": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "kohnhed.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -647,7 +671,7 @@
         },
         "neptunecigar.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 5
         },
         "newsroompanama.com": {
             "dns": "resout",
@@ -690,6 +714,10 @@
             "fiches": 3
         },
         "parisyachtmarina.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "patoro.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -791,7 +819,7 @@
         },
         "smokingpipes.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "sofitel-legend-metropole-hanoi.com": {
             "dns": "resout",
@@ -809,13 +837,17 @@
             "dns": "resout",
             "fiches": 1
         },
+        "stogieguys.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "stogiephile.blog": {
             "dns": "resout",
             "fiches": 4
         },
         "stogiepress.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "supreme.justia.com": {
             "dns": "resout",
@@ -842,10 +874,6 @@
             "fiches": 1
         },
         "tampachanging.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "teamocigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -883,7 +911,7 @@
         },
         "tobaccobusiness.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "tokyoamericanclub.org": {
             "dns": "resout",
