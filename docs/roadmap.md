@@ -5078,3 +5078,29 @@ vérification du lot prétendait avoir évitée.
 **Lot suivant** : les onze fabriques-maisons (Luciano, Agrotabacos, Karen
 Berger, Tabacalera Aragón, PDR, Cuban Stock, Blackbird, Gran Habano, Cavalier
 Genève, Kafie 1901, Rojas).
+
+---
+
+## Lot 2a — quatre fabriques nicaraguayennes
+
+**964 assertions, 0 échec.** Tous les contrôles verts, `contenu.sql` régénéré.
+Migration **208**. L'atlas passe à **190 maisons**.
+
+| fiche | ce qu'elle apporte |
+| --- | --- |
+| **Luciano Cigars** (ex-ACE Prime) | la fabrique d'un Cubain parti en 2005, au prénom d'un financier brésilien ; présentés par **E.P. Carrillo** en 2008 ; 64 rouleurs, 3 millions de cigares ; roule **Crowned Heads** et **Ozgener** |
+| **Agrotabacos** | Condega, 1995, les Ortez ; 60 % de la production pour des tiers, dont **Altadis** ; roule Ventura et Lampert |
+| **Karen Berger Cigars** | Max Berger fuit la Pologne pour Cuba, son fils Kiki refait la fabrique au Nicaragua, sa veuve la dirige depuis 2014 — **et c'est la fabrique de Cuban Crafters**, dont la fiche nommait l'usine sans dire à qui elle était |
+| **Rojas Cigars** | un ancien cinéma d'Estelí ; l'assembleur d'Ezra Zion, Nomad, Emilio et Stolen Throne — quatre maisons avant la sienne |
+
+**Tabacalera Aragón est reportée** : son site ne donne pas d'année de fondation,
+et la seule relation documentée par la presse (Jas Sum Kral, 2018–2024) est
+terminée. Une fiche qui ne tiendrait que sur le site de la maison répéterait la
+faute du Toraño Panama.
+
+`i18n_superlatif_check` a refusé deux mots : un « die jüngsten » allemand, et un
+« أشهر » arabe qui voulait dire *mois* — faux positif du détecteur, mais le
+cliquet ne se discute pas : « شهور » dit la même chose sans le déclencher.
+
+**Lot suivant (2b)** : les fabriques-maisons dominicaines et honduriennes —
+PDR, Cuban Stock, Blackbird, Gran Habano, Cavalier Genève, Kafie 1901.
