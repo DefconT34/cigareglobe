@@ -143,7 +143,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 18
+            "fiches": 21
         },
         "cigar.com": {
             "dns": "resout",
@@ -151,7 +151,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 105
+            "fiches": 111
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -159,7 +159,7 @@
         },
         "cigardojo.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "cigares.com": {
             "dns": "resout",
@@ -171,11 +171,15 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 6
         },
         "cigarjournal.com": {
             "dns": "resout",
             "fiches": 59
+        },
+        "cigarlifeguy.com": {
+            "dns": "resout",
+            "fiches": 2
         },
         "cigaroa.com": {
             "dns": "resout",
@@ -299,7 +303,7 @@
         },
         "famous-smoke.com": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 6
         },
         "feriotego.com": {
             "dns": "resout",
@@ -353,6 +357,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "ghcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "goafricaonline.com": {
             "dns": "resout",
             "fiches": 2
@@ -395,7 +403,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 33
+            "fiches": 37
         },
         "hilton.com": {
             "dns": "resout",
@@ -783,7 +791,7 @@
         },
         "smokingpipes.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "sofitel-legend-metropole-hanoi.com": {
             "dns": "resout",
@@ -807,7 +815,7 @@
         },
         "stogiepress.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "supreme.justia.com": {
             "dns": "resout",
@@ -875,7 +883,7 @@
         },
         "tobaccobusiness.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "tokyoamericanclub.org": {
             "dns": "resout",

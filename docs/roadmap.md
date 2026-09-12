@@ -5104,3 +5104,39 @@ cliquet ne se discute pas : « شهور » dit la même chose sans le déclenche
 
 **Lot suivant (2b)** : les fabriques-maisons dominicaines et honduriennes —
 PDR, Cuban Stock, Blackbird, Gran Habano, Cavalier Genève, Kafie 1901.
+
+---
+
+## Lot 2b — dominicaines et honduriennes
+
+**964 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 236
+domaines, `contenu.sql` régénéré. Migration **209**. L'atlas passe à
+**195 maisons**.
+
+| fiche | pays | ce qu'elle apporte |
+| --- | --- | --- |
+| **PDR Cigars** | Rép. dominicaine | Abe Flores, Tamboril, 2008 ; cinq millions de cigares, **moitié pour La Palina, Gurkha, Viaje et Kristoff** — quatre fiches gagnent une cible de renvoi |
+| **Cuban Stock** | Rép. dominicaine | 1996 ; vingt marques ; usine de zone franche depuis 2016 — une fabrique de volume, dite comme telle |
+| **Blackbird** | Rép. dominicaine | 2016 ; des oiseaux pour noms ; **toute la feuille de Tabacalera Palma** |
+| **Kafie 1901** | **Rép. dominicaine** | un chirurgien hondurien retiré à 38 ans ; usine à Danlí 2017–2021, **fermée** (ouragans, pandémie) ; toute la production chez **La Aurora** |
+| **Gran Habano** | Honduras | les Rico, colombiens depuis 1920 ; usine et fermes propres à Danlí depuis 1998 |
+| **Cavalier Genève** | Honduras | un Genevois, une usine à lui à Danlí, un losange d'or sur chaque cigare |
+
+### Une erreur de pays évitée avant écriture
+Le recensement classait Kafie 1901 au **Honduras**, avec son usine de Danlí. La
+recherche a rendu la suite : l'usine a fermé en novembre 2021 et toute la
+production est passée à La Aurora. **Le pays d'une fiche est celui où l'on
+roule aujourd'hui.** C'est la onzième erreur de ce type que les recensements
+rattrapent — et la première rattrapée *avant* d'être écrite plutôt qu'après.
+
+### La doctrine des notes de presse, appliquée à des fiches neuves
+J'avais écrit deux classements — un Top 25 de 2007 pour Gran Habano, un de
+2014 pour PDR — et `marques_check` les a refusés, à raison : c'est
+**exactement ce que la migration 058 a retiré de toutes les fiches**. Retirés,
+pas justifiés. Une fiche neuve ne rouvre pas une règle close.
+
+`i18n_superlatif_check` a refusé sept mots dans quatre langues, dont un « أشهر »
+arabe qui voulait dire *mois* — pour la deuxième fois. Réécrit.
+
+**Restent du lot 2** : Tabacalera Aragón (reportée). **Lot suivant (3)** : les
+deux historiques — Te-Amo et Miami Cigar & Co.

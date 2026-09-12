@@ -88,10 +88,10 @@ avant d'écrire.
 
 | maison | fondée | fabrique | ce qu'il faut savoir | sources |
 |---|---|---|---|---|
-| **Gran Habano** — G.R. Tabacaleras Unidas | usine 1998 · marque 2003 | **usine et fermes propres** — Danlí | Guillermo Rico, famille **colombienne** dans le tabac depuis les années 1920, installé à Miami en 1995 ; son fils George Rico dirige. Cultive l'essentiel de sa feuille. ⚠ **Classée Honduras, pas Colombie** : le lieu de fabrication, pas l'origine de la famille | ghcigars.com, cigaraficionado.com, famous-smoke.com |
+| ~~**Gran Habano**~~ — G.R. Tabacaleras Unidas | **FAIT** — migration 209 | **usine et fermes propres** — Danlí | Guillermo Rico, famille **colombienne** dans le tabac depuis les années 1920, installé à Miami en 1995 ; son fils George Rico dirige. Cultive l'essentiel de sa feuille. ⚠ **Classée Honduras, pas Colombie** : le lieu de fabrication, pas l'origine de la famille | ghcigars.com, cigaraficionado.com, famous-smoke.com |
 | ~~**Reyes Family Cigars**~~ — Puros Aliados | **FAIT** — migration 207 · Danlí 1990 | **usine propre** — Danlí, ~5 millions de cigares par an | Rolando Reyes Sr. (1923–2012), fabrique confisquée à Cuba. ⚠ **Cuba Aliados, Puros Indios et Roly ont été vendues à Oliva en août 2021 — les marques, pas l'usine** ; leur fabrication est passée au Nicaragua. La maison continue avec Premier, Classic, Vintage, Cienfuegos et le travail à façon (**Kafie jusqu'en 2017**). La fiche **Oliva** doit porter les trois marques | cigaraficionado.com (6 août 2021), halfwheel.com |
-| **Cavalier Genève** | 2015 *(ou 2016 selon la source)* | **usine propre** — Fábrica Centroamericana de Tabaco S.A., Danlí | Sébastien Decoppet, Genevois. Dix ans en 2025 (Cigar Aficionado). Classée Honduras : la fabrique, pas Genève | cigaraficionado.com, cigarlifeguy.com |
-| **Kafie 1901** | 2013 | **usine propre** depuis 2017 — Tabacalera G. Kafie y Cía, Danlí ; **chez Puros Aliados (Reyes) auparavant** | Dr. Gaby Kafie ; Kafie Trading Co. distribue aussi Tabacos San Jerónimo | halfwheel.com, kafiecigars.com |
+| ~~**Cavalier Genève**~~ | **FAIT** — migration 209 · 2016 (dix ans en mars 2026) | **usine propre** — Fábrica Centroamericana de Tabaco S.A., Danlí | Sébastien Decoppet, Genevois. Dix ans en 2025 (Cigar Aficionado). Classée Honduras : la fabrique, pas Genève | cigaraficionado.com, cigarlifeguy.com |
+| ~~**Kafie 1901**~~ | **FAIT** — migration 209, **mais sous `dominican`** : l'usine de Danlí a fermé en novembre 2021 (ouragans, pandémie) et toute la production est chez **La Aurora**. Le pays est celui où l'on roule aujourd'hui — onzième erreur de ce type rattrapée avant écriture | Puros Aliados 2013–2017, usine propre 2017–2021 | Dr. Gaby Kafie ; Kafie Trading Co. distribue aussi Tabacos San Jerónimo | halfwheel.com, kafiecigars.com |
 | **Jake Wyatt Cigar Co.** | ~2020 | Danlí — *(à vérifier : usine propre ou partenaire)* | Neil Garcia et Gerard Abajian ; le nom vient des prénoms de leurs fils | halfwheel.com, jakewyattcigars.com |
 | **Blanco Cigars** | 1998 | sans usine — **chez Plasencia**, cousins de la famille, Danlí et Estelí *(pays principal à trancher)* | Cesar A. Blanco, son frère Francisco et son fils David, l'assembleur | blancocigars.com, neptunecigar.com |
 | **Ramón Bueso** *(à vérifier)* | marque 2012 | sans usine — **chez Flor de Copán**, Danlí | Assembleur hondurien connu ; ⚠ vérifier que ce n'est pas une exclusivité de détaillant — les pages trouvées sont celles d'un club d'abonnement | cigarmonthclub.com |
@@ -102,9 +102,9 @@ avant d'écrire.
 |---|---|---|---|---|
 | ~~**Tabacalera William Ventura**~~ | **FAIT** — migration 207 · 2007–2008 | William Ventura, **vingt ans chez Davidoff** ; ses fils Henderson et Weber dirigent. **Détruite par un incendie en septembre 2022, rouverte en mars 2024.** ⚠ L'atlas la nomme déjà comme fabrique de **Caldwell** et de **La Barba** — sans fiche. Roule aussi ADVentura et Freud | halfwheel.com, cigaraficionado.com, cigar-coop.com |
 | ~~**Kelner Boutique Factory**~~ (KBF) | **FAIT** — migration 207 | Hendrik Kelner Jr., dix-huit ans chez Davidoff, fils du maître de tabac de Davidoff. ⚠ L'atlas la nomme dans la fiche **Casdagli** (2013–2016) — sans fiche. Roule **Principle** ; marque propre The 73 | halfwheel.com, cigarpublic.com |
-| **PDR Cigars** — Pinar del Río | marque 2008 | **usine propre** — Tamboril | Abe Flores, maître assembleur ; ligne Flores y Rodríguez. **Roule Hiram & Solomon depuis juin 2022** | pdrcigars.com, cigaraficionado.com |
-| **Cuban Stock Cigar Co.** | 1996 | **usine propre** — zone franche de Tamboril (nouvelle usine ~2016) | Yaniv Levy, fondateur et président | cigardojo.com |
-| **Blackbird Cigar Co.** | *(à vérifier)* | **usine propre** — Blackbird Dominicana | Jonas Santana, maître cigarier ; siège à Hialeah, Floride | smokingpipes.com, cigarlifeguy.com |
+| ~~**PDR Cigars**~~ — Pinar del Río | **FAIT** — migration 209 · roule aussi La Palina, Gurkha, Viaje, Kristoff | **usine propre** — Tamboril | Abe Flores, maître assembleur ; ligne Flores y Rodríguez. **Roule Hiram & Solomon depuis juin 2022** | pdrcigars.com, cigaraficionado.com |
+| ~~**Cuban Stock Cigar Co.**~~ | **FAIT** — migration 209 | **usine propre** — zone franche de Tamboril (nouvelle usine ~2016) | Yaniv Levy, fondateur et président | cigardojo.com |
+| ~~**Blackbird Cigar Co.**~~ | **FAIT** — migration 209 · 2016 ; toute la feuille de Tabacalera Palma | **usine propre** — Blackbird Dominicana | Jonas Santana, maître cigarier ; siège à Hialeah, Floride | smokingpipes.com, cigarlifeguy.com |
 | **Debonaire House** | 2012 | sans usine — **chez De Los Reyes**, sous la supervision du fondateur | Phil Zanghi, avec Daniel Sinclair. ⚠ **Nommée dans la fiche De Los Reyes** comme travail à façon — sans fiche | cigar-coop.com, halfwheel.com |
 | **Patoro** | vend depuis 2001 | sans usine — **chez De Los Reyes** | Patrick J. Martin, **Suisse** — même modèle que les trois maisons suisses de la migration 180, et classée comme elles au pays de fabrication. Nommée dans la fiche De Los Reyes | patoro.com, cigaraficionado.com, halfwheel.com |
 | **Principle Cigars** | ~2011 | sans usine — **chez KBF**, et Casa Carrillo pour certaines | Darren Cioffi, marchand d'art ; « art & cigar » | cigarjournal.com, halfwheel.com, principletrading.com |
@@ -247,9 +247,7 @@ sa fabrique, et que le renvoi doit avoir une cible.
 1. ~~**Les fabriques que l'atlas nomme déjà**~~ — **FAIT, migration 207.** Tabacalera William Ventura,
    Kelner Boutique Factory, J. Fuego, Reyes Family Cigars. Quatre fiches, et
    elles réparent quatre renvois dans le vide.
-2. **Les fabriques-maisons** — Luciano, Agrotabacos, Karen Berger, Tabacalera
-   Aragón, PDR, Cuban Stock, Blackbird, Gran Habano, Cavalier Genève, Kafie,
-   Rojas. Onze fiches, chacune avec usine.
+2. ~~**Les fabriques-maisons**~~ — **FAIT, migrations 208 et 209** (dix sur onze ; Tabacalera Aragón reportée, Kafie n'a plus d'usine et passe en République dominicaine).
 3. **Les historiques** — Te-Amo, Miami Cigar & Co. Deux fiches qu'un amateur
    remarque absentes.
 4. **La scène boutique sans usine**, par fabrique de rattachement — chez
