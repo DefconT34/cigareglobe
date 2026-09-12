@@ -175,7 +175,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 118
+            "fiches": 119
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -199,7 +199,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 60
+            "fiches": 61
         },
         "cigarlifeguy.com": {
             "dns": "resout",
@@ -278,6 +278,10 @@
             "fiches": 1
         },
         "diariodeavisos.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "don-collins.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -429,6 +433,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "graycliff.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "habanomag.com": {
             "dns": "resout",
             "fiches": 6
@@ -443,7 +451,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 53
+            "fiches": 54
         },
         "hilton.com": {
             "dns": "resout",
@@ -887,7 +895,7 @@
         },
         "supreme.justia.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "sushi-jiro.jp": {
             "dns": "resout",
@@ -900,6 +908,10 @@
         "tabacalerapalma.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "tabaqueria.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "taillevent.com": {
             "dns": "resout",
@@ -953,6 +965,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "tobaccoasia.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "tobaccobusiness.com": {
             "dns": "resout",
             "fiches": 6
@@ -988,6 +1004,10 @@
         "villigercigars.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "visitpontadelgada.pt": {
+            "dns": "resout",
+            "fiches": 1
         },
         "wentworthclub.com": {
             "dns": "resout",

@@ -46,6 +46,7 @@ var PAYS_INFOS = {
   BH: ['BHD', 'ar',       'Asia/Bahrain'],
   BJ: ['XOF', 'fr',       'Africa/Porto-Novo'],
   BR: ['BRL', 'pt',       'America/Sao_Paulo'],
+  BS: ['BSD', 'en',       'America/Nassau'],
   BW: ['BWP', 'en,tn',    'Africa/Gaborone'],
   CA: ['CAD', 'en,fr',    'America/Toronto'],
   CH: ['CHF', 'de,fr,it', 'Europe/Zurich'],
@@ -103,6 +104,7 @@ var PAYS_INFOS = {
   PE: ['PEN', 'es',       'America/Lima'],
   PH: ['PHP', 'fil,en',   'Asia/Manila'],
   PL: ['PLN', 'pl',       'Europe/Warsaw'],
+  PR: ['USD', 'es,en',    'America/Puerto_Rico'],
   PT: ['EUR', 'pt',       'Europe/Lisbon'],
   PY: ['PYG', 'es,gn',    'America/Asuncion'],
   QA: ['QAR', 'ar',       'Asia/Qatar'],
@@ -173,6 +175,9 @@ var PAYS_MULTIFUSEAUX = ['US', 'RU', 'BR', 'CA', 'AU', 'MX', 'ID', 'CN',
 // drapeau qui ne discrimine pas.
 var TERRITOIRES_INFOS = {
   canaries: ['EUR', 'es', 'Atlantic/Canary'],
+  // Meme cas que les Canaries : le drapeau en base est le portugais, mais
+  // l'archipel vit a UTC-1, une heure derriere Lisbonne.
+  azores:   ['EUR', 'pt', 'Atlantic/Azores'],
 };
 
 window.PAYS_INFOS = PAYS_INFOS;

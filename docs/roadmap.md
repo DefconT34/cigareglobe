@@ -5366,3 +5366,43 @@ Toraño → General Cigar, Villa Zamorano → Maya Selva, Havana Club →
 Villiger, et une soixantaine de lignes. Trouvailles sur Luciano, La Palina,
 Miami Cigar, Mombacho, Asylum, Villiger, Arturo Fuente. Ordre recommandé :
 lot 6 (la carte), 7 (Nicaragua/Costa Rica), 8 (dominicaines), 5 bis.
+
+---
+
+## Lot 6 — la carte s'étend : quatre pays, cinq maisons
+
+**965 assertions, 0 échec.** Tous les contrôles verts, `coords_check`
+compris, `sources` re-figé à 260 domaines. Migration **215**. L'atlas passe
+à **221 maisons** et **22 pays producteurs**.
+
+| pays | maison | ce qui est établi |
+| --- | --- | --- |
+| **Bahamas** | Graycliff | Nassau, janvier 1997 ; Avelino Lara, sorti de Cuba en 1993 ; rouleurs cubains retraités ; 650 000 cigares en 1999 |
+| **Açores** | Fábrica de Tabaco Estrela | Ponta Delgada, 1882 ; l'atelier main d'une fabrique de cigarettes ; EMT, associée de Luciano dans Constella depuis avril 2025 |
+| **Porto Rico** | Don Collins | Vieux San Juan, 1991 ; la Porto Rican-American Tobacco Co. de 1899, écrite dans l'arrêt antitrust de 1911 |
+| **Chine** | Great Wall Cigars | Shifang, 1918 ; le 132 roulé pour Mao ; 1,5 million de cigares main par an ; accord mondial du 23 juillet 2025 |
+| Philippines | Tabaqueria de Filipinas | Manille 1993, San Pedro ; plantations de Tubao |
+
+**Trois lieux de roulage sans champs** — comme la Suisse et la Côte
+d'Ivoire — et **un pays producteur**. Les trous sont déclarés, comme pour
+le Mozambique : aucune zone, aucune variété. Les coordonnées de la Chine
+pointent Shifang, pas Pékin.
+
+**Ce qui est attribué sans être adopté** : Don Collins se dit de 1506 et
+« la plus vieille fabrique des Caraïbes » — rapporté à la maison, 1991
+retenu, seul fait gardé la société de 1899 que la Cour suprême nomme.
+Great Wall « avant toute autre fabrique du pays » — attribué à la presse.
+
+**Le code accompagne la base** : `flags.js` reçoit trois drapeaux
+(Bahamas, Porto Rico, Açores — l'autour omis, comme l'emblème du
+Mozambique), `data.pays.js` reçoit BS et PR et les Açores entrent dans
+`TERRITOIRES_INFOS` à UTC−1, `coords_check` et `geo_banquemondiale`
+apprennent les Açores comme ils connaissaient les Canaries. Sans cela,
+trois contrôles auraient refusé la migration — et deux l'ont fait avant
+la correction.
+
+**Luciano** reçoit Constella en six langues, et le renvoi vers l'Estrela.
+
+**Lot suivant (7)** : Nicaragua et Costa Rica — Esteban Carreras, NACSA,
+La Sirena, Patina, Powstanie, Paul Stulac, Reinado, Amendola ; Brun del Ré,
+El Septimo.

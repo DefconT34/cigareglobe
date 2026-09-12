@@ -186,6 +186,20 @@ var FLAGS_SPEC = {
                 o:[['bande','#F9E814',0,1,0.62,0.70],['bande','#F9E814',0,1,0.76,0.84],
                    ['etoile4','#EF3340','#FFFFFF',0.17,0.28,0.135]]},
   stkitts:     {o:[['diagStKitts']]},
+  // Bahamas : aigue-marine, or, aigue-marine, et un triangle noir de
+  // hampe — equilateral, comme celui de Cuba.
+  bahamas:     {h:['#00ABC9','#FAE042','#00ABC9'], o:[['tri','#000000',0.866]]},
+  // Porto Rico : cinq bandes rouge/blanc, triangle bleu, etoile blanche
+  // au centre du triangle. Le dessin de Cuba, aux couleurs inversees.
+  puertorico:  {h:['#ED0000','#FFFFFF','#ED0000','#FFFFFF','#ED0000'],
+                o:[['tri','#0050F0',0.866],['etoile','#FFFFFF',0.13,0.5,0.11,0.045]]},
+  // Acores : bleu a la hampe sur deux cinquiemes, blanc au vol, neuf
+  // etoiles d'or en arc — une par ile. L'autour, l'oiseau de l'embleme,
+  // n'a pas de primitive ici : simplification assumee, comme l'embleme
+  // du Mozambique. Le drapeau en base est le portugais (le code ISO
+  // en derive), la table TERRITOIRES_INFOS donne l'heure des Acores.
+  azores:      {vp:[['#0033A0',2],['#FFFFFF',3]],
+                o:[['arcEtoiles','#FFD700',0.40,0.32,0.36,9]]},
   caymanisles: {o:[['ensign','#00247D']]},
   // ── Afrique ───────────────────────────────────────────
   ivorycoast:  {v:['#F77F00','#FFFFFF','#009E60']},
@@ -1131,7 +1145,7 @@ var flagT=0,flagRaf=null,bannerRaf=null,lexBannerRaf=null;
 // compare desormais cette liste a `producer_countries`.
 var FLAGS_DESSINES = [
                       'albania','andorra','argentina','armenia','aruba',
-                      'australia','austria','azerbaijan','bahrain','barbados',
+                      'australia','austria','azerbaijan','azores','bahamas','bahrain','barbados',
                       'belgium','benin','botswana','brazil','bulgaria',
                       'burkina','cambodia','cameroon','canada','canada_mkt',
                       'canaries','caymanisles','chile','china','china_mkt',
@@ -1145,7 +1159,7 @@ var FLAGS_DESSINES = [
                       'macau','mali','mexico','monaco','morocco','mozambique',
                       'netherlands',
                       'nicaragua','nigeria','oman','panama','paraguay',
-                      'peru','philippines','poland','portugal','qatar',
+                      'peru','philippines','poland','portugal','puertorico','qatar',
                       'romania','russia','russia_mkt','saudiarabia','senegal',
                       'serbia','singapore','southafrica','southkorea','spain',
                       'stkitts','stmartin','switz_mkt','switzerland','taiwan',

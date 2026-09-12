@@ -86,6 +86,7 @@ const ISO_NUM = [
  *  catégorie : c'est ainsi qu'un contrôle cesse de contrôler. */
 const SANS_FOND = [
     'canaries' => 'archipel absent du fond 110m — le polygone « Spain » ne couvre que la péninsule',
+    'azores'   => 'archipel absent du fond 110m — le polygone « Portugal » ne couvre que le continent ; Ponta Delgada est à 1 400 km de Lisbonne',
 ];
 
 /** « 🇨🇺 » → « CU ». Deux indicateurs régionaux, rien d'autre. */
