@@ -137,24 +137,24 @@ recherche les trouve par leur nom. **Aucune de celles-ci n'y est encore.**
 
 | nom | ce qu'il est | maison (présente) | à faire |
 |---|---|---|---|
-| **Black Works Studio** (BLK WKS) | second projet de James Brown, nov. 2015, même fabrique | **Black Label Trading** — Fábrica Oveja Negra | l'ajouter au `gamme` et en prose |
-| **Condega Cigars** | marque rachetée en 2002 par Eduardo Fernández | **Aganorsa** (Tabacalera Tropical) | `gamme` |
-| **Cuba Aliados · Puros Indios · Roly** | marques vendues par les Reyes en août 2021, fabrication passée au Nicaragua | **Oliva** | `gamme`, avec la date et l'origine — et renvoi à Reyes Family Cigars |
-| **Casa Fernández** | l'ancien nom | **Aganorsa** | prose, si absent |
-| **Perla del Mar · Quorum · Brick House** | lignes | **J.C. Newman** | `gamme` |
-| **León Jimenes** | ligne | **La Aurora** | `gamme` |
-| **Herrera Estelí · Kentucky Fire Cured · Deadwood · Isla del Sol · 20 Acre Farm** | lignes | **Drew Estate** | `gamme` (Undercrown et Acid y sont déjà) |
-| **Hamlet** (Hamlet Paredes) | ligne | **Rocky Patel** | `gamme` |
-| **Cabaiguan** | ligne | **Tatuaje** | `gamme` |
-| **CroMagnon · Intemperance · Baka** | lignes | **RoMa Craft** | `gamme` |
-| **Enclave · Días de Gloria · Indomina** | lignes | **A.J. Fernández** | `gamme` |
-| **601** | ligne | **Espinosa** | `gamme` |
-| **Cusano** | marque rachetée | **Davidoff** | `gamme` ou prose |
-| **Lost & Found** | ligne | **Caldwell** | déjà en `gamme` ? à vérifier |
-| **Guardian of the Farm · Cloud Hopper** | collaborations Warped × Aganorsa | **Warped** | `gamme`, en nommant Aganorsa |
-| **Flores y Rodríguez** | ligne | **PDR** (à écrire) | avec la fiche |
-| **Archetype · Psyko Seven** | lignes, la seconde faite par **Agrotabacos** | **Ventura** | `gamme`, en nommant Ortez |
-| **Belinda** | marque Villazon/General, retirée | **General Cigar** | prose — ne pas créer |
+| ~~**Black Works Studio**~~ (BLK WKS) | second projet de James Brown, nov. 2015, même fabrique | **Black Label Trading** — Fábrica Oveja Negra | **FAIT (214)** — `gamme` |
+| ~~**Condega Cigars**~~ | marque rachetée en 2002 par Eduardo Fernández | **Aganorsa** (Tabacalera Tropical) | **FAIT (214)** |
+| ~~**Cuba Aliados · Puros Indios · Roly**~~ | marques vendues par les Reyes en août 2021, fabrication passée au Nicaragua | **Oliva** | **FAIT (207)** |
+| ~~**Casa Fernández**~~ | l'ancien nom | **Aganorsa** | déjà en prose |
+| ~~**Perla del Mar · Quorum · Brick House**~~ | lignes | **J.C. Newman** | **FAIT (214)** — et la fiche disait à tort que la famille ne roule rien : **PENSA** (Estelí, 2011) corrigé en six langues |
+| ~~**León Jimenes**~~ | ligne | **La Aurora** | **FAIT (214)** |
+| ~~**Herrera Estelí · Kentucky Fire Cured**~~ · Deadwood · Isla del Sol · 20 Acre Farm | lignes | **Drew Estate** | **FAIT (214)** pour les deux premières ; les trois autres non sourcées dans ce lot |
+| ~~**Hamlet**~~ (Hamlet Paredes) | ligne | **Rocky Patel** | **FAIT (214)** — Paredes parti en août 2022, Tabaquero arrêtée, la maison garde le nom |
+| ~~**Cabaiguan**~~ | ligne | **Tatuaje** | **FAIT (214)** |
+| ~~**CroMagnon · Intemperance · Baka**~~ | lignes | **RoMa Craft** | les deux premières y étaient ; **Baka FAIT (214)** |
+| ~~**Enclave · Días de Gloria**~~ · Indomina | lignes | **A.J. Fernández** | **FAIT (214)** pour les deux premières |
+| ~~**601**~~ | ligne | **Espinosa** | **FAIT (214)** |
+| ~~**Cusano**~~ | marque rachetée en juin 2009 | **Davidoff** | **FAIT (214)** |
+| **Lost & Found** | une société à part (Caldwell, Bellatto, Sears), pas une ligne | **Caldwell** | **non traitée** — n'appartient pas au `gamme` de Caldwell |
+| ~~**Guardian of the Farm · Cloud Hopper**~~ | collaborations Warped × Aganorsa | **Warped** | **FAIT (214)** |
+| ~~**Flores y Rodríguez**~~ | ligne | **PDR** | **FAIT (209)** |
+| **Archetype · Psyko Seven** | lignes, la seconde faite par **Agrotabacos** | **Ventura** | **non traitée** — Ventura n'a pas de fiche (le recensement la croyait présente) |
+| **Belinda** | marque Villazon/General, retirée | **General Cigar** | **non traitée** — aucune source vérifiée |
 | **Cubariqueño Cigar Co.** | la société derrière Protocol | **Protocol** | rien |
 
 ---

@@ -5289,3 +5289,48 @@ français dit « plus rare qu'on ne le croit » — reformulé.
 
 **Lot suivant (5)** : les requalifications dans les gammes existantes —
 dix-neuf lignes du recensement, dont Nomad → Ezra Zion.
+
+---
+
+## Lot 5 — les requalifications
+
+**965 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 255
+domaines. Migration **214**. Aucune maison créée : l'atlas reste à
+**216 maisons**, mais seize lignes que le recensement testait comme des
+maisons entrent dans le `gamme` de celle qui les possède, en six langues,
+chacune avec une notice qui dit ce qu'elle est.
+
+| maison | lignes ajoutées |
+| --- | --- |
+| Black Label Trading | Black Works Studio (nov. 2015, même fabrique) |
+| Aganorsa Leaf | Condega (rachetée 2002 avec Tropical Tobacco) |
+| J.C. Newman | Brick House, Perla del Mar, Quorum |
+| La Aurora | León Jimenes |
+| Drew Estate | Herrera Estelí (2013, Willy Herrera), Kentucky Fire Cured |
+| Rocky Patel | Hamlet (Paredes parti en août 2022, Tabaquero arrêtée) |
+| Tatuaje | Cabaiguan |
+| RoMa Craft | Baka (2019, cape du Cameroun) |
+| A.J. Fernández | Enclave, Días de Gloria |
+| Espinosa | 601 |
+| Davidoff | Cusano (rachetée juin 2009) |
+| Warped | Guardian of the Farm (2016), Cloud Hopper (2017) — chez Aganorsa |
+
+**Une fiche corrigée en passant** : J.C. Newman disait « la famille ne roule
+rien elle-même ». Faux depuis 2011 — PENSA, à Estelí, roule Quorum, Perla del
+Mar et Brick House, plus de cent mille cigares par jour, co-dirigée par Omar
+Ortez, l'homme d'Agrotabacos (lot 2a). Le paragraphe est remplacé en six
+langues et la fiche dit qu'une première version se trompait.
+
+**Non traitées, et pourquoi** : Archetype/Psyko Seven — Ventura n'a pas de
+fiche, le recensement la croyait présente ; Lost & Found — une société à
+part, pas une ligne de Caldwell ; Belinda — marque retirée, aucune source
+vérifiée ; Deadwood, Isla del Sol, 20 Acre Farm, Indomina — non sourcées
+dans ce lot.
+
+Un garde-fou : le journal a été tronqué trois fois de suite à 255 avant
+de tenir — la liste des seize noms ne rentre pas dans un `detail`.
+
+**Le second recensement est clos.** Reste, de ses reports : Tabacalera
+Aragón, Ortega, Jas Sum Kral, Casa 1910 (fabrique non nommée) ; Dissident,
+Sagrado, Hooten Young, Lampert (même règle). Ils reviendront si la presse
+nomme leurs fabriques.

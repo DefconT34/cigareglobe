@@ -25,6 +25,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "ajfernandezcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "alacivette.com": {
             "dns": "resout",
             "fiches": 1
@@ -163,7 +167,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 27
+            "fiches": 28
         },
         "cigar.com": {
             "dns": "resout",
@@ -171,7 +175,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 117
+            "fiches": 118
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -191,7 +195,7 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "cigarjournal.com": {
             "dns": "resout",
@@ -287,7 +291,7 @@
         },
         "drewestate.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "dunbartoncigars.com": {
             "dns": "resout",
@@ -318,6 +322,10 @@
             "fiches": 1
         },
         "espinashotel.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "espinosacigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -435,7 +443,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 50
+            "fiches": 53
         },
         "hilton.com": {
             "dns": "resout",
@@ -902,6 +910,10 @@
             "fiches": 1
         },
         "tampachanging.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "tatuajecigars.com": {
             "dns": "resout",
             "fiches": 1
         },
