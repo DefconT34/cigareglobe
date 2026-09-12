@@ -518,6 +518,12 @@ entre la main et la machine, pas entre la feuille entière et le hachis.
 **Il n'y a pas de point 7.** Ce document a fait son travail et n'a plus de
 liste à proposer.
 
+> **12 septembre 2026 — il y a un point 7, et il est ailleurs.** Ce recensement
+> était clos contre sa propre liste, pas contre le marché. Un test de 210 noms
+> contre l'index servi a trouvé **41 maisons réelles jamais recensées** — la
+> scène boutique des années 2010–2020 et une dizaine de fabriques que l'atlas
+> nomme sans fiche. Voir **`maisons-absentes-2.md`**.
+
 ---
 
 ## Ce que ce recensement a corrigé dans l'atlas lui-même

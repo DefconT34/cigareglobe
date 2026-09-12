@@ -4995,3 +4995,43 @@ ce qui ne dit rien de la demande — seulement que l'audience n'existe pas encor
 Le point 4 — **structurer** (société, hébergement, monétisation) — attend une
 audience mesurée, pas des robots. Rien à faire tant que les visiteurs distincts
 se comptent en dizaines.
+
+---
+
+## Second recensement des maisons absentes — 12 septembre 2026
+
+**Document : `docs/maisons-absentes-2.md`.** Aucun code, aucune migration :
+une recherche, et le constat qu'elle impose.
+
+Le premier recensement s'était clos le 7 septembre sur « il n'y a pas de
+point 7 ». Il était clos **contre sa propre liste** — l'index de Cigar
+Aficionado, la page Wikipédia — pas contre le marché. Un test de **210 noms de
+maisons connues contre l'index que sert le site** donne : 126 fiches, 14 lignes
+de gamme trouvables, **70 absents** — dont **≈ 41 maisons réelles, roulées main,
+jamais recensées**, vérifiées une à une (roulage, fabrique, pays, activité,
+sources ; 30 domaines DNS-vérifiés).
+
+| pays de fabrication | à écrire |
+| --- | --- |
+| Nicaragua | 18 |
+| République dominicaine | 13 |
+| Honduras | 7 |
+| Mexique | 2 |
+| Costa Rica | 1 |
+
+Ce que la scène boutique a d'inattendu : **une dizaine de fabriques que l'atlas
+nomme déjà dans ses fiches sans leur en donner une** — Tabacalera William
+Ventura (Caldwell, La Barba), Kelner Boutique Factory (Casdagli), J. Fuego
+(7-20-4), Reyes Family Cigars (Kafie). Même défaut que Tabacalera Palma avant
+la 186, à l'échelle d'un lot entier.
+
+Et neuf fiches présentes ont quelque chose à dire qu'elles ne disent pas
+encore — Oliva possède Cuba Aliados et Puros Indios depuis août 2021 ; la
+fabrique de Caldwell et La Barba a brûlé en 2022 ; Vegas de Santiago roule une
+troisième marque, MBombay ; Nomad appartient à Ezra Zion.
+
+**Ordre recommandé** : les fabriques déjà nommées (4), les fabriques-maisons
+(11), les historiques (2), la scène sans usine par fabrique de rattachement
+(24), puis une migration de requalification pour dix-neuf lignes. Sept à huit
+lots, au rythme des migrations 180 à 193 — et une part tombera à l'écriture,
+comme à chaque fois.
