@@ -5035,3 +5035,46 @@ troisième marque, MBombay ; Nomad appartient à Ezra Zion.
 (24), puis une migration de requalification pour dix-neuf lignes. Sept à huit
 lots, au rythme des migrations 180 à 193 — et une part tombera à l'écriture,
 comme à chaque fois.
+
+---
+
+## Lot 1 du second recensement — les fabriques déjà nommées
+
+**964 assertions, 0 échec** (trois passages). Tous les contrôles verts,
+`sources` re-figé, `contenu.sql` régénéré. Migration **207**. L'atlas passe à
+**186 maisons**, toutes sourcées.
+
+Quatre fiches, et les quatre réparent un renvoi dans le vide — l'atlas les
+nommait dans d'autres fiches sans leur avoir donné d'entrée, le défaut de
+Tabacalera Palma avant la 186 :
+
+| fiche | pays | nommée par |
+| --- | --- | --- |
+| **Tabacalera William Ventura** | Rép. dominicaine | Caldwell, La Barba |
+| **Kelner Boutique Factory** | Rép. dominicaine | Casdagli |
+| **J. Fuego** | Nicaragua | 7-20-4 |
+| **Reyes Family Cigars** | Honduras | Kafie (à venir) |
+
+### Ce que la recherche a rendu en passant
+- **777 n'était pas introuvable.** Le premier recensement la cherchait comme
+  maison hondurienne et concluait « rien ». C'est une marque de J. Fuego, à
+  Estelí — rangée sous le mauvais pays.
+- **La fabrique de Caldwell et de La Barba a brûlé** le 26 septembre 2022
+  (800 000 cigares perdus, aucun blessé), rouverte en mars 2024. Les deux
+  fiches ne le disaient pas ; un paragraphe en six langues le dit.
+- **Oliva porte désormais Cuba Aliados, Puros Indios et Roly**, avec la date
+  (août 2021) et l'origine. L'usine de Danlí n'était pas dans la vente :
+  Reyes Family Cigars reste au Honduras — le lieu de fabrication, toujours.
+- Le nom **Eiroa** revient : C.L.E. distribue les Reyes depuis 2016.
+
+### Trois garde-fous ont travaillé
+`i18n_superlatif_check` a refusé un « 最终 » chinois que le français ne
+portait pas. Le contrôle de journal a compté une entrée à 255 — raccourcie.
+Et **`sources.php` a refusé `cigarpublic.com`**, cité sans avoir été
+DNS-vérifié : sa résolution est instable. Écarté — une source qu'on ne peut
+pas rouvrir n'en est pas une, et c'est exactement la faute que la liste de
+vérification du lot prétendait avoir évitée.
+
+**Lot suivant** : les onze fabriques-maisons (Luciano, Agrotabacos, Karen
+Berger, Tabacalera Aragón, PDR, Cuban Stock, Blackbird, Gran Habano, Cavalier
+Genève, Kafie 1901, Rojas).

@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-09-10",
+    "fige_le": "2026-09-12",
     "domaines": {
         "21club.com": {
             "dns": "resout",
@@ -127,7 +127,7 @@
         },
         "casdaglicigars.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "casinomadrid.es": {
             "dns": "resout",
@@ -151,13 +151,9 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 103
+            "fiches": 105
         },
         "cigarcitybrewing.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "cigarcountry.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -179,7 +175,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 58
+            "fiches": 59
         },
         "cigaroa.com": {
             "dns": "resout",
@@ -203,7 +199,7 @@
         },
         "cigarworld.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "cigarworld.de": {
             "dns": "resout",
@@ -228,10 +224,6 @@
         "cohiba-atmosphere.com": {
             "dns": "resout",
             "fiches": 5
-        },
-        "coronacigar.com": {
-            "dns": "resout",
-            "fiches": 1
         },
         "correiobraziliense.com.br": {
             "dns": "resout",
@@ -287,7 +279,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 41
+            "fiches": 42
         },
         "enthusiastreport.com": {
             "dns": "resout",
@@ -307,7 +299,7 @@
         },
         "famous-smoke.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "feriotego.com": {
             "dns": "resout",
@@ -403,7 +395,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 29
+            "fiches": 33
         },
         "hilton.com": {
             "dns": "resout",
@@ -464,6 +456,10 @@
         "jcnewman.com": {
             "dns": "resout",
             "fiches": 3
+        },
+        "jfuego.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "jjfox.co.uk": {
             "dns": "resout",
@@ -530,6 +526,10 @@
             "fiches": 1
         },
         "le-diplomate.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "leafenthusiast.com": {
             "dns": "resout",
             "fiches": 1
         },
