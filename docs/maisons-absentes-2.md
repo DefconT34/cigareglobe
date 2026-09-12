@@ -81,7 +81,7 @@ avant d'écrire.
 | **Jas Sum Kral** | *(à vérifier)* | sans usine — Tabacalera Aragón 2018–oct. 2024, **nouvelle fabrique à nommer** | Riste Ristevski ; le nom veut dire « je suis roi » en macédonien | cigar-coop.com, cigarinspector.com, jassumkral.com |
 | **Sindicato Cigar Group** | 2013 | sans usine — **chez Casa Fernández (Aganorsa)** | Fondée par un groupe de **détaillants** devenus propriétaires de marque. ⚠ Pas une série de catalogue comme Black Swan : une société avec un portefeuille — la fiche doit poser la distinction | cigar-coop.com, cigardojo.com |
 | **Fable Cigars** | *(à vérifier)* | sans usine — Nica Sueño (RoMa Craft) puis **Córdoba & Morales**, Estelí | Sean Kremenetski et Mitul Shah ; ligne Fourth Prime ; a quitté puis regagné le marché | halfwheel.com |
-| **Miami Cigar & Co.** — Nestor Miranda | 1989 | sans usine — **chez My Father** (Collection) et **La Aurora** (Private Reserve) | Nestor et Mariana Miranda ; 40 000 cigares distribués la première année, plus de 20 millions aujourd'hui ; **distributeur de La Aurora aux États-Unis**. Fabrication principale au Nicaragua → classée ici, comme Nomad | cigaraficionado.com, halfwheel.com |
+| ~~**Miami Cigar & Co.**~~ — Nestor Miranda | **FAIT** — migration 210 | sans usine — **chez My Father** (Collection) et **La Aurora** (Private Reserve) | Nestor et Mariana Miranda ; 40 000 cigares distribués la première année, plus de 20 millions aujourd'hui ; **distributeur de La Aurora aux États-Unis**. Fabrication principale au Nicaragua → classée ici, comme Nomad | cigaraficionado.com, halfwheel.com |
 | **Ortega Cigars** *(activité à vérifier)* | 2012 | sans usine — **chez My Father** (Serie D) | Eddie Ortega, après la dissolution d'EO Brands avec Erik **Espinosa** (qui a sa fiche) ; distribution reprise par Quality Importers en 2016 | stogieguys.com, halfwheel.com |
 
 ### Honduras — 7
@@ -118,7 +118,7 @@ avant d'écrire.
 
 | maison | fondée | fabrique | ce qu'il faut savoir | sources |
 |---|---|---|---|---|
-| **Te-Amo** | 1963 | **Nueva Matacapan Tabacos**, San Andrés — la fabrique des Turrent | Créée par Alberto Turrent, quatrième génération ; **propriété d'Altadis depuis 2000** (fusion Consolidated Cigar), toujours faite par les Turrent. Même cas que Bolívar Honduras chez STG : une marque de groupe faite dans l'usine d'une famille qui a sa fiche (**Casa Turrent**) | halfwheel.com, cigaraficionado.com, altadisusa.com |
+| ~~**Te-Amo**~~ | **ÉTAIT DÉJÀ DANS L'ATLAS, sous « Te Amo »** — mon test cherchait le trait d'union et ne repliait pas les tirets ; la recherche du site non plus, c'est corrigé. La fiche existante (texte de première génération, fabrique « Tabacos San Andrés » que rien n'établit, date 1963) est **réécrite** par la migration 210 : 1966 selon Alberto Turrent lui-même, Nueva Matacapan, Altadis | Créée par Alberto Turrent, quatrième génération ; **propriété d'Altadis depuis 2000** (fusion Consolidated Cigar), toujours faite par les Turrent. Même cas que Bolívar Honduras chez STG : une marque de groupe faite dans l'usine d'une famille qui a sa fiche (**Casa Turrent**) | halfwheel.com, cigaraficionado.com, altadisusa.com |
 | **Casa 1910** | 2021 | San Andrés — *(fabrique à nommer)* | Manolo Santiago, ancien de la distribution Habanos au Mexique ; puros 100 % mexicains | casa1910.com, cigarsmokerclub.com |
 
 ### Costa Rica — 1
@@ -248,8 +248,7 @@ sa fabrique, et que le renvoi doit avoir une cible.
    Kelner Boutique Factory, J. Fuego, Reyes Family Cigars. Quatre fiches, et
    elles réparent quatre renvois dans le vide.
 2. ~~**Les fabriques-maisons**~~ — **FAIT, migrations 208 et 209** (dix sur onze ; Tabacalera Aragón reportée, Kafie n'a plus d'usine et passe en République dominicaine).
-3. **Les historiques** — Te-Amo, Miami Cigar & Co. Deux fiches qu'un amateur
-   remarque absentes.
+3. ~~**Les historiques**~~ — **FAIT, migration 210.** Miami Cigar & Co. écrite ; Te Amo était présente et a été réécrite.
 4. **La scène boutique sans usine**, par fabrique de rattachement — chez
    Plasencia (1502, Crux, Blanco), chez De Los Reyes (Debonaire, Patoro), chez
    William Ventura (ADVentura, Freud), chez Rojas (Stolen Throne, Ezra Zion),

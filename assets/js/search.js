@@ -73,8 +73,15 @@ function chargerIndexServi() {
  */
 function _pli(s) {
   s = String(s == null ? '' : s).toLowerCase();
-  try { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
-  catch (e) { return s; }   // navigateur sans normalize() : on dégrade, on ne casse pas
+  try { s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  catch (e) { /* navigateur sans normalize() : on dégrade, on ne casse pas */ }
+  // ── ET LES TIRETS, POINTS ET SOULIGNÉS ───────────────────
+  // Le second recensement a donné « Te-Amo » pour absente alors que la
+  // fiche s'appelle « Te Amo » : le test ne repliait pas le tiret, et la
+  // recherche du site non plus. Un lecteur qui tape « te-amo »,
+  // « 7 20 4 » ou « j fuego » doit trouver « Te Amo », « 7-20-4 » et
+  // « J. Fuego ». Tout séparateur devient une espace, des deux côtés.
+  return s.replace(/[-\u2013\u2014_.]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 /** Le pays d'un identifiant, producteur ou pays de lounges. */

@@ -5140,3 +5140,40 @@ arabe qui voulait dire *mois* — pour la deuxième fois. Réécrit.
 
 **Restent du lot 2** : Tabacalera Aragón (reportée). **Lot suivant (3)** : les
 deux historiques — Te-Amo et Miami Cigar & Co.
+
+---
+
+## Lot 3 — les historiques, et une fiche qui était déjà là
+
+**965 assertions, 0 échec.** Tous les contrôles verts. Migration **210**.
+L'atlas passe à **196 maisons** — pas 197 : voir ci-dessous.
+
+**Miami Cigar & Co.** est écrite : Nestor Miranda, Cubain, vingt-cinq ans
+dans les spiritueux ; société fondée en 1989 avec Mariana ; Don Lino née à
+l'usine d'U.S. Tobacco au Honduras — celle de Don Tomás —, douze millions de
+cigares en 1996, deux ans hors marché quand UST cesse, sauvée par Guillermo
+León chez La Aurora en 1999 ; la Collection au nom du fondateur chez My
+Father. Une maison sans usine qui en nomme trois, et trois fiches de l'atlas
+reliées.
+
+### Te Amo était déjà dans l'atlas
+Le second recensement l'avait donnée absente. Mon test cherchait « Te-Amo »
+avec un trait d'union ; la fiche s'appelle « Te Amo ». **Le repli d'accents ne
+repliait pas les tirets — et la recherche du site non plus** : un lecteur qui
+tapait « te-amo » ne trouvait rien. Corrigé dans `search.js` : tirets, points
+et soulignés deviennent des espaces, des deux côtés ; « 7 20 4 » trouve
+« 7-20-4 », « j fuego » trouve « J. Fuego ». Assertion ajoutée.
+
+La fiche existante était de première génération — texte générique sur les
+Totonaques, fabrique « Tabacos San Andrés » que rien n'établit, date 1963.
+Elle est **réécrite sous son nom** : 1966 selon Alberto Turrent lui-même
+(Cigar Aficionado, 2009 ; halfwheel dit 1963, l'écart est écrit), Nueva
+Matacapan de Tabacos, propriété d'Altadis depuis 2000 et toujours faite par
+les Turrent — le cas Bolívar Honduras chez STG. Un premier essai local avait
+inséré un doublon « Te-Amo » ; la migration le supprime et le contrôle le
+vérifie.
+
+**Leçon de méthode** : un recensement qui teste des noms doit replier ce que
+la recherche replie. Le prochain test le fera.
+
+**Lot suivant (4)** : la scène sans usine, par fabrique de rattachement.

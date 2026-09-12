@@ -5365,6 +5365,12 @@ require_once PROJECT_ROOT . '/backend/audience.php';
           (bool)preg_match('/var q = _pli\(/', $js));
     check('recherche : et les libelles compares le sont',
           str_contains($js, '_pli(item.label)'));
+    // Et les SEPARATEURS. Le second recensement a donne « Te-Amo » pour
+    // absente alors que la fiche s appelle « Te Amo » : ni le test ni la
+    // recherche ne repliaient le tiret. Tout separateur devient une
+    // espace, des deux cotes.
+    check('recherche : les tirets et les points sont replies',
+          (bool)preg_match('/_pli[\s\S]{0,900}replace\(\/\[-/', $js));
     check('recherche : plus aucun .toLowerCase() pour comparer',
           substr_count($js, '.toLowerCase()') === 1);   // le seul est DANS _pli
 
