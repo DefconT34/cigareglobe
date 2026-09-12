@@ -5209,3 +5209,41 @@ divergence — reformulée en « la presse du métier » plutôt qu'exemptée.
 
 **Lot suivant (4b)** : chez Rojas (Stolen Throne, Ezra Zion), chez My Father
 (Ortega), chez Pichardo (Ozgener), et les isolées.
+
+---
+
+## Lot 4b — la scène nicaraguayenne sans usine, chez Rojas, Luciano, Rocky Patel, La Corona et Aganorsa
+
+**965 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 250
+domaines. Migration **212**. L'atlas passe à **209 maisons**.
+
+Six maisons sans usine, rangées par la fabrique qui les roule :
+
+| chez | maisons |
+| --- | --- |
+| **Rojas** (Estelí) | Stolen Throne, Ezra Zion |
+| **Luciano** (Estelí) | Ozgener Family Cigars *(Aramas chez La Alianza, E.P. Carrillo)* |
+| **Rocky Patel / TAVICUSA** | All Saints |
+| **La Corona** (Omar González-Alemán) | Serino — fabrique nommée, sans fiche : pas de marque propre |
+| **Aganorsa / Casa Fernández** | Sindicato |
+
+**Ortega reportée** : la seule trace récente est un catalogue de détaillant
+annonçant le retour du Cubao, sans date ni confirmation d'activité. Une fiche
+au présent sur une maison peut-être dormante serait la faute de Mombacho à
+l'envers.
+
+**Sindicato n'est pas Black Swan** : la fiche pose la distinction — une
+société de détaillants avec un catalogue permanent et une fabrique nommée,
+pas une série commandée à des fabriques tournantes.
+
+**Deux renvois deviennent réciproques** : Nomad appartient à Ezra Zion depuis
+septembre 2018 (la fiche Nomad le dira au lot 5) ; CAO et Ozgener sont père
+et fils. Rojas roule désormais pour quatre fiches de l'atlas.
+
+Un garde-fou que les outils n'ont pas vu : « nouvelle société de l'année »
+décernée par halfwheel à Ozgener — une distinction de presse, retirée dans
+les six langues avant application, comme les Top 25 du lot 2b.
+
+**Lot suivant (4c)** : Jas Sum Kral, Fable, Jake Wyatt, Hiram & Solomon, Epic,
+Chogüí, Principle, Casa 1910, Bombay Tobak. Puis le **lot 5**, les
+requalifications dans les gammes existantes (dont Nomad → Ezra Zion).
