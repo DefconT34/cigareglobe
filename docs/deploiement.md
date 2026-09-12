@@ -147,6 +147,59 @@ Une migration qui ne fait qu'ajouter ou corriger des lignes se passe
 dans n'importe quel ordre. Celles qui **retirent** — colonne vidée,
 table supprimée, valeur mise à NULL — se lancent après.
 
+### ⚠ Le Deploy HEAD Commit peut ne rien copier — et ne le dit pas
+
+**C'est arrivé deux fois la même semaine** (11 et 12 septembre 2026). Le
+bouton de cPanel a rendu la main sans erreur, la migration avait tourné,
+`prevol.php` était vert — et `public_html/assets/js/search.js` était
+toujours celui de la veille : 28 436 octets contre 28 978 dans le dépôt.
+Une réparation de la recherche déployée « avec succès » ne cherchait
+toujours rien. Les deux fois, **relancer le Deploy a suffi**.
+
+La cause n'est pas établie. L'hypothèse la plus plausible : cPanel refuse
+silencieusement de déployer un clone dont l'arbre de travail n'est pas
+propre — un fichier modifié sur le serveur, un `.env` ou une sortie
+d'outil qui traîne — et ne l'écrit nulle part. D'où le geste ajouté
+**avant** le bouton :
+
+```bash
+cd ~/repositories/cigareglobe && git pull && git status --short
+```
+
+Si la seconde commande affiche quoi que ce soit, le régler avant de
+cliquer (`git stash`, ou supprimer le fichier étranger). Puis, **après**
+le bouton, ne pas croire cPanel sur parole — comparer le dépôt et la
+racine servie sur ce que le commit a touché :
+
+```bash
+diff -rq ~/repositories/cigareglobe/assets ~/public_html/assets ; diff -rq ~/repositories/cigareglobe/backend ~/public_html/backend
+```
+
+Rien en sortie : la recopie a eu lieu. Une ligne `Files … differ` : le
+Deploy n'a pas copié, le relancer. Depuis l'extérieur, la même chose se
+lit dans l'en-tête `Last-Modified` — un fichier daté de la veille alors
+que le commit est du jour n'a pas été recopié :
+
+```bash
+curl -sI "https://thecigarodyssey.com/assets/js/search.js?_=$(date +%s)" | grep -i last-modified
+```
+
+Le cache de 5 minutes ne s'applique pas ici : `Last-Modified` est la date
+du fichier sur le disque, pas celle de la réponse. Et le JS est servi
+avec `max-age=604800` — une semaine — donc une page qui tourne encore
+mal après un Deploy réussi peut simplement tenir l'ancien fichier en
+cache navigateur ; la chaîne de requête unique (`?_=…`) contourne cela.
+
+L'ordre complet, avec ce cinquième geste inséré, devient :
+
+```bash
+cd ~/repositories/cigareglobe && git pull && git status --short   # 1. le dépôt — et il doit être propre
+# 2. la recopie : cPanel → Git™ Version Control → Deploy HEAD Commit
+diff -rq ~/repositories/cigareglobe/assets ~/public_html/assets     # 2b. la recopie a-t-elle eu lieu ?
+mysql --default-character-set=utf8mb4 -u <user> -p <base> < sql/migrations/<n>.sql
+php ~/public_html/tools/prevol.php                                   # 4. le contrôle, SUR LE SERVEUR
+```
+
 ## 1. Le code
 
 Deux voies. La première est préférable : elle rend les mises à jour

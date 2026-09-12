@@ -5334,3 +5334,15 @@ de tenir — la liste des seize noms ne rentre pas dans un `detail`.
 Aragón, Ortega, Jas Sum Kral, Casa 1910 (fabrique non nommée) ; Dissident,
 Sagrado, Hooten Young, Lampert (même règle). Ils reviendront si la presse
 nomme leurs fabriques.
+
+---
+
+## Note de déploiement — le Deploy qui ne copie pas
+
+`docs/deploiement.md` porte désormais le cas vu deux fois les 11 et 12
+septembre : le bouton cPanel rend la main sans erreur et ne recopie rien
+(`search.js` de la veille, 28 436 octets contre 28 978). La note donne le
+geste avant — `git status --short` doit être vide —, le geste après —
+`diff -rq` entre le clone et `public_html` —, la sonde depuis l'extérieur
+— l'en-tête `Last-Modified` —, et l'ordre complet réécrit avec ce
+cinquième geste. La cause reste une hypothèse, et la note le dit.
