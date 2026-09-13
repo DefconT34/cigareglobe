@@ -5536,3 +5536,39 @@ voyait pas.
 attente. Après `founded` (50), `detail` (255) et `source` (500), la
 prochaine migration qui écrit long doit vérifier la capacité avant
 d'écrire, pas après.
+
+---
+
+## Migration 220 — les reports traités
+
+**967 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 309
+domaines. L'atlas passe à **236 maisons**.
+
+Onze noms attendaient depuis les lots 4 à 8. Chacun a été recherché à
+nouveau — sites des maisons compris, pas seulement la presse. **Six sont
+écrits, chacun avec son état** :
+
+| maison | ce que la fiche dit — et ce qu'elle dit ne pas savoir |
+| --- | --- |
+| **Jas Sum Kral** | 2015 ; la maison publie ses fabriques : NOA (Noel Rojas, 2015–2017), Aragón (2018–2024), et dit ne pas publier la troisième |
+| **Casa 1910** | 2021 ; la presse écrit que la fabrique mexicaine n'est pas divulguée ; Soldadera (La Isla) et Cavalry arrêtées en 2026 ; Smoker Friendly au capital |
+| **Ortega Cigars** | 2012, l'autre moitié d'EO Brands ; My Father puis TACASA ; la presse ne la suit plus depuis 2016 |
+| **La Sirena** | 2009 avec Nestor Miranda ; La Zona ; dernière trace 2022, plan LS LE annoncé jusqu'en 2025 |
+| **Reinado** | 2009, éclipsée, revenue en 2021 chez Aganorsa ; site muet depuis 2023 — écrite avec réserve |
+| **Cabal** | 2013 ; KBF, puis La Isla pour Initiative ; six ans entre deux cigares |
+
+**La règle et son exception, nommée.** « Pas de fiche sans fabrique
+nommée » vise l'invention. Quand la maison elle-même (Jas Sum Kral) ou la
+presse du métier (Casa 1910) écrit que la fabrique n'est pas publiée, le
+silence est un fait documenté, et la fiche peut le porter. Les deux fiches
+disent l'exception.
+
+**Cinq restent non écrits** : Tabacalera Aragón (fabrique sans marque
+propre — le site .com est une boutique de détaillant ; nommée dans JSK),
+Las Cumbres (rien depuis 2017), Amendola (rien depuis 2023, boutique
+fermée), Isabela (la presse dit « fabrique non nommée »), Cubanacan (rien
+depuis 2018).
+
+Trouvaille en passant : Noel Rojas a roulé pour une **cinquième** maison de
+l'atlas (JSK, 2015–2017) ; TACASA, la fabrique de Carlos Sánchez, entre
+dans l'atlas par Ortega.

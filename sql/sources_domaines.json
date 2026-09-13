@@ -133,6 +133,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "cabalcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "caffeflorian.com": {
             "dns": "resout",
             "fiches": 1
@@ -148,6 +152,10 @@
         "caocigars.com": {
             "dns": "resout",
             "fiches": 4
+        },
+        "casa1910.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "casadecampo.com.do": {
             "dns": "resout",
@@ -183,7 +191,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 42
+            "fiches": 45
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -195,9 +203,13 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 124
+            "fiches": 125
         },
         "cigarcitybrewing.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarcraig.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -219,7 +231,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 63
+            "fiches": 64
         },
         "cigarlifeguy.com": {
             "dns": "resout",
@@ -252,6 +264,10 @@
         "cigars.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "cigarsinternational.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "cigarsnobmag.com": {
             "dns": "resout",
@@ -523,7 +539,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 69
+            "fiches": 75
         },
         "havanahouse.co.uk": {
             "dns": "resout",
@@ -594,6 +610,10 @@
             "fiches": 1
         },
         "jakewyattcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "jassumkral.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -685,6 +705,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "lasirenacigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "lcdh.com.my": {
             "dns": "resout",
             "fiches": 1
@@ -730,6 +754,10 @@
             "fiches": 2
         },
         "lonelyplanet.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "luxurycigarclub.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -849,6 +877,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "ortegacigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "ovejanegracigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -941,6 +973,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "reinadopremiumcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "revuedestabacs.com": {
             "dns": "resout",
             "fiches": 1
@@ -1027,7 +1063,7 @@
         },
         "stogieguys.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "stogiephile.blog": {
             "dns": "resout",
@@ -1035,7 +1071,11 @@
         },
         "stogiepress.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
+        },
+        "stogiereview.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "stolenthronecigars.com": {
             "dns": "resout",
