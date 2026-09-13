@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-09-12",
+    "fige_le": "2026-09-13",
     "domaines": {
         "21club.com": {
             "dns": "resout",
@@ -167,7 +167,11 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 28
+            "fiches": 29
+        },
+        "cigar-review.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "cigar.com": {
             "dns": "resout",
@@ -175,7 +179,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 119
+            "fiches": 120
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -199,7 +203,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 61
+            "fiches": 62
         },
         "cigarlifeguy.com": {
             "dns": "resout",
@@ -451,7 +455,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 54
+            "fiches": 58
         },
         "hilton.com": {
             "dns": "resout",
@@ -709,6 +713,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "oakglentobacconist.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "oetkercollection.com": {
             "dns": "resout",
             "fiches": 1
@@ -749,6 +757,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "paulstulaccigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "pavilion-kl.com": {
             "dns": "resout",
             "fiches": 1
@@ -765,13 +777,17 @@
             "dns": "resout",
             "fiches": 2
         },
+        "planetcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "plasenciacigars.com": {
             "dns": "resout",
             "fiches": 1
         },
         "premiumcigars.org": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "principletrading.com": {
             "dns": "resout",
@@ -1006,6 +1022,10 @@
             "fiches": 2
         },
         "visitpontadelgada.pt": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "wantedonline.co.za": {
             "dns": "resout",
             "fiches": 1
         },

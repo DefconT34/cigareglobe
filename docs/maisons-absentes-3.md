@@ -58,14 +58,14 @@ porter une maison qui y roule.
 
 | maison | fondée | fabrique | ce qu'il faut savoir | sources |
 |---|---|---|---|---|
-| **Esteban Carreras** | *(à dater)* | **usine propre** — Tabacalera Carreras S.A., Estelí | Propriétaire Craig Cunningham ; puros nicaraguayens surtout | neptunecigar.com, cigar-coop.com |
-| **NACSA** — Nicaragua American Cigars S.A. | *(à dater)* | **usine propre**, Estelí | Détenue en partie par l'**Oliva Tobacco Company** (le courtier en feuilles de Tampa — pas Oliva Cigar) ; marques propres Red Dot, Villar y Villar, La Rosa Especial, Aristoff ; roule **Asylum** et **Patina** ; Quorum y était roulée avant PENSA (2011). ⚠ Vérifier ce que la fiche Asylum dit de sa fabrique | halfwheel.com, jrcigars.com |
-| **La Sirena** | **2009** | sans usine — My Father, puis **La Zona (Espinosa)** depuis 2014 | Arielle Ditkowich, **en partenariat avec Nestor Miranda** de Miami Cigar & Co. — la fiche Miami Cigar doit la nommer | halfwheel.com, cigar-coop.com |
-| **Patina Cigars** | **2015** (Chicago) | sans usine — **Mombacho** (2017–2019), puis **NACSA** | Mo Maali ; a quitté Mombacho en 2019. ⚠ La fiche Mombacho (maison fermée) peut le dire | cigar-coop.com, cigarpublic.com |
-| **Powstanie** | *(à dater)* | sans usine — **Nica Sueño (RoMa Craft)** | Pospiech Inc., Mike et Greg Szczepankiewicz, Deltona (Floride) — **le même Pospiech qui distribue Fable et Chogüí** (fiches 213) ; nom polonais, « insurrection » | halfwheel.com, cigar-coop.com |
-| **Paul Stulac Cigars** | *(à dater)* | sans usine — **Las Villas Cigars**, Estelí (Guillermo Peña) | Maison canadienne | paulstulaccigars.com, halfwheel.com |
-| **Reinado** | ~2012 | sans usine — Agros Tabacos Industriales, puis **Aganorsa** pour Grand Apex | Antonio Lam ; a quitté puis regagné le métier | cigar-coop.com, halfwheel.com |
-| **Amendola Family Cigar Co.** | **2017** | sans usine — **TABSA (Aganorsa)** pour le cœur, **La Zona** pour Cannoli | Jeffrey Amendola, Durham (Caroline du Nord) ; ⚠ la boutique de Durham est signalée fermée — vérifier que la marque vit | halfwheel.com, cigar-coop.com |
+| ~~**Esteban Carreras**~~ **FAIT (216)** | *(non datée — la presse dit les origines mystérieuses ; Cunningham depuis les années 2000)* | **usine propre** — Tabacalera Carreras S.A., Estelí | Propriétaire Craig Cunningham ; puros nicaraguayens surtout | neptunecigar.com, cigar-coop.com |
+| ~~**NACSA**~~ — Nicaragua American Cigars S.A. **FAIT (216)** | 1995 (NATSA, Bermejo et Rothman) | **usine propre**, Estelí | Détenue en partie par l'**Oliva Tobacco Company** (le courtier en feuilles de Tampa — pas Oliva Cigar) ; marques propres Red Dot, Villar y Villar, La Rosa Especial, Aristoff ; roule **Asylum** et **Patina** ; Quorum y était roulée avant PENSA (2011). ⚠ Vérifier ce que la fiche Asylum dit de sa fabrique | halfwheel.com, jrcigars.com |
+| **La Sirena** *(REPORTÉE — 216 : dernière presse juin 2022, règle Ortega)* | **2009** | sans usine — My Father, puis **La Zona (Espinosa)** depuis 2014 | Arielle Ditkowich, **en partenariat avec Nestor Miranda** de Miami Cigar & Co. — la fiche Miami Cigar doit la nommer | halfwheel.com, cigar-coop.com |
+| ~~**Patina Cigars**~~ **FAIT (216)** | **2015** (Chicago) | sans usine — **Mombacho** (2017–2019), puis **NACSA** | Mo Maali ; a quitté Mombacho en 2019. ⚠ La fiche Mombacho (maison fermée) peut le dire | cigar-coop.com, cigarpublic.com |
+| ~~**Powstanie**~~ **FAIT (216)** | 2015 | sans usine — **Nica Sueño (RoMa Craft)** | Pospiech Inc., Mike et Greg Szczepankiewicz, Deltona (Floride) — **le même Pospiech qui distribue Fable et Chogüí** (fiches 213) ; nom polonais, « insurrection » | halfwheel.com, cigar-coop.com |
+| ~~**Paul Stulac Cigars**~~ **FAIT (216)** | 2011 (selon les détaillants) | sans usine — **Las Villas Cigars**, Estelí (Guillermo Peña) | Maison canadienne | paulstulaccigars.com, halfwheel.com |
+| **Reinado** *(REPORTÉE — 216 : dernière presse octobre 2022, déjà dormante une fois)* | 2009 | sans usine — Agros Tabacos Industriales, puis **Aganorsa** pour Grand Apex | Antonio Lam ; a quitté puis regagné le métier | cigar-coop.com, halfwheel.com |
+| **Amendola Family Cigar Co.** *(REPORTÉE — 216 : dernière presse février 2023, boutique signalée fermée)* | **2017** | sans usine — **TABSA (Aganorsa)** pour le cœur, **La Zona** pour Cannoli | Jeffrey Amendola, Durham (Caroline du Nord) ; ⚠ la boutique de Durham est signalée fermée — vérifier que la marque vit | halfwheel.com, cigar-coop.com |
 
 ### République dominicaine — 5
 
@@ -81,8 +81,8 @@ porter une maison qui y roule.
 
 | maison | fondée | fabrique | ce qu'il faut savoir | sources |
 |---|---|---|---|---|
-| **Brun del Ré** | 2007 (fabrique) | **usine propre**, Escazú / San José | Carlo Corazza, Suisse installé au Costa Rica ; ≈ 15 employés, 25–30 000 cigares/mois ; nom de sa grand-mère. **La maison costaricienne la plus connue** hors Puriscal | cigarjournal.com, brundelrecigars.com |
-| **El Septimo** | **2005** (Genève) | **usine propre revendiquée** — El Septimo Cigar Factory, Costa Rica | Rachetée début **2019** par la Younan Company (Zaya Younan) ; luxe, prix élevés. ⚠ La maison dit « tabac cultivé à 9 500 pieds » — **à attribuer, pas à reprendre** | cigaraficionado.com, halfwheel.com, premiumcigars.org |
+| ~~**Brun del Ré**~~ **FAIT (216)** | 2006 ; fabrique 2007 | **usine propre**, Escazú / San José | Carlo Corazza, Suisse installé au Costa Rica ; ≈ 15 employés, 25–30 000 cigares/mois ; nom de sa grand-mère. **La maison costaricienne la plus connue** hors Puriscal | cigarjournal.com, brundelrecigars.com |
+| ~~**El Septimo**~~ **FAIT (216)** | **2005** (Genève) | **usine propre revendiquée** — El Septimo Cigar Factory, Costa Rica | Rachetée début **2019** par la Younan Company (Zaya Younan) ; luxe, prix élevés. ⚠ La maison dit « tabac cultivé à 9 500 pieds » — **à attribuer, pas à reprendre** | cigaraficionado.com, halfwheel.com, premiumcigars.org |
 | Tabacos de la Cordillera | — | Puriscal, plantations propres | Fabrique à façon avec ses champs ; **marque propre à établir** avant toute fiche | — |
 
 ---
@@ -121,8 +121,8 @@ n'ajoute aucune maison.
 | ~~**Luciano Cigars**~~ **FAIT (215)** | **Constella Group**, avril 2025 : coentreprise avec l'Empresa Madeirense de Tabacos (Açores), qui devient la maison mère ; Luciano Meirelles président de Constella USA ; Luciano Tabacos S.A. roule aussi pour **Peter James Cigars** et **Dalay Zigarren** |
 | **La Palina** | cite Graycliff ; quand Graycliff aura sa fiche, renvoi réciproque |
 | **Miami Cigar & Co.** | La Sirena, fondée en 2009 avec Nestor Miranda |
-| **Mombacho** | Patina, roulée là de 2017 à 2019 |
-| **Asylum** | vérifier qu'elle nomme NACSA |
+| **Mombacho** | Patina, roulée là de 2017 à 2019 — *la fiche Patina le dit (216) ; Mombacho, fermée, ne reçoit rien* |
+| ~~**Asylum**~~ | nomme déjà NACSA — vérifié |
 | **Villiger** | ABAM, sa fabrique dominicaine, et Havana Club |
 | **Chogüí · Fable** | leur distributeur Pospiech est aussi le propriétaire de Powstanie — renvoi quand Powstanie aura sa fiche |
 | **Arturo Fuente** | Juan Sosa, maître assembleur de la fabrique n° 4 depuis 1997, et le rachat de Sosa par A.J. Fernández |

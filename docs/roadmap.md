@@ -5406,3 +5406,40 @@ la correction.
 **Lot suivant (7)** : Nicaragua et Costa Rica — Esteban Carreras, NACSA,
 La Sirena, Patina, Powstanie, Paul Stulac, Reinado, Amendola ; Brun del Ré,
 El Septimo.
+
+---
+
+## Lot 7 — Nicaragua et Costa Rica
+
+**965 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 265
+domaines. Migration **216**. L'atlas passe à **228 maisons**.
+
+| pays | maison | chez |
+| --- | --- | --- |
+| **Nicaragua** | Esteban Carreras | usine propre — Tabacalera Carreras, Craig Cunningham |
+| | NACSA | la fabrique elle-même (1995, NATSA) — Red Dot, Villar y Villar ; roule Asylum, Mi Querida, Patina |
+| | Patina (2015) | Mombacho, puis NACSA depuis 2019 |
+| | Powstanie (2015) | Nica Sueño — les frères Szczepankewicz, Pospiech (Fable, Chogüí) |
+| | Paul Stulac (2011) | Las Villas Cigars, Guillermo Peña |
+| **Costa Rica** | Brun del Ré (2006) | usine propre, Escazú — 1787 Libertad en tabac costaricien |
+| | El Septimo (2005, Younan 2019) | usine propre revendiquée |
+
+**Trois reportées, la règle Ortega** : La Sirena (dernière presse juin
+2022), Reinado (octobre 2022, déjà dormante une fois), Amendola (février
+2023, boutique signalée fermée). Une fiche au présent sur une maison
+peut-être dormante serait la faute de Mombacho à l'envers.
+
+**Attribué sans être adopté** : les origines d'Esteban Carreras — la
+presse elle-même les dit mystérieuses, la fiche ne retient aucune date ;
+l'année 2011 de Paul Stulac vient des détaillants ; les 2 800 mètres et
+le « 100 % costaricien » d'El Septimo restent à la maison. Et **Oliva
+Tobacco Co. n'est pas Oliva Cigars** — la fiche NACSA le dit, comme la
+presse à chaque fois.
+
+Garde-fous : deux `founded` à cinquante caractères, une parole prêtée
+(« conquérir le monde ») retirée plutôt qu'exemptée, deux superlatifs
+arabes reformulés.
+
+**Lot suivant (8)** : les dominicaines — Balmoral, Don Lucas, Las Cumbres
+(si vivante), Hammer + Sickle, Cabal. Puis le **lot 5 bis** des
+requalifications.
