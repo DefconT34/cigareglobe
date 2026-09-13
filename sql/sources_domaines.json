@@ -125,6 +125,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "bottegadelfumatore.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "bovedainc.com": {
             "dns": "resout",
             "fiches": 1
@@ -191,7 +195,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 45
+            "fiches": 46
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -213,6 +217,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "cigarday.ru": {
+            "dns": "resout",
+            "fiches": 3
+        },
         "cigardojo.com": {
             "dns": "resout",
             "fiches": 9
@@ -222,6 +230,10 @@
             "fiches": 1
         },
         "cigarindonesia.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarinfo.ru": {
             "dns": "resout",
             "fiches": 1
         },
@@ -246,6 +258,10 @@
             "fiches": 2
         },
         "cigarpassion.ch": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarpro.ru": {
             "dns": "resout",
             "fiches": 1
         },
@@ -301,6 +317,10 @@
             "dns": "resout",
             "fiches": 5
         },
+        "compagniatoscanasigari.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "correiobraziliense.com.br": {
             "dns": "resout",
             "fiches": 2
@@ -318,6 +338,10 @@
             "fiches": 1
         },
         "cuencacigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "dalmoroshop.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -350,6 +374,10 @@
             "fiches": 1
         },
         "dossantossa.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "dresden-exists.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -489,6 +517,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "globenewswire.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "goafricaonline.com": {
             "dns": "resout",
             "fiches": 2
@@ -521,6 +553,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "gustotabacco.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "habanomag.com": {
             "dns": "resout",
             "fiches": 6
@@ -539,7 +575,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 75
+            "fiches": 76
         },
         "havanahouse.co.uk": {
             "dns": "resout",
@@ -550,6 +586,10 @@
             "fiches": 1
         },
         "hkclub.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hogn.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -594,6 +634,10 @@
             "fiches": 1
         },
         "illusionecigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "ilnordest.it": {
             "dns": "resout",
             "fiches": 1
         },
@@ -657,6 +701,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "koelnerleben-magazin.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "kohnhed.com": {
             "dns": "resout",
             "fiches": 1
@@ -694,6 +742,10 @@
             "fiches": 1
         },
         "lacasadelhabanoandorra.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lagalana.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -833,6 +885,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "mosi.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "myfathercigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -843,7 +899,7 @@
         },
         "neptunecigar.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "newsroompanama.com": {
             "dns": "resout",
@@ -989,6 +1045,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "rogerklaassen.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "royalgolfmarrakech.com": {
             "dns": "resout",
             "fiches": 1
@@ -1030,6 +1090,10 @@
             "fiches": 1
         },
         "sheraton.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "siglodeoro.ru": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1185,6 +1249,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "vanderdonksigaren.nl": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "vegassantiago.com": {
             "dns": "resout",
             "fiches": 1
@@ -1226,6 +1294,10 @@
             "fiches": 1
         },
         "zigarren.zone": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "zigarrenmanufaktur.com": {
             "dns": "resout",
             "fiches": 1
         },

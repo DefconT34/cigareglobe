@@ -5572,3 +5572,40 @@ depuis 2018).
 Trouvaille en passant : Noel Rojas a roulé pour une **cinquième** maison de
 l'atlas (JSK, 2015–2017) ; TACASA, la fabrique de Carlos Sánchez, entre
 dans l'atlas par Ortega.
+
+---
+
+## Quatrième recensement, et lot 10 — l'Europe roule aussi
+
+`docs/maisons-absentes-4.md` change de méthode : chercher **dans la langue du
+pays** ce que la presse anglophone ne décrit pas. Presque chaque pays testé a
+rendu un atelier réel — 27 dans 12 pays —, parce que personne ne les avait
+cherchés en allemand, en néerlandais, en russe, en indonésien.
+
+Migration **221**. **Trois pays de roulage entrent** — Allemagne, Pays-Bas,
+Russie, tous trois déjà pays d'adresses de l'atlas — et **neuf maisons** :
+**245 maisons, 25 pays**.
+
+| pays | maisons |
+| --- | --- |
+| **Allemagne** | Zigarren Manufaktur Dresden (2015, un torcedor cubain à Dresde), La Galana (Cologne, 2005, Annette Meisl formée à Cuba), Wolf & Ruhland (1909, Perlesreut, « la dernière de Bavière ») |
+| **Pays-Bas** | Van der Donk (Culemborg, 1919, « la dernière du pays », sans successeur) |
+| Italie | Compagnia Toscana Sigari (Sansepolcro, 2015), MOSI (Orsago, 2013 — STG depuis 2021) |
+| **Russie** | Siglo de Oro (Moscou, 2011, ≈ 350 000 cigares/an), Pogar (1915) |
+| Rép. dominicaine | Total Flame — russe, roulée chez La Aurora et Plasencia |
+
+**La frontière main / machine, écrite fiche par fiche** : Wolf & Ruhland et
+Van der Donk forment les rouleaux sur un appareil à pédale et posent la cape
+à la main ; MOSI et Pogar font surtout de la machine et une ligne main —
+l'atlas ne porte que la ligne main, comme pour Villiger. Chaque fiche dit ce
+partage, et dit que sa presse n'est pas anglophone.
+
+**Non écrites** : Cigares de Navarre (Navarrenx — le seul cigare cultivé et
+roulé en Europe, fermée en août 2020), Édito (activité non vérifiée),
+Weinhof Rauch et Sigarenfabriek Amsterdam (source unique).
+
+Garde-fous : du cyrillique dans un `gamme` (translittéré), un « أشهر » qui
+est le mot « mois », une parole prêtée, deux `founded` à cinquante.
+
+**Lots suivants** : 11 — Indonésie et Chine ; 12 — Zimbabwe, Afrique du Sud,
+Pérou, Colombie, Aruba.

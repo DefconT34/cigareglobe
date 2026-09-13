@@ -38,6 +38,8 @@ const PAYS_BM = [
     // Lot 6 (215) : trois pays de roulage et un producteur. Les Acores,
     // comme les Canaries, ne sont pas un pays pour la Banque mondiale.
     'bahamas'     => 'BS', 'puertorico' => 'PR', 'china' => 'CN',
+    // Lot 10 (221) : trois pays de roulage europeens.
+    'germany'     => 'DE', 'netherlands' => 'NL', 'russia' => 'RU',
 ];
 
 // Les pays dont la source elle-meme n'a plus rien de recent. Ce n'est

@@ -34,15 +34,15 @@ Trois surprises de méthode :
 
 | maison | fondée | ce qui est établi | sources |
 |---|---|---|---|
-| **Zigarren Manufaktur Dresden** | **2015** (concept 2013) | Longfiller roulés à la main à Dresde par **Lázaro Javier Herrera Cabrera**, torcedor cubain de troisième génération ; équipe fondatrice avec Katrin Lieberum ; atelier visible du public | dresden-exists.de (portrait de fondateurs, 22 mai 2015), zigarrenmanufaktur.com |
-| **La Galana** | **2005** ; boutique-salon à Ehrenfeld (Cologne) en 2009 | **Annette Meisl**, ancienne agente d'artistes, formée à Cuba par la maestra Silvia Hernández ; longfiller roulés main par des torcedoras, tabacs caribéens importés | koelnerleben-magazin.de, lagalana.de |
-| **Wolf & Ruhland** | **1909** (Munich) ; Perlesreut depuis 1917 | Fondée par Hermann Wolf et sa belle-sœur Käthe Ruhland ; **Cornelia Stix**, troisième génération, depuis 2006 ; huit femmes roulent à la main — « la dernière de Bavière ». ⚠ Tabac Virginia, cigares de style allemand : roulé main, mais à vérifier tripe entière ou hachée (Canaritos admis) | hogn.de (17 août 2016), wolf-und-ruhland.de |
+| ~~**Zigarren Manufaktur Dresden**~~ **FAIT (221)** | **2015** (concept 2013) | Longfiller roulés à la main à Dresde par **Lázaro Javier Herrera Cabrera**, torcedor cubain de troisième génération ; équipe fondatrice avec Katrin Lieberum ; atelier visible du public | dresden-exists.de (portrait de fondateurs, 22 mai 2015), zigarrenmanufaktur.com |
+| ~~**La Galana**~~ **FAIT (221)** | **2005** ; boutique-salon à Ehrenfeld (Cologne) en 2009 | **Annette Meisl**, ancienne agente d'artistes, formée à Cuba par la maestra Silvia Hernández ; longfiller roulés main par des torcedoras, tabacs caribéens importés | koelnerleben-magazin.de, lagalana.de |
+| ~~**Wolf & Ruhland**~~ **FAIT (221)** — rouleaux sur appareil à pédale, cape à la main, dit la fiche | **1909** (Munich) ; Perlesreut depuis 1917 | Fondée par Hermann Wolf et sa belle-sœur Käthe Ruhland ; **Cornelia Stix**, troisième génération, depuis 2006 ; huit femmes roulent à la main — « la dernière de Bavière ». ⚠ Tabac Virginia, cigares de style allemand : roulé main, mais à vérifier tripe entière ou hachée (Canaritos admis) | hogn.de (17 août 2016), wolf-und-ruhland.de |
 
 ### Pays-Bas — 1 (+ 1 à vérifier)
 
 | maison | fondée | ce qui est établi | sources |
 |---|---|---|---|
-| **Van der Donk** | **1919** (« Sigarenfabriek Havana », A.W. Smits) ; nom actuel années 1970 | Culemborg ; J. van der Donk reprend dans les années 1960 ; **« la dernière fabrique des Pays-Bas où l'on roule encore à la main »** ; style hollandais, cape Sumatra | rogerklaassen.com (reportage), vanderdonksigaren.nl |
+| ~~**Van der Donk**~~ **FAIT (221)** — même partage main/machine, écrit | **1919** (« Sigarenfabriek Havana », A.W. Smits) ; nom actuel années 1970 | Culemborg ; J. van der Donk reprend dans les années 1960 ; **« la dernière fabrique des Pays-Bas où l'on roule encore à la main »** ; style hollandais, cape Sumatra | rogerklaassen.com (reportage), vanderdonksigaren.nl |
 | Sigarenfabriek Amsterdam | *(à dater)* | Petit atelier, vente directe | sigarenfabriekamsterdam.nl — *source unique, à vérifier* |
 
 De Olifant (Kampen, 1832) est **machine** — déjà écarté au premier recensement.
@@ -58,8 +58,8 @@ De Olifant (Kampen, 1832) est **machine** — déjà écarté au premier recense
 
 | maison | fondée | ce qui est établi | sources |
 |---|---|---|---|
-| **Compagnia Toscana Sigari** | *(à dater)* | Cortona ; sigaraie formées par deux maîtresses de plus de trente ans de métier ; tradition toscane hors du monopole | compagniatoscanasigari.it |
-| **MOSI — Moderno Opificio del Sigaro Italiano** | *(à dater)* | Ambasciator Italico Storico : **longfiller de Kentucky italien** (Vénétie, Toscane), roulé main, feuilles écotées à la main | dalmoroshop.com, bottegadelfumatore.com |
+| ~~**Compagnia Toscana Sigari**~~ **FAIT (221)** | **2015**, Sansepolcro, Gabriele Zippilli | Cortona ; sigaraie formées par deux maîtresses de plus de trente ans de métier ; tradition toscane hors du monopole | compagniatoscanasigari.it |
+| ~~**MOSI**~~ **FAIT (221)** — seule la ligne main (Storico) est portée ; STG depuis nov. 2021 | **2013**, Orsago (Trévise), Cesare Pietrella ; production le 3 février 2014 | Ambasciator Italico Storico : **longfiller de Kentucky italien** (Vénétie, Toscane), roulé main, feuilles écotées à la main | dalmoroshop.com, bottegadelfumatore.com |
 
 ### Autriche — 1 à vérifier
 
@@ -71,9 +71,9 @@ De Olifant (Kampen, 1832) est **machine** — déjà écarté au premier recense
 
 | maison | fondée | ce qui est établi | sources |
 |---|---|---|---|
-| **Siglo de Oro** | **2011** (Moscou) | Fabrique à Moscou ; tabacs achetés en Rép. dominicaine, au Nicaragua et à Cuba, **roulés et assemblés à Moscou** ; marques Евгений Онегин, Siglo de Oro, Pelo de Oro, Hidalgo, Чортова Дюжина | cigarday.ru (31 juillet 2025) |
-| **Pogar** — Погарская фабрика | 1839 ; fabrique actuelle **1915** (Pogar, Briansk) | Cigares de machine ET roulé main — cigarpro la donne pour « le plus grand producteur de cigares roulés main de Russie » ; marques XO, Aroma Cubana, Достоевскiй. ⚠ Ne porter que le roulé main, comme Villiger | cigarday.ru, cigarpro.ru |
-| **Total Flame** | **2010** | Maxim Privezentsev, motard ; roulée chez **La Aurora** et **Plasencia** → fiche Rép. dominicaine ou Nicaragua, pas Russie | cigarday.ru |
+| ~~**Siglo de Oro**~~ **FAIT (221)** | **2011** (Moscou) — Artur Chiliaev et Andreï Ivanov ; ≈ 350 000 cigares/an | Fabrique à Moscou ; tabacs achetés en Rép. dominicaine, au Nicaragua et à Cuba, **roulés et assemblés à Moscou** ; marques Евгений Онегин, Siglo de Oro, Pelo de Oro, Hidalgo, Чортова Дюжина | cigarday.ru (31 juillet 2025) |
+| ~~**Pogar**~~ **FAIT (221)** — seule la ligne main | 1839 ; fabrique actuelle **1915** (Pogar, Briansk) | Cigares de machine ET roulé main — cigarpro la donne pour « le plus grand producteur de cigares roulés main de Russie » ; marques XO, Aroma Cubana, Достоевскiй. ⚠ Ne porter que le roulé main, comme Villiger | cigarday.ru, cigarpro.ru |
+| ~~**Total Flame**~~ **FAIT (221)** — classée Rép. dominicaine (La Aurora) | **2010** — Privezentsev et Roshchin | Maxim Privezentsev, motard ; roulée chez **La Aurora** et **Plasencia** → fiche Rép. dominicaine ou Nicaragua, pas Russie | cigarday.ru |
 | Orishas (2018), Sicario | *(fabriques non nommées)* | — | non écrites |
 
 ---
