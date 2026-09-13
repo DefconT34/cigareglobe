@@ -5609,3 +5609,30 @@ est le mot « mois », une parole prêtée, deux `founded` à cinquante.
 
 **Lots suivants** : 11 — Indonésie et Chine ; 12 — Zimbabwe, Afrique du Sud,
 Pérou, Colombie, Aruba.
+
+## Lot 11 — Java et la Chine (migration 222)
+
+**249 maisons, 25 pays** — aucun pays nouveau, deux pays étoffés.
+
+| pays | maisons |
+| --- | --- |
+| Indonésie | Rizona Baru (Temanggung, 1910, Hoo Tjong An — troisième génération), BIN Cigar (Jember, 2013, semence cubaine acclimatée), Golden Djawa (Jember, décembre 2019, marque de PTPN X et de la coopérative Kertanegara) |
+| Chine | Wangguan 王冠 (Mengcheng, Anhui — China Tobacco Anhui ; racines en 1896, fabrique d'après 1978 ; roulé main feuille entière) |
+
+**Deux fiches suisses complétées** : Villiger Söhne et Burger Söhne ont des
+fabriques à Jember — un paragraphe ajouté aux deux, dans les six langues.
+Le champ `factory` de Villiger reste à revoir (« Suisse, Allemagne,
+Nicaragua » — Java n'y est que dans l'histoire).
+
+**Sources en langue locale, dites comme telles dans chaque fiche** :
+indonésien (tribunnews, suaramerdeka, kompas, detik, tugujatim) et chinois
+(zhihu, xuejiahaomai). Une divergence de date écrite (reprise de Rizona par
+le fils : 1934 ou 1940).
+
+**Non écrites** : Taishan (roulage main non établi), Mangli Djaya Raya et
+Dwipa Nusantara (ni date ni fondateur).
+
+Garde-fous : deux `founded` à cinquante, un contrôle qui cherchait « Jember »
+en latin dans l'arabe (« جمبر »).
+
+**Lot suivant** : 12 — Zimbabwe, Afrique du Sud, Pérou, Colombie, Aruba.

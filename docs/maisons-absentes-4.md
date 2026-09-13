@@ -84,21 +84,22 @@ De Olifant (Kampen, 1832) est **machine** — déjà écarté au premier recense
 
 | maison | fondée | ce qui est établi | sources |
 |---|---|---|---|
-| **Rizona Baru** | **1910** | Temanggung (Java central) ; fondée par Hoo Tjong An ; **troisième génération, Mulyadi Hartono** ; outils traditionnels ; export Europe, États-Unis, Qatar, Chypre, Singapour | radarmagelang.jawapos.com |
-| **BIN Cigar** | **2013** | Jember ; fondée par Abdul Kahar Muzakir (†), cinquante ans de tabac ; **tabac de semence cubaine acclimaté à Jember** ; G20 2022 | umkm.kompas.com (22 nov. 2022) |
-| **Kopkar Kartanegara** — Golden Djawa | *(à dater)* | Jember ; coopérative liée à PTPN X ; marque Golden Djawa, handmade, export Europe | detik.com, kompas.com |
+| ~~**Rizona Baru**~~ **FAIT (222)** — reprise par le fils en 1934 ou 1940, les deux écrits | **1910** | Temanggung (Java central) ; fondée par Hoo Tjong An ; **troisième génération, Mulyadi Hartono** ; outils traditionnels ; export Europe, États-Unis, Qatar, Chypre, Singapour | radarmagelang.jawapos.com |
+| ~~**BIN Cigar**~~ **FAIT (222)** | **2013** | Jember ; fondée par Abdul Kahar Muzakir (†), cinquante ans de tabac ; **tabac de semence cubaine acclimaté à Jember** ; G20 2022 | umkm.kompas.com (22 nov. 2022) |
+| ~~**Kopkar Kartanegara**~~ — Golden Djawa **FAIT (222)**, fiche au nom de la marque | **Décembre 2019** (lancement de la marque, PTPN X) | Jember ; coopérative liée à PTPN X ; marque Golden Djawa, handmade, export Europe | detik.com, kompas.com |
 | **Mangli Djaya Raya** | *(à dater)* | Jember, Kaliwates | radarmagelang.jawapos.com |
 | **Dwipa Nusantara Tobacco** | *(à dater)* | Jember | radarmagelang.jawapos.com |
 
 ⚠ **Trouvaille** : Burger Söhne et Villiger Söhne ont des fabriques à Jember
-— les fiches suisses ne le disent pas.
+— les fiches suisses ne le disaient pas. **FAIT (222)** : un paragraphe ajouté
+aux deux fiches, dans les six langues.
 
 ### Chine — 2 (le monopole provincial, après Great Wall)
 
 | maison | fondée | ce qui est établi | sources |
 |---|---|---|---|
-| **Wangguan** 王冠 | *(à dater)* | Mengcheng (Anhui) ; China Tobacco Anhui ; roulé main feuille entière | xuejiahaomai.com, beijingbindao.com — *sources chinoises seulement* |
-| **Taishan** 泰山 | **1928** | Shandong ; China Tobacco Shandong ; cigarettes et cigares | idem |
+| ~~**Wangguan**~~ 王冠 **FAIT (222)** | **après 1978** (Mengcheng ; racines en 1896) | Mengcheng (Anhui) ; China Tobacco Anhui ; roulé main feuille entière | xuejiahaomai.com, beijingbindao.com — *sources chinoises seulement* |
+| **Taishan** 泰山 — *non écrite : roulage main non établi* | **1928** | Shandong ; China Tobacco Shandong ; cigarettes et cigares | idem |
 
 ---
 
@@ -127,7 +128,7 @@ De Olifant (Kampen, 1832) est **machine** — déjà écarté au premier recense
 
 | fiche | ce qui manque |
 |---|---|
-| **Villiger Söhne**, **Burger Söhne** | leurs fabriques de Jember (Indonésie) |
+| ~~**Villiger Söhne**, **Burger Söhne**~~ **FAIT (222)** | leurs fabriques de Jember (Indonésie) |
 | **Luciano** | roule pour **Dalay Zigarren** (Sarrebruck) et Peter James — dit depuis la 215 ; Dalay pourrait avoir sa fiche (Nicaragua) |
 | **La Aurora**, **Plasencia** | roulent Total Flame |
 
@@ -142,6 +143,8 @@ De Olifant (Kampen, 1832) est **machine** — déjà écarté au premier recense
 | De Olifant | machine |
 | El Guajiro (Tenerife) | mécanisé depuis les années 1960 — dit par la maison |
 | Royaume-Uni, Espagne péninsulaire, Pologne, Tchéquie | aucun atelier trouvé |
+| Taishan (Shandong) | cigarettes et cigares de machine ; roulage main non établi |
+| Mangli Djaya Raya, Dwipa Nusantara Tobacco (Jember) | pas de date, pas de fondateur, une seule source |
 
 ---
 
@@ -151,7 +154,7 @@ De Olifant (Kampen, 1832) est **machine** — déjà écarté au premier recense
    Van der Donk (Pays-Bas ouverts), Compagnia Toscana Sigari et MOSI (Italie
    étoffée), Siglo de Oro et Pogar (Russie ouverte), Total Flame (chez La
    Aurora/Plasencia). Neuf fiches, trois pays de roulage.
-2. **Lot 11 — l'Indonésie et la Chine** : Rizona Baru, BIN Cigar, Kopkar
+2. ~~**Lot 11 — l'Indonésie et la Chine**~~ **FAIT (222)** — sans Taishan : Rizona Baru, BIN Cigar, Kopkar
    Kartanegara ; Wangguan, Taishan. Et les fabriques de Jember dans les deux
    fiches suisses.
 3. **Lot 12 — Afrique et Amériques** : Mosi-oa-Tunya (Zimbabwe), Santa Bras

@@ -81,6 +81,10 @@
             "dns": "resout",
             "fiches": 4
         },
+        "baike.baidu.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "bangkok.intercontinental.com": {
             "dns": "resout",
             "fiches": 1
@@ -106,6 +110,10 @@
             "fiches": 1
         },
         "beyondthemagazine.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "bincigar.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -354,6 +362,10 @@
             "fiches": 36
         },
         "de.wikipedia.org": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "detik.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -661,6 +673,14 @@
             "dns": "resout",
             "fiches": 1
         },
+        "jatim.times.co.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "jatimtimes.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "jcnewman.com": {
             "dns": "resout",
             "fiches": 3
@@ -857,6 +877,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "merdeka.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "merivale.com": {
             "dns": "resout",
             "fiches": 1
@@ -1013,11 +1037,19 @@
             "dns": "resout",
             "fiches": 1
         },
+        "ptpn10.co.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "puertobanus.com": {
             "dns": "resout",
             "fiches": 1
         },
         "purosartesanosjulio.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "radarmagelang.jawapos.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1145,6 +1177,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "suaramerdeka.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "supreme.justia.com": {
             "dns": "resout",
             "fiches": 2
@@ -1237,9 +1273,21 @@
             "dns": "resout",
             "fiches": 1
         },
+        "tribunnews.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "tripadvisor.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "tugujatim.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "umkm.kompas.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "union-interalliee.fr": {
             "dns": "resout",
@@ -1290,6 +1338,10 @@
             "fiches": 2
         },
         "zechbauer.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "zhuanlan.zhihu.com": {
             "dns": "resout",
             "fiches": 1
         },
