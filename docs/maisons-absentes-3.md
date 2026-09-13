@@ -110,7 +110,7 @@ porter une maison qui y roule.
 | Fratello Navetta · 262 Paradigm/Allegiance · HVC Serie A/Cerro/Hot Cake · Cornelius & Anthony Meridian/Venganza/The Gent | lignes | leurs maisons | `gamme` |
 
 C'est un **lot 5 bis** : une seule migration, comme la `214`, et elle
-n'ajoute aucune maison.
+n'ajoute aucune maison. **FAIT — migration 218** (41 lignes, treize maisons ; les infusées de Drew Estate et une douzaine de noms non sourcés restent dehors).
 
 ---
 

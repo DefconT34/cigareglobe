@@ -5108,6 +5108,39 @@ foreach (['1905 — Tampa ; produit au Honduras depuis 1990',
           mb_strlen($v) < 50);
 }
 
+// ── La meme panne, sur une autre colonne, un mois plus tard ──
+//
+// CE QUI EST ARRIVE. `brands.source` etait un varchar(500). Les sources
+// ecrites depuis la migration 204 — titre d'article, date, faits
+// etablis, second article, site de la maison — font six a neuf cents
+// caracteres. MySQL les coupait a 500 SANS ERREUR : 53 fiches
+// s'arretaient au milieu d'un mot, et les CONCAT des lots suivants
+// ajoutaient a une valeur deja pleine. Drew Estate n'a jamais recu sa
+// note du lot 5 bis, et c'est un controle de la 218 — treize sources
+// devaient porter la note, douze la portaient — qui l'a montre.
+//
+// La 219 passe la colonne en TEXT et reconstruit les 53 sources. Ce
+// test verifie le TYPE, pas les valeurs : une production restee en
+// varchar(500) recouperait la prochaine source longue sans rien dire.
+{
+    try {
+        $pdoR = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
+                        . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $type = (string)$pdoR->query(
+            "SELECT DATA_TYPE FROM information_schema.COLUMNS
+              WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'brands' AND COLUMN_NAME = 'source'")
+            ->fetchColumn();
+        check('brands.source est un TEXT, pas un varchar(500) qui tronque', $type === 'text');
+        $pile = (int)$pdoR->query(
+            "SELECT COUNT(*) FROM brands WHERE CHAR_LENGTH(source) = 500 AND name <> 'ADVentura'")
+            ->fetchColumn();
+        check('brands.source : aucune valeur pile a 500 (ADVentura y est par hasard, et complete)', $pile === 0);
+    } catch (Throwable $e) {
+        check('brands.source : type verifiable', false);
+    }
+}
+
 // ── Le tiret orphelin en tete de champ ───────────────────
 //
 // L'AUTRE MANIERE D'ABIMER UN CHAMP DE DATE. `brands.founded` s'ecrit

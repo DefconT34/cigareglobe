@@ -5482,3 +5482,57 @@ le **lot 5 bis** — une soixantaine de lignes à ranger dans les gammes de
 Foundation, Dunbarton, Alec Bradley, Crowned Heads, Illusione, Southern
 Draw, Drew Estate, My Father, Tatuaje, Fratello, 262, HVC, Cornelius &
 Anthony — qui n'ajoute aucune maison et demande une recherche par ligne.
+
+---
+
+## Lot 5 bis — quarante et une lignes dans treize gammes
+
+Migration **218**. Aucune maison créée : 41 lignes entrent dans le `gamme`
+de Foundation (Tabernacle, Highclere Castle, Olmec), Dunbarton (Umbagog,
+Muestra de Saka), Alec Bradley (Black Market, Magic Toast, Project 40,
+Kintsugi), Crowned Heads (Headley Grange, Jericho Hill, Las Calaveras, La
+Imperiosa, Mil Días), Illusione (Cruzado, Rothchildes, Fume d'Amour,
+OneOff, Garagiste), Southern Draw (Quickdraw, Firethorn, Desert Rose,
+Fraternal Order), Drew Estate (Nica Rustica, Norteño), My Father (Jaime
+García RE, Flor de las Antillas, La Dueña, El Centurión), Tatuaje (Black
+Label, La Riqueza, Monster Series, Ambos Mundos), Fratello (Classico), 262
+(Allegiance), HVC (La Rosa 520, San Isidro, Cerro), Cornelius & Anthony
+(Meridian, Venganza, The Gent). Les infusées de Drew Estate ne sont pas
+ajoutées sans règle écrite ; une douzaine d'autres noms restent non
+sourcés.
+
+**Le troisième recensement est entièrement clos** : 16 fiches, 4 pays,
+46 lignes requalifiées, 8 reports motivés, 3 non écrites.
+
+---
+
+## Migration 219 — `brands.source` tronquait à 500 caractères depuis un mois
+
+**967 assertions, 0 échec.** Le contrôle de la 218 demandait que treize
+sources portent la note « lot 5 bis : » — **douze** la portaient. Drew
+Estate ne pouvait pas la recevoir : sa source faisait déjà 500 caractères,
+la capacité de `brands.source`, un **varchar(500)**.
+
+**Ce qui est arrivé** : la même panne que `moderation_log.detail` à 255,
+un mois plus tard, sur une autre colonne. Les sources écrites depuis la
+204 — titre, date, faits, second article, site — font six à neuf cents
+caractères ; MySQL les coupait sans erreur. **53 fiches** s'arrêtaient au
+milieu d'un mot, et les CONCAT des lots 5, 5 bis et des requalifications
+ajoutaient à des valeurs déjà pleines.
+
+**Ce que fait la 219** : la colonne passe en TEXT, et les 53 sources sont
+reconstruites depuis les générateurs (207–218) et les migrations écrites à
+la main (204–206), dans l'ordre où elles ont été posées puis prolongées.
+Le générateur a vérifié pour chacune que la valeur tronquée est un
+**préfixe** de la valeur reconstruite, et a refusé d'écrire sinon — aucun
+refus. Un test de campagne vérifie désormais le **type** de la colonne,
+pour qu'une production restée en varchar ne recoupe pas la prochaine.
+
+**Effet visible** : le sceau des sources passe de 268 à **299 domaines** —
+trente et un domaines cités après le 500ᵉ caractère que `sources.php` ne
+voyait pas.
+
+**Leçon** : une colonne varchar est une troncature silencieuse en
+attente. Après `founded` (50), `detail` (255) et `source` (500), la
+prochaine migration qui écrit long doit vérifier la capacité avant
+d'écrire, pas après.
