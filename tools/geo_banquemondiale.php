@@ -40,6 +40,9 @@ const PAYS_BM = [
     'bahamas'     => 'BS', 'puertorico' => 'PR', 'china' => 'CN',
     // Lot 10 (221) : trois pays de roulage europeens.
     'germany'     => 'DE', 'netherlands' => 'NL', 'russia' => 'RU',
+    // Lot 12 (223) : deux pays d'Afrique, deux d'Amerique du Sud, Aruba.
+    'zimbabwe'    => 'ZW', 'southafrica' => 'ZA', 'peru' => 'PE',
+    'colombia'    => 'CO', 'aruba' => 'AW',
 ];
 
 // Les pays dont la source elle-meme n'a plus rien de recent. Ce n'est

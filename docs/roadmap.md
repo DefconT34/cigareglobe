@@ -5636,3 +5636,47 @@ Garde-fous : deux `founded` à cinquante, un contrôle qui cherchait « Jember �
 en latin dans l'arabe (« جمبر »).
 
 **Lot suivant** : 12 — Zimbabwe, Afrique du Sud, Pérou, Colombie, Aruba.
+
+## Lot 12 — l'Afrique et les Amériques (migrations 223, 224)
+
+**255 maisons, 30 pays** — cinq pays de roulage ouverts, deux zones.
+
+| pays | maisons |
+| --- | --- |
+| **Zimbabwe** | Mosi Oa Tunya (Harare, 2019 — Shepherd Mafundikwa et Loy Veal ; des rouleuses formées par un maestro dominicain ; Burley du pays, cape importée) |
+| **Afrique du Sud** | Santa Bras (George, années 1990 — famille Snyman ; « le seul fabricant du pays », dit-elle) |
+| **Pérou** | Tabacalera del Oriente (Tarapoto — famille Lettieri ; zone **Juan Guerra**, 90 ha ; 500 000 à un million de cigares par an) |
+| **Colombie** | Corona Real (2006, Gabriel Pico), Colpuros (2009, Yorgan Correa) — zone **Piedecuesta** |
+| **Aruba** | Aruhiba (Noord, 2005 — Benjamin Petrocchi cultive, sèche et roule sur l'île) |
+
+**Les dates qui divergent sont écrites** : Mosi (mars, mai, juillet 2020),
+Tabacalera del Oriente (milieu du XXe, 1997, vers 2000), Pico (études
+achevées ou non). Les « première » et « seule » sont attribués. Les
+variétés que la presse nomme (Negro, Pelo de Oro, Criollo ; Costeña,
+Guane, Cubita) restent en prose : pas de fiche de feuille sans genèse ni
+caractères documentés.
+
+**Sources locales, dites dans chaque fiche** : presse anglophone du
+Zimbabwe et d'Afrique du Sud, presse péruvienne et colombienne en
+espagnol, sources touristiques en anglais et néerlandais pour Aruba.
+L'ancien domaine d'Aruhiba sert une boutique ukrainienne : non cité.
+
+**Non écrites** : Gran Colombia Cigars, Bribón, Puros de Colombia (pages
+inaccessibles, aucune presse).
+
+**Une troisième colonne qui coupait sans le dire (224)** :
+`producer_countries.rev_detail` et ses cinq traductions étaient des
+varchar(200) — douze pays tronqués depuis la 165 (Côte d'Ivoire,
+Mozambique, Bahamas, Açores, Chine, Allemagne, Russie et les cinq de ce
+lot). Passés en TEXT, textes réécrits entiers depuis les migrations qui
+les ont écrits, test dans `tests/run.php`. La même sonde (toute colonne
+varchar dont une valeur fait exactement sa taille) a trouvé
+`producer_geo.independent` coupé à 50 pour Aruba : raccourci, et testé.
+
+Outils : le Zimbabwe dessiné dans `flags.js` ; `ZW` dans `data.pays.js`
+(USD, comme CLDR) ; les cinq pays dans `PAYS_BM` ; `ZW`, `BS`, `MZ`, `PR`
+dans `ISO_NUM` de `coords_check` — les Bahamas, le Mozambique et Porto
+Rico passaient « hors carte » faute de code.
+
+**Le quatrième recensement est clos** : lots 10, 11, 12 — 19 maisons,
+8 pays de roulage ouverts, deux fiches suisses complétées.

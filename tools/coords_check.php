@@ -60,7 +60,7 @@ require_once __DIR__ . '/../backend/config.php';
 const CARTE     = __DIR__ . '/../assets/data/countries-110m.json';
 const TOLERANCE = 1.0;   // degrés — marge de simplification côtière
 
-/** ISO 3166-1 alpha-2 → numérique, pour les 93 codes présents en base.
+/** ISO 3166-1 alpha-2 → numérique, pour les 97 codes présents en base.
  *  Donnée de référence, pas une estimation. */
 const ISO_NUM = [
     'AD'=>20,'AE'=>784,'AL'=>8,'AM'=>51,'AR'=>32,'AT'=>40,'AU'=>36,'AW'=>533,
@@ -76,6 +76,9 @@ const ISO_NUM = [
     'PL'=>616,'PT'=>620,'PY'=>600,'QA'=>634,'RO'=>642,'RS'=>688,'RU'=>643,
     'SA'=>682,'SG'=>702,'SN'=>686,'TG'=>768,'TH'=>764,'TR'=>792,'TW'=>158,
     'TZ'=>834,'UA'=>804,'US'=>840,'VE'=>862,'VN'=>704,'ZA'=>710,
+    // Lot 12 (223) : le Zimbabwe entre ; les Bahamas, le Mozambique et
+    // Porto Rico passaient « hors carte » faute de code — ils y sont.
+    'ZW'=>716,'BS'=>44,'MZ'=>508,'PR'=>630,
 ];
 
 /** Entités dont le territoire N'EST PAS dessiné par le fond 110m, alors

@@ -228,6 +228,12 @@ var FLAGS_SPEC = {
   kenya:       {hp:[['#000000',4],['#FFFFFF',1],['#BB0000',5],['#FFFFFF',1],['#006600',4]],
                 o:[['bouclier','#BB0000','#FFFFFF',0.5,0.5,0.30]]},
   southafrica: {o:[['ySudAfricain']]},
+  // Zimbabwe : sept bandes, le triangle blanc borde de noir a la hampe,
+  // l'etoile rouge. L'oiseau de Zimbabwe qui se pose sur l'etoile n'est
+  // pas dessine — simplification assumee, comme celle du Mozambique.
+  zimbabwe:    {h:['#319208','#FFD200','#DE2010','#000000','#DE2010','#FFD200','#319208'],
+                o:[['tri','#000000',0.52],['tri','#FFFFFF',0.46],
+                   ['etoile','#DE2010',0.155,0.5,0.15,0.062]]},
   benin:       {o:[['benin']]},
   togo:        {o:[['togo']]},
   tanzania:    {o:[['tanzanie']]},
@@ -1165,7 +1171,7 @@ var FLAGS_DESSINES = [
                       'stkitts','stmartin','switz_mkt','switzerland','taiwan',
                       'tanzania','thailand','togo','turkey','uae',
                       'uae_mkt','uk','uk_mkt','ukraine','usa',
-                      'usa_mkt','venezuela','vietnam'];
+                      'usa_mkt','venezuela','vietnam','zimbabwe'];
 
 /**
  * Arrete les trois boucles et efface les canvas.

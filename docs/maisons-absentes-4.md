@@ -107,8 +107,8 @@ aux deux fiches, dans les six langues.
 
 | maison | pays | fondée | ce qui est établi | sources |
 |---|---|---|---|---|
-| **Mosi-oa-Tunya Cigars** | **Zimbabwe** | **2019** ; production juillet 2020 | Shepherd Mafundikwa (quinze ans aux États-Unis) et Loy Veal ; **première fabrique de cigares roulés main du Zimbabwe**, équipe de rouleuses ; tabac zimbabwéen | africanews.com (6 juillet 2020), mosioatunyacigars.com |
-| **Santa Bras Cigars** | **Afrique du Sud** | *(à dater)* | George (Western Cape) ; « le seul fabricant sud-africain » ; cape et sous-cape de la côte sud | santabrascigars.com |
+| ~~**Mosi-oa-Tunya Cigars**~~ **FAIT (223)** — fiche « Mosi Oa Tunya » ; mars, mai ou juillet 2020 selon le journal, les trois écrits | **Zimbabwe** | **2019** ; production juillet 2020 | Shepherd Mafundikwa (quinze ans aux États-Unis) et Loy Veal ; **première fabrique de cigares roulés main du Zimbabwe**, équipe de rouleuses ; tabac zimbabwéen | africanews.com (6 juillet 2020), mosioatunyacigars.com |
+| ~~**Santa Bras Cigars**~~ **FAIT (223)** — Jaco et Annerie Snyman ; la maison ne date que le passe-temps | **Afrique du Sud** | **Années 1990** (essais) | George (Western Cape) ; « le seul fabricant sud-africain » ; cape et sous-cape de la côte sud | santabrascigars.com |
 
 ---
 
@@ -116,11 +116,11 @@ aux deux fiches, dans les six langues.
 
 | maison | pays | fondée | ce qui est établi | sources |
 |---|---|---|---|---|
-| **Tabacalera del Oriente** | **Pérou** | milieu du XXe | Tarapoto (San Martín) ; 100 % tabac péruvien ; marques Señor de Sipán, Miguel Grau, San Martín ; 200 000 cigares et 30 t de tabac à l'export | andina.pe, agraria.pe, tdo.com.pe |
-| **Corona Real** | **Colombie** | *(> 10 ans)* | Piedecuesta (Santander) ; roulé main ; le Santander, terre de tabac historique | semana.com |
-| **Colpuros** | Colombie | *(à dater)* | Yorgan Correa ; marques Don José Correa, Mosqueteros | colpuros.com |
-| Gran Colombia Cigars, Bribón, Puros de Colombia | Colombie | *(à dater)* | — | à vérifier |
-| **Aruhiba** | **Aruba** | ~2005 (« 21 ans ») | Noord ; **tabac cultivé, séché et roulé sur l'île** ; le seul cigare arubain | tripadvisor.com, fredyt3photos.net — *presse à trouver* |
+| ~~**Tabacalera del Oriente**~~ **FAIT (223)** — famille Lettieri ; zone Juan Guerra (90 ha) | **Pérou** | milieu du XXe, **1997** ou vers 2000 — les trois écrits | Tarapoto (San Martín) ; 100 % tabac péruvien ; marques Señor de Sipán, Miguel Grau, San Martín ; 200 000 cigares et 30 t de tabac à l'export | andina.pe, agraria.pe, tdo.com.pe |
+| ~~**Corona Real**~~ **FAIT (223)** — Gabriel Pico ; zone Piedecuesta | **Colombie** | **2000** (Cigarros Chicamocha) ; **2006** | Piedecuesta (Santander) ; roulé main ; le Santander, terre de tabac historique | semana.com |
+| ~~**Colpuros**~~ **FAIT (223)** — lignée Correa de Zapatoca ; puros en Allemagne (2018) | Colombie | **5 août 2009** | Yorgan Correa ; marques Don José Correa, Mosqueteros | colpuros.com |
+| Gran Colombia Cigars, Bribón, Puros de Colombia | Colombie | *(à dater)* | — *non écrites : pages inaccessibles, aucune presse* | à vérifier |
+| ~~**Aruhiba**~~ **FAIT (223)** — Benjamin Petrocchi ; sources touristiques dites ; l'ancien domaine sert une boutique ukrainienne, non cité | **Aruba** | **2005** | Noord ; **tabac cultivé, séché et roulé sur l'île** ; le seul cigare arubain | tripadvisor.com, fredyt3photos.net — *presse à trouver* |
 
 ---
 
@@ -144,6 +144,7 @@ aux deux fiches, dans les six langues.
 | El Guajiro (Tenerife) | mécanisé depuis les années 1960 — dit par la maison |
 | Royaume-Uni, Espagne péninsulaire, Pologne, Tchéquie | aucun atelier trouvé |
 | Taishan (Shandong) | cigarettes et cigares de machine ; roulage main non établi |
+| Gran Colombia Cigars, Bribón, Puros de Colombia | pages inaccessibles, aucune presse trouvée |
 | Mangli Djaya Raya, Dwipa Nusantara Tobacco (Jember) | pas de date, pas de fondateur, une seule source |
 
 ---
@@ -157,7 +158,7 @@ aux deux fiches, dans les six langues.
 2. ~~**Lot 11 — l'Indonésie et la Chine**~~ **FAIT (222)** — sans Taishan : Rizona Baru, BIN Cigar, Kopkar
    Kartanegara ; Wangguan, Taishan. Et les fabriques de Jember dans les deux
    fiches suisses.
-3. **Lot 12 — Afrique et Amériques** : Mosi-oa-Tunya (Zimbabwe), Santa Bras
+3. ~~**Lot 12 — Afrique et Amériques**~~ **FAIT (223)** : Mosi-oa-Tunya (Zimbabwe), Santa Bras
    (Afrique du Sud), Tabacalera del Oriente (Pérou), Corona Real et Colpuros
    (Colombie), Aruhiba (Aruba). Six fiches, cinq pays.
 

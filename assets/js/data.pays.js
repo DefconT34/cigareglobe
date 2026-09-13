@@ -128,6 +128,7 @@ var PAYS_INFOS = {
   VE: ['VES', 'es',       'America/Caracas'],
   VN: ['VND', 'vi',       'Asia/Ho_Chi_Minh'],
   ZA: ['ZAR', 'en,af,zu', 'Africa/Johannesburg'],
+  ZW: ['USD', 'en,sn,nd', 'Africa/Harare'],
 };
 
 // Pays à plusieurs fuseaux : l'heure affichée est celle de la capitale

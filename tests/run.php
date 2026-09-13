@@ -5141,6 +5141,50 @@ foreach (['1905 — Tampa ; produit au Honduras depuis 1990',
     }
 }
 
+// ── Et une troisieme fois : la colonne courte qui ne dit rien ──
+//
+// CE QUI EST ARRIVE. `producer_countries.rev_detail` et ses cinq
+// traductions etaient des varchar(200), et le serveur n'est pas en
+// mode strict. Depuis la 165 (Cote d'Ivoire), DOUZE pays avaient leur
+// phrase coupee au 200e caractere — le francais et l'anglais surtout,
+// le chinois passait parce qu'il est plus court. Personne ne l'a vu
+// pendant huit lots : c'est un scellement de fraicheur qui a differe
+// (sha1 du texte rogne contre sha1 du texte coupe) qui l'a montre.
+//
+// La 224 passe les six colonnes en TEXT et reecrit les douze textes
+// entiers. Ce test verifie le TYPE, et qu'aucune valeur ne s'arrete
+// pile a 200 — sauf le francais des Bahamas, qui y tombe par hasard,
+// entier et ponctue. La meme sonde a trouve `producer_geo.independent`
+// coupe a 50 pour Aruba : les valeurs sont raccourcies, le type reste.
+{
+    try {
+        $pdoR = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
+                        . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $n = (int)$pdoR->query(
+            "SELECT COUNT(*) FROM information_schema.COLUMNS
+              WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'producer_countries'
+                AND COLUMN_NAME LIKE 'rev_detail%' AND DATA_TYPE = 'text'")
+            ->fetchColumn();
+        check('producer_countries.rev_detail et ses traductions sont des TEXT (224)', $n === 6);
+        $pile = (int)$pdoR->query(
+            "SELECT COUNT(*) FROM producer_countries
+              WHERE id <> 'bahamas'
+                AND 200 IN (CHAR_LENGTH(rev_detail), CHAR_LENGTH(rev_detail_en), CHAR_LENGTH(rev_detail_es),
+                            CHAR_LENGTH(rev_detail_de), CHAR_LENGTH(rev_detail_zh), CHAR_LENGTH(rev_detail_ar))")
+            ->fetchColumn();
+        check('rev_detail : aucune valeur pile a 200 (les Bahamas y sont par hasard, et completes)', $pile === 0);
+        $geo = (int)$pdoR->query(
+            "SELECT COUNT(*) FROM producer_geo
+              WHERE 50 IN (CHAR_LENGTH(independent), CHAR_LENGTH(independent_en), CHAR_LENGTH(independent_es),
+                           CHAR_LENGTH(independent_de), CHAR_LENGTH(independent_zh), CHAR_LENGTH(independent_ar))")
+            ->fetchColumn();
+        check('producer_geo.independent : aucune valeur pile a 50 — la colonne coupe sans le dire', $geo === 0);
+    } catch (Throwable $e) {
+        check('rev_detail : type verifiable', false);
+    }
+}
+
 // ── Le tiret orphelin en tete de champ ───────────────────
 //
 // L'AUTRE MANIERE D'ABIMER UN CHAMP DE DATE. `brands.founded` s'ecrit
