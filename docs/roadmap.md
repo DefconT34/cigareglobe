@@ -5443,3 +5443,42 @@ arabes reformulés.
 **Lot suivant (8)** : les dominicaines — Balmoral, Don Lucas, Las Cumbres
 (si vivante), Hammer + Sickle, Cabal. Puis le **lot 5 bis** des
 requalifications.
+
+---
+
+## Lot 8 — deux dominicaines, cinq requalifications, et deux cigares de machine sortis
+
+**965 assertions, 0 échec.** Tous les contrôles verts, `sources` re-figé à 268
+domaines. Migration **217**. L'atlas passe à **230 maisons**.
+
+**Deux fiches** là où le recensement en annonçait cinq :
+
+| maison | ce qui est établi |
+| --- | --- |
+| **Balmoral** | la marque premium de Royal Agio — Añejo 18 en 2014, XO en juillet 2015, fabrique de San Pedro de Macorís ; STG depuis janvier 2020, retirée des États-Unis le 1er mai 2020 (ventes, FDA), roulée depuis à General Cigar Dominicana pour l'Europe. Une marque de groupe, comme Bolívar Honduras |
+| **Don Lucas** | fabrique-boutique du complexe Mundo Auténtico, Punta Cana ; 1992 selon la maison, un 20th Anniversary vers 2017 — **les deux dates écrites**, pas tranchées |
+
+**Trois non écrites** : Hammer + Sickle — fermée par Klin Groupe en mai
+2022 ; Las Cumbres — José Blanco chez E.P. Carrillo, aucune presse depuis
+2017 ; Cabal — aucune presse du métier depuis 2015. La règle Ortega.
+
+**Cinq requalifications**, dans le `gamme` de leur maison, six langues :
+Sosa → A.J. Fernández (décembre 2016, roulée au Nicaragua depuis), Toraño →
+General Cigar (septembre 2014 — la marque réelle, là où l'atlas avait
+supprimé un « Carlos Toraño Panama » inventé), Villa Zamorano → Maya Selva,
+Havana Club → Villiger (2007, à l'ABAM), Indian Tabac → Rocky Patel.
+
+**Une faute corrigée en passant** : le `gamme` de Villiger portait deux
+cigares de **machine** — Premium No. 6 et Export — depuis avant la règle
+187. Ils sortent, en six langues ; la fiche ne porte que ce qui se roule à
+Estelí.
+
+Garde-fous : un `founded` à cinquante caractères (deux fois), un « 最终 »
+chinois reformulé, un guillemet allemand qui fermait une chaîne Python.
+
+**Le troisième recensement est clos** sur ses maisons : 16 fiches écrites
+(lots 6 à 8), 5 requalifications, 4 pays ouverts, 8 reports motivés. Reste
+le **lot 5 bis** — une soixantaine de lignes à ranger dans les gammes de
+Foundation, Dunbarton, Alec Bradley, Crowned Heads, Illusione, Southern
+Draw, Drew Estate, My Father, Tatuaje, Fratello, 262, HVC, Cornelius &
+Anthony — qui n'ajoute aucune maison et demande une recherche par ligne.

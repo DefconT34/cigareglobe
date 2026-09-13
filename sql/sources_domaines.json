@@ -107,7 +107,7 @@
         },
         "blindmanspuff.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "bocachicaabidjan.com": {
             "dns": "resout",
@@ -167,7 +167,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 29
+            "fiches": 30
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -179,7 +179,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 120
+            "fiches": 121
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -216,6 +216,10 @@
         "cigarpage.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "cigarpassion.ch": {
+            "dns": "resout",
+            "fiches": 1
         },
         "cigars-connect.com": {
             "dns": "resout",
@@ -455,7 +459,11 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 58
+            "fiches": 60
+        },
+        "havanahouse.co.uk": {
+            "dns": "resout",
+            "fiches": 1
         },
         "hilton.com": {
             "dns": "resout",
@@ -483,7 +491,7 @@
         },
         "houseofgrauer.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "humolatino.com": {
             "dns": "resout",
@@ -820,6 +828,10 @@
         "raffles.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "revuedestabacs.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "riotimesonline.com": {
             "dns": "resout",

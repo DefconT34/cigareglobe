@@ -71,11 +71,11 @@ porter une maison qui y roule.
 
 | maison | fondée | fabrique | ce qu'il faut savoir | sources |
 |---|---|---|---|---|
-| **Balmoral** (Royal Agio) | *(à dater — Añejo XO ~2015)* | **usine propre** — Royal Agio, San Pedro de Macorís | Royal Agio est néerlandaise et fait surtout du cigarillo de machine (hors périmètre) — **mais Balmoral Añejo XO est roulé main** à SPM ; STG possède Royal Agio depuis 2020. La fiche ne porte que le roulé main, comme Villiger | cigaraficionado.com, thecigarauthority.com |
-| **Don Lucas** | **1992** | **usine propre**, Punta Cana (Mundo Auténtico) | Fondée par le Belge Philippe Gillet, deux rouleurs et 150 cigares/jour au départ, 45 employés aujourd'hui ; fabrique-boutique de la côte touristique — le dire | blindmanspuff.com, cigarcountry.com |
-| **Las Cumbres Tabaco** (José Blanco, Señorial) | **février 2014** | sans usine — **Tabacalera Palma** (Jochy Blanco, son cousin) | José Blanco, ancien de La Aurora et de Joya de Nicaragua. ⚠ Il a rejoint E.P. Carrillo ensuite — **vérifier que Las Cumbres existe encore** avant d'écrire | famous-smoke.com, cigaraficionado.com |
-| **Hammer + Sickle** | *(à dater)* | sans usine — **Davidoff / TabaDom / Occidental** (Oettinger Davidoff) | Marque américaine à imagerie soviétique ; trois fabriques du même groupe | halfwheel.com, cigar-coop.com |
-| **Cabal Cigars** | *(à dater)* | sans usine — **Kelner Boutique Factory** | Chris Arolfo avec Hendrik Kelner Jr. — **quatrième marque de KBF** dans l'atlas après Casdagli, Principle et The 73 | luxurycigarclub.com, cabalcigars.com |
+| ~~**Balmoral**~~ (Royal Agio) **FAIT (217)** | Añejo 18 en 2014, XO en juillet 2015 ; STG depuis 2020, roulée à General Cigar Dominicana pour l'Europe | **usine propre** — Royal Agio, San Pedro de Macorís | Royal Agio est néerlandaise et fait surtout du cigarillo de machine (hors périmètre) — **mais Balmoral Añejo XO est roulé main** à SPM ; STG possède Royal Agio depuis 2020. La fiche ne porte que le roulé main, comme Villiger | cigaraficionado.com, thecigarauthority.com |
+| ~~**Don Lucas**~~ **FAIT (217)** | **1992** selon la maison ; un 20th Anniversary vers 2017 — les deux écrits | **usine propre**, Punta Cana (Mundo Auténtico) | Fondée par le Belge Philippe Gillet, deux rouleurs et 150 cigares/jour au départ, 45 employés aujourd'hui ; fabrique-boutique de la côte touristique — le dire | blindmanspuff.com, cigarcountry.com |
+| **Las Cumbres Tabaco** *(NON ÉCRITE — 217 : José Blanco chez E.P. Carrillo, aucune presse depuis 2017)* | **février 2014** | sans usine — **Tabacalera Palma** (Jochy Blanco, son cousin) | José Blanco, ancien de La Aurora et de Joya de Nicaragua. ⚠ Il a rejoint E.P. Carrillo ensuite — **vérifier que Las Cumbres existe encore** avant d'écrire | famous-smoke.com, cigaraficionado.com |
+| **Hammer + Sickle** *(NON ÉCRITE — 217 : fermée par Klin Groupe en mai 2022)* | 2010 | sans usine — **Davidoff / TabaDom / Occidental** (Oettinger Davidoff) | Marque américaine à imagerie soviétique ; trois fabriques du même groupe | halfwheel.com, cigar-coop.com |
+| **Cabal Cigars** *(NON ÉCRITE — 217 : aucune presse du métier depuis 2015)* | 2013 | sans usine — **Kelner Boutique Factory** | Chris Arolfo avec Hendrik Kelner Jr. — **quatrième marque de KBF** dans l'atlas après Casdagli, Principle et The 73 | luxurycigarclub.com, cabalcigars.com |
 
 ### Costa Rica — 2 (+ 1 à vérifier)
 
@@ -91,11 +91,11 @@ porter une maison qui y roule.
 
 | nom | ce qu'il est | maison (présente) | à faire |
 |---|---|---|---|
-| **Sosa** | marques rachetées par **A.J. Fernández en décembre 2016**, fabrication passée du Dominicain (Fuente) au Nicaragua | A.J. Fernández | `gamme` + prose ; renvoi Arturo Fuente (Juan Sosa y fut maître assembleur de la fabrique n° 4) |
-| **Toraño** | portefeuille racheté par **General Cigar en septembre 2014** ; la société Toraño Family Cigar a cessé | General Cigar | `gamme` + prose. ⚠ L'atlas a **supprimé Carlos Toraño Panama** (204) parce que c'était une invention — la marque Toraño, elle, est réelle et vit chez General |
-| **Villa Zamorano** | ligne de Maya Selva, Fábrica de Puros MSC à Danlí | Maya Selva Cigars | `gamme` |
-| **Havana Club** | ancienne marque cubaine relancée par Villiger en 2007, roulée à l'**ABAM**, la fabrique de Villiger en Rép. dominicaine | Villiger | `gamme` + prose (ABAM à nommer) |
-| **Indian Tabac** | la première marque de Rocky Patel (années 1990) | Rocky Patel | prose |
+| ~~**Sosa**~~ **FAIT (217)** | marques rachetées par **A.J. Fernández en décembre 2016**, fabrication passée du Dominicain (Fuente) au Nicaragua | A.J. Fernández | `gamme` + prose ; renvoi Arturo Fuente (Juan Sosa y fut maître assembleur de la fabrique n° 4) |
+| ~~**Toraño**~~ **FAIT (217)** | portefeuille racheté par **General Cigar en septembre 2014** ; la société Toraño Family Cigar a cessé | General Cigar | `gamme` + prose. ⚠ L'atlas a **supprimé Carlos Toraño Panama** (204) parce que c'était une invention — la marque Toraño, elle, est réelle et vit chez General |
+| ~~**Villa Zamorano**~~ **FAIT (217)** | ligne de Maya Selva, Fábrica de Puros MSC à Danlí | Maya Selva Cigars | `gamme` |
+| ~~**Havana Club**~~ **FAIT (217)** | ancienne marque cubaine relancée par Villiger en 2007, roulée à l'**ABAM**, la fabrique de Villiger en Rép. dominicaine | Villiger | `gamme` + prose (ABAM à nommer) |
+| ~~**Indian Tabac**~~ **FAIT (217)** | la première marque de Rocky Patel (années 1990) | Rocky Patel | prose |
 | **Ramón Bueso** (Genesis The Project) | ligne de Cigars International roulée à **Flor de Copán** | — | rien : marque de catalogue ; mais Flor de Copán peut la nommer |
 | **Nica Libre · Ave Maria · Diesel** | lignes de Cigars International chez A.J. Fernández | — | rien (Diesel est déjà nommée par la fiche Forged) |
 | Foundation : Tabernacle · Olmec · Highclere Castle · Charter Oak | lignes | Foundation Cigar Company | `gamme` |
@@ -123,9 +123,9 @@ n'ajoute aucune maison.
 | **Miami Cigar & Co.** | La Sirena, fondée en 2009 avec Nestor Miranda |
 | **Mombacho** | Patina, roulée là de 2017 à 2019 — *la fiche Patina le dit (216) ; Mombacho, fermée, ne reçoit rien* |
 | ~~**Asylum**~~ | nomme déjà NACSA — vérifié |
-| **Villiger** | ABAM, sa fabrique dominicaine, et Havana Club |
+| ~~**Villiger**~~ **FAIT (217)** | ABAM et Havana Club au `gamme` — et deux cigares de machine (Premium No. 6, Export) qui y traînaient depuis avant la règle 187, retirés |
 | **Chogüí · Fable** | leur distributeur Pospiech est aussi le propriétaire de Powstanie — renvoi quand Powstanie aura sa fiche |
-| **Arturo Fuente** | Juan Sosa, maître assembleur de la fabrique n° 4 depuis 1997, et le rachat de Sosa par A.J. Fernández |
+| **Arturo Fuente** | Juan Sosa, maître assembleur de la fabrique n° 4 depuis 1997 — *dit dans le `gamme` d'A.J. Fernández (217), pas encore dans la fiche Fuente* |
 
 ---
 
