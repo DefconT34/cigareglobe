@@ -62,12 +62,26 @@ même semence, relues :
 
 24 feuilles sur 32 sourcées.
 
+## Lot 18 (231) — l'Ancien Monde et l'Asie
+
+| feuille | ce que la fiche disait | ce que la relecture rend | source |
+|---|---|---|---|
+| **Cape du Cameroun** | des colons néerlandais, début du XXᵉ | c'est le récit des **détaillants** ; la presse du métier fait commencer l'histoire avec la **SEITA et Jean Masseron, fin des années 1950** — les deux écrits ; retrait de 1993, Meerapfel et la CETAC | CA janvier-février 1998 |
+| Tabac de La Palma | ✓ | confirmé par les sources des six maisons palmeras ; cochenille et émigrants restent l'usage | eldiario.es, diariodeavisos, humolatino |
+| **Kentucky** (Italie) | séché au feu « une quinzaine de jours » | **dix à quinze jours, bois non résineux, sans cheminée** ; les cinq régions dans l'ordre ; la légende de 1815 nommée légende par la maison — culture réécrite | it.wikipedia, manifatturesigarotoscano.it |
+| **Deli Sumatra** | « semence native, jamais importée » | **faux** : Nienhuys apporta la culture depuis Java oriental en 1863 ; Deli Maatschappij le 1ᵉʳ novembre 1869 ; main-d'œuvre chinoise de Singapour — genèse et culture réécrites | britannica, storiesfromdeli, researchgate |
+| **Besuki** | la résidence de Besuki | **George Birnie, 1859, Jenggawah** ; Landbouw Maatschappij Oud Djember ; Na Oogst vers Brême — genèse réécrite | ptmdr.co.id, journal.unnes.ac.id |
+| **Tabac natif de Cagayan** | souches « Cimaba, Viscaya, Isabela » ; La Flor de la Isabela 1885 | **Cimaba et Viscaya ne viennent de nulle part : retirées** ; le galion San Clemente de 1592, le monopole 1782-1881 ; Isabela désigne surtout un Burley aujourd'hui — genèse et caractères réécrits | philstar 2014, tabacalera.com.ph, tobaccoasia 2016 |
+| Tiébissou, Didiévi | sans caractères ni notes | confirmé, **et voulu** : rien ne documente le tabac du Bélier | lefagot.com, fr.wikipedia |
+
+**32 feuilles sur 32 sourcées.** Le sixième recensement est clos.
+
 ## Lots suivants
 
 | lot | feuilles | ce qu'il faudra vérifier |
 |---|---|---|
 | ~~**17 — les Amériques hors semence cubaine**~~ **FAIT (230)** | Connecticut Shade et Broadleaf (USA), Ecuador Connecticut / Habano / Sumatra, Mata Fina / Mata Norte / Arapiraca, Negro San Andrés, Cow Tongue | l'expérience d'ombrage de 1900 (station du Connecticut) ; les variétés d'Équateur chez Oliva et Plasencia ; l'ouragan Gilbert (1988) ; la DO du Recôncavo (2026) |
-| **18 — l'Ancien Monde et l'Asie** (8) | Cape du Cameroun, Tabac de La Palma, Kentucky, Besuki, Deli Sumatra, Tabac natif de Cagayan, Tiébissou, Didiévi | qui a apporté la semence de Sumatra au Cameroun (colons allemands ou néerlandais ?) ; Deli « semence native » à vérifier (Nienhuys, 1863) ; les souches « Cimaba, Viscaya, Isabela » des Philippines, que rien ne documente ; les deux ivoiriennes sans caractères |
+| ~~**18 — l'Ancien Monde et l'Asie**~~ **FAIT (231)** | Cape du Cameroun, Tabac de La Palma, Kentucky, Besuki, Deli Sumatra, Tabac natif de Cagayan, Tiébissou, Didiévi | qui a apporté la semence de Sumatra au Cameroun (colons allemands ou néerlandais ?) ; Deli « semence native » à vérifier (Nienhuys, 1863) ; les souches « Cimaba, Viscaya, Isabela » des Philippines, que rien ne documente ; les deux ivoiriennes sans caractères |
 
 Et les **variétés nommées sans fiche** par les recensements 4 et 5 —
 Negro, Pelo de Oro, Criollo (Pérou) ; Costeña, Guane, Cubita (Colombie) ;

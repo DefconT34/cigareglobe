@@ -5841,3 +5841,20 @@ tabac « depuis le début du XXᵉ » dit comme usage) ; Cow Tongue (« rien
 n'a redémarré depuis 1988 » était faux — Gore cultivait encore à May
 Pen en 1999 ; sol volcanique ou calcaire, les deux écrits). 24 feuilles
 sur 32 sourcées. **Lot suivant** : 18 — l'Ancien Monde et l'Asie.
+
+## Lot 18 — l'Ancien Monde et l'Asie (migration 231)
+
+Les huit dernières feuilles sourcées : **32 sur 32**. Cinq corrigées :
+Deli (« semence native jamais importée » était faux — Nienhuys apporta
+la culture depuis Java en 1863, Deli Maatschappij en 1869) ; Cagayan
+(les souches Cimaba et Viscaya ne venaient de nulle part, retirées ; le
+galion de 1592, le monopole 1782-1881) ; Cameroun (colons néerlandais
+selon les détaillants, SEITA et Masseron fin des années 1950 selon la
+presse — les deux écrits) ; Besuki (Birnie, 1859) ; Kentucky (le
+séchage au feu précisé). Les deux ivoiriennes restent sans caractères,
+et le disent.
+
+**Le sixième recensement est clos** : lots 16, 17, 18 — une colonne
+posée, 32 feuilles sourcées, 15 réécrites en tout ou partie, trois
+filiations fausses corrigées (Corojo 99, San Vicente, Deli), cinq
+divergences écrites.

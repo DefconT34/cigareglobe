@@ -179,9 +179,13 @@
         },
         "bottegadelfumatore.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "bovedainc.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "britannica.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -267,7 +271,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 151
+            "fiches": 153
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -299,7 +303,7 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 8
         },
         "cigarjournal.com": {
             "dns": "resout",
@@ -443,7 +447,7 @@
         },
         "diariodeavisos.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "diexmexico.com": {
             "dns": "resout",
@@ -495,7 +499,7 @@
         },
         "eldiario.es": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "elseptimo.com": {
             "dns": "resout",
@@ -515,7 +519,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 44
+            "fiches": 45
         },
         "enthusiastreport.com": {
             "dns": "resout",
@@ -584,6 +588,10 @@
         "fourseasons.com": {
             "dns": "resout",
             "fiches": 3
+        },
+        "fr.wikipedia.org": {
+            "dns": "resout",
+            "fiches": 2
         },
         "fratellocigar.com": {
             "dns": "resout",
@@ -667,7 +675,7 @@
         },
         "gustotabacco.it": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "habanoclub.mx": {
             "dns": "resout",
@@ -731,7 +739,7 @@
         },
         "humolatino.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "humoytabaco.com": {
             "dns": "resout",
@@ -769,11 +777,19 @@
             "dns": "resout",
             "fiches": 1
         },
+        "indonesia.travel": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "inforegion.pe": {
             "dns": "resout",
             "fiches": 1
         },
         "inyourpocket.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "it.wikipedia.org": {
             "dns": "resout",
             "fiches": 1
         },
@@ -816,6 +832,10 @@
         "jjfox.co.uk": {
             "dns": "resout",
             "fiches": 3
+        },
+        "journal.unnes.ac.id": {
+            "dns": "resout",
+            "fiches": 1
         },
         "jrcigars.com": {
             "dns": "resout",
@@ -903,7 +923,7 @@
         },
         "lapalmabiosfera.es": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "lasirenacigars.com": {
             "dns": "resout",
@@ -927,7 +947,7 @@
         },
         "lefagot.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 4
         },
         "leroyal.com": {
             "dns": "resout",
@@ -983,7 +1003,7 @@
         },
         "manifatturesigarotoscano.it": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "marinabaysands.com": {
             "dns": "resout",
@@ -1155,7 +1175,7 @@
         },
         "philstar.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "pindula.co.zw": {
             "dns": "resout",
@@ -1193,6 +1213,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "ptmdr.co.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "ptpn10.co.id": {
             "dns": "resout",
             "fiches": 1
@@ -1203,7 +1227,7 @@
         },
         "purosartesanosjulio.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "radarmagelang.jawapos.com": {
             "dns": "resout",
@@ -1222,6 +1246,10 @@
             "fiches": 2
         },
         "reinadopremiumcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "researchgate.net": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1365,6 +1393,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "storiesfromdeli.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "suaramerdeka.com": {
             "dns": "resout",
             "fiches": 1
@@ -1379,7 +1411,7 @@
         },
         "tabacalera.com.ph": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "tabacalerapalma.com": {
             "dns": "resout",
@@ -1451,7 +1483,7 @@
         },
         "tobaccoasia.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "tobaccobusiness.com": {
             "dns": "resout",
@@ -1471,7 +1503,7 @@
         },
         "tribunnews.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "tripadvisor.com": {
             "dns": "resout",
@@ -1483,7 +1515,7 @@
         },
         "umkm.kompas.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "union-interalliee.fr": {
             "dns": "resout",
