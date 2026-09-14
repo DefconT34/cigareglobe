@@ -5185,6 +5185,67 @@ foreach (['1905 — Tampa ; produit au Honduras depuis 1990',
     }
 }
 
+// ── La sonde generale : toute colonne, toute table ──────────
+//
+// QUATRE FOIS LA MEME PANNE. `brands.source` (219), `producer_countries.
+// rev_detail` (224), `producer_geo.independent` (224), `moderation_log.
+// detail` et `action` (225) : une colonne varchar, un serveur qui n'est
+// pas en mode strict, et des valeurs coupees a la taille de la colonne
+// sans qu'aucune erreur ne remonte. Les trois premiers tests ci-dessus
+// regardent chacun leur colonne ; celui-ci regarde toutes les autres,
+// pour que la cinquieme fois soit attrapee le jour meme.
+//
+// Le signe est simple et n'a jamais menti : une valeur qui fait
+// EXACTEMENT la taille de sa colonne. Un texte libre n'y tombe que par
+// hasard — deux fois en 225 migrations, Bahamas et Aladino, et les deux
+// colonnes ont ete elargies depuis. Seules les colonnes de largeur fixe
+// par construction sont exemptees, nommement : les codes de langue et
+// de pays, les empreintes.
+{
+    try {
+        $pdoR = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
+                        . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $exemptes = [
+            // table.colonne => pourquoi la valeur fait toujours la taille de la colonne
+            'audience.lang'                    => 'code de langue, deux lettres',
+            'audience.empreinte'               => 'empreinte tronquee a 12 par construction',
+            'content_translations.lang'        => 'code de langue, deux lettres',
+            'content_translations.source_hash' => 'sha1, quarante caracteres',
+            'email_tokens.token_hash'          => 'sha256, soixante-quatre caracteres',
+            'lounge_countries.iso_code'        => 'code ISO 3166-1, deux lettres',
+            'site_languages.code'              => 'code de langue, deux lettres',
+            'translation_status.lang'          => 'code de langue, deux lettres',
+            'translation_status.source_hash'   => 'sha1, quarante caracteres',
+        ];
+        $cols = $pdoR->query(
+            "SELECT TABLE_NAME t, COLUMN_NAME c, CHARACTER_MAXIMUM_LENGTH m
+               FROM information_schema.COLUMNS
+              WHERE TABLE_SCHEMA = DATABASE() AND DATA_TYPE IN ('varchar', 'char')
+              ORDER BY TABLE_NAME, ORDINAL_POSITION")->fetchAll(PDO::FETCH_ASSOC);
+        $pleines = [];
+        $vus = 0;
+        foreach ($cols as $col) {
+            if (isset($exemptes[$col['t'] . '.' . $col['c']])) continue;
+            $vus++;
+            $n = (int)$pdoR->query(sprintf(
+                'SELECT COUNT(*) FROM `%s` WHERE CHAR_LENGTH(`%s`) = %d',
+                $col['t'], $col['c'], (int)$col['m']))->fetchColumn();
+            if ($n > 0) $pleines[] = sprintf('%s.%s (%d) x%d', $col['t'], $col['c'], $col['m'], $n);
+        }
+        check('sonde varchar : ' . $vus . ' colonnes regardees, aucune valeur pile a la taille de sa colonne',
+              $pleines === [], implode(' ; ', $pleines));
+        // La liste d'exemptions ne doit pas pourrir : chaque entree nomme
+        // une colonne qui existe encore.
+        $connues = array_map(fn($c) => $c['t'] . '.' . $c['c'], $cols);
+        $mortes  = array_diff(array_keys($exemptes), $connues);
+        check('sonde varchar : les exemptions nomment des colonnes qui existent',
+              $mortes === [], implode(', ', $mortes));
+    } catch (Throwable $e) {
+        check('sonde varchar : base interrogeable', false, $e->getMessage());
+    }
+}
+
 // ── Le tiret orphelin en tete de champ ───────────────────
 //
 // L'AUTRE MANIERE D'ABIMER UN CHAMP DE DATE. `brands.founded` s'ecrit

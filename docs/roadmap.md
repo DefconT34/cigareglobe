@@ -5680,3 +5680,31 @@ Rico passaient « hors carte » faute de code.
 
 **Le quatrième recensement est clos** : lots 10, 11, 12 — 19 maisons,
 8 pays de roulage ouverts, deux fiches suisses complétées.
+
+## La sonde varchar générale (migration 225)
+
+**Quatre fois la même panne** : `brands.source` (219), `rev_detail` et
+`independent` (224), et maintenant `moderation_log.detail` (255) et
+`action` (40). Le serveur n'est pas en mode strict ; une valeur trop
+longue est coupée sans erreur.
+
+**Ce que la sonde a trouvé** en parcourant les 220 colonnes varchar de
+la base : **188 entrées de journal coupées** au 255ᵉ caractère, des
+migrations 153 à 210 — les contrôles « journal_non_tronque » n'existent
+que depuis la 214. La 225 passe `detail` en TEXT, `action` en
+varchar(100), et réécrit chaque entrée entière depuis la migration qui
+l'a écrite — reconnue par acteur, action et les 80 premiers caractères
+(pas 255 : la 186 a été relue après son passage en base). Une entrée de
+la 161 fait 255 pile, entière : exception nommée. Les entrées des 168 et
+177 manquent en base locale — l'UPDATE ne trouve rien, et c'est dit.
+`journaliser()` ne coupe plus à 255.
+
+**Le test** (`tests/run.php`, « La sonde generale ») regarde désormais
+toute colonne varchar/char de toute table, et échoue sur toute valeur
+qui fait exactement la taille de sa colonne. Neuf colonnes exemptées,
+nommément, parce que largeur fixe par construction : codes de langue,
+codes ISO, empreintes, sha1, sha256. La liste d'exemptions est elle-même
+testée (chaque entrée doit nommer une colonne qui existe).
+
+Le point 1 du point du 13 septembre est fait ; le point 2 — le
+cinquième recensement — est ouvert.

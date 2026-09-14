@@ -55,7 +55,8 @@ function journaliser(PDO $db, string $action, string $cible_type, int $cible_id,
              VALUES (?,?,?,?,?,?,?)"
         )->execute([$acteur_id, mb_substr($acteur_nom, 0, 80), $scope ?? 'systeme',
                     $action, $cible_type, $cible_id,
-                    $detail === '' ? null : mb_substr($detail, 0, 255)]);
+                    // Plus de coupe a 255 : `detail` est un TEXT depuis la 225.
+                    $detail === '' ? null : $detail]);
     } catch (Throwable $e) {
         error_log('[moderation] journal non ecrit (' . $action . ' ' . $cible_type
                   . '#' . $cible_id . ') : ' . $e->getMessage());
