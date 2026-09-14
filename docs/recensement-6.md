@@ -47,11 +47,26 @@ même semence, relues :
 | Connecticut Shade (Honduras) | ✓ | confirmé | CA 2015 |
 | Corojo (Panama), Habano (Panama) | Chiriquí, Coclé, Philippe II | Oliva et Plasencia apportent les semences cubaines en mars 1981 ; **l'interdiction de Philippe II reste l'usage**, aucune source consultée ne la date | dopanama 2025, newsroompanama 2025 |
 
+## Lot 17 (230) — les Amériques hors semence cubaine
+
+| feuille | ce que la fiche disait | ce que la relecture rend | source |
+|---|---|---|---|
+| **Connecticut Shade** (USA) | vers 1900, des toiles de gaze | le **demi-acre de Poquonock en 1900**, cinquante acres l'année suivante, **30 800 acres en 1921**, le tabac reconstitué des années 1950, 2 000 acres en 1999, moins en 2006 — genèse réécrite | CA nov.-déc. 1999, connecticuthistory.org |
+| Connecticut Broadleaf | ✓ | confirmé | CA 1999, connecticuthistory.org |
+| Ecuador Connecticut / Habano / Sumatra | ✓ | confirmés ; ASP depuis 1987, Oliva, 80 % de couverture nuageuse, exportations 2020 | CA 2015, Expreso 2022 |
+| **Mata Fina** | « 1 200 mm de pluie par an » | **le chiffre ne venait de nulle part** : retiré ; les six communes de la DO de 2026 — culture réécrite | CA 2005, bahianoticias 2026, fortenoreconcavo 2026, degustandocharutos 2012 |
+| Mata Norte | ✓ | confirmé | CA 2005, degustandocharutos 2012 |
+| **Arapiraca** | centre du tabac brésilien depuis le début du XXᵉ | c'est **l'usage**, dit comme tel ; Primo del Rey 1960-1970, maduros — genèse réécrite | CA 2005 |
+| Negro San Andrés | ✓ | confirmé ; les immigrants des années 1830 restent l'usage | CA 2009, humolatino 2023 |
+| **Cow Tongue** (Jamaïque) | « rien n'a redémarré depuis 1988 » ; plaine calcaire | **faux** : Gore cultivait encore à May Pen en 1999 ; sol **volcanique** selon la presse — les deux écrits ; culture et caractères réécrits | CA juillet-août 1999, cigardojo 2020 |
+
+24 feuilles sur 32 sourcées.
+
 ## Lots suivants
 
 | lot | feuilles | ce qu'il faudra vérifier |
 |---|---|---|
-| **17 — les Amériques hors semence cubaine** (10) | Connecticut Shade et Broadleaf (USA), Ecuador Connecticut / Habano / Sumatra, Mata Fina / Mata Norte / Arapiraca, Negro San Andrés, Cow Tongue | l'expérience d'ombrage de 1900 (station du Connecticut) ; les variétés d'Équateur chez Oliva et Plasencia ; l'ouragan Gilbert (1988) ; la DO du Recôncavo (2026) |
+| ~~**17 — les Amériques hors semence cubaine**~~ **FAIT (230)** | Connecticut Shade et Broadleaf (USA), Ecuador Connecticut / Habano / Sumatra, Mata Fina / Mata Norte / Arapiraca, Negro San Andrés, Cow Tongue | l'expérience d'ombrage de 1900 (station du Connecticut) ; les variétés d'Équateur chez Oliva et Plasencia ; l'ouragan Gilbert (1988) ; la DO du Recôncavo (2026) |
 | **18 — l'Ancien Monde et l'Asie** (8) | Cape du Cameroun, Tabac de La Palma, Kentucky, Besuki, Deli Sumatra, Tabac natif de Cagayan, Tiébissou, Didiévi | qui a apporté la semence de Sumatra au Cameroun (colons allemands ou néerlandais ?) ; Deli « semence native » à vérifier (Nienhuys, 1863) ; les souches « Cimaba, Viscaya, Isabela » des Philippines, que rien ne documente ; les deux ivoiriennes sans caractères |
 
 Et les **variétés nommées sans fiche** par les recensements 4 et 5 —

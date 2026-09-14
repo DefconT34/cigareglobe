@@ -5829,3 +5829,15 @@ Martínez et la presse du métier (1995, 1996, 2015) :
 pas. Le recensement est dans `docs/recensement-6.md` ; **lots suivants**
 : 17 — les Amériques hors semence cubaine (10 feuilles) ; 18 — l'Ancien
 Monde et l'Asie (8).
+
+## Lot 17 — les Amériques hors semence cubaine (migration 230)
+
+Dix feuilles sourcées contre la presse du métier (1999, 2005, 2009,
+2015), la Connecticut Historical Society, la presse de Bahia (2026) et
+d'Équateur (2022). **Quatre corrigées** : Connecticut Shade (le
+demi-acre de Poquonock en 1900, 30 800 acres en 1921) ; Mata Fina
+(« 1 200 mm » ne venait de nulle part, retiré) ; Arapiraca (le centre du
+tabac « depuis le début du XXᵉ » dit comme usage) ; Cow Tongue (« rien
+n'a redémarré depuis 1988 » était faux — Gore cultivait encore à May
+Pen en 1999 ; sol volcanique ou calcaire, les deux écrits). 24 feuilles
+sur 32 sourcées. **Lot suivant** : 18 — l'Ancien Monde et l'Asie.

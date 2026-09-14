@@ -113,6 +113,10 @@
             "dns": "resout",
             "fiches": 4
         },
+        "bahianoticias.com.br": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "baike.baidu.com": {
             "dns": "resout",
             "fiches": 1
@@ -263,7 +267,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 141
+            "fiches": 151
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -279,7 +283,7 @@
         },
         "cigardojo.com": {
             "dns": "resout",
-            "fiches": 9
+            "fiches": 10
         },
         "cigares.com": {
             "dns": "resout",
@@ -385,6 +389,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "connecticuthistory.org": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "correiobraziliense.com.br": {
             "dns": "resout",
             "fiches": 5
@@ -424,6 +432,10 @@
         "de.wikipedia.org": {
             "dns": "resout",
             "fiches": 1
+        },
+        "degustandocharutos.wordpress.com": {
+            "dns": "resout",
+            "fiches": 2
         },
         "detik.com": {
             "dns": "resout",
@@ -471,7 +483,7 @@
         },
         "ecured.cu": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 8
         },
         "egmcigars.com": {
             "dns": "resout",
@@ -499,7 +511,7 @@
         },
         "eluniversalqueretaro.mx": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "en.wikipedia.org": {
             "dns": "resout",
@@ -528,6 +540,10 @@
         "ethiopianairlines.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "expreso.ec": {
+            "dns": "resout",
+            "fiches": 3
         },
         "fablecigars.com": {
             "dns": "resout",
@@ -715,7 +731,7 @@
         },
         "humolatino.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "humoytabaco.com": {
             "dns": "resout",
@@ -943,7 +959,7 @@
         },
         "luxurycigarclub.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "maisondelatruffe.com": {
             "dns": "resout",
@@ -1307,7 +1323,7 @@
         },
         "smallbatchcigar.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "smokingpipes.com": {
             "dns": "resout",
@@ -1519,7 +1535,7 @@
         },
         "www.fortenoreconcavo.com.br": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 6
         },
         "ycm.org": {
             "dns": "resout",
