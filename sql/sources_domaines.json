@@ -41,6 +41,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "agris.fao.org": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "agroportal.pt": {
             "dns": "resout",
             "fiches": 1
@@ -195,7 +199,7 @@
         },
         "camachocigars.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "caocigars.com": {
             "dns": "resout",
@@ -259,7 +263,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 128
+            "fiches": 141
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -311,7 +315,7 @@
         },
         "cigarpassion.ch": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 3
         },
         "cigarpro.ru": {
             "dns": "resout",
@@ -347,7 +351,7 @@
         },
         "cigarworld.de": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "circolodellunione.it": {
             "dns": "resout",
@@ -443,7 +447,7 @@
         },
         "dopanama.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 3
         },
         "dossantossa.com": {
             "dns": "resout",
@@ -464,6 +468,10 @@
         "econodata.com.br": {
             "dns": "resout",
             "fiches": 1
+        },
+        "ecured.cu": {
+            "dns": "resout",
+            "fiches": 7
         },
         "egmcigars.com": {
             "dns": "resout",
@@ -655,7 +663,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 54
+            "fiches": 55
         },
         "hacico.de": {
             "dns": "resout",
@@ -1047,7 +1055,7 @@
         },
         "newsroompanama.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 3
         },
         "nyc.com": {
             "dns": "resout",
@@ -1190,6 +1198,10 @@
             "fiches": 2
         },
         "raffles.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "redalyc.org": {
             "dns": "resout",
             "fiches": 2
         },

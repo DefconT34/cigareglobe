@@ -5798,3 +5798,34 @@ pour sa langue.
 
 **Le cinquième recensement est clos** : lots 13, 14, 15 — 34 fiches
 relues, 9 maisons entrées, 3 zones, 27 fabriques cubaines nommées.
+
+## Sixième recensement, et lot 16 — les feuilles ont une source (migration 229)
+
+**Trente-deux feuilles écrites au premier jour, sans colonne source.**
+La doctrine « aucune fiche sans source » était vérifiable pour les caves
+et les maisons, invisible pour la table la plus exigeante de l'atlas.
+La 229 pose `feuilles.source` — TEXT d'emblée, leçon 219 —, que
+`tools/sources.php` compte, que `page.php` rend, que `schema.sql`
+porte (avec les colonnes élargies par 219, 224 et 225, qu'il ne
+portait pas encore).
+
+**La famille cubaine relue** — quatorze feuilles nées de la même
+semence, à Cuba, au Nicaragua, en République dominicaine, au Honduras
+et au Panama — contre l'encyclopédie cubaine, la station de San Juan y
+Martínez et la presse du métier (1995, 1996, 2015) :
+
+- **Corojo 99 est la sœur du Criollo 98** (même croisement Habana 92 ×
+  Habana P.R.), pas un croisement Criollo 98 × Corojo — l'atlas
+  l'écrivait sans source ; corrigé, et dit dans la fiche.
+- **San Vicente** est née à la ferme San Vicente de la Vuelta Abajo et
+  pousse dans le Cibao — pas « dans le sud dominicain ».
+- **Corojo** : une sélection des années 1930-1940 ; 1947 est l'usage.
+- **Criollo** : la plante des Taïnos (usage) et la variété de 1941
+  (station), séparées.
+- Divergences écrites : Habano 2000 (Bell 61-10 ou Habana 2.1.1),
+  Piloto Cubano (Toraño père ou Satornini).
+
+14 feuilles sur 32 sourcées ; le test exige que ce chiffre ne recule
+pas. Le recensement est dans `docs/recensement-6.md` ; **lots suivants**
+: 17 — les Amériques hors semence cubaine (10 feuilles) ; 18 — l'Ancien
+Monde et l'Asie (8).

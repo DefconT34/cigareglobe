@@ -786,6 +786,15 @@ if ($db === null) {
         $corps .= bloc_liste(L('fe_notes'),    $f['notes']    ?? null);
         $corps .= bloc_liste(L('fe_pairings'), $f['pairings'] ?? null);
 
+        // LA SOURCE, COMME POUR UNE MAISON (229). Les feuilles ont ete
+        // ecrites sans colonne source ; le sixieme recensement la leur
+        // donne, fiche par fiche. Le bloc ne s'ecrit pas tant qu'elle
+        // est vide — le trou se lit dans tools/sources.php.
+        $src = trim((string)($f['source'] ?? ''));
+        if ($src !== '') {
+            $corps .= '<p class="pg-source">' . e(L('pg_source')) . ' : ' . e($src) . '</p>';
+        }
+
         if ($f['cigares']) {
             $corps .= '<section class="pg-bloc"><h2>' . e(L('fe_cigares')) . '</h2><ul class="pg-modules">';
             foreach ($f['cigares'] as $c) {

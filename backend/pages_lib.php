@@ -367,7 +367,7 @@ function page_feuille(PDO $db, string $id, string $lang): ?array {
     foreach (['emploi', 'genese', 'culture', 'caracteres', 'notes', 'pairings'] as $c) {
         $champs[] = page_col($c, $lang, 'f') . " AS `$c`";
     }
-    $q = $db->prepare("SELECT f.id, f.name, f.country_id, " . implode(', ', $champs) . ",
+    $q = $db->prepare("SELECT f.id, f.name, f.country_id, f.source, " . implode(', ', $champs) . ",
                               COALESCE(pc.name, lc.name) AS pays_nom,
                               COALESCE(pc.flag, lc.flag) AS pays_drapeau
                          FROM feuilles `f`

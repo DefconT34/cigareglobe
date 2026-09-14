@@ -104,13 +104,24 @@ function sources_inventaire(PDO $db): array {
             }
         }
     } catch (Throwable $e) { /* colonne absente : rien a lire */ }
+    // TROISIEME TABLE DEPUIS LA 229 : les feuilles. Meme prefixe que les
+    // marques, pour la meme raison — leur cle est un slug, pas un entier.
+    try {
+        $q = $db->query("SELECT `id`, `source` FROM `feuilles`
+                          WHERE `source` IS NOT NULL AND `source` <> ''");
+        foreach ($q->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            foreach (sources_domaines_du_champ((string)$r['source']) as $d) {
+                $inv[$d][] = 'feuille:' . $r['id'];
+            }
+        }
+    } catch (Throwable $e) { /* colonne absente : rien a lire */ }
     ksort($inv);
     return $inv;
 }
 
 /** Combien de fiches portent une source, table par table. */
 function sources_couverture(PDO $db): array {
-    $out = ['lounges' => [0, 0], 'brands' => [0, 0]];
+    $out = ['lounges' => [0, 0], 'brands' => [0, 0], 'feuilles' => [0, 0]];
     $out['lounges'] = [
         (int)$db->query("SELECT COUNT(*) FROM `lounges` WHERE `source` <> ''")->fetchColumn(),
         (int)$db->query("SELECT COUNT(*) FROM `lounges`")->fetchColumn()];
@@ -120,6 +131,12 @@ function sources_couverture(PDO $db): array {
                               WHERE `source` IS NOT NULL AND `source` <> ''")->fetchColumn(),
             (int)$db->query("SELECT COUNT(*) FROM `brands`")->fetchColumn()];
     } catch (Throwable $e) { $out['brands'] = [0, 0]; }
+    try {
+        $out['feuilles'] = [
+            (int)$db->query("SELECT COUNT(*) FROM `feuilles`
+                              WHERE `source` IS NOT NULL AND `source` <> ''")->fetchColumn(),
+            (int)$db->query("SELECT COUNT(*) FROM `feuilles`")->fetchColumn()];
+    } catch (Throwable $e) { $out['feuilles'] = [0, 0]; }
     return $out;
 }
 
@@ -290,14 +307,14 @@ if (isset($opts['verifier'])) {
 // ── État ─────────────────────────────────────────────────
 $couv = sources_couverture($db);
 printf("\nSOURCES CITÉES — %d domaines, %d fiches\n", count($inv),
-       $couv['lounges'][0] + $couv['brands'][0]);
+       $couv['lounges'][0] + $couv['brands'][0] + $couv['feuilles'][0]);
 echo str_repeat('═', 62), "\n";
 // LE TROU EST UN CHIFFRE, PAS UN SILENCE. Cent cinq maisons sur 182
 // n'ont pas de source enregistree : leurs fiches ont ete ecrites avant
 // que la colonne existe, et personne n'a note d'ou elles venaient. En
 // leur fabriquer une pour faire propre serait exactement ce que cet
 // outil existe pour attraper. On affiche donc la couverture.
-foreach (['lounges' => 'caves', 'brands' => 'maisons'] as $t => $lib) {
+foreach (['lounges' => 'caves', 'brands' => 'maisons', 'feuilles' => 'feuilles'] as $t => $lib) {
     [$avec, $tout] = $couv[$t];
     if ($tout === 0) continue;
     printf("  %-8s %4d / %-4d sourcees  (%d sans source)\n",

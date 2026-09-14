@@ -5185,6 +5185,33 @@ foreach (['1905 — Tampa ; produit au Honduras depuis 1990',
     }
 }
 
+// ── Les feuilles ont une source (229) ────────────────────
+//
+// TRENTE-DEUX FEUILLES ECRITES SANS COLONNE SOURCE. La doctrine
+// « aucune fiche sans source » etait verifiable pour les caves (depuis
+// toujours) et les maisons (depuis la 195), et invisible pour la table
+// la plus exigeante de l'atlas. La 229 pose la colonne — TEXT d'emblee,
+// lecon 219 — et source la famille cubaine. Ce test verifie le TYPE,
+// que tools/sources.php la compte, et que la couverture ne recule pas :
+// le chiffre monte lot par lot, il ne doit jamais redescendre.
+{
+    try {
+        $pdoR = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME
+                        . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $type = (string)$pdoR->query(
+            "SELECT DATA_TYPE FROM information_schema.COLUMNS
+              WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'feuilles' AND COLUMN_NAME = 'source'")
+            ->fetchColumn();
+        check('feuilles.source existe, et c est un TEXT (229)', $type === 'text');
+        $n = (int)$pdoR->query(
+            "SELECT COUNT(*) FROM feuilles WHERE source IS NOT NULL AND source <> ''")->fetchColumn();
+        check('feuilles : au moins les quatorze de la famille cubaine sont sourcees', $n >= 14, (string)$n);
+    } catch (Throwable $e) {
+        check('feuilles.source : type verifiable', false, $e->getMessage());
+    }
+}
+
 // ── La sonde generale : toute colonne, toute table ──────────
 //
 // QUATRE FOIS LA MEME PANNE. `brands.source` (219), `producer_countries.
