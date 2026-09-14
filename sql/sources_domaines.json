@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-09-13",
+    "fige_le": "2026-09-14",
     "domaines": {
         "21club.com": {
             "dns": "resout",
@@ -239,7 +239,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 125
+            "fiches": 128
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -373,6 +373,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "cubancigarwebsite.com": {
+            "dns": "resout",
+            "fiches": 27
+        },
         "cubanstockcigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -455,7 +459,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 43
+            "fiches": 44
         },
         "enthusiastreport.com": {
             "dns": "resout",
@@ -818,6 +822,10 @@
             "fiches": 1
         },
         "lagalana.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lahabana.gob.cu": {
             "dns": "resout",
             "fiches": 1
         },

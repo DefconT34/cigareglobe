@@ -5708,3 +5708,40 @@ testée (chaque entrée doit nommer une colonne qui existe).
 
 Le point 1 du point du 13 septembre est fait ; le point 2 — le
 cinquième recensement — est ouvert.
+
+## Cinquième recensement, et lot 13 — les fabriques mères (migration 226)
+
+**Les 27 fiches cubaines relues** contre les 27 pages officielles de
+habanos.com (14 septembre 2026), cubancigarwebsite.com et la presse du
+métier (2011, 2016, 2019). Aucune marque absente, aucune dormante : le
+gisement était la question que l'atlas pose à toutes les autres fiches
+depuis le lot 4 — **où est-elle roulée, et par qui ?**
+
+**Ce que la relecture a trouvé** : quinze fiches sans fabrique nommée ;
+sept qui en nommaient une fausse ou périmée — Bolívar (chez Romeo y
+Julieta : basée à Partagás, dit Habanos), Trinidad (El Laguito : Pinar
+del Río, dit Habanos), Punch (H. Upmann : La Corona, dit Habanos), Hoyo,
+Quintero et Vegas Robaina (« El Rey del Mundo », une fabrique qui a cédé
+son bâtiment à Partagás en 2010 et son nom à Romeo y Julieta), Partagás
+(Industria 520 : San Carlos 806). Six dates qui divergent de la page
+officielle (El Rey del Mundo 1848/1882, Rafael González 1928/années
+1930, Saint Luis Rey, Vegueros 1996/1997, José L. Piedra, La Flor de
+Cano). Six marques en tripe courte, entière ou partielle, que les fiches
+ne disaient pas.
+
+**Ce que la 226 fait** : un paragraphe ajouté à chaque histoire, six
+langues — la politique des fabriques mères (2002), la fabrique mère
+documentée, le classement de 2019, la tripe courte, la divergence de
+date. `factory` et `source` réécrits pour les 27 ; `founded` corrigé
+pour quatre. Quatre marques dont aucune source ne nomme la mère —
+Fonseca, Juan López, Rafael González, Sancho Panza — le disent (règle
+220). Les histoires et les gammes ne bougent pas.
+
+Garde-fous : « classe parmi » pris pour une note de presse (→ « range
+dans ») ; « le plus vendu au monde », rang mondial attribué à Habanos,
+retiré quand même ; « fondée en 1889 » de La Corona lu comme la date de
+la marque (→ « née en ») ; trois `factory` à 200 pile ; un marqueur
+arabe absent de son propre texte, qui aurait fait doubler l'ajout.
+
+Le recensement est dans `docs/recensement-5.md`. **Pays suivants** :
+Brésil, Équateur, Costa Rica, Panama, Philippines, Mexique.
