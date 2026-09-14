@@ -5549,10 +5549,20 @@ require_once PROJECT_ROOT . '/backend/audience.php';
                                        OR name LIKE 'Joyas de Panam%'")->fetchColumn();
         check('panama : la maison cite une source de presse datee',
               str_contains($src, 'newsroompanama.com') && str_contains($src, '2025'));
-        // ET AUCUN NOM DE GAMME INVENTE : c est la promesse de la 205.
+        // ET AUCUN NOM DE GAMME INVENTE : c est la promesse de la 205. La
+        // gamme est restee vide jusqu a ce qu une source la nomme : le
+        // reportage de dopanama (15 septembre 2025) donne les deux marques
+        // de la fabrique, Joyas de Panama et Flor de Panama, sans vitole.
+        // La 228 ecrit ces deux-la, et rien d autre — pas de vitoles.
         $gj = (string)$appli->query("SELECT gamme FROM brands WHERE name LIKE 'Joyas de Panam%'")
                             ->fetchColumn();
-        check('panama : aucune gamme inventee pour la maison', trim($gj) === '[]');
+        $lignes = json_decode($gj, true) ?: [];
+        $noms = array_map(fn($e) => $e['name'] ?? '', $lignes);
+        sort($noms);
+        check('panama : la gamme ne porte que ce que le reportage de 2025 nomme',
+              $noms === ['Flor de Panamá', 'Joyas de Panamá'], implode(', ', $noms));
+        check('panama : aucune vitole inventee',
+              array_sum(array_map(fn($e) => count($e['vitolas'] ?? []), $lignes)) === 0);
         // Plus aucune trace de la fiche inventee, nulle part.
         $t = (int)$appli->query("SELECT COUNT(*) FROM habanos_presence
                                   WHERE country_id = 'panama'

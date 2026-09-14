@@ -97,6 +97,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "asomarte.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "atlanticcigar.com": {
             "dns": "resout",
             "fiches": 1
@@ -219,7 +223,7 @@
         },
         "casdaglicigars.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "casinomadrid.es": {
             "dns": "resout",
@@ -236,6 +240,10 @@
         "charutoso.com.br": {
             "dns": "resout",
             "fiches": 2
+        },
+        "chazarocigars.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "cigar-coop.com": {
             "dns": "resout",
@@ -421,6 +429,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "diexmexico.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "don-collins.com": {
             "dns": "resout",
             "fiches": 1
@@ -470,6 +482,14 @@
             "fiches": 1
         },
         "eltitandebronze.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "eluniversal.com.mx": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "eluniversalqueretaro.mx": {
             "dns": "resout",
             "fiches": 1
         },
@@ -625,6 +645,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "habanoclub.mx": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "habanomag.com": {
             "dns": "resout",
             "fiches": 6
@@ -683,7 +707,7 @@
         },
         "humolatino.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "humoytabaco.com": {
             "dns": "resout",
@@ -702,6 +726,10 @@
             "fiches": 1
         },
         "id.wikipedia.org": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "igmcigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1015,7 +1043,7 @@
         },
         "neptunecigar.com": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 8
         },
         "newsroompanama.com": {
             "dns": "resout",
@@ -1201,6 +1229,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "rpaxtian.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "sacher.com": {
             "dns": "resout",
             "fiches": 1
@@ -1249,6 +1281,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "shop.rpaxtian.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "siglodeoro.ru": {
             "dns": "resout",
             "fiches": 1
@@ -1259,7 +1295,7 @@
         },
         "smallbatchcigar.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "smokingpipes.com": {
             "dns": "resout",

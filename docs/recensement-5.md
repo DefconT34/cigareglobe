@@ -166,13 +166,61 @@ tient pas ; les notes du pays le disent.
 
 ---
 
+## Équateur, Costa Rica, Panama, Philippines, Mexique — lot 15 (228)
+
+### Équateur — 3 fiches de cape, aucune maison qui roule
+
+Trois ateliers à Guayaquil, décrits par un seul journal (Expreso, 2020
+et 2022) : **La Clemencia** (El Fortín ; Atiliano Castellano et Eduardo
+Jurado ; ≈3 000/mois en 2020 ; marque Guayacos), l'atelier de **Franklin
+Coello** (Equinoccial, Libertador, Rumiñahui), **Hacienda Real**
+(Geovanny León ; >20 ans en 2022 ; 5 personnes ; exporta vers la
+France, l'Allemagne, l'Espagne). Le groupe **Aray** a fermé vers 2015.
+Une source par atelier → **non écrites, nommées dans les notes du pays**.
+
+### Costa Rica — 9 → 10 fiches
+
+| maison | fondée | ce qui est établi | sources |
+|---|---|---|---|
+| ~~**IGM Cigars**~~ **FAIT (228)** | 1997 (maison) | Inversiones González Martínez, San José ; ferme à Santa Marta de Puriscal ; José González Ferrer, agronome cubain ; roule Casdagli depuis 2013 (Daughters of the Wind 2018, Cypher 3311 2022) | igmcigars.com, casdaglicigars.com — *aucune presse : la maison et sa cliente* |
+| Tabacos de la Cordillera (Puriscal) | — | domaine mort, aucune presse | **non écrite** |
+
+Le pays disait « un seul acteur » avec dix fiches : `tabacaleras`
+réécrit (Tabacos de Costa Rica, IGM, Brun del Ré, Selected Tobacco, El
+Septimo revendiquée).
+
+### Panama — 1 fiche, à jour
+
+Joyas de Panamá portait déjà la réouverture sous Braulio Zurita (2025).
+Ajouté : la gamme, vide (Joyas de Panamá, **Flor de Panamá**), et le
+reportage de dopanama (15 sept. 2025) ; les deux fabriques de 1981 et
+1984 marquées **fermées** dans `tabacaleras`.
+
+### Philippines — 4 fiches, rien de plus
+
+Rien trouvé au-delà des quatre (Mighty est de la machine). Tabaqueria
+de Filipinas reçoit les chiffres de la presse asiatique de 2016 : plus
+de 200 personnes, 15 000 cigares/jour, marques Antonio Gimenez,
+Independencia 1898, Flor de Filipinas.
+
+### Mexique — 6 → 8 fiches, une zone hors de Veracruz
+
+| maison | fondée | ce qui est établi | sources |
+|---|---|---|---|
+| ~~**Tabacalera R. Paxtián**~~ **FAIT (228)** | 1990 ; planteurs dès 1910 | Sihuapan (San Andrés Tuxtla) ; Don Juan Rodríguez López (1910, 7 ha), Víctor (300 ha), Paco (ingénieur 1994, les marques) ; Del Paraíso 1994, Privilegios, R. Paxtián, TabaRicos | humolatino (14 nov. 2023), rpaxtian.com, diexmexico |
+| ~~**Cházaro**~~ **FAIT (228)** | 2015 ou 2016 — écrits | Real Fábrica de Tabacos, **Ezequiel Montes (Querétaro)** — zone 55 ; Don Toño de San Andrés ; 15 000/mois (2018) ou 15 personnes et ≈300/jour (2022) — écrits | eluniversalqueretaro (20 sept. 2018), eluniversal (11 sept. 2022) |
+| Santa Clara | — | 60 personnes, ≥2 500/jour (Diario de Xalapa, 28 oct. 2023 — corps inaccessible, résumé seulement) | dans les notes du pays |
+| Don Chicho (San Andrés) | — | une mention | **non écrite** |
+
+---
+
 ## Les pays suivants
 
 | pays | fiches | ce qu'on n'a pas regardé |
 |---|---|---|
 | ~~Brésil~~ **FAIT (227)** | 5 → 9 | quatre maisons de Bahia ; rien hors de Bahia |
-| Équateur | 3 | hors Quevedo — un pays de cape, qui roule aussi |
-| Costa Rica | 9 | les ateliers hors Vega et Tabacos de la Cordillera |
-| Panama | 1 | Joya de Panamá n'est pas seule |
-| Philippines | 4 | au-delà de Tabacalera Incorporada |
-| Mexique | 6 | San Andrés hors Turrent |
+| ~~Équateur~~ **FAIT (228)** | 3 | trois ateliers de Guayaquil nommés, une source chacun |
+| ~~Costa Rica~~ **FAIT (228)** | 9 → 10 | IGM Cigars ; Tabacos de la Cordillera morte |
+| ~~Panama~~ **FAIT (228)** | 1 | elle est seule : les deux autres ont fermé |
+| ~~Philippines~~ **FAIT (228)** | 4 | rien au-delà des quatre |
+| ~~Mexique~~ **FAIT (228)** | 6 → 8 | R. Paxtián ; Cházaro, hors de Veracruz |

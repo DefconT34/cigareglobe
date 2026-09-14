@@ -5770,3 +5770,31 @@ Garde-fous : deux `founded` à 50 ; un « أشهر » (mois) ; le domaine
 `www.`, qui résout.
 
 **Pays suivants** : Équateur, Costa Rica, Panama, Philippines, Mexique.
+
+## Lot 15 — cinq vitrines relues (migration 228)
+
+**262 maisons, 30 pays, 51 zones.** Équateur, Costa Rica, Panama,
+Philippines, Mexique relus dans la presse en espagnol et la presse
+asiatique du tabac. Trois maisons entrent :
+
+| maison | ce qui est établi |
+| --- | --- |
+| **IGM Cigars** (San José, Costa Rica) | 1997 selon la maison ; la fabrique boutique que l'atlas nommait déjà comme fabrique de Casdagli sans lui donner de fiche — la maison et sa cliente parlent, aucune presse, et la fiche le dit |
+| **Tabacalera R. Paxtián** (Sihuapan, San Andrés Tuxtla) | 1990 ; quatre générations de planteurs depuis 1910 ; Del Paraíso 1994 |
+| **Cházaro** (Ezequiel Montes, Querétaro) | 2015 ou 2016 — écrits ; première maison mexicaine hors de Veracruz ; zone 55 |
+
+**Ce qui n'est pas écrit est dit** dans les notes des pays : les trois
+ateliers de Guayaquil (une source chacun), Tabacos de la Cordillera
+(domaine mort), Don Chicho (une mention), rien aux Philippines au-delà
+des quatre fiches. Tabaqueria de Filipinas reçoit les chiffres de 2016 ;
+Joyas de Panamá sa gamme (Flor de Panamá) ; le Costa Rica cesse de dire
+« un seul acteur » avec dix fiches ; les fabriques fermées du Panama
+sont marquées fermées.
+
+Garde-fous : trois `founded` et un `factory` trop longs ; « marque
+créée en 2016 » lu comme la date de la fiche ; un domaine mort
+(`tuxtlas.travel`) retiré ; une gamme chinoise deux fois trop longue
+pour sa langue.
+
+**Le cinquième recensement est clos** : lots 13, 14, 15 — 34 fiches
+relues, 9 maisons entrées, 3 zones, 27 fabriques cubaines nommées.
