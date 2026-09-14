@@ -122,11 +122,55 @@ la catégorie de 2019, la tripe courte quand elle s'applique, et la
 divergence de date quand il y en a une ; `source` réécrit entier.
 `founded` corrigé pour El Rey del Mundo et José L. Piedra.
 
+## Brésil — 5 fiches, ce que la relecture rend
+
+Source primaire en portugais : la presse de Bahia et de Brasília, le site
+de l'Apcab par la presse régionale, les détaillants pour les gammes. Ce
+que l'atlas portait : Dannemann et Menendez Amerino en activité,
+Suerdieck fermée, Arturo Fuente Maduro en fiche de cape. **Bahia compte
+une dizaine de fabriques.**
+
+### 1. Quatre maisons entrent
+
+| maison | ville | fondée | ce qui est établi | sources |
+|---|---|---|---|---|
+| ~~**Leite & Alves**~~ **FAIT (227)** | Cachoeira | 1854 ou 1881 à Niterói ; Cachoeira **1936** | Talvis, Le Cigar, Leite & Alves ; tripe longue ; musée du tabac dans la fabrique | vilacharutaria, pt.wikibooks, correiobraziliense (2017), charutoso (2020), festivalorigens, Valor (2012) |
+| ~~**Monte Pascoal**~~ **FAIT (227)** | Cruz das Almas | **2007**, Lorenzo Orsi | Tabacos Mata Fina ; cent pour cent brésilien, Mata Fina et Mata Norte ; six vitoles ; Orsi président de l'Apcab | charutoso (9 avril 2024), vilacharutaria, www.fortenoreconcavo (23 juillet 2026) |
+| ~~**JAMM Cigar**~~ **FAIT (227)** | Alagoinhas | **2020** ; production 2021 | ferme FEANBE (2016), fabrique en bord de BR-110 ; ≈100 personnes (2022) ; 4 500 cigares/jour dont 2 500 tripe longue (2024) | maisriodejaneiro (nov. 2022), ronaldojacobina (9 oct. 2024), www.fortenoreconcavo (2026) |
+| ~~**Chaba**~~ **FAIT (227)** — état dit | Alagoinhas | **1998**, Fernando Fraga (ex-Suerdieck) | 80 personnes, Anvisa 2010, réouverture 2011 à 25 ; registre actif 2026, **aucune presse depuis 2012** | Valor via abras (28 août 2012), econodata, correiobraziliense (2017) |
+
+### 2. Deux fiches complétées, une divergence
+
+- **Menendez Amerino** : 1977 (atlas, maison) ou **1978** (reportage
+  de 2017) — écrit ; les chiffres de 2012 (1 500 cigares/jour contre
+  15 000 fin 1990 ; 70 employés, 90 % de femmes ; 400 autrefois) ;
+  José Henrique Barreto vice-président de l'Apcab (2026).
+- **Dannemann** : 20 personnes au Centro en 2012 ; bâtiment de 1892 ;
+  le premier revenu du groupe à Bahia vient de Danco (feuilles).
+
+### 3. Ce que le recensement n'a pas trouvé
+
+**Aucun atelier de roulage main hors de Bahia** — ni Rio Grande do Sul,
+ni São Paulo (dont les fabriques de São Bernardo ont fermé dans les
+années 1910), ni Minas. La piste « le Sud » du point du 13 septembre ne
+tient pas ; les notes du pays le disent.
+
+### 4. Non écrites
+
+| nom | raison |
+|---|---|
+| San Francisco Charutos (Cruz das Almas) | une source, 2012, sept personnes |
+| Josefina (2001), Angelina, Julien Bahia, Paraguaçu (Cachoeira) | des noms dans des listes, rien d'autre |
+
+**Zones** : Cachoeira et São Félix (53), Alagoinhas (54).
+
+---
+
 ## Les pays suivants
 
 | pays | fiches | ce qu'on n'a pas regardé |
 |---|---|---|
-| Brésil | 5 | le Sud (Rio Grande do Sul), São Paulo, les maisons hors Recôncavo |
+| ~~Brésil~~ **FAIT (227)** | 5 → 9 | quatre maisons de Bahia ; rien hors de Bahia |
 | Équateur | 3 | hors Quevedo — un pays de cape, qui roule aussi |
 | Costa Rica | 9 | les ateliers hors Vega et Tabacos de la Cordillera |
 | Panama | 1 | Joya de Panamá n'est pas seule |

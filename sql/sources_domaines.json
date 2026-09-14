@@ -21,6 +21,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "abras.com.br": {
+            "dns": "resout",
+            "fiches": 4
+        },
         "adriaticluxuryhotels.com": {
             "dns": "resout",
             "fiches": 1
@@ -149,6 +153,10 @@
             "dns": "resout",
             "fiches": 3
         },
+        "blog.festivalorigens.com.br": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "bocachicaabidjan.com": {
             "dns": "resout",
             "fiches": 1
@@ -224,6 +232,10 @@
         "cgars.co.uk": {
             "dns": "resout",
             "fiches": 3
+        },
+        "charutoso.com.br": {
+            "dns": "resout",
+            "fiches": 2
         },
         "cigar-coop.com": {
             "dns": "resout",
@@ -363,7 +375,7 @@
         },
         "correiobraziliense.com.br": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 5
         },
         "crownedheads.com": {
             "dns": "resout",
@@ -434,6 +446,10 @@
             "fiches": 3
         },
         "dunbartoncigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "econodata.com.br": {
             "dns": "resout",
             "fiches": 1
         },
@@ -897,6 +913,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "maisriodejaneiro.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "mamillahotel.com": {
             "dns": "resout",
             "fiches": 1
@@ -1113,6 +1133,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "pt.wikibooks.org": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "pt.wikipedia.org": {
             "dns": "resout",
             "fiches": 1
@@ -1145,6 +1169,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "revistadeguste.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "revuedestabacs.com": {
             "dns": "resout",
             "fiches": 1
@@ -1158,6 +1186,10 @@
             "fiches": 1
         },
         "rogerklaassen.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "ronaldojacobina.com.br": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1409,6 +1441,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "vilacharutaria.com.br": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "villigercigars.com": {
             "dns": "resout",
             "fiches": 2
@@ -1432,6 +1468,10 @@
         "wina-mp.pl": {
             "dns": "resout",
             "fiches": 1
+        },
+        "www.fortenoreconcavo.com.br": {
+            "dns": "resout",
+            "fiches": 4
         },
         "ycm.org": {
             "dns": "resout",

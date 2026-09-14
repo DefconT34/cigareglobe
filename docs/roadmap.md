@@ -5745,3 +5745,28 @@ arabe absent de son propre texte, qui aurait fait doubler l'ajout.
 
 Le recensement est dans `docs/recensement-5.md`. **Pays suivants** :
 Brésil, Équateur, Costa Rica, Panama, Philippines, Mexique.
+
+## Lot 14 — le Recôncavo au complet (migration 227)
+
+**259 maisons, 30 pays, 50 zones.** Le Brésil relu dans la presse en
+portugais : Bahia compte une dizaine de fabriques, l'atlas en portait
+deux en activité.
+
+| maison | ce qui est établi |
+| --- | --- |
+| **Leite & Alves** (Cachoeira) | 1854 ou 1881 à Niterói — écrits —, Cachoeira depuis 1936 ; Talvis, Le Cigar ; musée du tabac |
+| **Monte Pascoal** (Cruz das Almas) | Tabacos Mata Fina, 2007, Lorenzo Orsi — président de l'Apcab, qui portait en juillet 2026 une dénomination d'origine à l'INPI |
+| **JAMM Cigar** (Alagoinhas) | 2020 ; 4 500 cigares par jour en 2024 dont 2 500 en tripe longue ; Mata Fina et semence cubaine plantée au Brésil |
+| **Chaba** (Alagoinhas) | 1998, Fernando Fraga, héritière de marques Suerdieck ; aucune presse depuis 2012, registre actif — **état dit** (règle Ortega) |
+
+Deux zones (Cachoeira et São Félix, Alagoinhas), deux fiches complétées
+(Menendez Amerino 1977/1978 et les chiffres de 2012 ; Dannemann), les
+notes du pays qui disent ce que le recensement n'a **pas** trouvé :
+aucun atelier hors de Bahia. Le `founded` de José L. Piedra, illisible
+sous le gabarit « Fondée en », est repris ici.
+
+Garde-fous : deux `founded` à 50 ; un « أشهر » (mois) ; le domaine
+`fortenoreconcavo.com.br` sans enregistrement A à l'apex — cité en
+`www.`, qui résout.
+
+**Pays suivants** : Équateur, Costa Rica, Panama, Philippines, Mexique.
