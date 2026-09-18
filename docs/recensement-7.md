@@ -242,3 +242,42 @@ Davidoff), Davidoff of Geneva Sydney, Bruxelles Sablon et Bucarest,
 La Casa del Habano de Montreux et d'Andorre — des lieux que les
 annuaires portent et que l'atlas n'a pas.
 
+## Lot 21 — les douze adresses que les annuaires portent (migration 235)
+
+*18 septembre 2026.* Les pistes du lot 20, cherchées une à une par un
+`expert-cigare` (site propre, presse datée, 89 lectures) : douze
+entrent, avec leurs divergences écrites.
+
+| | fiches | source primaire |
+|---|---|---|
+| Casas del Habano suisses absentes de l'atlas | 5 | Genève rue de Hesse (inaugurée les 10-11 octobre 2025 ; deux adresses et deux horaires selon la source), Montreux (Fairmont, mars 2026 — 19 selon le réseau, 20 selon son site), Zoug (3 février 2024), Samnaun (janvier 2024, deux téléphones), Kreuzlingen (27 juin 2026) — leur site et la presse du métier |
+| Casa d'Andorre | 1 | les deux annuaires du réseau, rien d'autre — dit comme tel |
+| boutiques en propre Davidoff of Geneva | 4 | Sydney (2025, première du pays selon Cigar Journal, horaires de la galerie), Bruxelles Sablon (aussi point de vente Habanos), Bucarest Athénée Palace (une seule liste, dit comme tel ; même adresse que la Casa de l'hôtel, fiche 76), Bucarest Băneasa (le centre commercial la liste, horaires) |
+| caves Zino à Abidjan | 2 | zino.ci (horaires, téléphones), KOACI 11 décembre 2020, localisateur Davidoff — qui écrit la seconde boulevard Roume, une adresse du Plateau : le site de la maison fait foi pour la rue des Jardins |
+
+345 → **357 fiches publiables**. Zino publie trois autres caves (Cosmos,
+Sofitel, Plateau) sans rue : elles attendent une adresse.
+
+## La relecture des traductions — le chantier suivant (migration 234, outil)
+
+9 220 traductions, toutes « machine », aucune jamais relue. Le chantier
+commence, mené par `expert-traduction`, lot par lot, une langue à la
+fois, l'anglais d'abord (orthographe britannique fixée comme norme) :
+
+- `tools/i18n_relecture.php --exporter` sort un lot (français,
+  traduction en place, empreinte du français) ; `--importer` transforme
+  les verdicts du relecteur en migration — textes corrigés réécrits,
+  statut `relu` pour tout ce qui a été relu, et le **nom du relecteur**
+  dans une colonne nouvelle, `translation_status.relecteur` (234) : le
+  statut seul aurait tu que c'est un agent qui relit. Un verdict dont le
+  français a bougé depuis l'export est refusé ; superlatifs zh/ar et
+  cyrillique aussi.
+- Cliquet `sql/i18n_relues.json` (`--figer`) : les relues ne reculent
+  pas, et aucune relecture n'est sans nom — dans la campagne de tests.
+
+Premier lot en cours : l'anglais des pays producteurs (167 textes), des
+zones, de la présence Habanos, des marchés, du lexique et des arômes
+(203), et des feuilles (186) — 556 textes, six agents par moitiés
+(la limite de session tue les agents en vol ; les fichiers de verdicts
+sont écrits dès que prêts).
+

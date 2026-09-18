@@ -2203,8 +2203,26 @@ section('Aucune traduction ne decrit un francais perime');
         $code = proc_close($proc);
         if ($code !== 0) echo "\n" . $sortie . "\n";
         eq('traductions : aucune perimee, aucune manquante, aucune non scellee', 0, $code);
+        // QUI A RELU (migration 234). Le statut « relu » ne vaut que signe
+        // par un relecteur — l'agent expert-traduction, ou un nom. Une
+        // relecture sans nom est une relecture que personne n'assume.
+        check('traductions : aucune relecture sans relecteur', !str_contains($sortie, 'sans relecteur'));
     } else {
         check('traductions : controle de fraicheur lancable', false);
+    }
+    // Et le cliquet : le nombre de traductions relues ne recule pas. Il
+    // est mesure sur la base de developpement, la ou les 9 220 vivent.
+    try {
+        $pdoT = new PDO('mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=utf8mb4', DB_USER, DB_PASS,
+                        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $relues = (int)$pdoT->query("SELECT COUNT(*) FROM translation_status WHERE statut = 'relu'")->fetchColumn();
+        $sceau = PROJECT_ROOT . '/sql/i18n_relues.json';
+        $attendu = is_file($sceau) ? (int)(json_decode((string)file_get_contents($sceau), true)['relues'] ?? 0) : 0;
+        check('traductions : les relues ne reculent pas (' . $relues . ' >= ' . $attendu . ')', $relues >= $attendu);
+        $sansNom = (int)$pdoT->query("SELECT COUNT(*) FROM translation_status WHERE statut = 'relu' AND (relecteur IS NULL OR relecteur = '')")->fetchColumn();
+        eq('traductions : chaque relue porte son relecteur', 0, $sansNom);
+    } catch (Throwable $e) {
+        check('traductions : base de developpement lisible', false, $e->getMessage());
     }
 }
 

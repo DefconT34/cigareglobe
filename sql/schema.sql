@@ -887,7 +887,8 @@ CREATE TABLE `translation_status` (
   `champ` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'colonne source, sans suffixe',
   `lang` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
   `source_hash` char(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 du français traduit',
-  `statut` enum('machine','relu') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'machine' COMMENT 'relu = vérifié par un humain',
+  `statut` enum('machine','relu') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'machine' COMMENT 'relu = vérifié par un relecteur nommé',
+  `relecteur` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'qui a relu : l agent expert-traduction, ou un nom',
   `maj` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`entite`,`entite_id`,`champ`,`lang`),
   KEY `idx_statut` (`statut`)

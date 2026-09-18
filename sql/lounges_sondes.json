@@ -99,10 +99,10 @@
         },
         "951": {
             "site": "https://azadihotel.com/",
-            "code": 301,
+            "code": 200,
             "final": "www.azadihotel.com",
-            "verdict": "refuse",
-            "detail": "301",
+            "verdict": "ok",
+            "detail": "200",
             "date": "2026-09-18"
         },
         "1107": {
@@ -134,7 +134,7 @@
             "code": null,
             "final": "www.marinabaysands.com",
             "verdict": "refuse",
-            "detail": "Operation timed out after 15002 milliseconds with 0 bytes received",
+            "detail": "Operation timed out after 15007 milliseconds with 0 bytes received",
             "date": "2026-09-18"
         },
         "2546": {
@@ -229,6 +229,70 @@
             "site": "https://www.lacavadelpuro.com/",
             "code": 200,
             "final": "www.lacavadelpuro.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2568": {
+            "site": "https://www.la-casa-del-habano-montreux.com/",
+            "code": 200,
+            "final": "www.la-casa-del-habano-montreux.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2569": {
+            "site": "https://www.lacasadelhabano-geneve.com/",
+            "code": 200,
+            "final": "lacasadelhabano-geneve.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2570": {
+            "site": "https://www.siglomundo.ch/",
+            "code": 200,
+            "final": "siglomundo.ch",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2571": {
+            "site": "https://www.lcdh-samnaun.ch/",
+            "code": 200,
+            "final": "lcdh-samnaun.ch",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2572": {
+            "site": "https://www.lacasadelhabanokreuzlingen.ch/",
+            "code": 200,
+            "final": "lacasadelhabanokreuzlingen.ch",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2576": {
+            "site": "http://www.trabucul.ro/",
+            "code": 200,
+            "final": "www.trabucul.ro",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2578": {
+            "site": "https://zino.ci/",
+            "code": 200,
+            "final": "zino.ci",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2579": {
+            "site": "https://zino.ci/",
+            "code": 200,
+            "final": "zino.ci",
             "verdict": "ok",
             "detail": "200",
             "date": "2026-09-18"

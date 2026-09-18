@@ -5916,3 +5916,23 @@ deux listes officielles, jamais sur une.** 359 → 345 publiables. Pistes :
 Zino Cigares Abidjan, Davidoff Sydney / Sablon / Bucarest, Casas de
 Montreux et d'Andorre.
 
+## Lot 21 — les douze adresses que les annuaires portent (migration 235)
+
+Vérifiées une à une par `expert-cigare` : cinq Casas del Habano suisses
+(Genève rue de Hesse, Montreux, Zoug, Samnaun, Kreuzlingen), la Casa
+d'Andorre, quatre boutiques en propre Davidoff of Geneva (Sydney,
+Bruxelles Sablon, Bucarest ×2), deux caves Zino à Abidjan — chacune
+avec son site ou une presse de moins de trois ans, les divergences
+écrites. 345 → 357 publiables. Restent : trois caves Zino sans rue
+(Cosmos, Sofitel, Plateau).
+
+## La relecture des traductions (migration 234, `tools/i18n_relecture.php`)
+
+Chantier ouvert : 9 220 traductions « machine », relues lot par lot par
+`expert-traduction`, anglais d'abord, orthographe britannique. Colonne
+`translation_status.relecteur` (qui a relu), cliquet
+`sql/i18n_relues.json`, tests : aucune relecture sans nom, les relues
+ne reculent pas. Chaque lot = une migration (`--importer`). Premier lot
+(556 textes anglais : pays, zones, présence Habanos, marchés, lexique,
+arômes, feuilles) en cours d'agents.
+

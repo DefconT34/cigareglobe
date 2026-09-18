@@ -141,6 +141,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "baneasa.ro": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "bangkok.intercontinental.com": {
             "dns": "resout",
             "fiches": 1
@@ -291,7 +295,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 153
+            "fiches": 154
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -327,7 +331,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 64
+            "fiches": 67
         },
         "cigarlifeguy.com": {
             "dns": "resout",
@@ -455,7 +459,7 @@
         },
         "davidoff.com": {
             "dns": "resout",
-            "fiches": 39
+            "fiches": 45
         },
         "davidoffcigarbarlv.com": {
             "dns": "resout",
@@ -727,11 +731,11 @@
         },
         "habanomag.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 171
+            "fiches": 178
         },
         "hacico.de": {
             "dns": "resout",
@@ -921,6 +925,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "koaci.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "koelnerleben-magazin.de": {
             "dns": "resout",
             "fiches": 1
@@ -934,6 +942,10 @@
             "fiches": 1
         },
         "kupi.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "la-casa-del-habano-montreux.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -953,15 +965,23 @@
             "dns": "resout",
             "fiches": 2
         },
+        "lacasadelhabano-geneve.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "lacasadelhabano.com": {
             "dns": "resout",
-            "fiches": 101
+            "fiches": 104
         },
         "lacasadelhabano.kn": {
             "dns": "resout",
             "fiches": 1
         },
         "lacasadelhabanoandorra.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lacasadelhabanokreuzlingen.ch": {
             "dns": "resout",
             "fiches": 1
         },
@@ -990,6 +1010,10 @@
             "fiches": 2
         },
         "lasirenacigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lcdh-samnaun.ch": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1421,6 +1445,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "siglomundo.ch": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "sindicatocigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -1470,6 +1498,10 @@
             "fiches": 1
         },
         "storiesfromdeli.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "strandarcade.com.au": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1585,6 +1617,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "trabucul.ro": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "tribunnews.com": {
             "dns": "resout",
             "fiches": 2
@@ -1671,7 +1707,7 @@
         },
         "zigarren.zone": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "zigarrenmanufaktur.com": {
             "dns": "resout",
@@ -1684,6 +1720,10 @@
         "zimbabwenow.co.zw": {
             "dns": "resout",
             "fiches": 1
+        },
+        "zino.ci": {
+            "dns": "resout",
+            "fiches": 2
         },
         "zirahotel.com": {
             "dns": "resout",

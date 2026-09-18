@@ -49,11 +49,13 @@ fait », vérifier les pages en production avec curl.
   `markets`, lexique, arômes. Le français est la source ; les cinq
   traductions sont des colonnes suffixées (`_en` … `_ar`) **scellées** dans
   `translation_status` (`source_hash = SHA1(colonne française)`, statut
-  `machine` ; `relu` seulement par un humain). Toute réécriture d'un texte
+  `machine` ; `relu` signé du `relecteur` — l'agent expert-traduction
+  ou un nom — via `tools/i18n_relecture.php --exporter` / `--importer`,
+  une migration par lot, anglais britannique comme norme). Toute réécriture d'un texte
   français **rescelle** ses traductions dans la même migration.
 - Une fiche d'établissement se dépublie (`is_verified = 0`, `source =
   'RETIRÉ — …'`), ne s'efface jamais. Ids explicites pour toute nouvelle
-  ligne (derniers connus : `lounges` 2567, `lounge_photos` 477,
+  ligne (derniers connus : `lounges` 2579, `lounge_photos` 489,
   `production_zones` 55 ; un pays d'établissements nouveau = ligne
   `lounge_countries` + drapeau dessiné dans `flags.js` et `FLAGS_DESSINES`
   + `ISO_NUM` de `coords_check.php` + `data.pays.js`), gardés par `NOT EXISTS`.

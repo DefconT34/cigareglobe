@@ -206,6 +206,21 @@ printf("\n%d / %d a jour (%d%%) — le francais n'a pas bouge depuis\n",
        $total ? (int)floor(100 * ($parEtat['a-jour'] + $parEtat['relue']) / $total) : 0);
 printf("%d / %d relues (%d%%) — seul chiffre qui engage quelqu'un\n",
        $parEtat['relue'], $total, $total ? round(100 * $parEtat['relue'] / $total) : 0);
+// QUI A RELU. Depuis la migration 234 chaque relecture porte un nom —
+// l'agent expert-traduction, ou une personne. Le compte par relecteur et
+// par langue dit ce que « relu » veut dire ici ; une relecture sans nom
+// est signalee, la campagne de tests la refuse.
+try {
+    $sansNom = 0;
+    foreach ($db->query("SELECT lang, COALESCE(NULLIF(relecteur, ''), '(sans relecteur)') r, COUNT(*) n
+                         FROM translation_status WHERE statut = 'relu' GROUP BY lang, r ORDER BY lang, r") as $r) {
+        printf("    %s : %d relue(s) par %s\n", $r['lang'], $r['n'], $r['r']);
+        if ($r['r'] === '(sans relecteur)') $sansNom += (int)$r['n'];
+    }
+    if ($sansNom) echo "  ⚠ $sansNom relecture(s) sans relecteur : qui l'assume ?\n";
+} catch (Throwable $e) {
+    echo "  (colonne relecteur absente — appliquer la migration 234)\n";
+}
 
 if ($parEtat['non-scellee']) {
     echo "\nDes traductions n'ont pas d'empreinte : php tools/i18n_fraicheur.php --sceller\n";
