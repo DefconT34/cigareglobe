@@ -76,8 +76,14 @@ function infractions(string $lang, string $texte): array {
 
 /** Le slug d'un nom de migration : minuscules, sans accent, tirets bas. */
 function slug_migration(string $s): string {
-    $s = iconv('UTF-8', 'ASCII//TRANSLIT', $s) ?: $s;
-    $s = strtolower(preg_replace('/[^A-Za-z0-9]+/', '_', $s));
+    // pas d'iconv : sa translittération dépend de la plateforme (WAMP écrit « 'e » pour « é »)
+    $s = strtr(mb_strtolower($s, 'UTF-8'), [
+        'à' => 'a', 'â' => 'a', 'ä' => 'a', 'á' => 'a', 'ã' => 'a', 'å' => 'a', 'æ' => 'ae',
+        'ç' => 'c', 'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e', 'î' => 'i', 'ï' => 'i', 'í' => 'i',
+        'ô' => 'o', 'ö' => 'o', 'ó' => 'o', 'õ' => 'o', 'ø' => 'o', 'œ' => 'oe',
+        'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ú' => 'u', 'ÿ' => 'y', 'ñ' => 'n', 'ß' => 'ss',
+    ]);
+    $s = preg_replace('/[^a-z0-9]+/', '_', $s);
     return trim($s, '_');
 }
 
@@ -96,6 +102,7 @@ function relecture_autotest(): int {
     $dire(infractions('en', 'Москва') === ['cyrillique'], 'infractions : cyrillique en anglais');
     $dire(infractions('en', 'A plain sentence.') === [], 'infractions : rien a redire');
     $dire(slug_migration("Relecture anglaise — pays et feuilles") === 'relecture_anglaise_pays_et_feuilles', 'slug : accents et tirets');
+    $dire(slug_migration("Présence Habanos, marchés, arômes, Zoug") === 'presence_habanos_marches_aromes_zoug', 'slug : accents portés en clair');
     printf("\n  %d cas, %d echec(s)\n", 8, $echecs);
     return $echecs === 0 ? 0 : 1;
 }

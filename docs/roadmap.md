@@ -5932,7 +5932,12 @@ Chantier ouvert : 9 220 traductions « machine », relues lot par lot par
 `expert-traduction`, anglais d'abord, orthographe britannique. Colonne
 `translation_status.relecteur` (qui a relu), cliquet
 `sql/i18n_relues.json`, tests : aucune relecture sans nom, les relues
-ne reculent pas. Chaque lot = une migration (`--importer`). Premier lot
-(556 textes anglais : pays, zones, présence Habanos, marchés, lexique,
-arômes, feuilles) en cours d'agents.
+ne reculent pas. Chaque lot = une migration (`--importer`).
 
+- **236** — anglais des pays, zones, présence Habanos, marchés, lexique,
+  arômes : 370 relus, 27 corrigés (calques, glossaire *factory* /
+  *representation* / *machine-made*, intensifs perdus, un contresens
+  *bench* pour pupitre). Feuilles (186) : migration à part, agents en
+  cours. Puis : établissements (510 descriptions anglaises), maisons
+  (histoire, célébrités, accords — 611 k caractères, `gamme` en JSON à
+  traiter par structure), puis es, de, zh, ar.

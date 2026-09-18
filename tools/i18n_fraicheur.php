@@ -129,7 +129,7 @@ if (in_array('--sceller', $argv, true)) {
     }
     printf("%d traduction(s) scellee(s) sur le francais actuel%s.\n", $n,
            $langueSeule !== null ? " (langue $langueSeule uniquement)" : "");
-    echo "Statut « machine » : rien n'est declare relu tant qu'un humain ne l'a pas dit.\n";
+    echo "Statut « machine » : rien n'est declare relu tant qu'un relecteur nomme ne l'a pas dit (tools/i18n_relecture.php).\n";
     exit(0);
 }
 
@@ -174,7 +174,7 @@ foreach ($inv as $e) {
 }
 
 echo "CigarOdyssey — fraicheur des traductions\n\n";
-printf("  %-13s %5d  verifiee par un humain\n",       'relue',       $parEtat['relue']);
+printf("  %-13s %5d  relue, signee de son relecteur\n",       'relue',       $parEtat['relue']);
 printf("  %-13s %5d  traduite depuis le francais actuel\n", 'a jour', $parEtat['a-jour']);
 printf("  %-13s %5d  le francais a change depuis\n",  'perimee',     $parEtat['perimee']);
 printf("  %-13s %5d  presente, origine inconnue\n",   'non scellee', $parEtat['non-scellee']);

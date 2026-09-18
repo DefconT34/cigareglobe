@@ -275,9 +275,29 @@ fois, l'anglais d'abord (orthographe britannique fixée comme norme) :
 - Cliquet `sql/i18n_relues.json` (`--figer`) : les relues ne reculent
   pas, et aucune relecture n'est sans nom — dans la campagne de tests.
 
-Premier lot en cours : l'anglais des pays producteurs (167 textes), des
-zones, de la présence Habanos, des marchés, du lexique et des arômes
-(203), et des feuilles (186) — 556 textes, six agents par moitiés
-(la limite de session tue les agents en vol ; les fichiers de verdicts
-sont écrits dès que prêts).
+Premier lot : l'anglais des pays producteurs (167 textes), des zones,
+de la présence Habanos, des marchés, du lexique et des arômes (203), et
+des feuilles (186) — 556 textes, six agents par moitiés (la limite de
+session tue les agents en vol ; les fichiers de verdicts sont écrits
+dès que prêts).
 
+### Migration 236 — l'anglais des pays, zones, présence Habanos, marchés, lexique et arômes
+
+*18 septembre 2026.* 370 textes relus par `expert-traduction` (quatre
+agents), **343 validés tels quels, 27 corrigés** — 7 %. Ce que les
+relecteurs ont trouvé, par famille :
+
+| défaut | exemples | textes |
+|---|---|---|
+| calques du français | présent + *since* au lieu du present perfect (Bahamas), *go to export* pour *for export* (Pérou), *what the tobacco has of dryness* (arôme pâtisserie), *artisans come from* pour « venus de » (zone 55), *the specialist shop* pour un pluriel, *hold* pour « tenir une histoire de » (Aruba) | 10 |
+| glossaire non tenu | « manufacture » rendu *workshop* au lieu de *factory* (Dominicaine, Nicaragua ×2) ; « représentation Habanos » rendu *office* au lieu de *representation* (Panama, Philippines) ; « cigares de machine » tantôt *machine cigars*, tantôt *machine-made* (Allemagne, Pays-Bas) | 7 |
+| précision ou intensif perdus | « très » omis (Cameroun) ou affaibli en *largely* (Tenerife) ; *natural* ajouté (Équateur) ; « caves à cigares » rendu *cellars* seul (Japon) ; « marchés parallèles » rendu *channels* (Russie) ; sous-bois affaibli en *woodland* (arôme terre) | 6 |
+| contresens et fautes | pupitre du lecteur traduit *bench* (galera) ; *wrappers there is* (États-Unis) ; préposition fautive et fragments mal recollés (Union européenne) ; fiche Panama : *no Panamanian house* pour « aucune fiche de maison panaméenne » | 4 |
+
+Le reste — vocabulaire du métier (*wrapper/binder/filler*, *torcedor*,
+*vitola*), orthographe britannique (*fertiliser*, *ageing*, *tonnes*),
+réserves du français gardées comme réserves (« c'est la maison qui le
+dit ») — est tenu partout. Le slug des migrations ne passe plus par
+`iconv`, dont la translittération dépend de la plateforme (WAMP écrit
+`pr_esence`). Les feuilles (186 textes) suivent dans une migration à
+part.
