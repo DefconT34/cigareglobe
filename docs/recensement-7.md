@@ -178,3 +178,67 @@ Dakar), 14 « partners » (États-Unis, Tyrol, Monaco) et un onglet
 ne porte ni Genève rue de Rive ni Londres St James's : il est
 **partiel**, et on n'en conclut aucune absence. Les 36 fiches Davidoff
 restent « réseau », à recouper autrement.
+
+## Lot 20 — les réseaux à deux sources (migration 233)
+
+*18 septembre 2026.* Le lot 19 avait conclu les absences de réseau sur
+**un** annuaire, les 4 437 pages « place » de habanos.com. Il était
+incomplet, et deux fiches dépubliées la veille en portaient la preuve
+dans leur propre texte : Tbilissi « inaugurée le 20 octobre 2025 »,
+León « inaugurée en octobre 2024 ».
+
+### La seconde source
+
+Le site de la franchise, **lacasadelhabano.com**, tient un plan des
+franchises — 180 marqueurs, état du 30 août 2026 — derrière une
+vérification d'âge qui cache les marqueurs mais pas leurs
+**catégories** : région → pays → ville, avec le compte par ville, lues
+dans le flux que la page injecte. Et une chronique datée des
+ouvertures, lisible par ses métadonnées : Tbilissi ouverte le 20 octobre
+2025 (annonce du 3 novembre), León le 13 octobre 2023 (annonce du
+7 novembre 2023, Plaza Campestre, humidor sur deux niveaux), la
+Colombie le 28 décembre 2025, Montreux en juin 2026.
+
+Les deux listes officielles ne se recouvrent pas : le plan compte des
+Casas à Riyad (2), Khobar, Djeddah, Madrid, Mascate et Chiang Mai que
+l'annuaire ignore ou classe autrement ; l'annuaire a Paphos, Bonn,
+Rabat, Mendrisio, Belgrade, Téhéran, Rishon LeZion que le plan n'a pas.
+**Ni l'un ni l'autre ne suffit seul** — c'est la règle qui sort de ce
+lot, et elle est écrite dans `CLAUDE.md` : une absence ne se conclut que
+sur deux listes officielles, ou sur une liste et la parole de
+l'établissement.
+
+| Casas del Habano | fiches | |
+|---|---|---|
+| restaurées | 8 | Tbilissi (sous la Géorgie, créée : pays, drapeau aux cinq croix, coordonnées), León (date corrigée : 2023), Riyad, Khobar, Djeddah (retrouve son nom de Casa, l'écart de l'annuaire écrit), Madrid, Montréal et Toronto avec réserve (le plan compte deux Casas au Canada, Windsor et une sans ville) |
+| requalifiées | 2 | Mascate, Chiang Mai : Casas au plan, Specialist à l'annuaire — les deux écrits, le type de Casa rendu |
+| confirmées par le plan seul | 7 | Aruba, Caïmans, Guatemala, Jamaïque (deux), Saint-Martin, Togo — pays que l'annuaire ne couvre pas |
+| présentes dans les deux | 76 | le plan s'ajoute à la source |
+| dépubliées, absentes des deux | 6 | Barbade (annoncée par la franchise en 2012, plus listée), Botswana, Mali, Paraguay (encore citée en 2016), Venezuela, Égypte |
+
+### Davidoff, lu en entier
+
+Le localisateur de davidoff.com ne s'arrête pas à sa cinquième page ;
+ses données se lisent dans les propriétés que la page charge : **56
+boutiques en propre** (Genève rue de Rive est page six), 14 partenaires,
+**1 636 dépositaires** dans 44 pays — Amérique du Nord, Europe,
+Amérique latine, Hong Kong, Japon, Côte d'Ivoire (deux Zino Cigares à
+Abidjan) —, sans la Grèce, la Serbie, Israël, la Corée, l'Indonésie, le
+Nigeria ni les Caraïbes, et la France par ses seuls satellites de
+Roissy.
+
+| Davidoff | fiches | |
+|---|---|---|
+| corrigées | 4 | Tokyo (Ginza 8-5-6, pas Ginza Six), Las Vegas (3200 Las Vegas Blvd, pas le Palazzo), Belgrade (Đure Jakšića 2, pas Knez Mihailova), Londres (Davidoff of London, la boutique d'Edward Sahakian, est un dépositaire agréé, pas une boutique en propre) |
+| dépubliées, absentes d'un pays couvert | 15 | São Paulo, Toronto, Santiago, Medellín (le dépositaire y est La Cava del Puro), Milan, Rome, Luxembourg, Madrid, Barcelone, Miami Bal Harbour, Beverly Hills, Hong Kong IFC, Manille SM Megamall, Taipei Shin Kong, Shanghai Plaza 66 |
+| gardées, pays non couvert | 17 | Andorre, Erevan, Aruba, Barbade, Caïmans, Paris, Bordeaux, Marseille, Gibraltar, Athènes, Bali, Tel Aviv, Abuja, Séoul, Saint-Kitts, Saint-Martin, Istanbul |
+
+Et La Cava del Puro (Bogotá, Medellín, Carthagène) est dépositaire
+Davidoff selon le localisateur : une seconde source officielle pour les
+trois fiches du lot 19. **359 → 345 fiches publiables.**
+
+Pistes laissées : Zino Cigares (deux adresses à Abidjan, dépositaire
+Davidoff), Davidoff of Geneva Sydney, Bruxelles Sablon et Bucarest,
+La Casa del Habano de Montreux et d'Andorre — des lieux que les
+annuaires portent et que l'atlas n'a pas.
+

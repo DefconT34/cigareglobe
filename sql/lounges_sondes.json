@@ -25,6 +25,14 @@
             "detail": "200",
             "date": "2026-09-18"
         },
+        "276": {
+            "site": "https://www.davidofflondon.com/",
+            "code": 200,
+            "final": "www.davidofflondon.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
         "277": {
             "site": "https://www.sauttercigars.com/",
             "code": 200,
@@ -33,10 +41,26 @@
             "detail": "200",
             "date": "2026-09-18"
         },
+        "365": {
+            "site": "https://davidoffgeneva.jp/",
+            "code": 200,
+            "final": "davidoffgeneva.jp",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
         "385": {
             "site": "https://www.bertie-hk.com/",
             "code": 200,
             "final": "www.bertie-hk.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "415": {
+            "site": "http://www.davidoffcigarbarlv.com/",
+            "code": 200,
+            "final": "davidoffcigarbarlv.com",
             "verdict": "ok",
             "detail": "200",
             "date": "2026-09-18"
@@ -65,12 +89,20 @@
             "detail": "200",
             "date": "2026-09-18"
         },
-        "951": {
-            "site": "https://azadihotel.com/",
+        "934": {
+            "site": "https://www.davidoffshop.rs/",
             "code": 200,
-            "final": "www.azadihotel.com",
+            "final": "www.davidoffshop.rs",
             "verdict": "ok",
             "detail": "200",
+            "date": "2026-09-18"
+        },
+        "951": {
+            "site": "https://azadihotel.com/",
+            "code": 301,
+            "final": "www.azadihotel.com",
+            "verdict": "refuse",
+            "detail": "301",
             "date": "2026-09-18"
         },
         "1107": {
@@ -102,7 +134,7 @@
             "code": null,
             "final": "www.marinabaysands.com",
             "verdict": "refuse",
-            "detail": "Operation timed out after 15011 milliseconds with 0 bytes received",
+            "detail": "Operation timed out after 15002 milliseconds with 0 bytes received",
             "date": "2026-09-18"
         },
         "2546": {

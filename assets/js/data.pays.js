@@ -67,6 +67,7 @@ var PAYS_INFOS = {
   ET: ['ETB', 'am',       'Africa/Addis_Ababa'],
   FR: ['EUR', 'fr',       'Europe/Paris'],
   GB: ['GBP', 'en',       'Europe/London'],
+  GE: ['GEL', 'ka',       'Asia/Tbilisi'],
   GH: ['GHS', 'en',       'Africa/Accra'],
   GI: ['GIP', 'en',       'Europe/Gibraltar'],
   GN: ['GNF', 'fr',       'Africa/Conakry'],

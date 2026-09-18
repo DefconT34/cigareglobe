@@ -153,6 +153,14 @@ var FLAGS_SPEC = {
   austria:     {h:['#ED2939','#FFFFFF','#ED2939']},
   bulgaria:    {h:['#FFFFFF','#00966E','#D62612']},
   armenia:     {h:['#D90012','#0033A0','#F2A800']},
+  // Les cinq croix : la grande de saint Georges, large d'un cinquieme
+  // de la hauteur, et une croix de Bolnissi au centre de chaque quartier.
+  georgia:     {h:['#FFFFFF'],
+                o:[['bande','#FF0000',0.433,0.567,0,1],['bande','#FF0000',0,1,0.4,0.6],
+                   ['bande','#FF0000',0.2017,0.2317,0.12,0.28],['bande','#FF0000',0.1633,0.27,0.1775,0.2225],
+                   ['bande','#FF0000',0.7683,0.7983,0.12,0.28],['bande','#FF0000',0.73,0.8367,0.1775,0.2225],
+                   ['bande','#FF0000',0.2017,0.2317,0.72,0.88],['bande','#FF0000',0.1633,0.27,0.7775,0.8225],
+                   ['bande','#FF0000',0.7683,0.7983,0.72,0.88],['bande','#FF0000',0.73,0.8367,0.7775,0.8225]]},
   ukraine:     {h:['#005BBB','#FFD500']},
   poland:      {h:['#FFFFFF','#DC143C']},
   monaco:      {h:['#CE1126','#FFFFFF']},
@@ -1158,7 +1166,7 @@ var FLAGS_DESSINES = [
                       'colombia','costarica','croatia','cuba','cyprus',
                       'czech','dominican','ecuador','egypt','ethiopia',
                       'eu_mkt','france','france_mkt','germany','ghana',
-                      'gibraltar','greece','guatemala','guinea','honduras',
+                      'georgia','gibraltar','greece','guatemala','guinea','honduras',
                       'hongkong','india','indonesia','iran','israel',
                       'italy','ivorycoast','jamaica','japan','japan_mkt',
                       'kenya','kuwait','lebanon','luxembourg','malaysia',

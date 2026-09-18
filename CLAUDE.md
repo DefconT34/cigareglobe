@@ -54,7 +54,9 @@ fait », vérifier les pages en production avec curl.
 - Une fiche d'établissement se dépublie (`is_verified = 0`, `source =
   'RETIRÉ — …'`), ne s'efface jamais. Ids explicites pour toute nouvelle
   ligne (derniers connus : `lounges` 2567, `lounge_photos` 477,
-  `production_zones` 55), gardés par `NOT EXISTS`.
+  `production_zones` 55 ; un pays d'établissements nouveau = ligne
+  `lounge_countries` + drapeau dessiné dans `flags.js` et `FLAGS_DESSINES`
+  + `ISO_NUM` de `coords_check.php` + `data.pays.js`), gardés par `NOT EXISTS`.
 - **Aucune migration écrite à la main** : un générateur Python dans le
   carnet de session (`genNNN.py` — dictionnaires `F[...]`, `q()` pour
   l'échappement, `W(fr,en,es,de,zh,ar)`, assertions de longueur et de
@@ -89,6 +91,13 @@ fait », vérifier les pages en production avec curl.
   entre guillemets ; une fiche « à vérifier » ne décrit **aucune offre**
   (premium, clientèle, atmosphère…). Longueurs : `brands.founded` ≤ 49,
   `brands.factory` < 200, `lounges.source` ≤ 500, `name`/`city` ≤ 200.
+- **Une absence de réseau ne se conclut que sur deux listes officielles**
+  (pour La Casa del Habano : les pages « place » de habanos.com ET le
+  plan des franchises lacasadelhabano.com, lisible par ses catégories ;
+  pour Davidoff : les données que charge le localisateur davidoff.com,
+  56 boutiques, 1 636 dépositaires) ou sur une liste et la parole de
+  l'établissement. Un seul annuaire, si complet paraisse-t-il, ne retire
+  rien (leçon du lot 20).
 - Les vérifications factuelles se confient aux agents de `~/.claude/agents`
   (`expert-cigare` en relecteur puis en contradicteur, sorties JSON à
   schéma). Quand un annuaire a un plan de site (habanos.com :

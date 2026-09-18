@@ -5895,3 +5895,24 @@ après la vague de 87 du lot 15 ; à instrumenter si elle revient. Et
 la sonde HTTP de `lounges_fraicheur.php` a pris une machine en veille
 pour cinq sites morts : elle vérifie désormais deux témoins DNS avant
 d'écrire, et refuse un tiers de « dns » d'un coup.
+
+## Lot 20 — les réseaux à deux sources (migration 233)
+
+Le lot 19 concluait les absences de réseau sur un seul annuaire ; il
+était incomplet. Le plan des franchises de lacasadelhabano.com (180
+marqueurs, 30 août 2026, lu par ses catégories malgré la vérification
+d'âge) et sa chronique datée des ouvertures rendent **8 Casas
+restaurées** — Tbilissi (ouverte le 20 octobre 2025, rangée sous la
+Géorgie, pays créé avec son drapeau), León (13 octobre 2023), Riyad,
+Khobar, Djeddah, Madrid, Montréal et Toronto avec réserve —, 2
+requalifiées (Mascate, Chiang Mai), 7 confirmées dans des pays hors
+annuaire, 76 présentes dans les deux listes, 6 dépubliées absentes des
+deux (Barbade, Botswana, Mali, Paraguay, Venezuela, Égypte). Davidoff,
+localisateur lu en entier (56 boutiques, 14 partenaires, 1 636
+dépositaires) : 4 corrigées (Tokyo, Las Vegas, Belgrade, Londres), 15
+dépubliées, 17 gardées hors couverture ; La Cava del Puro dépositaire
+Davidoff. **Règle écrite dans `CLAUDE.md` : une absence se conclut sur
+deux listes officielles, jamais sur une.** 359 → 345 publiables. Pistes :
+Zino Cigares Abidjan, Davidoff Sydney / Sablon / Bucarest, Casas de
+Montreux et d'Andorre.
+

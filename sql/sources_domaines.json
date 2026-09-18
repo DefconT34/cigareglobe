@@ -403,7 +403,7 @@
         },
         "clubpasionhabanos.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 1
         },
         "cohiba-atmosphere.com": {
             "dns": "resout",
@@ -455,7 +455,23 @@
         },
         "davidoff.com": {
             "dns": "resout",
-            "fiches": 36
+            "fiches": 39
+        },
+        "davidoffcigarbarlv.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "davidoffgeneva.jp": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "davidofflondon.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "davidoffshop.rs": {
+            "dns": "resout",
+            "fiches": 1
         },
         "de.wikipedia.org": {
             "dns": "resout",
@@ -939,7 +955,7 @@
         },
         "lacasadelhabano.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 101
         },
         "lacasadelhabano.kn": {
             "dns": "resout",
