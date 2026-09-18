@@ -5858,3 +5858,40 @@ et le disent.
 posée, 32 feuilles sourcées, 15 réécrites en tout ou partie, trois
 filiations fausses corrigées (Corojo 99, San Vicente, Deli), cinq
 divergences écrites.
+
+## Septième recensement — la fraîcheur des établissements (outil)
+
+508 fiches d'établissements, 408 publiables, écrites entre le 1er août
+et le 5 septembre, et personne n'avait sondé si elles existent encore.
+`tools/lounges_fraicheur.php` dit de quoi chaque fiche tient — classe
+de source (sourcée, réseau, faible, à vérifier, relue), année, site
+cité encore vivant (sonde HTTP figée dans `sql/lounges_sondes.json` ;
+un 403 ou un flux qui casse est « refusé », pas « mort ») — et en tire
+la liste des fiches **à relire** : 43 sur 408, dont 20 en Afrique de
+l'Ouest. Cliquet dans la campagne (`sql/lounges_fraicheur.json`) : ce
+nombre ne doit pas remonter. Une fiche « à vérifier — relu le … »
+datée vaut dix-huit mois avant de revenir. Le recensement est dans
+`docs/recensement-7.md`.
+
+## Lot 19 — les 43 relues, et les réseaux (migration 232)
+
+Premier lot mené avec l'équipe d'agents : un `expert-cigare` par lot
+géographique, un second en contradicteur sur chaque « introuvable » —
+aucun réfuté. **30 dépubliées** (20 que rien n'atteste à deux
+lecteurs ; 8 que l'établissement dément en publiant la liste de ses
+bars sans cigares, dont l'ex-Radisson Blu Dakar devenu Noom Hotel
+Dakar Sea Plaza ; 2 composites), **11 gardées et datées**, **2
+corrigées** (le Habanos Lounge du casino Enjoy à Viña del Mar ; La
+Cava del Puro à Bogotá), **2 ajoutées** (La Cava del Puro Medellín et
+Carthagène), l'Hôtel Salam renommé Azalaï Hôtel Bamako. Réseaux :
+l'annuaire habanos.com lu à la machine par son plan de site (4 437
+pages « place ») ; 97 fiches La Casa del Habano et Cohiba Atmosphere présentes et datées, 21 absentes dépubliées, 2 requalifiées, 2 corrigées, 13 dans des pays non couverts ; Davidoff : localisateur
+partiel, rien conclu. 408 → 359 fiches publiables.
+
+**À surveiller** : la campagne de tests a rendu 5 échecs « visiteur
+anonyme connecté » (profil, forum, images, effacement) au premier
+passage du 17 septembre, verts au second — deuxième alerte transitoire
+après la vague de 87 du lot 15 ; à instrumenter si elle revient. Et
+la sonde HTTP de `lounges_fraicheur.php` a pris une machine en veille
+pour cinq sites morts : elle vérifie désormais deux témoins DNS avant
+d'écrire, et refuse un tiers de « dns » d'un coup.

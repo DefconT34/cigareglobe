@@ -1,0 +1,205 @@
+{
+    "date": "2026-09-18",
+    "sondes": {
+        "11": {
+            "site": "https://lefagot.com",
+            "code": 200,
+            "final": "lefagot.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "159": {
+            "site": "https://www.casadelhabanochile.cl/",
+            "code": 200,
+            "final": "www.casadelhabanochile.cl",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "232": {
+            "site": "https://www.raffles.com/paris/dining/vinales-lounge/",
+            "code": 200,
+            "final": "www.raffles.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "277": {
+            "site": "https://www.sauttercigars.com/",
+            "code": 200,
+            "final": "www.sauttercigars.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "385": {
+            "site": "https://www.bertie-hk.com/",
+            "code": 200,
+            "final": "www.bertie-hk.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "745": {
+            "site": "https://www.habanos.com/place/enjoy-casino-vina-del-mar/",
+            "code": 200,
+            "final": "www.habanos.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "750": {
+            "site": "https://www.lacavadelpuro.com/",
+            "code": 200,
+            "final": "www.lacavadelpuro.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "828": {
+            "site": "https://thewheatbakerlagos.com/",
+            "code": 200,
+            "final": "thewheatbakerlagos.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "951": {
+            "site": "https://azadihotel.com/",
+            "code": 200,
+            "final": "www.azadihotel.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "1107": {
+            "site": "http://www.alsuites.com/",
+            "code": 200,
+            "final": "www.alsuites.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2498": {
+            "site": "https://bangkok.intercontinental.com/bars/humidor-cigar-bar",
+            "code": 200,
+            "final": "bangkok.intercontinental.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2509": {
+            "site": "https://www.pavilion-kl.com/store/davidoff/",
+            "code": 200,
+            "final": "www.pavilion-kl.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2515": {
+            "site": "https://www.marinabaysands.com/shopping/davidoff-of-geneva.html",
+            "code": null,
+            "final": "www.marinabaysands.com",
+            "verdict": "refuse",
+            "detail": "Operation timed out after 15011 milliseconds with 0 bytes received",
+            "date": "2026-09-18"
+        },
+        "2546": {
+            "site": "https://hoteldulac-benin.com",
+            "code": 200,
+            "final": "hoteldulac-benin.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2550": {
+            "site": "https://www.palmcamayenne.com",
+            "code": 200,
+            "final": "guestcentric.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2552": {
+            "site": "https://www.laicohotels.com",
+            "code": 200,
+            "final": "www.laicohotels.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2554": {
+            "site": "https://www.azalai.com/en/azalai-hotel-bamako",
+            "code": 200,
+            "final": "www.azalai.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2555": {
+            "site": "https://www.azalai.com/en/grand-hotel-bamako",
+            "code": 200,
+            "final": "www.azalai.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2557": {
+            "site": "https://www.bertie-pnh.com/",
+            "code": 200,
+            "final": "www.bertie-pnh.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2558": {
+            "site": "https://lcdh.com.my/",
+            "code": 200,
+            "final": "lcdh.com.my",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2559": {
+            "site": "https://www.lacasadelhabano-dl.es/boutiques",
+            "code": 200,
+            "final": "www.lacasadelhabano-dl.es",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2560": {
+            "site": "https://www.lacasadelhabano-dl.es/boutiques",
+            "code": 200,
+            "final": "www.lacasadelhabano-dl.es",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2565": {
+            "site": "https://www.lecadre223.com/",
+            "code": 200,
+            "final": "www.lecadre223.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2566": {
+            "site": "https://www.lacavadelpuro.com/",
+            "code": 200,
+            "final": "www.lacavadelpuro.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        },
+        "2567": {
+            "site": "https://www.lacavadelpuro.com/",
+            "code": 200,
+            "final": "www.lacavadelpuro.com",
+            "verdict": "ok",
+            "detail": "200",
+            "date": "2026-09-18"
+        }
+    }
+}

@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-09-14",
+    "fige_le": "2026-09-18",
     "domaines": {
         "21club.com": {
             "dns": "resout",
@@ -65,7 +65,15 @@
             "dns": "resout",
             "fiches": 1
         },
+        "all.accor.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "allsaintscigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "alsuites.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -82,6 +90,10 @@
             "fiches": 1
         },
         "andina.pe": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "arenamall.co.il": {
             "dns": "resout",
             "fiches": 1
         },
@@ -108,6 +120,14 @@
         "atlanticcigar.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "azadihotel.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "azalai.com": {
+            "dns": "resout",
+            "fiches": 2
         },
         "baab.ci": {
             "dns": "resout",
@@ -223,7 +243,7 @@
         },
         "casadelhabanochile.cl": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "casadelpuro.com": {
             "dns": "resout",
@@ -381,9 +401,13 @@
             "dns": "resout",
             "fiches": 2
         },
+        "clubpasionhabanos.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "cohiba-atmosphere.com": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 2
         },
         "colpuros.com": {
             "dns": "resout",
@@ -450,6 +474,10 @@
             "fiches": 2
         },
         "diexmexico.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "diplomatic.zenithoteles.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -687,7 +715,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 55
+            "fiches": 171
         },
         "hacico.de": {
             "dns": "resout",
@@ -700,6 +728,10 @@
         "halfwheel.com": {
             "dns": "resout",
             "fiches": 76
+        },
+        "havanaconnections.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "havanahouse.co.uk": {
             "dns": "resout",
@@ -722,6 +754,10 @@
             "fiches": 1
         },
         "hotel-lutetia.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hoteldulac-benin.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -861,6 +897,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "kingfahdpalacehotels.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "klarocigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -909,11 +949,19 @@
             "dns": "resout",
             "fiches": 1
         },
+        "lacavadelpuro.com": {
+            "dns": "resout",
+            "fiches": 3
+        },
         "lagalana.de": {
             "dns": "resout",
             "fiches": 1
         },
         "lahabana.gob.cu": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "laicohotels.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -948,6 +996,10 @@
         "lefagot.com": {
             "dns": "resout",
             "fiches": 4
+        },
+        "lelagondakar.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "leroyal.com": {
             "dns": "resout",
@@ -1000,6 +1052,10 @@
         "manchebo.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "mangalis.com": {
+            "dns": "resout",
+            "fiches": 2
         },
         "manifatturesigarotoscano.it": {
             "dns": "resout",
@@ -1305,6 +1361,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "sarakawa-hotel.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "sauttercigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -1438,6 +1498,14 @@
             "fiches": 1
         },
         "tdo.com.pe": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "terroubi.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "teyliom.com": {
             "dns": "resout",
             "fiches": 1
         },

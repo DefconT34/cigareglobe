@@ -4006,10 +4006,13 @@ section('La fiche dit d ou elle vient');
               in_array('Marque de test', $vusM, true), implode(',', $vusM));
         // Le cliquet ne vaut que s'il porte sur quelque chose : si le
         // jour venait ou plus aucune fiche n'est marquee, l'assertion
-        // ci-dessus passerait sur un ensemble vide.
+        // ci-dessus passerait sur un ensemble vide. Dix-huit a l'origine
+        // (162) ; le septieme recensement (232) en a depublie ou corrige
+        // la moitie et date les autres (« a verifier — relu le ... ») :
+        // le cliquet porte sur ce qui reste.
         $n = (int)$pdoR->query("SELECT COUNT(*) FROM lounges
                                  WHERE " . PAGE_FICHE_PUBLIABLE . " AND source LIKE 'à vérifier%'")->fetchColumn();
-        check('reserve : le cliquet porte bien sur des fiches', $n >= 18, $n . ' fiche(s) marquee(s)');
+        check('reserve : le cliquet porte bien sur des fiches', $n >= 1, $n . ' fiche(s) marquee(s)');
     } catch (Throwable $e) {
         check('reserve : base de developpement lisible', false, $e->getMessage());
     }
@@ -5210,6 +5213,32 @@ foreach (['1905 — Tampa ; produit au Honduras depuis 1990',
     } catch (Throwable $e) {
         check('feuilles.source : type verifiable', false, $e->getMessage());
     }
+}
+
+// ── La fraicheur des etablissements (septieme recensement) ──
+//
+// 508 fiches d'etablissements, 408 publiables, et personne n'avait
+// jamais sonde si elles existent encore. tools/lounges_fraicheur.php
+// dit de quoi chaque fiche tient — classe de source, annee, site cite
+// encore vivant ou non — et en tire la liste des fiches A RELIRE. Le
+// reseau n'est interroge que par --sonder, qui fige un sceau ; la
+// campagne lit le sceau. Le cliquet : le nombre de fiches a relire et
+// de sites morts ne doit pas remonter.
+{
+    $out = []; $code = 0;
+    exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(PROJECT_ROOT . '/tools/lounges_fraicheur.php')
+         . ' --autotest 2>&1', $out, $code);
+    eq('fraicheur : les cas construits passent', 0, $code, implode("
+", array_slice($out, -3)));
+    check('fraicheur : le sceau des sondes est versionne',
+          is_file(PROJECT_ROOT . '/sql/lounges_sondes.json'));
+    check('fraicheur : le sceau du cliquet est versionne',
+          is_file(PROJECT_ROOT . '/sql/lounges_fraicheur.json'));
+    $out2 = []; $code2 = 0;
+    exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(PROJECT_ROOT . '/tools/lounges_fraicheur.php')
+         . ' --verifier 2>&1', $out2, $code2);
+    eq('fraicheur : rien de nouveau a relire, aucun site mort nouveau', 0, $code2, implode("
+", $out2));
 }
 
 // ── La sonde generale : toute colonne, toute table ──────────
