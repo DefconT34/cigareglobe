@@ -4,8 +4,8 @@ Atlas mondial du cigare premium (`thecigarodyssey.com`) : maisons, pays
 producteurs, zones, feuilles, établissements, en six langues
 (fr → en/es/de/zh/ar). Communication en français avec l'utilisateur,
 qui déploie lui-même après chaque lot ; on vérifie ensuite en production.
-Ce fichier fait foi pour tout ce qui est dans `C:\CLAUDE\cigareglobe\` ;
-le `CLAUDE.md` du dossier parent décrit un autre projet (LiquidLink).
+Ce fichier fait foi pour `C:\CLAUDE\cigareglobe\` ; celui du dossier
+parent décrit un autre projet.
 
 ## Stack et commandes
 
@@ -35,7 +35,8 @@ php tools/prevol.php                    # sur le serveur, après déploiement
 Après chaque migration, dans l'ordre : appliquer en local
 (`mysql --default-character-set=utf8mb4 … < sql/migrations/NNN_*.sql`),
 `contenu_dump`, `sources --figer`, tous les guardrails, `tests/run.php`,
-docs (`docs/roadmap.md` + le `docs/recensement-N.md` du chantier),
+docs (`docs/roadmap.md` pour ce qui reste, `docs/journal.md` pour le
+récit du chantier, + le `docs/recensement-N.md` s'il y en a un),
 commit **sur master** (pas de branche), push, puis donner à l'utilisateur
 les commandes de déploiement — une par bloc `bash`, dans l'ordre de
 `docs/deploiement.md` (git pull → Deploy HEAD Commit cPanel → `diff -rq`
@@ -120,6 +121,24 @@ fait », vérifier les pages en production avec curl.
   fabriquent sur le serveur ; la sauvegarde (B4b2) est le seul point
   bloquant de la roadmap.
 
-État et suite dans `docs/roadmap.md` (fin de fichier) et
-`docs/recensement-7.md` ; mémoire de session dans
+## Travail et réponses
+
+Concision stricte : pas de préambule, pas de résumé narratif, pas de
+redite de ce que le diff montre déjà. Le raisonnement s'écrit là où le
+projet l'exige — en-tête de migration, arbitrage éditorial, divergence
+de sources — pas dans la réponse de chat.
+
+Tâche terminée, dix lignes maximum sauf demande contraire :
+
+```
+✅ Actions réalisées
+✅ Fichiers modifiés
+✅ Résultat
+✅ Points d'attention       — seulement s'il y en a
+```
+
+État et suite dans `docs/roadmap.md` (section « En cours ») et
+`docs/recensement-7.md` ; le récit des chantiers terminés est dans
+`docs/journal.md` (à consulter par `grep`, pas à charger) ;
+mémoire de session dans
 `~/.claude/projects/C--CLAUDE/memory/cigareglobe-projet.md`.

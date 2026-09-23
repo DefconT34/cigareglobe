@@ -95,7 +95,8 @@ sql/
   schema.sql          Schéma de référence (structure complète)
   migrations/         Évolutions incrémentales (001→018)
 docs/
-  roadmap.md          Feuille de route (chantiers restants + ordre)
+  roadmap.md          Feuille de route (chantiers restants + en cours)
+  journal.md          Récit de chaque chantier terminé (038→)
   espace-client.md    Cahier des charges de l'espace membre
   communaute.md       Cahier des charges de l'espace communautaire
 uploads/lounges/      Photos uploadées (hors Git)
@@ -227,4 +228,4 @@ puis le dump de l'archive — l'ordre compte, les avis référencent des
 
 Le reste — hébergement, rotation des secrets, cron des rappels,
 enregistrements DNS des emails (`php tools/mail_doctor.php`) — est
-détaillé dans `docs/roadmap.md`, chantiers **B1** et suivants.
+détaillé dans `docs/journal.md`, chantiers **B1** et suivants.

@@ -194,7 +194,7 @@ if (in_array('--robots', $argv, true)) {
         if (count($lr) > 1) {
             echo "  Plusieurs langues explorees : les versions traduites SONT
 ";
-            echo "  parcourues par les moteurs. Voir docs/roadmap.md sur le
+            echo "  parcourues par les moteurs. Voir docs/journal.md sur le
 ";
             echo "  risque des traductions automatiques a l'echelle.
 
