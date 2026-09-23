@@ -89,8 +89,9 @@ function slug_migration(string $s): string {
 
 /* ── Les cas construits ────────────────────────────────── */
 function relecture_autotest(): int {
-    $echecs = 0;
-    $dire = function (bool $ok, string $titre) use (&$echecs) {
+    $echecs = 0; $cas = 0;
+    $dire = function (bool $ok, string $titre) use (&$echecs, &$cas) {
+        $cas++;
         if (!$ok) $echecs++;
         printf("  [%s] %s\n", $ok ? 'ok' : 'KO', $titre);
     };
@@ -103,7 +104,7 @@ function relecture_autotest(): int {
     $dire(infractions('en', 'A plain sentence.') === [], 'infractions : rien a redire');
     $dire(slug_migration("Relecture anglaise — pays et feuilles") === 'relecture_anglaise_pays_et_feuilles', 'slug : accents et tirets');
     $dire(slug_migration("Présence Habanos, marchés, arômes, Zoug") === 'presence_habanos_marches_aromes_zoug', 'slug : accents portés en clair');
-    printf("\n  %d cas, %d echec(s)\n", 8, $echecs);
+    printf("\n  %d cas, %d echec(s)\n", $cas, $echecs);
     return $echecs === 0 ? 0 : 1;
 }
 
@@ -134,7 +135,9 @@ if (in_array('--exporter', $argv, true)) {
             if ($champsVoulus && !in_array($champ, $champsVoulus, true)) continue;
             if (!in_array("{$champ}_{$lang}", $cols, true)) continue;
             $sel = '`' . implode('`, `', $pk) . "`, `$champ` src, `{$champ}_{$lang}` trad";
-            foreach ($db->query("SELECT $sel FROM `$table` WHERE `$champ` IS NOT NULL AND `$champ` <> '' ORDER BY " . implode(', ', array_map(fn($c) => "`$c`", $pk))) as $r) {
+            // une fiche dépubliée (lounges.is_verified = 0) ne s'affiche pas : on ne la relit pas
+            $publiee = in_array('is_verified', $cols, true) ? ' AND `is_verified` = 1' : '';
+            foreach ($db->query("SELECT $sel FROM `$table` WHERE `$champ` IS NOT NULL AND `$champ` <> ''$publiee ORDER BY " . implode(', ', array_map(fn($c) => "`$c`", $pk))) as $r) {
                 $id = identite_ligne($pk, $r);
                 $ref = $statuts["$table|$id|$champ"] ?? null;
                 $h = empreinte_source((string)$r['src']);
@@ -181,7 +184,7 @@ if ($fichier !== null) {
     $o("-- ════════════════════════════════════════════════════════");
     $o("-- $num — $titre");
     $o("-- ────────────────────────────────────────────────────────");
-    $o("-- Relecture des traductions en $lang par : $relecteur.");
+    $o("-- Relecture des traductions « $lang » par : $relecteur.");
     $o("-- Fichier de verdicts : " . basename($fichier) . " ; generee par tools/i18n_relecture.php le " . date('Y-m-d') . ".");
     $o("-- Un texte « corrige » est reecrit ; tout texte relu passe au statut « relu »,");
     $o("-- avec le nom du relecteur. L'empreinte du francais est verifiee dans le WHERE :");
@@ -223,7 +226,7 @@ if ($fichier !== null) {
     $total = $corriges + $valides;
     $o("");
     $o("DELETE FROM `moderation_log` WHERE `acteur_nom` = 'migration $num';");
-    $detail = sprintf("Relecture %s par %s : %d traduction(s) relue(s) — %d corrigee(s), %d validee(s) telles quelles ; %s", $lang, $relecteur, $total, $corriges, $valides,
+    $detail = sprintf("Relecture « %s » par %s : %d traduction(s) relue(s) — %d corrigee(s), %d validee(s) telles quelles ; %s", $lang, $relecteur, $total, $corriges, $valides,
                       implode(', ', array_map(fn($t, $n) => "$t $n", array_keys($parEntite), $parEntite)));
     $o("INSERT INTO `moderation_log` (`acteur_id`, `acteur_nom`, `portee`, `action`, `cible_type`, `cible_id`, `detail`)\nVALUES (NULL, 'migration $num', 'systeme', 'traductions_relues', 'systeme', 0, " . sq($detail) . ");");
     $o("");

@@ -301,3 +301,25 @@ dit ») — est tenu partout. Le slug des migrations ne passe plus par
 `iconv`, dont la translittération dépend de la plateforme (WAMP écrit
 `pr_esence`). Les feuilles (186 textes) suivent dans une migration à
 part.
+
+### Migration 237 — l'anglais des feuilles
+
+*23 septembre 2026.* 186 textes — genèse, culture, caractères, notes,
+accords et emploi des trente feuilles — relus par `expert-traduction`
+(deux agents), **166 validés tels quels, 20 corrigés** : 11 %, contre
+7 % pour les pays. Les feuilles sont le texte le plus technique de
+l'atlas, et le glossaire y est le plus sollicité.
+
+| défaut | exemples | textes |
+|---|---|---|
+| glossaire non tenu | « caves » rendues *merchants* (Didiévi, Tiébissou), « plein soleil » *full sun* (Cameroun), « fabriques » *workshops* (La Palma), *moho azul* omis (Corojo hondurien, Criollo 98) | 6 |
+| « douceur » rendue *sweetness* | Besuki et Mata Fina (caractères, notes), le Connecticut vu depuis la fiche du Habano équatorien — *mildness* dans les cinq autres fiches, *mild* dans les arômes | 4 |
+| calques et tournures | *can be heard* pour « s'entend », *depending on the case*, *frailty to disease*, *on the foothills*, un passé pour un présent (Habano équatorien) | 7 |
+| ajouts, renforcements, forme | *disease-resistant* pour « résistante », *strikingly* pour « très », un siècle en chiffres | 3 |
+
+Deux corrections d'agent ont été reprises par la session principale
+avant l'import (*this fungus*, calque de « ce champignon » ; *makes the
+country's name*, non idiomatique) — la retouche est écrite dans le
+motif. Un agent avait recopié l'empreinte de la ligne voisine : le
+contrôle d'ordre et d'empreintes avant import l'a arrêtée. **556
+traductions anglaises relues sur 1 856, 47 corrigées.**

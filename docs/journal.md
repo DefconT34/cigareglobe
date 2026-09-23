@@ -5949,4 +5949,7 @@ avec son site ou une presse de moins de trois ans, les divergences
 ## La relecture des traductions (migration 234, `tools/i18n_relecture.php`)
 
 Chantier **en cours** — son état et la suite sont dans `docs/roadmap.md`,
-section « En cours ».
+section « En cours ». Les lots faits sont racontés dans
+`docs/recensement-7.md` : 236 (pays, zones, présence Habanos, marchés,
+lexique, arômes) et 237 (feuilles) — 556 traductions anglaises relues,
+47 corrigées.

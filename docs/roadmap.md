@@ -195,17 +195,21 @@ ne reculent pas. Chaque lot = une migration (`--importer`).
 - **236** — anglais des pays, zones, présence Habanos, marchés, lexique,
   arômes : 370 relus, 27 corrigés (calques, glossaire *factory* /
   *representation* / *machine-made*, intensifs perdus, un contresens
-  *bench* pour pupitre). Feuilles (186) : migration à part, agents en
-  cours. Puis : établissements (510 descriptions anglaises), maisons
-  (histoire, célébrités, accords — 611 k caractères, `gamme` en JSON à
-  traiter par structure), puis es, de, zh, ar.
+  *bench* pour pupitre).
+- **237** — anglais des feuilles : 186 relus, 20 corrigés (glossaire :
+  *cigar cellars*, *sun-grown*, *factory*, *moho azul* gardé ; « douceur »
+  rendue *mildness* comme partout ailleurs ; calques).
+- Suite : établissements (357 fiches publiées sur 522 — les dépubliées
+  ne se relisent pas ; lot exporté en trois parts), maisons (histoire,
+  célébrités, accords — 611 k caractères, `gamme` en JSON à traiter par
+  structure), puis es, de, zh, ar.
 
 ### Reste du lot 21 (migration `235`)
 
 - Trois caves Zino sans rue : Cosmos, Sofitel, Plateau.
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → **B1** → F3/F4/F6 → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → ~~B1~~ → ~~F3/F4/F6~~ → **B4b2** (sauvegarde, bloquant) → D6/C1b (optionnels)
 
 ---
 
