@@ -141,11 +141,16 @@ function buildIndex() {
   if (_servi) {
     _servi.marques.forEach(function(m) {
       var country = paysDe(m.p);
+      // Les noms que la fiche CITE sans qu'ils soient ses lignes (`m`,
+      // migration 238) s'indexent comme elles : taper « Black Swan »
+      // mène à Oliva, et le résultat affiche le nom trouvé devant, par
+      // le même chemin que « Saga » devant De Los Reyes.
+      var noms = (m.g || []).concat(m.m || []);
       _index.push({
-        type: 'brand', id: m.n, label: m.n, lignes: m.g || [],
+        type: 'brand', id: m.n, label: m.n, lignes: noms,
         sub: (country.flag || '') + ' ' + country.name + ' · ' + (m.f || ''),
         flag: '🏷',
-        keywords: _pli(m.n + ' ' + country.name + ' ' + (m.g || []).join(' ')
+        keywords: _pli(m.n + ' ' + country.name + ' ' + noms.join(' ')
                  + ' marque cigare'),
         data: { brand: null, country: country, name: m.n }
       });
@@ -202,6 +207,7 @@ function buildIndex() {
     // rien, une recherche ne doit jamais casser sur une donnée creuse.
     var lignes = (Array.isArray(b.gamme) ? b.gamme : [])
       .map(function(g) { return g && g.name ? String(g.name) : ''; })
+      .concat(Array.isArray(b.mentions) ? b.mentions.map(String) : [])
       .filter(function(n) { return n !== ''; });
     _index.push({
       type: 'brand', id: name, label: name, lignes: lignes,

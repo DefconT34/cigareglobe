@@ -5953,3 +5953,20 @@ section « En cours ». Les lots faits sont racontés dans
 `docs/recensement-7.md` : 236 (pays, zones, présence Habanos, marchés,
 lexique, arômes) et 237 (feuilles) — 556 traductions anglaises relues,
 47 corrigées.
+
+## Huitième recensement — les noms cités deviennent trouvables (migration 238)
+
+Le recensement range une vingtaine de marques de détaillants dans
+l'histoire de la maison qui les roule, sur le précédent Black Swan. La
+recherche du site ne les aurait pas trouvées : elle ne lit que les noms,
+les gammes et les cent premiers caractères des histoires — mesuré,
+« Black Swan », « Oliveros », « King Havano », « Zechbauer » ne rendaient
+rien. Sur décision de l'utilisateur, la 238 crée `brands.mentions`
+(tableau JSON de noms, `CHECK json_valid`) ; l'index servi la rend sous
+la clé `m`, search.js l'indexe comme une ligne dans ses deux chemins, la
+fiche servie la décode ; quatre contrôles dans `tests/run.php`. Vérifié
+dans le navigateur : « black swan » rend E.P. Carrillo, Joya de
+Nicaragua, Oliva et Rocky Patel, le nom trouvé affiché devant. Piège
+noté : un `ALTER TABLE` valide la transaction, l'essai à blanc
+`START TRANSACTION … ROLLBACK` d'une migration de schéma l'applique.
+L'avancée du recensement est dans `docs/recensement-8.md`.

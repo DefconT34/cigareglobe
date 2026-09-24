@@ -104,6 +104,7 @@ CREATE TABLE `brands` (
   `limited_eds` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Éditions limitées notables',
   `factory` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Tabacalera / manufacture',
   `source` text COLLATE utf8mb4_unicode_ci COMMENT 'D''où vient la fiche. Texte libre, comme lounges.source. TEXT depuis la 219 : le varchar(500) coupait sans le dire.',
+  `mentions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COMMENT 'Noms que l''histoire cite sans qu''ils soient des lignes de la gamme (commande de tiers, marque roulée pour un détaillant, autre nom) : lus par la recherche. Depuis la 238.',
   `history_en` text COLLATE utf8mb4_unicode_ci COMMENT 'Histoire en anglais',
   `history_es` text COLLATE utf8mb4_unicode_ci COMMENT 'Histoire en espagnol',
   `history_de` text COLLATE utf8mb4_unicode_ci COMMENT 'Histoire en allemand',
@@ -144,7 +145,8 @@ CREATE TABLE `brands` (
   CONSTRAINT `brands_chk_6` CHECK (json_valid(`gamme_en`)),
   CONSTRAINT `brands_chk_7` CHECK (json_valid(`gamme_es`)),
   CONSTRAINT `brands_chk_8` CHECK (json_valid(`gamme_de`)),
-  CONSTRAINT `brands_chk_9` CHECK (json_valid(`gamme_zh`))
+  CONSTRAINT `brands_chk_9` CHECK (json_valid(`gamme_zh`)),
+  CONSTRAINT `brands_chk_mentions` CHECK (json_valid(`mentions`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `content_translations`;

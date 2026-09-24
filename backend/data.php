@@ -551,7 +551,7 @@ function action_brand(PDO $db): void {
     foreach (['notes_en','notes_es','notes_de','notes_zh','notes_ar'] as $col) {
         unset($brand[$col]);
     }
-    $brand = row_parse($brand, ['gamme','scores','celebrities','pairings','limited_eds']);
+    $brand = row_parse($brand, ['gamme','scores','celebrities','pairings','limited_eds','mentions']);
     // JS compat: country_id → country
     $brand['country'] = $brand['country_id'];
     unset($brand['country_id']);
@@ -726,7 +726,7 @@ function action_market(PDO $db): void {
 // ════════════════════════════════════════════════════════
 function action_recherche(PDO $db): void {
     $marques = [];
-    foreach ($db->query("SELECT name, country_id, founded, gamme FROM brands ORDER BY name") as $b) {
+    foreach ($db->query("SELECT name, country_id, founded, gamme, mentions FROM brands ORDER BY name") as $b) {
         // Les NOMS de gamme, et rien d'autre : c'est par eux qu'on
         // retrouve une ligne repliée dans la fiche de sa fabrique —
         // Saga chez De Los Reyes, Arsen chez De Los Reyes, Chaman chez
@@ -736,8 +736,21 @@ function action_recherche(PDO $db): void {
             $n = is_array($g) ? trim((string)($g['name'] ?? '')) : '';
             if ($n !== '') $lignes[] = $n;
         }
-        $marques[] = ['n' => $b['name'], 'p' => $b['country_id'],
-                      'f' => (string)$b['founded'], 'g' => $lignes];
+        $m = ['n' => $b['name'], 'p' => $b['country_id'],
+              'f' => (string)$b['founded'], 'g' => $lignes];
+        // Les noms que la fiche CITE sans qu'ils soient ses lignes
+        // (migration 238) : une commande de tiers — Black Swan chez
+        // Oliva —, une marque de détaillant roulée ici, un autre nom de
+        // la maison. L'histoire les écrit ; sans cette clé, la recherche
+        // ne les lisait pas. Omise quand la fiche n'en cite aucun : la
+        // plupart n'en ont pas, et l'index reste léger.
+        $cites = [];
+        foreach ((array)parse_json_field($b['mentions']) as $c) {
+            $c = is_string($c) ? trim($c) : '';
+            if ($c !== '') $cites[] = $c;
+        }
+        if ($cites) $m['m'] = $cites;
+        $marques[] = $m;
     }
 
     $lounges = [];
@@ -754,10 +767,11 @@ function action_all(PDO $db): void {
     // Le globe, puis les marques par-dessus.
     $globe = action_globe($db, true);
 
-    $brands_raw = $db->query("SELECT name,country_id AS country,founded,history,gamme FROM brands")->fetchAll();
+    $brands_raw = $db->query("SELECT name,country_id AS country,founded,history,gamme,mentions FROM brands")->fetchAll();
     $brands = [];
     foreach ($brands_raw as $b) {
         $b['gamme'] = parse_json_field($b['gamme']);
+        $b['mentions'] = parse_json_field($b['mentions']);
         $brands[$b['name']] = $b;
     }
 

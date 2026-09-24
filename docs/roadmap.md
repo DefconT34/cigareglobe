@@ -204,6 +204,20 @@ ne reculent pas. Chaque lot = une migration (`--importer`).
   célébrités, accords — 611 k caractères, `gamme` en JSON à traiter par
   structure), puis es, de, zh, ar.
 
+### Huitième recensement — les marques des catalogues (`docs/recensement-8.md`)
+
+Toutes les marques que vendent cigares.com, cigarworld.de, Neptune,
+Holt's et Atlantic confrontées à l'atlas : 649 noms, 322 à trier
+(`expert-cigare`, treize lots de vingt-cinq, verdicts `fiche` / `gamme` /
+`mention` / `doublon` / `hors_perimetre` / `fabricant_tu` /
+`introuvable`), puis contradiction des `fiche`, puis écriture par lots de
+pays. Tri : 175 noms sur 322 ; contradiction : 48 examinés ; écriture :
+premier lot écrit et relu, en traduction. Livrée en chemin : la 238, les
+noms que les fiches citent deviennent trouvables. À venir : Haïti (pays
+nouveau, pour Bohekio), le Costa Rica de Puriscal (quatre marques à
+réexaminer ensemble), les ajouts aux fiches existantes (lignes de gamme,
+mentions).
+
 ### Reste du lot 21 (migration `235`)
 
 - Trois caves Zino sans rue : Cosmos, Sofitel, Plateau.

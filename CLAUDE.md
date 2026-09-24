@@ -68,14 +68,19 @@ fait », vérifier les pages en production avec curl.
   pourquoi on tranche ainsi, instructions rejouables, `moderation_log`
   DELETE + INSERT (`acteur_nom = 'migration NNN'`), et un SELECT de
   contrôle final qui **doit rendre des 1 partout**. Tester à blanc :
-  `START TRANSACTION; … ROLLBACK;`.
+  `START TRANSACTION; … ROLLBACK;` — sauf un `ALTER`, qui valide la
+  transaction : l'essai l'applique.
 
 ### Règles éditoriales (toutes en vigueur)
 
 - Pas de cigare de machine ; une maison se classe là où le cigare est
   **roulé aujourd'hui** ; pas de fiche sans fabrique nommée, sauf silence
-  documenté ; **règle Ortega** : pas de fiche au présent sur une maison
+  documenté (propriétaire identifié et pays de roulage attesté, sources à
+  l'appui) ; **règle Ortega** : pas de fiche au présent sur une maison
   invérifiable sans dire son état.
+- Ligne du catalogue propre d'une maison → sa `gamme` ; marque d'un tiers
+  roulée par une maison de l'atlas → une phrase de son histoire (Black
+  Swan) **et** son nom dans `brands.mentions`, que lit la recherche (238).
 - Les dires d'une maison sont **attribués**, jamais adoptés ; notes de
   presse et palmarès retirés ; une divergence de dates **s'écrit**, ne se
   tranche pas ; sources en langue locale déclarées.
@@ -138,7 +143,7 @@ Tâche terminée, dix lignes maximum sauf demande contraire :
 ```
 
 État et suite dans `docs/roadmap.md` (section « En cours ») et
-`docs/recensement-7.md` ; le récit des chantiers terminés est dans
+`docs/recensement-8.md` ; le récit des chantiers terminés est dans
 `docs/journal.md` (à consulter par `grep`, pas à charger) ;
 mémoire de session dans
 `~/.claude/projects/C--CLAUDE/memory/cigareglobe-projet.md`.

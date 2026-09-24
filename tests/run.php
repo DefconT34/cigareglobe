@@ -5570,6 +5570,23 @@ require_once PROJECT_ROOT . '/backend/audience.php';
     check('recherche : le resultat dit QUELLE ligne a repondu',
           str_contains($js, 'var touchee'));
 
+    // LES NOMS CITES AUSSI (migration 238). Black Swan est ecrit dans
+    // l histoire d Oliva, de Rocky Patel, d E.P. Carrillo et de Joya de
+    // Nicaragua, jamais dans leur gamme : c est une commande d un
+    // detaillant, pas leur catalogue (194). L index ne lisait que les
+    // gammes — taper « Black Swan » ne rendait rien. La colonne
+    // `mentions` porte ces noms, le serveur les sert sous `m`, et
+    // search.js les indexe comme des lignes, dans les deux chemins.
+    check('recherche : le serveur lit la colonne des noms cites',
+          (bool)preg_match('/SELECT name, country_id, founded, gamme, mentions FROM brands/', $dp)
+       && str_contains($dp, "\$m['m'] = \$cites"));
+    check('recherche : l index servi les indexe',
+          str_contains($js, '(m.g || []).concat(m.m || [])'));
+    check('recherche : le repli sur les fiches ouvertes aussi',
+          str_contains($js, 'b.mentions'));
+    check('recherche : la fiche servie les decode',
+          (bool)preg_match("/row_parse\(\\\$brand, \[[^\]]*'mentions'\]\)/", $dp));
+
     // Le repli d accents, des deux cotes — replier un seul cote ne sert
     // a rien.
     check('recherche : les accents sont replies', str_contains($js, 'function _pli'));
