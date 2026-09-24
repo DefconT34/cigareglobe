@@ -139,6 +139,23 @@ sans en être : ce sont des marques de tiers, qui gardent leur fiche.
 Marca Fina n'est pas une ligne de Darier & Cleef, qui n'en était que
 l'importateur.
 
+Lots 09 à 11 (36 noms) : **25 tiennent, 11 cèdent**. Cèdent :
+- Sansibar devient une mention de Laura Chavin, qui roule sa Gran
+  Reserva.
+- La Chaveta, marque maison de Cigarworld, devient une mention de Casa
+  de Alegria, qui la roule.
+- Woermann Cigars sort du périmètre : importateur, il ne vend sous son
+  nom que des cigares de machine.
+- Les huit exclusivités Holt's du lot 11 rejoignent la fiche de maison
+  de Holt's (voir plus bas), comme les trois du lot 10.
+
+Le contradicteur a trouvé la fabrique d'Antonius (Intercigar S.A.,
+Tamboril), précisé les villes de SYN, Valentino Siesto et Samana, et
+fixé Alcazar à la PENSA de J.C. Newman, à Estelí, plutôt que chez
+Fuente. Alcazar et Bauza gardent leur fiche alors que leur propriétaire
+possède la fabrique qui les roule : leur histoire précède le rachat
+(précédent Cuesta-Rey).
+
 ## Arbitrage — les maisons à plusieurs marques (24 septembre)
 
 La contradiction a fait apparaître des maisons **absentes de l'atlas**
@@ -187,6 +204,21 @@ tiennent à jour.
   Puriscal (voir « En réserve »).
 - **Leonel et Reserva del Presidente** restent dehors : leur fabrique
   est tue et aucun propriétaire n'est identifié.
+
+## Arbitrage — Holt's Cigar Company (24 septembre)
+
+Le tri compte une trentaine de noms liés au détaillant Holt's Cigar
+Company (Philadelphie), maison mère d'Ashton : des exclusivités roulées
+à la main, surtout en République dominicaine, dans des fabriques que
+Holt's ne nomme jamais. Même propriétaire, même silence : trente fiches
+presque identiques n'apprendraient rien de plus qu'une seule.
+
+Holt's Cigar Company reçoit donc une fiche de maison. Elle écrit le
+silence et range ses exclusivités dans sa gamme ; chaque nom reste
+trouvable, puisque la recherche lit les lignes. La fiche s'écrira une
+fois toutes les exclusivités examinées (contradiction des lots 11 à 16).
+Une exclusivité qu'une maison de l'atlas roule reste une mention de
+cette maison, comme Ashton chez Fuente.
 
 ## Migration 239 — treize maisons des catalogues (24 septembre)
 
@@ -242,6 +274,30 @@ absente du français. « El Mejor Sabor », nom d'une ligne de Castillo de
 Reyes, est consigné au cliquet des superlatifs. Enfin, un compte
 Instagram sort des sources de Kinix : il redisait le site de la maison.
 
+## Migration 241 — treize maisons, dont onze écrivent le silence (24 septembre)
+
+Les lots d'écriture 06, 08 et 09 donnent treize fiches, et l'atlas
+passe à 303 marques :
+- une en République dominicaine : DBL, dans son usine de Tamboril ;
+- huit au Nicaragua : Cuervo y Sobrinos (Tabacalera Pages), Ann-Eks,
+  BerlinCigarMen, Canned Heat, Casa Culinaria, Casagranda, Chinchalero,
+  Perla de Calvano ;
+- une au Honduras : Barrio Viejo ;
+- trois en Indonésie : Mata Hari, Atatürk, Chone.
+
+Onze écrivent le silence, surtout des marques de négociants et
+d'importateurs allemands. La relecture a relevé deux fautes de méthode,
+désormais dans la consigne d'écriture :
+- des vitolas rangées comme des lignes (Ann-Eks, Canned Heat, Cuervo y
+  Sobrinos) ;
+- des entrées au catalogue d'un détaillant prises pour des fondations :
+  Ann-Eks, Canned Heat et Atatürk ont une fondation « Non précisée ».
+
+Deux mots ont été arrêtés par les garde-fous. En allemand, « der größte
+Teil » (l'essentiel) se lisait comme un superlatif. En chinois,
+雪茄爱好者 (amateurs de cigares) est aussi le nom d'une revue à notes :
+la traduction dit 雪茄迷.
+
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
 Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti
@@ -261,7 +317,5 @@ après les premières migrations de fiches.
   et La Bavaria les rejoignent. Les six seront réexaminées ensemble
   avant d'être écrites : ligne de la maison, marque d'un tiers ou
   fabrique distincte.
-- **Sansibar.** Le nom recouvre deux lignes roulées dans deux pays :
-  la No.1 au Honduras (Jamastrán) et la Gran Reserva Laura Chavin en
-  République dominicaine. L'examen de Laura Chavin tranchera la forme
-  de la fiche.
+- **Holt's Cigar Company.** Fiche de maison ouverte (voir plus haut),
+  écrite après la contradiction des lots 11 à 16.

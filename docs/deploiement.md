@@ -139,13 +139,18 @@ pour afficher le bouton « Google Maps ». Appliquée avant la recopie, elle
 a laissé le site sans aucun lien de carte — la donnée retirée, et le code
 qui la lisait encore en place.
 
-L'inverse est sans danger : du code neuf devant une base pas encore
-migrée lit des colonnes qui existent déjà. C'est le retrait qui blesse,
-jamais l'ajout.
+L'inverse est sans danger tant que le code neuf ne lit que des colonnes
+qui existent déjà. C'est le retrait qui blesse, jamais l'ajout.
 
 Une migration qui ne fait qu'ajouter ou corriger des lignes se passe
 dans n'importe quel ordre. Celles qui **retirent** — colonne vidée,
 table supprimée, valeur mise à NULL — se lancent après.
+
+**Une migration qui crée ce que le nouveau code lit se lance avant la
+recopie**, juste après le `git pull`. La 238 crée `brands.mentions`,
+que `backend/data.php` lit dans le même commit : recopié d'abord, ce
+code aurait fait échouer la recherche et le chargement de l'atlas
+jusqu'à la migration. L'ancien code, lui, ignore une colonne de plus.
 
 ### ⚠ Le Deploy HEAD Commit peut ne rien copier — et ne le dit pas
 

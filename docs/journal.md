@@ -6025,3 +6025,34 @@ pays.
 
 Le tri est terminé : 319 noms examinés, plus 3 pliés d'avance dans une
 maison.
+
+## Huitième recensement — treize maisons, dont onze écrivent le silence (migration 241)
+
+Troisième migration de fiches du recensement : treize maisons, et
+l'atlas passe à 303 marques. Onze écrivent le silence. Ce sont pour la
+plupart des marques de négociants et d'importateurs allemands : le
+propriétaire et le pays de roulage sont attestés, la fabrique n'est
+jamais nommée.
+
+La relecture a trouvé deux fautes que la relecture automatique ne voyait
+pas :
+- des vitolas rangées comme des lignes de gamme ;
+- des entrées au catalogue d'un détaillant écrites comme des fondations.
+
+La consigne d'écriture porte maintenant ces deux leçons, et trois
+autres :
+- ce qu'on ignore s'écrit comme ce que la maison ne dit pas ;
+- chaque détail a sa page dans les sources ;
+- `mentions` ne porte ni un nom qui a sa fiche, ni une marque que la
+  maison ne fait que distribuer.
+
+Les garde-fous ont arrêté deux mots. L'allemand « der größte Teil »
+(l'essentiel) se lisait comme un superlatif. Le chinois 雪茄爱好者
+(amateurs de cigares) est aussi le nom d'une revue à notes.
+
+`deploiement.md` est corrigé. Une migration qui crée ce que le nouveau
+code lit se lance avant la recopie : la 238 l'exigeait, et le document
+disait l'inverse sans danger.
+
+Arbitrage : Holt's Cigar Company reçoit une fiche de maison pour sa
+trentaine d'exclusivités, au lieu de trente fiches identiques.

@@ -271,7 +271,7 @@
         },
         "casagranda-cigars.de": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "casdaglicigars.com": {
             "dns": "resout",
@@ -289,6 +289,10 @@
             "dns": "resout",
             "fiches": 3
         },
+        "cgarsltd.co.uk": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "charutoso.com.br": {
             "dns": "resout",
             "fiches": 2
@@ -303,7 +307,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 51
+            "fiches": 52
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -311,7 +315,7 @@
         },
         "cigar-wiki.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "cigar.com": {
             "dns": "resout",
@@ -359,7 +363,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 77
+            "fiches": 79
         },
         "cigarlifeguy.com": {
             "dns": "resout",
@@ -423,7 +427,7 @@
         },
         "cigarworld.de": {
             "dns": "resout",
-            "fiches": 23
+            "fiches": 34
         },
         "circolodellunione.it": {
             "dns": "resout",
@@ -493,6 +497,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "cuervoysobrinoscigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "dalmoroshop.com": {
             "dns": "resout",
             "fiches": 1
@@ -526,6 +534,10 @@
             "fiches": 1
         },
         "davidoffshop.rs": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "dblcigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -605,6 +617,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "elcigarshop.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "eldiario.es": {
             "dns": "resout",
             "fiches": 2
@@ -658,6 +674,14 @@
             "fiches": 1
         },
         "ethiopianairlines.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "etwasgenuss.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "eventartdirection.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -823,7 +847,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 85
+            "fiches": 88
         },
         "havanaconnections.com": {
             "dns": "resout",
@@ -1026,6 +1050,10 @@
             "fiches": 2
         },
         "koelnerleben-magazin.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "kohlhase-soehne.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1257,6 +1285,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "monsooncigar.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "montecarlosbm.com": {
             "dns": "resout",
             "fiches": 1
@@ -1285,6 +1317,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "mystarluxury.pt": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "natsherman.com": {
             "dns": "resout",
             "fiches": 1
@@ -1299,7 +1335,7 @@
         },
         "noblego.de": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 6
         },
         "northdata.de": {
             "dns": "resout",
@@ -1365,6 +1401,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "pasionpuro.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "patinacigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -1372,6 +1412,10 @@
         "patoro.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "paul-bugge.com": {
+            "dns": "resout",
+            "fiches": 3
         },
         "paulstulaccigars.com": {
             "dns": "resout",
@@ -1392,6 +1436,10 @@
         "perdomocigars.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "peterheinrichs.de": {
+            "dns": "resout",
+            "fiches": 1
         },
         "philstar.com": {
             "dns": "resout",
@@ -1587,7 +1635,7 @@
         },
         "smokersplanet.de": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 4
         },
         "smokingpipes.com": {
             "dns": "resout",
@@ -1611,7 +1659,7 @@
         },
         "starkezigarren.de": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 6
         },
         "steenberghotel.com": {
             "dns": "resout",
@@ -1627,7 +1675,7 @@
         },
         "stogiepress.com": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 6
         },
         "stogiereview.com": {
             "dns": "resout",
@@ -1721,6 +1769,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "thehouseofcigars.co.uk": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "theritzlondon.com": {
             "dns": "resout",
             "fiches": 1
@@ -1751,11 +1803,11 @@
         },
         "tobaccoasia.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "tobaccobusiness.com": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 8
         },
         "tokyoamericanclub.org": {
             "dns": "resout",
@@ -1778,6 +1830,10 @@
             "fiches": 1
         },
         "trademarks.justia.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
+        "trbusiness.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1877,11 +1933,19 @@
             "dns": "resout",
             "fiches": 1
         },
+        "zigarre.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "zigarren.zone": {
             "dns": "resout",
             "fiches": 2
         },
         "zigarrenmanufaktur.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "zigarrennewsblog.ch": {
             "dns": "resout",
             "fiches": 1
         },
