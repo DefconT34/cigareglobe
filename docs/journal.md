@@ -5970,3 +5970,32 @@ Nicaragua, Oliva et Rocky Patel, le nom trouvé affiché devant. Piège
 noté : un `ALTER TABLE` valide la transaction, l'essai à blanc
 `START TRANSACTION … ROLLBACK` d'une migration de schéma l'applique.
 L'avancée du recensement est dans `docs/recensement-8.md`.
+
+## Huitième recensement — treize maisons des catalogues (migration 239)
+
+Premières fiches écrites par le recensement. Elles sont passées par
+toutes ses étapes : tri, contradiction, écriture, relecture machine puis
+humaine, traduction. Il y en a huit en République dominicaine, une au
+Honduras, une en Indonésie et trois au Nicaragua. L'atlas passe de 262
+à 275 marques.
+
+L'essai à blanc a trouvé quatre tournures arabes que le garde-fou lit
+comme des superlatifs : « أقوى » seul pour « plus corsé », « أكثر بقليل
+من ». Elles se récrivent « أشدّ قوةً » et « ما يزيد قليلًا على ».
+
+Les garde-fous d'après-migration ont trouvé deux autres défauts, que ni
+le générateur ni la relecture ne voyaient :
+- Des fiches nommaient Cigar Journal ou Cigar Aficionado comme source
+  d'un fait. `marques_check` refuse de nommer une revue à notes : le fait
+  reste, la parole revient à qui l'a dite, et les appréciations de force
+  sortent.
+- « Fondée en » datait deux fabriques tierces.
+  `coherence_check` ne veut ce verbe que pour la maison de la fiche.
+
+`relis8` et la consigne d'écriture voient désormais les deux défauts. Les
+lots suivants en sont corrigés avant traduction.
+
+Au passage, `i18n_divergence` a fait remonter un défaut ancien, sans
+lien avec ce chantier : la description chinoise du salon Turmeaus de
+Liverpool est un mélange de français et de particules. L'écart est
+consigné au cliquet de l'outil, et sa correction est proposée à part.

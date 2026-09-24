@@ -74,13 +74,16 @@ tri ne s'y fie pas : chaque pays de roulage s'établit par une source.
 
 ## Le tri
 
-*En cours.* Lots 01 à 07 terminés (175 noms) : 71 `fiche`, 58
-`fabricant_tu`, 16 `mention`, 14 `gamme`, 12 `hors_perimetre`, 4
-`doublon`, aucun `introuvable`. Les `hors_perimetre` sont surtout la
+*En cours.* Lots 01 à 11 terminés (275 noms sur 322) : 96 `fiche`,
+85 `fabricant_tu`, 37 `gamme`, 25 `mention`, 20 `hors_perimetre`, 8
+`introuvable`, 4 `doublon`. Les `hors_perimetre` sont surtout la
 machine allemande (Schuster, von Eicken, Arnold André à Bünde) ; les
 `fabricant_tu`, des marques de cavistes et d'importateurs. Trois noms des
 lots à venir sont pliés d'avance dans une fiche de maison (Carlos André et
 Montosa chez Arnold André, The Traveler chez American Caribbean Cigars).
+Le lot 11 en plie deux autres dans une maison que la contradiction n'a pas
+encore examinée : Lotus et Miami Beach Sweets, chez El Mago (Nicholas
+Fusco, fabrique MGE à Estelí).
 
 ## Arbitrage — la fabrique tue (23 septembre)
 
@@ -116,6 +119,25 @@ le fondateur d'Alfambra (Alejandro Mata, de Málaga), la fabrique de
 Belmore (la Tabacalera von Eicken, ex-Charles Fairmorn), le propriétaire
 de Dominus (Traumfabrik, Munich).
 
+Lots 05 à 08 (44 noms) : **37 tiennent, 7 cèdent**. La plupart des
+`fabricant_tu` de caviste deviennent des fiches qui écrivent le silence,
+propriétaire et pays prouvés (Cigarkings, CSC, Despot, Helvada, Ibis,
+May's, Nordlicht, Teatro del Mundo, Dos Jotas…). Cèdent :
+- Manuel Alonso devient une ligne de Tabacosta.
+- G.H. est le nom européen de Gran Habano (voir plus bas).
+- Tortuga sort du périmètre. Sa fabrique existe, la Tabacalera Aguilar
+  au Honduras, mais on ne trouve aucune trace d'activité depuis 2016 et
+  le domaine a été reconverti.
+- Dominican Santiago Selection devient une mention de Kristoff, dont
+  elle partage la fabrique.
+
+Le contradicteur a aussi fixé Barrio Viejo au Honduras, à Danlí. La cape
+avait fait écrire le Nicaragua à certains catalogues. Umnum et Villa
+Vieja sortent de la même fabrique, la TABSA d'Aganorsa Leaf à Estelí,
+sans en être : ce sont des marques de tiers, qui gardent leur fiche.
+Marca Fina n'est pas une ligne de Darier & Cleef, qui n'en était que
+l'importateur.
+
 ## Arbitrage — les maisons à plusieurs marques (24 septembre)
 
 La contradiction a fait apparaître des maisons **absentes de l'atlas**
@@ -133,7 +155,8 @@ tiers garde la sienne, qui nomme la fabrique.
 | American Caribbean Cigars (Emiliano Lagos) | Nicaragua (Estelí) | The Traveler, El Viejo Continente, The Bouncer, Maradona Tribute, El Copey (roulée en Rép. dominicaine) ; Bella Mundo, ligne ou marque de tiers, à dire |
 | D'Crossier | Rép. dominicaine (ABAM) | Flor de D'Crossier |
 | Darier & Cleef | Panama | Colón, Cruzero |
-| Dalay | à établir (lot 09) | Ferruh Karakasli |
+| Dalay | Rép. dominicaine (Tabacalera Zauberberg, Santiago) | Ferruh Karakasli ; la ligne Dalay Nicaragua, roulée chez Luciano Cigars depuis 2023, se dit dans l'histoire |
+| Tabacosta (Tabacos Costa Nicaragua S.A.) | Nicaragua (Estelí) | Manuel Alonso ; Costa Platinum à éprouver |
 
 Arnold André fait aussi, à Bünde, des cigares de machine : sa fiche ne
 porte que les longfillers roulés à la main à Santiago.
@@ -151,6 +174,45 @@ qui en citaient déjà (Black Swan ×4, Oliveros et King Havano chez Swag,
 Zechbauer chez Vegas de Santiago) ; les migrations du recensement la
 tiennent à jour.
 
+## Arbitrages de la contradiction, lots 05 à 08 (24 septembre)
+
+- **Rough Rider** est une ligne de la Tabacalera Palma. Elle rejoint
+  sa gamme parmi les ajouts aux fiches existantes. Les dates divergent,
+  1925 ou 1936, et s'écriront toutes deux.
+- **G.H.** est le nom sous lequel Gran Habano se vend en Europe, où
+  « Habano » est réservé. C'est un doublon qu'il faut pouvoir trouver :
+  une phrase dans l'histoire de Gran Habano, et le nom dans `mentions`.
+- **Dominus et La Bavaria** rejoignent le réexamen des marques de
+  Puriscal (voir « En réserve »).
+- **Leonel et Reserva del Presidente** restent dehors : leur fabrique
+  est tue et aucun propriétaire n'est identifié.
+
+## Migration 239 — treize maisons des catalogues (24 septembre)
+
+Les lots d'écriture 01 à 03 donnent treize fiches, et l'atlas passe à
+275 marques :
+- huit en République dominicaine : Baron Ullmann, Belmore, Bock y Ca.,
+  Capadura, Chateau Diadem, Notorious, Simon Beltre, Vallejuelo ;
+- une au Honduras : Stauffenberg ;
+- une en Indonésie : El Gaucho ;
+- trois au Nicaragua : Alfambra, Casa de Alegria, Don Fidel.
+
+Rosa Nicaragua et Vedado Flat Black sont entrées dans `mentions`.
+
+Deux garde-fous du dépôt ont refusé ce que la relecture laissait
+passer :
+- **Des fiches nommaient Cigar Journal ou Cigar Aficionado** comme
+  source d'un fait : 72 phrases dans les six langues. La revue n'était
+  qu'un canal. Le fait reste, l'URL reste dans `source`, et la parole
+  revient à qui l'a dite (« dit Alejandro Mata »). Les appréciations de
+  force tirées de la revue sortent.
+- **« Fondée en » datait deux fabriques tierces**, Charles Fairmorn et
+  MJ Frias. Le texte les dit désormais « établie » et « ouverte ».
+
+La relecture automatique des fiches (`relis8`) et la consigne d'écriture
+repèrent maintenant ces deux défauts. Les lots 04, 05 et 07, relus, en
+sont corrigés avant leur migration.
+
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
 Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti
@@ -166,6 +228,11 @@ après les premières migrations de fiches.
   établit que son atelier travaille aujourd'hui sous le nom de Tabacos de
   Costa Rica S.A. (Casdagli, Zechbauer). Malekö, La Flor de Montenegro,
   Kaneda et Skull 77 y seraient roulées ; la contradiction a lu ces
-  sources autrement pour deux d'entre elles. Les quatre seront
-  réexaminées ensemble — ligne de la maison, marque d'un tiers, ou
-  fabrique distincte — avant d'être écrites.
+  sources autrement pour deux d'entre elles. Dominus (Traumfabrik)
+  et La Bavaria les rejoignent. Les six seront réexaminées ensemble
+  avant d'être écrites : ligne de la maison, marque d'un tiers ou
+  fabrique distincte.
+- **Sansibar.** Le nom recouvre deux lignes roulées dans deux pays :
+  la No.1 au Honduras (Jamastrán) et la Gran Reserva Laura Chavin en
+  République dominicaine. L'examen de Laura Chavin tranchera la forme
+  de la fiche.

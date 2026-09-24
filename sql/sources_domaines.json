@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-09-18",
+    "fige_le": "2026-09-24",
     "domaines": {
         "21club.com": {
             "dns": "resout",
@@ -24,6 +24,10 @@
         "abras.com.br": {
             "dns": "resout",
             "fiches": 4
+        },
+        "absolutecigars.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "adriaticluxuryhotels.com": {
             "dns": "resout",
@@ -173,6 +177,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "besukirayacigar.co.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "beyondthemagazine.it": {
             "dns": "resout",
             "fiches": 1
@@ -277,15 +285,23 @@
             "dns": "resout",
             "fiches": 2
         },
+        "chateaudiadem.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "chazarocigars.com": {
             "dns": "resout",
             "fiches": 1
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 46
+            "fiches": 47
         },
         "cigar-review.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigar-wiki.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -295,9 +311,13 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 154
+            "fiches": 155
         },
         "cigarcitybrewing.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarconexion.in": {
             "dns": "resout",
             "fiches": 1
         },
@@ -311,7 +331,7 @@
         },
         "cigardojo.com": {
             "dns": "resout",
-            "fiches": 10
+            "fiches": 11
         },
         "cigares.com": {
             "dns": "resout",
@@ -331,7 +351,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 67
+            "fiches": 72
         },
         "cigarlifeguy.com": {
             "dns": "resout",
@@ -373,6 +393,14 @@
             "dns": "resout",
             "fiches": 1
         },
+        "cigarslover.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarsmokerclub.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "cigarsnobmag.com": {
             "dns": "resout",
             "fiches": 1
@@ -383,7 +411,7 @@
         },
         "cigarworld.de": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 13
         },
         "circolodellunione.it": {
             "dns": "resout",
@@ -424,6 +452,10 @@
         "connecticuthistory.org": {
             "dns": "resout",
             "fiches": 2
+        },
+        "coronacigar.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "correiobraziliense.com.br": {
             "dns": "resout",
@@ -529,6 +561,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "ebony.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "econodata.com.br": {
             "dns": "resout",
             "fiches": 1
@@ -548,6 +584,14 @@
         "eldiario.es": {
             "dns": "resout",
             "fiches": 2
+        },
+        "eldiquetrading.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "elgauchocigars.co.id": {
+            "dns": "resout",
+            "fiches": 1
         },
         "elseptimo.com": {
             "dns": "resout",
@@ -739,7 +783,7 @@
         },
         "hacico.de": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 3
         },
         "hajenius.com": {
             "dns": "resout",
@@ -747,7 +791,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 76
+            "fiches": 80
         },
         "havanaconnections.com": {
             "dns": "resout",
@@ -755,7 +799,7 @@
         },
         "havanahouse.co.uk": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "hilton.com": {
             "dns": "resout",
@@ -771,7 +815,7 @@
         },
         "holts.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "hotel-lutetia.com": {
             "dns": "resout",
@@ -841,6 +885,14 @@
             "dns": "resout",
             "fiches": 1
         },
+        "intercigar.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "intertabac.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "inyourpocket.com": {
             "dns": "resout",
             "fiches": 1
@@ -890,6 +942,10 @@
             "fiches": 3
         },
         "journal.unnes.ac.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "jpb.ro": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1010,6 +1066,10 @@
             "fiches": 2
         },
         "lasirenacigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lastdodo.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1189,6 +1249,10 @@
             "dns": "resout",
             "fiches": 3
         },
+        "noblego.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "nyc.com": {
             "dns": "resout",
             "fiches": 1
@@ -1221,6 +1285,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "opencorporates.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "ortegacigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -1236,6 +1304,10 @@
         "padron.com": {
             "dns": "resout",
             "fiches": 3
+        },
+        "paginasamarillas.com.ni": {
+            "dns": "resout",
+            "fiches": 1
         },
         "parisyachtmarina.fr": {
             "dns": "resout",
@@ -1287,7 +1359,7 @@
         },
         "premiumcigars.org": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 6
         },
         "principletrading.com": {
             "dns": "resout",
@@ -1336,6 +1408,10 @@
         "raffles.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "rauchr.de": {
+            "dns": "resout",
+            "fiches": 1
         },
         "redalyc.org": {
             "dns": "resout",
@@ -1525,6 +1601,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "tabak-kontor.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "tabaqueria.com": {
             "dns": "resout",
             "fiches": 1
@@ -1563,7 +1643,7 @@
         },
         "thecigarauthority.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "thecigarstore.com": {
             "dns": "resout",
@@ -1599,7 +1679,7 @@
         },
         "tobaccoasia.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "tobaccobusiness.com": {
             "dns": "resout",
@@ -1613,11 +1693,19 @@
             "dns": "resout",
             "fiches": 1
         },
+        "toropuro.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "toscanocigars.com": {
             "dns": "resout",
             "fiches": 1
         },
         "trabucul.ro": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "trademarks.justia.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1653,6 +1741,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "vdg-cigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "vegassantiago.com": {
             "dns": "resout",
             "fiches": 1
@@ -1663,7 +1755,7 @@
         },
         "villigercigars.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "visitpontadelgada.pt": {
             "dns": "resout",
@@ -1714,6 +1806,10 @@
             "fiches": 1
         },
         "zigarrenversand.ch": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "zigarrenwelt.de": {
             "dns": "resout",
             "fiches": 1
         },

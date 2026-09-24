@@ -211,10 +211,11 @@ Holt's et Atlantic confrontées à l'atlas : 649 noms, 322 à trier
 (`expert-cigare`, treize lots de vingt-cinq, verdicts `fiche` / `gamme` /
 `mention` / `doublon` / `hors_perimetre` / `fabricant_tu` /
 `introuvable`), puis contradiction des `fiche`, puis écriture par lots de
-pays. Tri : 175 noms sur 322 ; contradiction : 48 examinés ; écriture :
-premier lot écrit et relu, en traduction. Livrée en chemin : la 238, les
+pays. Tri : 275 noms sur 322 ; contradiction : 92 examinés ; écriture :
+treize fiches migrées (239, l'atlas à 275 marques), trois lots relus en
+traduction, huit à écrire. Livrée en chemin : la 238, les
 noms que les fiches citent deviennent trouvables. À venir : Haïti (pays
-nouveau, pour Bohekio), le Costa Rica de Puriscal (quatre marques à
+nouveau, pour Bohekio), le Costa Rica de Puriscal (six marques à
 réexaminer ensemble), les ajouts aux fiches existantes (lignes de gamme,
 mentions).
 
