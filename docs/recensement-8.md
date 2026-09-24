@@ -74,9 +74,10 @@ tri ne s'y fie pas : chaque pays de roulage s'établit par une source.
 
 ## Le tri
 
-*En cours.* Lots 01 à 11 terminés (275 noms sur 322) : 96 `fiche`,
-85 `fabricant_tu`, 37 `gamme`, 25 `mention`, 20 `hors_perimetre`, 8
-`introuvable`, 4 `doublon`. Les `hors_perimetre` sont surtout la
+*Terminé.* Treize lots, 319 noms ; les trois autres des 322 étaient
+pliés d'avance dans une fiche de maison (voir ci-dessous). Résultat : 114
+`fiche`, 95 `fabricant_tu`, 45 `gamme`, 27 `mention`, 24
+`hors_perimetre`, 10 `introuvable`, 4 `doublon`. Les `hors_perimetre` sont surtout la
 machine allemande (Schuster, von Eicken, Arnold André à Bünde) ; les
 `fabricant_tu`, des marques de cavistes et d'importateurs. Trois noms des
 lots à venir sont pliés d'avance dans une fiche de maison (Carlos André et
@@ -212,6 +213,34 @@ passer :
 La relecture automatique des fiches (`relis8`) et la consigne d'écriture
 repèrent maintenant ces deux défauts. Les lots 04, 05 et 07, relus, en
 sont corrigés avant leur migration.
+
+## Migration 240 — quinze maisons des catalogues (24 septembre)
+
+Les lots d'écriture 04, 05 et 07 donnent quinze fiches, et l'atlas
+passe à 290 marques :
+- cinq en République dominicaine : Arnold André, D'Crossier, Bugatti,
+  Caoba, Castillo de Reyes ;
+- cinq au Honduras : Dios del Sol, Flor del Sol, Kinix, Rodrigo de
+  Jerez, Wolfertz ;
+- quatre au Nicaragua : American Caribbean Cigars, Daniel Marshall,
+  Dos Amigos, T. Sonthi ;
+- une au Panama : Darier & Cleef.
+
+Quatre sont des fiches de maison qui rangent des marques du recensement
+dans leur gamme : Arnold André, American Caribbean Cigars, D'Crossier et
+Darier & Cleef. American Caribbean roule aussi pour Toraño, Leccia
+Tobacco et le Vintage Rock-A-Feller Cigar Group, qui entrent dans
+`mentions`. Six fiches écrivent le silence : Dios del Sol, Flor del Sol,
+Kinix, Rodrigo de Jerez, Dos Amigos et T. Sonthi.
+
+Les traductions sont revenues avec le chinois ponctué à l'occidentale
+(« , ; ( ) ») ; elles sont remises en pleine chasse comme le reste de
+l'atlas, et la consigne de traduction le dit désormais. Le « 2 000
+boîtes » de la ligne L'Forte s'écrit en toutes lettres dans les
+traductions : écrit « 2000 », `i18n_divergence` y lisait une année
+absente du français. « El Mejor Sabor », nom d'une ligne de Castillo de
+Reyes, est consigné au cliquet des superlatifs. Enfin, un compte
+Instagram sort des sources de Kinix : il redisait le site de la maison.
 
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 

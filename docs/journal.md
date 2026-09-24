@@ -5999,3 +5999,29 @@ Au passage, `i18n_divergence` a fait remonter un défaut ancien, sans
 lien avec ce chantier : la description chinoise du salon Turmeaus de
 Liverpool est un mélange de français et de particules. L'écart est
 consigné au cliquet de l'outil, et sa correction est proposée à part.
+
+## Huitième recensement — quinze maisons des catalogues (migration 240)
+
+Deuxième migration de fiches du recensement : quinze maisons, dont
+quatre qui rangent dans leur gamme des marques du recensement (Arnold
+André, American Caribbean Cigars, D'Crossier, Darier & Cleef). L'atlas
+passe à 290 marques. Les leçons de la 239 ont été appliquées au
+français avant la traduction ; les garde-fous en ont trouvé trois
+autres :
+- le chinois de ces lots était ponctué à l'occidentale ;
+- un « 2000 » de quantité que `i18n_divergence` lisait comme une
+  année ;
+- un nom de ligne espagnol, « El Mejor Sabor », lu comme un superlatif.
+
+La ponctuation est normalisée par script et la consigne de traduction
+le dit. La quantité s'écrit en lettres. Le nom de ligne est consigné au
+cliquet ; la même mise à jour retire du cliquet onze écarts résolus
+depuis.
+
+`gen8` sait maintenant régénérer une migration déjà appliquée en local.
+Il n'y admet que les fiches que `moderation_log` attribue à cette même
+migration, et remet à jour leur description dans la liste des marques du
+pays.
+
+Le tri est terminé : 319 noms examinés, plus 3 pliés d'avance dans une
+maison.

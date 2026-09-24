@@ -101,6 +101,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "arnold-andre.info": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "arturo-fuente.com": {
             "dns": "resout",
             "fiches": 1
@@ -245,6 +249,10 @@
             "dns": "resout",
             "fiches": 4
         },
+        "carlos-andre.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "casa1910.com": {
             "dns": "resout",
             "fiches": 1
@@ -295,7 +303,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 47
+            "fiches": 51
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -303,7 +311,7 @@
         },
         "cigar-wiki.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "cigar.com": {
             "dns": "resout",
@@ -311,7 +319,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 155
+            "fiches": 156
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -347,15 +355,19 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 8
+            "fiches": 9
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 72
+            "fiches": 77
         },
         "cigarlifeguy.com": {
             "dns": "resout",
             "fiches": 6
+        },
+        "cigarmonthclub.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "cigaroa.com": {
             "dns": "resout",
@@ -395,11 +407,11 @@
         },
         "cigarslover.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "cigarsmokerclub.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "cigarsnobmag.com": {
             "dns": "resout",
@@ -411,7 +423,7 @@
         },
         "cigarworld.de": {
             "dns": "resout",
-            "fiches": 13
+            "fiches": 23
         },
         "circolodellunione.it": {
             "dns": "resout",
@@ -455,7 +467,7 @@
         },
         "coronacigar.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "correiobraziliense.com.br": {
             "dns": "resout",
@@ -482,6 +494,14 @@
             "fiches": 1
         },
         "dalmoroshop.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "danielmarshall.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "danielmarshallshop.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -544,6 +564,10 @@
         "dopanama.com": {
             "dns": "resout",
             "fiches": 3
+        },
+        "dosamigos87.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "dossantossa.com": {
             "dns": "resout",
@@ -642,6 +666,14 @@
             "fiches": 3
         },
         "fablecigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "facebook.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "fahr-im-kreis.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -783,7 +815,7 @@
         },
         "hacico.de": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "hajenius.com": {
             "dns": "resout",
@@ -791,7 +823,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 80
+            "fiches": 85
         },
         "havanaconnections.com": {
             "dns": "resout",
@@ -843,7 +875,7 @@
         },
         "humoytabaco.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "hvccigars.com": {
             "dns": "resout",
@@ -957,6 +989,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "justsmokecigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "kafiecigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -977,6 +1013,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "kinix-cigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "klarocigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -994,6 +1034,10 @@
             "fiches": 1
         },
         "kolumbuscigars.ch": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "kopp-tobaccos.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1038,6 +1082,10 @@
             "fiches": 1
         },
         "lacasadelhabanokreuzlingen.ch": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "lacasadetabaco.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1087,7 +1135,7 @@
         },
         "leafenthusiast.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "lecadre223.com": {
             "dns": "resout",
@@ -1207,7 +1255,7 @@
         },
         "mikescigars.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "montecarlosbm.com": {
             "dns": "resout",
@@ -1243,13 +1291,17 @@
         },
         "neptunecigar.com": {
             "dns": "resout",
-            "fiches": 8
+            "fiches": 9
         },
         "newsroompanama.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "noblego.de": {
+            "dns": "resout",
+            "fiches": 4
+        },
+        "northdata.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1533,6 +1585,10 @@
             "dns": "resout",
             "fiches": 4
         },
+        "smokersplanet.de": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "smokingpipes.com": {
             "dns": "resout",
             "fiches": 3
@@ -1549,6 +1605,14 @@
             "dns": "resout",
             "fiches": 1
         },
+        "st-group.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "starkezigarren.de": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "steenberghotel.com": {
             "dns": "resout",
             "fiches": 1
@@ -1563,7 +1627,7 @@
         },
         "stogiepress.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "stogiereview.com": {
             "dns": "resout",
@@ -1590,6 +1654,10 @@
             "fiches": 2
         },
         "sushi-jiro.jp": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "t-sonthi.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1643,11 +1711,15 @@
         },
         "thecigarauthority.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "thecigarstore.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "thehappycigar.wordpress.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "theritzlondon.com": {
             "dns": "resout",
@@ -1683,7 +1755,7 @@
         },
         "tobaccobusiness.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "tokyoamericanclub.org": {
             "dns": "resout",
@@ -1774,6 +1846,14 @@
             "fiches": 1
         },
         "wina-mp.pl": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "wlw.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "wolfertz-gmbh.com": {
             "dns": "resout",
             "fiches": 1
         },
