@@ -6056,3 +6056,36 @@ disait l'inverse sans danger.
 
 Arbitrage : Holt's Cigar Company reçoit une fiche de maison pour sa
 trentaine d'exclusivités, au lieu de trente fiches identiques.
+
+## Turmeaus : Liverpool et Édimbourg ramenés aux faits (migration 242)
+
+Le défaut que la 239 avait consigné au cliquet : le chinois et l'arabe
+du salon Turmeaus de Liverpool étaient des substitutions machine, du
+français semé de particules. Le français et ses trois autres langues
+finissaient sur un éloge ; la fiche voisine d'Édimbourg en portait un
+dans les six langues (首屈一指, أبرز).
+
+Réécrire les faits a obligé à les relire, et ils tombaient aussi :
+- Liverpool n'a pas de Casa del Habano. Le site des Casas de C.Gars Ltd
+  en compte trois (Chester, Knutsford, Édimbourg) et l'annuaire
+  habanos.com range la boutique Turmeaus en Habanos Specialist. La fiche
+  devient une Cave & Lounge, à sa vraie adresse : Albany Building,
+  8 Old Hall Street.
+- Édimbourg est bien une Casa, ouverte en septembre 2023, mais au
+  11 Lister Square (Quartermile), pas au 35 Frederick Street.
+
+Les deux téléphones changent aussi. Aucune des sources lues ne portait
+les anciennes adresses, et `expert-cigare`, en contradicteur, n'a rien
+trouvé qui les soutienne. `expert-traduction` a relu les dix
+traductions sans retouche.
+
+Le contradicteur proposait pour Liverpool le type Habanos Specialist.
+Ce type aurait refait l'erreur à l'écran : `explorer.js` range tout type
+qui contient « habanos » sous La Casa del Habano.
+
+Les deux clés du cliquet `i18n_divergence` sont retirées à la main. Le
+sceau des sources n'est mis à jour que pour les domaines de la 242.
+`zirahotel.com`, seule source de la fiche 935, ne résout plus depuis le
+25 septembre : un `--figer` complet l'aurait inscrit « inexistant », et
+la campagne l'aurait refusé pour un défaut que ce chantier ne traite
+pas. `sources.php --verifier` continue de le signaler.

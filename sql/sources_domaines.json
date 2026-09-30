@@ -287,7 +287,7 @@
         },
         "cgars.co.uk": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 1
         },
         "cgarsltd.co.uk": {
             "dns": "resout",
@@ -398,6 +398,10 @@
             "fiches": 3
         },
         "cigars-vegasantiago.biz": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigars.co.uk": {
             "dns": "resout",
             "fiches": 1
         },
@@ -835,7 +839,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 178
+            "fiches": 180
         },
         "hacico.de": {
             "dns": "resout",
@@ -1099,7 +1103,7 @@
         },
         "lacasadelhabano.com": {
             "dns": "resout",
-            "fiches": 104
+            "fiches": 105
         },
         "lacasadelhabano.kn": {
             "dns": "resout",
@@ -1156,6 +1160,10 @@
         "lcdh.com.my": {
             "dns": "resout",
             "fiches": 1
+        },
+        "lcdhcigars.uk": {
+            "dns": "resout",
+            "fiches": 2
         },
         "le-diplomate.fr": {
             "dns": "resout",
@@ -1492,6 +1500,10 @@
         "puertobanus.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "puffinrooms.co.uk": {
+            "dns": "resout",
+            "fiches": 2
         },
         "purosartesanosjulio.com": {
             "dns": "resout",
@@ -1848,6 +1860,10 @@
         "tugujatim.id": {
             "dns": "resout",
             "fiches": 1
+        },
+        "turmeaus.co.uk": {
+            "dns": "resout",
+            "fiches": 2
         },
         "umkm.kompas.com": {
             "dns": "resout",

@@ -223,6 +223,18 @@ mentions).
 
 - Trois caves Zino sans rue : Cosmos, Sofitel, Plateau.
 
+### Reste de la 242 — autour des salons de C.Gars Ltd
+
+- Chester (fiche 50) : la fiche écrit 34 Watergate Street, habanos.com
+  et lcdhcigars.uk écrivent 32 ; « célèbre tobacconist » est un éloge.
+- Knutsford : la Casa de C.Gars Ltd (10 Minshull Street) n'a pas de
+  fiche.
+- Londres, Soho (fiche 283) : même source `cgars.co.uk` que les deux
+  fiches corrigées, et un type « Cave Premium Selfridges » pour une
+  adresse d'Old Compton Street — à relire.
+- Zira Hotel, Belgrade (fiche 935) : `zirahotel.com`, sa seule source,
+  ne résout plus depuis le 25 septembre 2026.
+
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → ~~B1~~ → ~~F3/F4/F6~~ → **B4b2** (sauvegarde, bloquant) → D6/C1b (optionnels)
 
