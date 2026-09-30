@@ -156,6 +156,31 @@ Fuente. Alcazar et Bauza gardent leur fiche alors que leur propriétaire
 possède la fabrique qui les roule : leur histoire précède le rachat
 (précédent Cuesta-Rey).
 
+Lots 12 à 14 (36 noms) : **24 tiennent, 12 cèdent**. Ce qui change :
+- Huit exclusivités Holt's rejoignent la fiche de maison de Holt's :
+  Casa Royale, Castano, Cortesia, Fine Catch, Herfdog, Jalopy, Par et
+  Rainmaker. Le contradicteur faisait de Par et Rainmaker deux fiches
+  qui écrivent le silence ; l'arbitrage les range dans la gamme, comme
+  les autres.
+- Oz Family est un doublon d'Ozgener Family Cigars : même maison de Tim
+  Ozgener, deux noms commerciaux.
+- Marzio by Parodi sort du périmètre : aucune trace depuis 2018.
+- Quatre noms restent hors de l'atlas, faute de pays de roulage ou de
+  propriétaire prouvé : Confidenciaal (origine tenue secrète), Dominican
+  Supreme, La Perla Habana (pays disputé) et My Cuban Wheel (le pays
+  donné était celui où vivait son fondateur).
+
+Le contradicteur a corrigé plusieurs fiches. Licenciados appartient à
+Oscar Boruchin (Mike's Cigars) et Quesada ne fait que la rouler. Onyx
+Reserve est dominicaine, roulée à la Tabacalera de García : seules les
+extensions récentes sont nicaraguayennes. Psyko Seven est à Ventura
+Cigar Company (Kretek International) et non à Michael Giannini. Ohana se
+vend sous ce nom, Pulse n'est qu'une ligne, et la fabrique NOA qu'on lui
+prêtait a fermé. La Fontana garde sa fiche alors que son propriétaire
+possède la fabrique qui la roule : son histoire précède le rachat.
+Ilegal reste séparée de H.R., et Gellis Family Cigars de Warped et
+d'Edition One.
+
 ## Arbitrage — les maisons à plusieurs marques (24 septembre)
 
 La contradiction a fait apparaître des maisons **absentes de l'atlas**
@@ -297,6 +322,34 @@ Deux mots ont été arrêtés par les garde-fous. En allemand, « der größte
 Teil » (l'essentiel) se lisait comme un superlatif. En chinois,
 雪茄爱好者 (amateurs de cigares) est aussi le nom d'une revue à notes :
 la traduction dit 雪茄迷.
+
+## Migration 243 — vingt-cinq maisons, dont douze écrivent le silence (30 septembre)
+
+Les lots d'écriture 10, 12, 17, 18 et 19 donnent vingt-cinq fiches, et
+l'atlas passe à 328 marques :
+- dix-sept au Nicaragua. Cinq nomment leur fabrique, toutes à Estelí :
+  Don Duarte (Tabacalera Pages), Alcazar (PENSA de J.C. Newman), Los
+  Amigos (Familia Disla), Umnum et Villa Vieja (TABSA d'Aganorsa Leaf).
+  Douze écrivent le silence : Bahia, Cigarkings, CSC, Despot, Don
+  Zuarin, Horacio, Ibis, Mara, Marca Fina, May's Cigars, Nordlicht et
+  Schumacher ;
+- sept en République dominicaine : Samana, SYN, Valentino Siesto, Xhaxhi
+  Bobi, Antonius, Bauza, Butera ;
+- une au Honduras : Cuba Aliados (Aladino, Danlí).
+
+La relecture a tranché plusieurs cas :
+- Marca Fina se range au Nicaragua, où elle est roulée ; le Panama n'est
+  que l'origine du tabac de sa ligne d'origine.
+- Cuba Aliados prend le nom sous lequel elle se vend.
+- Les fabriques de Valentino Siesto et de Butera s'écrivent attribuées,
+  à la maison ou à la source qui les nomme.
+- RVGN n'est pas une mention d'Antonius : c'est une ligne de German
+  Engineered Cigars, qui aura sa fiche.
+
+Deux fautes de traduction ont été reprises. « Caviste » était devenu
+« marchand de vin » dans les cinq langues : la consigne de traduction dit
+désormais que c'est un marchand de cigares. En chinois, 第一 devient
+头一.
 
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 

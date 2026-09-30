@@ -6089,3 +6089,33 @@ sceau des sources n'est mis à jour que pour les domaines de la 242.
 25 septembre : un `--figer` complet l'aurait inscrit « inexistant », et
 la campagne l'aurait refusé pour un défaut que ce chantier ne traite
 pas. `sources.php --verifier` continue de le signaler.
+
+## Huitième recensement — vingt-cinq maisons, dont douze écrivent le silence (migration 243)
+
+Quatrième migration de fiches du recensement : vingt-cinq maisons, et
+l'atlas passe à 328 marques. Dix-sept sont au Nicaragua, sept en
+République dominicaine et une au Honduras. Douze écrivent le silence :
+la maison est identifiée, le pays de roulage attesté, la fabrique jamais
+nommée.
+
+La numérotation a tenu compte d'une autre session. La 242 (salons
+Turmeaus) lui appartenait : la 243 n'a été appliquée qu'après son commit,
+pour que le redump de `contenu.sql` ne mêle pas deux chantiers.
+
+Le sceau des sources n'a été mis à jour que pour les vingt-sept domaines
+nouveaux de la 243. Un `--figer` complet aurait inscrit « inexistant »
+zirahotel.com (fiche 935), qui ne résout plus depuis le 25 septembre : le
+test « plus aucun domaine cité n'est inexistant » serait tombé pour une
+fiche que la migration ne touche pas. `sources --verifier` continue de
+le signaler.
+
+`i18n_divergence` a arrêté la gamme chinoise de Schumacher, deux fois
+plus longue que la médiane. Ce n'est pas une glose : la ligne française
+est courte et presque faite de noms latins (Double Toro, Robusto,
+Cigarworld.de), que le chinois garde tels quels. L'écart est justifié au
+cliquet. Le `--figer` a aussi recalculé les autres écarts, puisque les
+médianes bougent avec le corpus.
+
+La contradiction a examiné les lots 12 à 14 : 24 verdicts tiennent,
+12 cèdent. Holt's Cigar Company réunit maintenant dix-neuf exclusivités
+dans la gamme de sa future fiche de maison.
