@@ -6119,3 +6119,30 @@ médianes bougent avec le corpus.
 La contradiction a examiné les lots 12 à 14 : 24 verdicts tiennent,
 12 cèdent. Holt's Cigar Company réunit maintenant dix-neuf exclusivités
 dans la gamme de sa future fiche de maison.
+
+## Huitième recensement — quinze maisons, dont Dalay et Tabacosta (migration 244)
+
+Cinquième migration de fiches du recensement : quinze maisons, et
+l'atlas passe à 343 marques. Dalay et Tabacosta y entrent comme fiches de
+maison, qui rangent leurs autres marques en lignes de gamme.
+
+La relecture a rattrapé trois sortes de fautes :
+- des pages illisibles, payantes ou fermées aux robots, citées comme
+  lues ;
+- des arômes pris dans des avis de clients ;
+- des dates d'entrée au catalogue de détaillants prises pour des
+  fondations.
+
+Elle a aussi fait sortir Dos Jotas du silence : deux sites de
+dégustation nomment sa fabrique.
+
+Les contradictions 15 et 16 closent celle des catalogues : 24 noms,
+11 tiennent, 13 cèdent. Holt's Cigar Company réunit vingt-quatre
+exclusivités, et sa fiche de maison part à l'écriture.
+
+Le sceau des sources n'a été mis à jour que pour les dix-neuf domaines
+nouveaux. Deux domaines anciens ne résolvent plus : bincigar.com (fiche
+de la 222) et zirahotel.com (fiche 935). `sources --verifier` les
+signale. `i18n_divergence` a arrêté Ecuador Connecticut (feuilles), passé
+sous le seuil par le seul déplacement des médianes ; son chinois est
+complet, et l'écart est justifié au cliquet.

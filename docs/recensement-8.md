@@ -181,6 +181,32 @@ possède la fabrique qui la roule : son histoire précède le rachat.
 Ilegal reste séparée de H.R., et Gellis Family Cigars de Warped et
 d'Edition One.
 
+Lots 15 et 16 (24 noms) : **11 tiennent, 13 cèdent**. La contradiction des
+catalogues est close ; reste le réexamen des six marques de Puriscal.
+Ce qui change :
+- Royal Symbols, Savoy, Top Hat, Utopia et Viking Village rejoignent
+  Holt's, qui réunit vingt-quatre exclusivités : sa fiche de maison part
+  à l'écriture. Smokin' Sandwich et Winthrop restent dehors : Holt's n'y
+  écrit pas qu'ils sont roulés à la main, ou ne dit le pays que pour le
+  tabac.
+- Rustico devient une mention d'Oliva, qui roule sa ligne Reserve pour
+  Atlantic Cigar Company ; Rustico Habano en est le doublon. Spanish
+  Galleon reste dehors, sans fabrique ni propriétaire écrits.
+- The Circus est déjà dans l'atlas, ligne sœur d'El Viejo Continente
+  dans la fiche American Caribbean Cigars : elle y deviendra une mention,
+  et la fabrique de Condega que lui prête le contradicteur sera vérifiée.
+- The Repeater se vend comme une ligne de Baccarat, où elle entrera.
+- Rosa Cuba reste dehors : propriétaire introuvable, fabrique donnée par
+  les seuls libellés de détaillants.
+- La Familia est la société de Spence Drake, qui possède Ilegal : doublon
+  d'Ilegal, dont elle sera une mention. H.R., marque d'Hirochi Robaina,
+  reste à part.
+- United Cigars reste dehors : ses marques, Firecracker, La Gianna et Red
+  Anchor, ont leur fiche, et la ligne United n'a ni fabrique ni pays lus.
+
+Le contradicteur a corrigé Veritas, qui a sa propre fabrique, la
+Tabacalera Nuevo Nica, à Estelí, et passe au Nicaragua.
+
 ## Arbitrage — les maisons à plusieurs marques (24 septembre)
 
 La contradiction a fait apparaître des maisons **absentes de l'atlas**
@@ -350,6 +376,35 @@ Deux fautes de traduction ont été reprises. « Caviste » était devenu
 « marchand de vin » dans les cinq langues : la consigne de traduction dit
 désormais que c'est un marchand de cigares. En chinois, 第一 devient
 头一.
+
+## Migration 244 — quinze maisons, dont Dalay et Tabacosta (1er octobre)
+
+Les lots d'écriture 11, 13 et 14 donnent quinze fiches, et l'atlas passe
+à 343 marques :
+- six en République dominicaine : Hemmys (ABAM), German Engineered
+  Cigars (Intercigar), Dalay (Zauberberg), Casa de Garcia et Dominican
+  Estates (Tabacalera de García), Dos Jotas ;
+- huit au Nicaragua : El Galan, Tabacosta et Tambor Essence (usines
+  propres), H.R. (La Corona), Omar Rodriguez (Diamante), Helvada,
+  Spartanos et Teatro del Mundo ;
+- une au Honduras : Legado (CLE Cigar Company).
+
+Dalay et Tabacosta entrent comme fiches de maison (arbitrage du 24
+septembre) : Ferruh Karakasli devient une ligne de Dalay, Manuel Alonso
+une ligne de Tabacosta. Trois fiches écrivent le silence : Helvada,
+Spartanos et Teatro del Mundo.
+
+La relecture a repris :
+- Dos Jotas sort du silence : deux sites de dégustation la disent roulée
+  chez Chico Rivas, à Tamboril, où elle est née en 1999.
+- German Engineered Cigars se range en République dominicaine, où trois
+  de ses cinq lignes sont roulées.
+- Helvada : la maison lit la bague « Hecho a mano » de sa 51 comme une
+  tripe façonnée à la machine sous une cape roulée à la main. La fiche
+  l'écrit, et le point est soumis à l'utilisateur.
+- Ce qui ne reposait que sur des pages illisibles (Halfwheel payant,
+  Mike's Cigars fermé aux robots) est sorti ; les arômes de vanille et
+  de café de Teatro del Mundo venaient d'avis de clients.
 
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
