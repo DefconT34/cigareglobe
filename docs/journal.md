@@ -6209,3 +6209,12 @@ Un mot de la traduction chinoise (« 满分 », pour une force « 3,5 sur 5 »
 que la maison donne) a arrêté `marques_check` comme note de presse : la
 force se dit « 5级制中的3.5级 ». Quatre noms sortent des ajouts, faute de
 trace récente ou de vente datée.
+
+## Huitième recensement — les ajouts aux fiches existantes, lots 05 à 07 (migration 251)
+
+Deuxième migration d'ajouts : quatorze lignes de gamme et treize
+paragraphes de mention dans dix-neuf fiches. Un contrôle de langue a arrêté
+l'allemand de Tabacos Baez : sa liste de mots anglais est sensible à la
+casse, et « short filler » s'y écrit Shortfiller, avec sa majuscule.
+Huit noms sortent des ajouts, faute de trace récente ou de fabricant
+nommé.

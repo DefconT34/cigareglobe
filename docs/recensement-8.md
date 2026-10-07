@@ -560,6 +560,24 @@ chez Fuente alors que San Cristobal l'est chez les Garcia ; Aging Room,
 dont La Bohème est roulée chez A.J. Fernandez et non plus à la Tabacalera
 Palma ; CLE Cigar Company (Danlí).
 
+## Migration 251 — les ajouts aux fiches existantes, lots 05 à 07 (7 octobre)
+
+Deuxième migration d'ajouts : quatorze lignes de gamme et treize
+paragraphes dans dix-neuf fiches (voir l'en-tête de la 251). Cuban
+Aristocrat, d'abord rangée en mention de Tabacalera Palma, entre en gamme :
+Jochy Blanco, propriétaire de la fabrique, a racheté IndianHead en 2015.
+Odyssey, passée au portefeuille de Forged Cigar Company le 1er août 2025,
+reste chez General Cigar, dont STG la roule à Estelí.
+
+Huit noms sortent : Don Antonio, Botucal, APR, Les Privatiers et XEN by
+Nish Patel (plus de cinq ans sans trace, ou arrêtée) ; La Estrella, Maria
+Mancini et 5 Vegas (fabricant que la maison ne nomme pas).
+
+Sept fiches hôtes disent encore ce que les lignes ajoutées contredisent
+(Foundation, General Cigar, Miami Cigar & Co., Ozgener Family Cigars,
+Rocky Patel, Tabacalera Palma) : leurs champs seront corrigés avec ceux
+d'Ashton, d'Aging Room, de CLE Cigar Company et de Vegas de Santiago.
+
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
 Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti

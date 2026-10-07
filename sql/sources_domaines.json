@@ -151,7 +151,7 @@
         },
         "atlanticcigar.com": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 7
         },
         "azadihotel.com": {
             "dns": "resout",
@@ -235,7 +235,7 @@
         },
         "blindmanspuff.com": {
             "dns": "resout",
-            "fiches": 13
+            "fiches": 15
         },
         "blog.cigarworld.de": {
             "dns": "resout",
@@ -282,6 +282,10 @@
             "fiches": 1
         },
         "brundelrecigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "burnbyrockypatel.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -379,7 +383,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 94
+            "fiches": 103
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -407,7 +411,7 @@
         },
         "cigarcentury.com": {
             "dns": "resout",
-            "fiches": 9
+            "fiches": 10
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -435,7 +439,7 @@
         },
         "cigardojo.com": {
             "dns": "resout",
-            "fiches": 27
+            "fiches": 28
         },
         "cigarengineers.com": {
             "dns": "resout",
@@ -491,7 +495,7 @@
         },
         "cigarplace.biz": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "cigarpro.ru": {
             "dns": "resout",
@@ -527,13 +531,17 @@
         },
         "cigarsdaily.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "cigarsdirect.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 7
         },
         "cigarseedcompany.eu": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarsense.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -543,7 +551,7 @@
         },
         "cigarslover.com": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 8
         },
         "cigarsmokerclub.com": {
             "dns": "resout",
@@ -575,7 +583,7 @@
         },
         "cigarworld.de": {
             "dns": "resout",
-            "fiches": 76
+            "fiches": 81
         },
         "circolodellunione.it": {
             "dns": "resout",
@@ -619,7 +627,7 @@
         },
         "coronacigar.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "correiobraziliense.com.br": {
             "dns": "resout",
@@ -879,7 +887,7 @@
         },
         "enthusiastreport.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "epiccigars.com": {
             "dns": "resout",
@@ -974,6 +982,10 @@
             "fiches": 2
         },
         "fratellocigar.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "freudcigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1107,7 +1119,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 105
+            "fiches": 106
         },
         "hall4d21.com": {
             "dns": "resout",
@@ -1155,7 +1167,7 @@
         },
         "holts.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "hotel-lutetia.com": {
             "dns": "resout",
@@ -1218,6 +1230,10 @@
             "fiches": 1
         },
         "ilnordest.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "incacigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1535,7 +1551,7 @@
         },
         "luxurycigarclub.com": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 7
         },
         "maisondelatruffe.com": {
             "dns": "resout",
@@ -1564,6 +1580,10 @@
         "manifatturesigarotoscano.it": {
             "dns": "resout",
             "fiches": 2
+        },
+        "manofmany.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "mardocigars.com": {
             "dns": "resout",
@@ -1608,6 +1628,10 @@
         "metropole.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "miamicigar.com": {
+            "dns": "resout",
+            "fiches": 2
         },
         "micallefcigars.com": {
             "dns": "resout",
@@ -1725,6 +1749,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "online-cigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "onlineshop-helgoland.de": {
             "dns": "resout",
             "fiches": 2
@@ -1738,6 +1766,10 @@
             "fiches": 1
         },
         "osterholz24.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "outcastcigars.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1779,7 +1811,7 @@
         },
         "paul-bugge.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "paulstulaccigars.com": {
             "dns": "resout",
@@ -1835,7 +1867,7 @@
         },
         "premiumcigars.org": {
             "dns": "resout",
-            "fiches": 16
+            "fiches": 18
         },
         "presidencia.gob.do": {
             "dns": "resout",
@@ -2045,6 +2077,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "simplycigars.co.uk": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "sindicatocigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -2071,7 +2107,7 @@
         },
         "smokingpipes.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "smokintabacco.com": {
             "dns": "resout",
@@ -2119,11 +2155,11 @@
         },
         "stogiepress.com": {
             "dns": "resout",
-            "fiches": 16
+            "fiches": 17
         },
         "stogiereview.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "stolenthronecigars.com": {
             "dns": "resout",
@@ -2175,7 +2211,7 @@
         },
         "tabak-traeber.de": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "tabakfreund.de": {
             "dns": "resout",
@@ -2227,7 +2263,7 @@
         },
         "thecigarauthority.com": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 6
         },
         "thecigarguys.com": {
             "dns": "resout",
@@ -2236,6 +2272,10 @@
         "thecigarstore.com": {
             "dns": "resout",
             "fiches": 3
+        },
+        "thedailypour.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "thehappycigar.wordpress.com": {
             "dns": "resout",
@@ -2339,7 +2379,7 @@
         },
         "turmeaus.co.uk": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "umkm.kompas.com": {
             "dns": "resout",
@@ -2479,7 +2519,7 @@
         },
         "zigarren.zone": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 6
         },
         "zigarrenclub.at": {
             "dns": "resout",
