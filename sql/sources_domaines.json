@@ -315,11 +315,11 @@
         },
         "casagranda-cigars.de": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "casdaglicigars.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 6
         },
         "casinomadrid.es": {
             "dns": "resout",
@@ -363,7 +363,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 81
+            "fiches": 83
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -551,7 +551,7 @@
         },
         "cigarworld.de": {
             "dns": "resout",
-            "fiches": 69
+            "fiches": 71
         },
         "circolodellunione.it": {
             "dns": "resout",
@@ -1140,6 +1140,10 @@
         "houseofgrauer.com": {
             "dns": "resout",
             "fiches": 4
+        },
+        "humidor.ch": {
+            "dns": "resout",
+            "fiches": 1
         },
         "humolatino.com": {
             "dns": "resout",
@@ -1855,7 +1859,7 @@
         },
         "rauchr.de": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "recoilweb.com": {
             "dns": "resout",
@@ -2019,7 +2023,7 @@
         },
         "smokersplanet.de": {
             "dns": "resout",
-            "fiches": 12
+            "fiches": 13
         },
         "smokingpipes.com": {
             "dns": "resout",
@@ -2126,6 +2130,10 @@
             "fiches": 1
         },
         "tabak-traeber.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "tabakfreund.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2250,6 +2258,10 @@
             "fiches": 1
         },
         "trabucul.ro": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "trademarkia.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2435,11 +2447,11 @@
         },
         "zigarrenversand.ch": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "zigarrenwelt.de": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "zimbabwenow.co.zw": {
             "dns": "resout",

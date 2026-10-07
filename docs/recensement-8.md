@@ -524,6 +524,19 @@ Six marques costaricaines, relues ensemble par un contradicteur :
   en 2021) ne se vendent plus. Kaneda reste sans fabricant prouvé ; la
   mention de Vegas de Santiago cède.
 
+## Migration 249 — Malekö et Skull 77, deux marques du Costa Rica (7 octobre)
+
+Le lot d'écriture 28 donne deux fiches, et l'atlas passe à 381 marques.
+Malekö (titulaire Tabacos de Costa Rica, lu sur Trademarkia) et Skull 77
+(Laurent Taha) sont roulées chez Tabacos de Costa Rica S.A., à Santiago
+de Puriscal, l'atelier que la fiche Vegas de Santiago range sous ce nom ;
+ce ne sont pas des lignes de Vegas de Santiago, qui ne les possède pas.
+
+La relecture a retenu Skull 77, vendue en octobre 2026 par deux
+détaillants suisses, et n'a pas écrit la nationalité de Laurent Taha,
+qu'aucune page lue ne donne. Les forces « sur 5 » et « sur 8 » se disent
+pour ce qu'elles sont, des niveaux d'échelles de détaillants.
+
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
 Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti

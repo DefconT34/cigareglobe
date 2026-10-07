@@ -212,9 +212,10 @@ Holt's et Atlantic confrontées à l'atlas : 649 noms, 322 à trier
 `mention` / `doublon` / `hors_perimetre` / `fabricant_tu` /
 `introuvable`), puis contradiction des `fiche`, puis écriture par lots de
 pays. Tri : terminé (322 noms) ; contradiction : terminée (188 examinés ;
-réexamen de Puriscal terminé) ; écriture : 117 fiches migrées (239 à
-241, 243 à 245, 247 et 248, l'atlas à 379 marques), un lot en relecture
-(Malekö et Skull 77). Livrée en chemin : la 238, les
+réexamen de Puriscal terminé) ; écriture : 119 fiches migrées (239 à
+241, 243 à 245 et 247 à 249, l'atlas à 381 marques) ; il ne reste à
+écrire que Bohekio, qui attend Haïti ; les ajouts aux fiches existantes
+sont en écriture et en traduction. Livrée en chemin : la 238, les
 noms que les fiches citent deviennent trouvables. À venir : Haïti (pays
 nouveau, pour Bohekio), la correction de la fiche Vegas de Santiago
 (propriété de l'atelier de Puriscal), les ajouts aux fiches existantes

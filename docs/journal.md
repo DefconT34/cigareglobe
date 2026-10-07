@@ -6189,3 +6189,12 @@ Le réexamen du groupe de Puriscal a tourné une fiche déjà en ligne : la
 fiche Vegas de Santiago attribue à Marc Niehaus l'atelier de Santiago de
 Puriscal, que la presse et Cigar Coop disent à la famille León Guzmán. La
 correction est notée, elle viendra après les fiches nouvelles.
+
+## Huitième recensement — Malekö et Skull 77 (migration 249)
+
+Neuvième migration de fiches du recensement : deux marques du Costa Rica,
+et l'atlas passe à 381 marques. Toutes les fiches nouvelles que le tri et
+la contradiction avaient retenues sont écrites, sauf Bohekio, qui attend
+l'ouverture d'Haïti. Reste le travail sur les fiches existantes : lignes
+de gamme et mentions des marques rattachées à une maison, puis la
+correction de la fiche Vegas de Santiago.
