@@ -6198,3 +6198,14 @@ la contradiction avaient retenues sont écrites, sauf Bohekio, qui attend
 l'ouverture d'Haïti. Reste le travail sur les fiches existantes : lignes
 de gamme et mentions des marques rattachées à une maison, puis la
 correction de la fiche Vegas de Santiago.
+
+## Huitième recensement — les ajouts aux fiches existantes, lots 01 à 04 (migration 250)
+
+Première migration d'ajouts : seize lignes de gamme et neuf paragraphes
+de mention dans quinze fiches. Le générateur d'ajouts a appris à rejouer
+une migration déjà appliquée en local, comme celui des fiches.
+
+Un mot de la traduction chinoise (« 满分 », pour une force « 3,5 sur 5 »
+que la maison donne) a arrêté `marques_check` comme note de presse : la
+force se dit « 5级制中的3.5级 ». Quatre noms sortent des ajouts, faute de
+trace récente ou de vente datée.

@@ -537,6 +537,29 @@ détaillants suisses, et n'a pas écrit la nationalité de Laurent Taha,
 qu'aucune page lue ne donne. Les forces « sur 5 » et « sur 8 » se disent
 pour ce qu'elles sont, des niveaux d'échelles de détaillants.
 
+## Migration 250 — les ajouts aux fiches existantes, lots 01 à 04 (7 octobre)
+
+Les marques qui n'auront pas de fiche parce qu'elles appartiennent à une
+maison de l'atlas entrent dans la fiche de cette maison : une ligne de
+son catalogue en gamme, la marque d'un tiers qu'elle roule en paragraphe
+et dans `brands.mentions`, que lit la recherche. La première migration
+d'ajouts écrit seize lignes de gamme et neuf paragraphes dans quinze
+fiches (voir l'en-tête de la 250 pour la liste).
+
+Le rattachement de chaque nom a été éprouvé sur des pages avant d'être
+écrit. Quatre noms sortent : La Mia (aucune trace après 2013, et ligne de
+Casa Fernandez, sans lien avec A.J. Fernandez), Wynwood Hills (derniers
+textes de 2018 et 2019), The Repeater (cigarcentury.com est un catalogue
+de fiches, aucune vente datée) et MUWAT (arrêtée en janvier 2022). Silencio
+n'est pas une ligne de Cohiba USA mais le nom européen de toute la marque :
+il passe en paragraphe.
+
+À corriger dans les fiches hôtes (le champ `factory` dit encore ce que les
+lignes ajoutées contredisent) : Ashton, dont chaque cigare serait roulé
+chez Fuente alors que San Cristobal l'est chez les Garcia ; Aging Room,
+dont La Bohème est roulée chez A.J. Fernandez et non plus à la Tabacalera
+Palma ; CLE Cigar Company (Danlí).
+
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
 Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti

@@ -215,7 +215,8 @@ pays. Tri : terminé (322 noms) ; contradiction : terminée (188 examinés ;
 réexamen de Puriscal terminé) ; écriture : 119 fiches migrées (239 à
 241, 243 à 245 et 247 à 249, l'atlas à 381 marques) ; il ne reste à
 écrire que Bohekio, qui attend Haïti ; les ajouts aux fiches existantes
-sont en écriture et en traduction. Livrée en chemin : la 238, les
+sont en cours : lots 01 à 04 migrés (250), lots 05 à 09 en traduction
+et en écriture. Livrée en chemin : la 238, les
 noms que les fiches citent deviennent trouvables. À venir : Haïti (pays
 nouveau, pour Bohekio), la correction de la fiche Vegas de Santiago
 (propriété de l'atelier de Puriscal), les ajouts aux fiches existantes
