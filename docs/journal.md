@@ -6146,3 +6146,24 @@ de la 222) et zirahotel.com (fiche 935). `sources --verifier` les
 signale. `i18n_divergence` a arrêté Ecuador Connecticut (feuilles), passé
 sous le seuil par le seul déplacement des médianes ; son chinois est
 complet, et l'écart est justifié au cliquet.
+
+## Huitième recensement — vingt-cinq maisons, dont les trois marques d'United Cigars (migration 245)
+
+Sixième migration de fiches du recensement : vingt-cinq maisons, et
+l'atlas passe à 368 marques. Les trois marques de David Garofalo
+(Firecracker, La Gianna, Red Anchor) entrent ensemble, chacune avec sa
+fiche, parce qu'elles se renvoient l'une à l'autre.
+
+La relecture a fait sortir quatre marques qui ne se vendent plus, et
+Edition One devient une mention de Warped. Elle a aussi lu elle-même ce
+qu'un rédacteur n'avait pu lire : les pages de Neptune Cigars, dont le
+texte se noyait sous le menu, s'ouvrent dans le navigateur, et Secret
+Blend of Cuba y trouve sa fabrique, ABAM.
+
+Herr Lehmann, manufacture de Lahr, forme ses poupées avec une bande de
+cuir actionnée au pied. Comme pour la 51 d'Helvada, le point est écrit
+dans la fiche et soumis à l'utilisateur.
+
+La migration 246 refait en passant le chinois et l'arabe de deux salons
+(La Falaise, The Bristol Hotel) que la médiane déplacée par la 245 a fait
+tomber sous le seuil de `i18n_divergence`.

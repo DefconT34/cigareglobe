@@ -406,6 +406,61 @@ La relecture a repris :
   Mike's Cigars fermé aux robots) est sorti ; les arômes de vanille et
   de café de Teatro del Mundo venaient d'avis de clients.
 
+## Migration 245 — vingt-cinq maisons, dont les trois marques d'United Cigars (7 octobre)
+
+Les lots d'écriture 15, 16 et 20 à 23 donnent vingt-cinq fiches, et
+l'atlas passe à 368 marques :
+- seize en République dominicaine : Artista Cigars, Domenico et Eladio
+  Diaz (usines propres), Don Emmanuel, Domaine de Lavalette, God of Fire,
+  La Unica, Laura Chavin, Emperors Cut, Firecracker, Gellis Family
+  Cigars, Red Anchor, Licenciados, Onyx, Secret Blend of Cuba et
+  Mustique ;
+- trois en Allemagne : Christo et Herr Lehmann (manufactures propres),
+  Flavoroute ;
+- trois au Honduras : La Fontana et La Gianna (Diadema, Danlí), Las
+  Cabrillas ;
+- deux au Nicaragua : El Mago (MGE Cigars Factory) et Fortis Cigars ;
+- une aux États-Unis : Drunk Chicken.
+
+Cinq fiches écrivent le silence : Flavoroute, Mustique, Las Cabrillas,
+Fortis Cigars et Drunk Chicken. Firecracker, La Gianna et Red Anchor,
+les trois marques de David Garofalo (United Cigars), roulées dans trois
+fabriques qu'il ne possède pas, ont chacune leur fiche.
+
+La relecture a repris :
+- Quatre marques sortent parce qu'elles ne se vendent plus : Escarabin,
+  Joya de la Romana, Ilegal (avec La Familia, son doublon) et Hernandez
+  & Ruiz. Edition One devient une mention de Warped, qui vend son seul
+  cigare parmi ses lignes.
+- Domaine de Lavalette sort du silence : Cigarworld.de la dit roulée
+  chez Don Esteban, à Santiago. Flavoroute se range en Allemagne,
+  Emperors Cut en République dominicaine.
+- Secret Blend of Cuba est relue sur les pages de Neptune Cigars, que
+  le rédacteur n'avait lues que par leur titre : fabrique ABAM, roulage
+  à la main, tripe mêlée. Ses quatre vitolas sont en rupture, sans date
+  de retour depuis octobre 2024 ; des avis de clients datent de 2025, et
+  l'état s'écrit.
+- Herr Lehmann forme la poupée avec une bande de cuir actionnée au pied
+  et pose la cape à la main : la fiche l'écrit, et le point rejoint la
+  51 d'Helvada, soumis à l'utilisateur.
+- Les lignes de gamme perdent le nom de la marque quand elles le
+  répètent, et « long-filler » s'écrit « longfiller » comme dans le
+  reste de l'atlas : le trait d'union faisait compter `filler` comme un
+  mot anglais à `i18n_langue_check`.
+
+## Migration 246 — deux salons dont le chinois et l'arabe sont refaits (7 octobre)
+
+Vingt-cinq fiches de plus déplacent la médiane de volume de chaque
+langue : `i18n_divergence` arrête La Falaise (Douala) et The Bristol
+Hotel (Panama), que le seuil épargnait de justesse. Leur chinois et leur
+arabe sont du français semé de particules (« Espace VIP cigares 的 »),
+comme ceux de Turmeaus à la 242. La 246 les refait sur le français
+actuel, sans un fait de plus ; les sceaux restent `machine`.
+
+Points à noter : `sources --verifier` signale quatre domaines anciens qui
+ne résolvent plus (lahabana.gob.cu, lefagot.com, trabucul.ro,
+zirahotel.com), tous dans des fiches antérieures au recensement.
+
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
 Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti
@@ -426,4 +481,4 @@ après les premières migrations de fiches.
   avant d'être écrites : ligne de la maison, marque d'un tiers ou
   fabrique distincte.
 - **Holt's Cigar Company.** Fiche de maison ouverte (voir plus haut),
-  écrite après la contradiction des lots 11 à 16.
+  en écriture avec West Tampa (lot 26).
