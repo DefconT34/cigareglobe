@@ -6178,3 +6178,14 @@ République dominicaine.
 Les agents ont été arrêtés deux fois par la limite d'usage, dont une fois
 pour la semaine entière ; ce qui était écrit fiche après fiche était
 acquis, et la reprise n'a rien perdu.
+
+## Huitième recensement — Holt's, West Tampa et le groupe de Puriscal (migration 248)
+
+Huitième migration de fiches du recensement : Holt's Cigar Company, avec
+ses vingt-quatre exclusivités en lignes de gamme, et West Tampa ; l'atlas
+passe à 379 marques.
+
+Le réexamen du groupe de Puriscal a tourné une fiche déjà en ligne : la
+fiche Vegas de Santiago attribue à Marc Niehaus l'atelier de Santiago de
+Puriscal, que la presse et Cigar Coop disent à la famille León Guzmán. La
+correction est notée, elle viendra après les fiches nouvelles.

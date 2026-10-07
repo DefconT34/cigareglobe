@@ -483,6 +483,47 @@ La relecture a repris :
   notes n'est plus nommée par son journaliste.
 - Latitude Zero ne prête plus à STG un silence que personne n'a lu.
 
+## Migration 248 — Holt's Cigar Company et West Tampa (7 octobre)
+
+Les lots d'écriture 26 et 27 donnent deux fiches, et l'atlas passe à 379
+marques :
+- Holt's Cigar Company, fiche de maison ouverte par l'arbitrage du 24
+  septembre, range en République dominicaine ses vingt-quatre
+  exclusivités, une ligne de gamme chacune ; Ashton et Holt's House
+  Selection, roulées chez Arturo Fuente, se nomment dans l'histoire ;
+- West Tampa (Nicaragua) : Garmendia Cigar Co., NACSA et la Tabacalera
+  Pages de Nicaragua selon la ligne, Casa Carrillo pour la ligne
+  dominicaine.
+
+Aucune page lue de holts.com ne dit les vingt-quatre marques exclusives
+ni propriété de Holt's ; la gamme s'écrit sur l'arbitrage, la page de
+chaque marque disant ce qu'elle dit. Vingt-deux lignes sont épuisées en
+octobre 2026. **Six lignes ne disent pas « roulée à la main »** (Herfdog,
+Jalopy, Bottom Shelf, Bella Cuba, Par, Angry Elf) : le texte garde chaque
+nuance, attribuée, et le point est soumis à l'utilisateur. Smokin'
+Sandwich et Winthrop restent dehors pour la même raison.
+
+## Réexamen du groupe de Puriscal (7 octobre)
+
+Six marques costaricaines, relues ensemble par un contradicteur :
+- **Tabacos de Costa Rica S.A. est l'atelier de Vegas de Santiago**, sous
+  son nom actuel (Casdagli, 2021 : « alors connue sous le nom de Vegas
+  Santiago »), mais il appartient à la famille León Guzmán (La Nación,
+  2011 ; Cigar Coop, 2019 et 2020), pas à Marc Niehaus : Vegas de
+  Santiago est un partenariat Guzmán–Niehaus. La fiche Vegas de Santiago
+  de l'atlas dit l'inverse : **elle est à corriger** (chantier à part,
+  avec la vérification de Casdagli, Selected Tobacco, Atabey, Bandolero,
+  Byron et Bombay Tobak, qui citent le même atelier).
+- Malekö et Skull 77 (Laurent Taha) tiennent en fiches, écrites au lot
+  28. Le contradicteur n'avait trouvé aucune trace de Skull 77 en 2025
+  ou 2026 ; le rédacteur la lit vendue en octobre 2026 chez deux
+  détaillants suisses.
+- La Flor de Montenegro, bâtie sur Malekö, reste dehors : sa main n'est
+  écrite nulle part (tripe Mediumfiller seule). Dominus (stock restant
+  racheté par Cigarworld.de au printemps 2023) et La Bavaria (arrêtée
+  en 2021) ne se vendent plus. Kaneda reste sans fabricant prouvé ; la
+  mention de Vegas de Santiago cède.
+
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
 Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti
@@ -494,13 +535,11 @@ après les premières migrations de fiches.
 
 ## En réserve
 
-- **Le Costa Rica de Puriscal.** La fiche Vegas de Santiago de l'atlas
-  établit que son atelier travaille aujourd'hui sous le nom de Tabacos de
-  Costa Rica S.A. (Casdagli, Zechbauer). Malekö, La Flor de Montenegro,
-  Kaneda et Skull 77 y seraient roulées ; la contradiction a lu ces
-  sources autrement pour deux d'entre elles. Dominus (Traumfabrik)
-  et La Bavaria les rejoignent. Les six seront réexaminées ensemble
-  avant d'être écrites : ligne de la maison, marque d'un tiers ou
-  fabrique distincte.
+- **La fiche Vegas de Santiago.** Le réexamen de Puriscal (voir plus
+  haut) établit que l'atelier de Santiago de Puriscal appartient à la
+  famille León Guzmán et que Vegas de Santiago est un partenariat
+  Guzmán–Niehaus : la fiche, qui attribue l'atelier à Marc Niehaus, est
+  à corriger dans les six langues, avec les fiches qui citent le même
+  atelier.
 - **Holt's Cigar Company.** Fiche de maison ouverte (voir plus haut),
   en écriture avec West Tampa (lot 26).
