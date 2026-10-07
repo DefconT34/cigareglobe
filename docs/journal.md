@@ -6167,3 +6167,14 @@ dans la fiche et soumis à l'utilisateur.
 La migration 246 refait en passant le chinois et l'arabe de deux salons
 (La Falaise, The Bristol Hotel) que la médiane déplacée par la 245 a fait
 tomber sous le seuil de `i18n_divergence`.
+
+## Huitième recensement — neuf maisons, dont huit au Nicaragua (migration 247)
+
+Septième migration de fiches du recensement : neuf maisons, et l'atlas
+passe à 377 marques. Veritas, écrite puis relue, sort : plus de cinq ans
+sans trace. Psyko Seven change de pays à la relecture et se range en
+République dominicaine.
+
+Les agents ont été arrêtés deux fois par la limite d'usage, dont une fois
+pour la semaine entière ; ce qui était écrit fiche après fiche était
+acquis, et la reprise n'a rien perdu.

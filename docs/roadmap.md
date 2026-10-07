@@ -212,9 +212,9 @@ Holt's et Atlantic confrontées à l'atlas : 649 noms, 322 à trier
 `mention` / `doublon` / `hors_perimetre` / `fabricant_tu` /
 `introuvable`), puis contradiction des `fiche`, puis écriture par lots de
 pays. Tri : terminé (322 noms) ; contradiction : terminée (188 examinés ;
-reste le réexamen de Puriscal) ; écriture : 106 fiches migrées (239 à
-241, 243 à 245, l'atlas à 368 marques), deux lots en traduction, un en
-écriture (Holt's et West Tampa). Livrée en chemin : la 238, les
+réexamen de Puriscal en cours) ; écriture : 115 fiches migrées (239 à
+241, 243 à 245 et 247, l'atlas à 377 marques), un lot en relecture
+(Holt's et West Tampa). Livrée en chemin : la 238, les
 noms que les fiches citent deviennent trouvables. À venir : Haïti (pays
 nouveau, pour Bohekio), le Costa Rica de Puriscal (six marques à
 réexaminer ensemble), les ajouts aux fiches existantes (lignes de gamme,

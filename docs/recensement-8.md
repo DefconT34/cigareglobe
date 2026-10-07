@@ -461,6 +461,28 @@ Points à noter : `sources --verifier` signale quatre domaines anciens qui
 ne résolvent plus (lahabana.gob.cu, lefagot.com, trabucul.ro,
 zirahotel.com), tous dans des fiches antérieures au recensement.
 
+## Migration 247 — neuf maisons, dont huit au Nicaragua (7 octobre)
+
+Les lots d'écriture 24 et 25 donnent neuf fiches, et l'atlas passe à 377
+marques :
+- huit au Nicaragua : Casa de Torres (famille Schuster, Bünde), Charatan
+  (Joya de Nicaragua), Dapper et Latitude Zero (NACSA), League of Fat
+  Bastards, Ohana, Warfighter Tobacco, et Loaisiga (usine propre) ;
+- une en République dominicaine : Psyko Seven.
+
+La relecture a repris :
+- Veritas sort : dernière nouvelle datée le 16 août 2021, site hors
+  ligne, marque dite silencieuse par un blog d'avril 2026, deux
+  détaillants qui la listent sans stock lisible : plus de cinq ans sans
+  trace.
+- Psyko Seven se range en République dominicaine, où la maison la dit
+  façonnée et où trois mélanges sur quatre sont roulés, sans nommer
+  l'usine ; la version Nicaragua, chez Agrotabacos, garde sa phrase.
+- Les formules qui parlaient de nos lectures (« dernière sortie
+  connue », « pages lues ») deviennent des faits datés, et une revue à
+  notes n'est plus nommée par son journaliste.
+- Latitude Zero ne prête plus à STG un silence que personne n'a lu.
+
 ## Arbitrage — Haïti s'ouvre (24 septembre)
 
 Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti
