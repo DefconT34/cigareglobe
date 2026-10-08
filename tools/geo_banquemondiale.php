@@ -32,6 +32,7 @@ const PAYS_BM = [
     'brazil'      => 'BR', 'cameroon'  => 'CM', 'costarica' => 'CR',
     'cuba'        => 'CU', 'dominican' => 'DO', 'ecuador'   => 'EC',
     'honduras'    => 'HN', 'indonesia' => 'ID', 'jamaica'   => 'JM',
+    'haiti'       => 'HT',
     'mexico'      => 'MX', 'nicaragua' => 'NI', 'panama'    => 'PA',
     'philippines' => 'PH', 'usa'       => 'US',
     'italy'       => 'IT',

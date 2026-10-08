@@ -212,15 +212,15 @@ Holt's et Atlantic confrontées à l'atlas : 649 noms, 322 à trier
 `mention` / `doublon` / `hors_perimetre` / `fabricant_tu` /
 `introuvable`), puis contradiction des `fiche`, puis écriture par lots de
 pays. Tri : terminé (322 noms) ; contradiction : terminée (188 examinés ;
-réexamen de Puriscal terminé) ; écriture : 119 fiches migrées (239 à
-241, 243 à 245 et 247 à 249, l'atlas à 381 marques) ; il ne reste à
-écrire que Bohekio, qui attend Haïti ; les ajouts aux fiches existantes
-sont en cours : lots 01 à 07 migrés (250 et 251), lots 08 et 09 en
-écriture. Livrée en chemin : la 238, les
-noms que les fiches citent deviennent trouvables. À venir : Haïti (pays
-nouveau, pour Bohekio), la correction de la fiche Vegas de Santiago
-(propriété de l'atelier de Puriscal), les ajouts aux fiches existantes
-(lignes de gamme, mentions).
+réexamen de Puriscal terminé) ; écriture : 120 fiches migrées (239 à
+241, 243 à 245, 247 à 249 et 253, l'atlas à 382 marques) ; Haïti est
+ouvert (252 et 253) ; les ajouts aux fiches existantes sont migrés pour
+les lots 01 à 07 (250 et 251), les lots 08 et 09 suivent. Livrée en chemin :
+la 238, les noms que les fiches citent deviennent trouvables. À venir : la
+correction des fiches hôtes que les ajouts contredisent (Vegas de
+Santiago, propriété de l'atelier de Puriscal, Ashton, Aging Room, CLE,
+Foundation, General Cigar, Miami Cigar & Co., Ozgener, Rocky Patel,
+Tabacalera Palma, Tabacosta, Villiger, Warped).
 
 ### Reste du lot 21 (migration `235`)
 

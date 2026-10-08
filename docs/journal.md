@@ -6218,3 +6218,14 @@ l'allemand de Tabacos Baez : sa liste de mots anglais est sensible à la
 casse, et « short filler » s'y écrit Shortfiller, avec sa majuscule.
 Huit noms sortent des ajouts, faute de trace récente ou de fabricant
 nommé.
+
+## Haïti entre dans l'atlas (migrations 252 et 253)
+
+Bohekio, marque de Supreme Tobacco roulée en Haïti, ouvre le dix-huitième
+pays de roulage hors des grands producteurs : la 252 écrit le pays (en six
+langues, avec sa fiche géographique et ses sceaux) et le code qui
+l'accompagne (drapeau, fuseau, ISO, Banque mondiale) ; la 253 pose la
+fiche. `coherence_check` a refusé d'abord la zone et les variétés du pays,
+que rien ne place sur la carte : Haïti déclare « aucune zone, aucune
+variété » comme les Bahamas et Porto Rico. Le drapeau a été vérifié à
+l'écran dans l'atlas local.

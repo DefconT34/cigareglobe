@@ -208,6 +208,12 @@ var FLAGS_SPEC = {
   // en derive), la table TERRITOIRES_INFOS donne l'heure des Acores.
   azores:      {vp:[['#0033A0',2],['#FFFFFF',3]],
                 o:[['arcEtoiles','#FFD700',0.40,0.32,0.36,9]]},
+  // Haiti : bleu au-dessus du rouge, et au centre un rectangle blanc. Les
+  // armoiries officielles (palmier royal, trophee d'armes, devise) n'ont
+  // pas de primitive ici : le palmier seul, vert, est une simplification
+  // assumee, comme l'embleme du Mozambique.
+  haiti:       {h:['#00209F','#D21034'],
+                o:[['bande','#FFFFFF',0.32,0.68,0.29,0.71],['embleme','#00814A',0.5,0.5,0.17]]},
   caymanisles: {o:[['ensign','#00247D']]},
   // ── Afrique ───────────────────────────────────────────
   ivorycoast:  {v:['#F77F00','#FFFFFF','#009E60']},
@@ -1166,7 +1172,7 @@ var FLAGS_DESSINES = [
                       'colombia','costarica','croatia','cuba','cyprus',
                       'czech','dominican','ecuador','egypt','ethiopia',
                       'eu_mkt','france','france_mkt','germany','ghana',
-                      'georgia','gibraltar','greece','guatemala','guinea','honduras',
+                      'georgia','gibraltar','greece','guatemala','guinea','haiti','honduras',
                       'hongkong','india','indonesia','iran','israel',
                       'italy','ivorycoast','jamaica','japan','japan_mkt',
                       'kenya','kuwait','lebanon','luxembourg','malaysia',

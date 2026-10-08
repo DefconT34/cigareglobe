@@ -229,6 +229,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "blackboxcigarclub.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "blancocigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -383,7 +387,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 103
+            "fiches": 104
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -411,7 +415,7 @@
         },
         "cigarcentury.com": {
             "dns": "resout",
-            "fiches": 10
+            "fiches": 11
         },
         "cigarcitybrewing.com": {
             "dns": "resout",
@@ -1119,7 +1123,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 106
+            "fiches": 107
         },
         "hall4d21.com": {
             "dns": "resout",
@@ -1691,7 +1695,7 @@
         },
         "neptunecigar.com": {
             "dns": "resout",
-            "fiches": 16
+            "fiches": 17
         },
         "netzwerk-suedbaden.de": {
             "dns": "resout",
@@ -2184,6 +2188,10 @@
         "supreme.justia.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "supremetobaccohaiti.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "sushi-jiro.jp": {
             "dns": "resout",

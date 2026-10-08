@@ -76,6 +76,7 @@ var PAYS_INFOS = {
   HK: ['HKD', 'zh,en',    'Asia/Hong_Kong'],
   HN: ['HNL', 'es',       'America/Tegucigalpa'],
   HR: ['EUR', 'hr',       'Europe/Zagreb'],
+  HT: ['HTG', 'fr,ht',    'America/Port-au-Prince'],
   ID: ['IDR', 'id',       'Asia/Jakarta'],
   IL: ['ILS', 'he,ar',    'Asia/Jerusalem'],
   IN: ['INR', 'hi,en',    'Asia/Kolkata'],

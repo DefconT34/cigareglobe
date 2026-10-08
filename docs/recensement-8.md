@@ -578,14 +578,26 @@ Sept fiches hôtes disent encore ce que les lignes ajoutées contredisent
 Rocky Patel, Tabacalera Palma) : leurs champs seront corrigés avec ceux
 d'Ashton, d'Aging Room, de CLE Cigar Company et de Vegas de Santiago.
 
-## Arbitrage — Haïti s'ouvre (24 septembre)
+## Haïti entre dans l'atlas — migrations 252 et 253 (8 octobre)
 
-Bohekio (Supreme Tobacco, Plateau Central) est roulée à la main en Haïti
-et vendue en 2024 : la contradiction l'a confirmée. Décision de
-l'utilisateur : **ouvrir Haïti**, comme la 215 a ouvert les Bahamas, les
-Açores, Porto Rico et la Chine — fiche pays en six langues, coordonnées,
-données géographiques, drapeau —, puis la fiche Bohekio. Chantier à part,
-après les premières migrations de fiches.
+Bohekio (Supreme Tobacco) est roulée à la main en Haïti et vendue en 2024 :
+la contradiction l'a confirmée. Décision de l'utilisateur du 24 septembre :
+**ouvrir Haïti**, comme la 215 a ouvert les Bahamas, les Açores, Porto Rico
+et la Chine. La 252 ouvre le pays (fiche en six langues, fiche
+géographique, sceaux) et le code l'accompagne : drapeau dessiné (bleu,
+rouge, rectangle blanc, palmier vert seul : les armoiries ne se dessinent
+pas à cette taille), HT dans `data.pays.js`, ISO 332 dans `coords_check`,
+`haiti => HT` dans `geo_banquemondiale`. La 253 pose la fiche Bohekio :
+quatre lignes (Habano, Maduro, Colors, Liga 2).
+
+Le pays déclare ses trous au lieu de les remplir : aucun chiffre
+d'exportation de cigares, aucune récolte, aucun climat, aucune zone ni
+variété posée sur la carte. Aucune page lue ne place l'usine de Supreme
+Tobacco dans le Plateau Central ni dans une commune précise (la maison
+affiche une adresse à Pétion-Ville et ne cite que Mirebalais pour la
+culture) : le point de la carte est posé sur la région. Population (11,9 M,
+2025), PIB (32,1 Md$, 2025, contre 24,3 Md$ en 2024 selon la même source)
+et superficie (27 750 km², 2023) viennent de la Banque mondiale.
 
 ## En réserve
 

@@ -79,6 +79,8 @@ const ISO_NUM = [
     // Lot 12 (223) : le Zimbabwe entre ; les Bahamas, le Mozambique et
     // Porto Rico passaient « hors carte » faute de code — ils y sont.
     'ZW'=>716,'BS'=>44,'MZ'=>508,'PR'=>630,
+    // Haïti (Bohekio, huitième recensement).
+    'HT'=>332,
 ];
 
 /** Entités dont le territoire N'EST PAS dessiné par le fond 110m, alors
