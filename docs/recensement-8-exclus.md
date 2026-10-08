@@ -2,7 +2,7 @@
 
 Le recensement a confronté le marché (Holt's, Atlantic et les catalogues de détaillants) à l'atlas. Ce qui n'a pas de fiche, et pourquoi : le verdict final de chaque nom est celui du tri, repris par la contradiction, puis par les arbitrages. Un nom écarté revient dès qu'une page datée de moins de cinq ans montre la marque vendue, avec sa fabrique nommée ou un silence documenté (propriétaire et pays de roulage prouvés).
 
-## Éteintes, arrêtées ou qui ne se vendent plus (46)
+## Éteintes, arrêtées ou qui ne se vendent plus (49)
 
 Plus de cinq ans sans trace datée (règle Ortega), marque arrêtée par son propriétaire, ou stock épuisé partout ; un reliquat de détaillant ou une fiche de catalogue n'est pas une activité.
 
@@ -14,6 +14,7 @@ Plus de cinq ans sans trace datée (règle Ortega), marque arrêtée par son pro
 | Botucal | Règle Ortega : rien ne montre la marque vendue, annoncée ou datée depuis octobre 2021. | ajouts (Mombacho) |
 | Bremer Senatoren | Cigare de machine (« maschinengefertigte Zigarren ») fabriqué par Schuster Cigars à Bünde, en Allemagne — hors périmètre main. | tri |
 | Candlelight | Marque allemande distribuée par von Eicken (Lübeck), shortfiller fabriqué en série à Dingelstädt (Thuringe) ; cigares et cigarillos 100% tabac mais explicitement machine-made, aucune ligne roulée main identifiée. | tri |
+| Costa Platinum | Ligne de Tabacosta : seules traces datées l'IPCPR 2016 et la liste de marques de Momentohumo.com du 2 juin 2017, rien de vendu ni d'annoncé depuis octobre 2021 ; elle sort de la gamme de la fiche. | corrections (256) |
 | Craftsman's Bench | Ce n'est pas une marque de cigares mais une gamme d'accessoires (humidors, coupe-cigares, cendriers) de J.C. Newman Cigar Company, lancee a la fin des annees 1990. | tri |
 | Cuvee | « Cuvée Grand Lancero » est une édition limitée (17 400 exemplaires numérotés) de la marque Cusano, lancée en 2006-07 pour le marché européen ; | tri |
 | Dictador | Ligne de cigares lancée en 2015-2016 par la maison de rhum colombienne Dictador ; | tri |
@@ -35,6 +36,7 @@ Plus de cinq ans sans trace datée (règle Ortega), marque arrêtée par son pro
 | La Familia | écriture 22 : doublon d'Ilegal, sortie avec elle | arbitrage |
 | La Flor de Montenegro | réexamen de Puriscal : ligne bâtie sur Malekö (« von Malekö », smokersplanet.de, 26 janvier 2026) mais la main n'est écrite nulle part (tripe Mediumfiller seule) : reste dehors, comme Smokin' Sandwich et Winthrop chez Holt's | arbitrage |
 | Les Privatiers | La Serie N roulée chez Plasencia n'est plus qu'un reliquat de stock (entrée au catalogue du détaillant le 3 mars 2021, cigarworld.de écrit que la famille Plasencia a décidé au début des années 2020 de ne plus rouler de marques privées) ; | ajouts (Plasencia) |
+| Manuel Alonso Gran Selección | Ligne de Tabacosta : seules traces datées l'IPCPR 2016 et une critique d'un Conde du 9 septembre 2020 ; Humoytabaco.com écrit en novembre 2024 ignorer si la marque est encore sur le marché, et les bundles Manuel Alonso de Cigarworld.de ne nomment ni Tabacosta ni cette ligne ; elle sort de la gamme de la fiche. | corrections (256) |
 | Marzio by Parodi | Le lancement était réel et bien sourcé : Marzio, présentée comme la première vraie marque premium d'Avanti Cigar Company (Parodi Holdings LLC), roulée main à La Aurora en République dominicaine, distribuée aux États-Unis par Miami Cigar & Co. | contradiction |
 | Meine | Marque de distributeur d'ERMURI Genuss Company (coopérative d'achat, Detmold, Allemagne, racines à 1922) ; | tri |
 | MUWAT | Coentreprise de Subculture Studios (entité artistique de Drew Estate) et de Joya de Nicaragua, roulée dans la fabrique de Joya de Nicaragua (variante Kentucky Fire Cured, 2013) : la fabrication n'est pas celle de Drew Estate. | ajouts (Drew Estate) |
@@ -42,6 +44,7 @@ Plus de cinq ans sans trace datée (règle Ortega), marque arrêtée par son pro
 | Placeres | Aucune trace datée n'a été trouvée au-delà de juillet 2016 (« New Leadership, New Lines for Kuuts LLC », cigar-coop) malgré quatre recherches ciblées (revues, actualité, disponibilité en boutique) ; | contradiction |
 | Premium Outlet Cigars | Ligne d'importation bon marché « Porfina 100% Tobacco », dont des « Wilde Cigarros/Cigarillos » (catégorie courante de cigares d'entrée de gamme en Allemagne/Pays-Bas, typiquement non premium), mélangeant tabac brésilien et indonésien selon les références ; | tri |
 | Prominent | Marque indonésienne surtout connue pour ses petits formats aromatisés au clou de girofle (kretek) — « le best-seller local incontesté » sur ce segment — et son catalogue mélange cigarillos kretek et mini-cigarillos avec une ligne « 100% Tobacco » non aromat… | tri |
+| Punch Upper Cut | Ligne de General Cigar : aucune trace datée après août 2014, et la fiche la décrivait (cape maduro du Honduras) autrement que les pages (cape Sumatra d'Équateur, tripe nicaraguayenne, Honduras) ; elle sort de la gamme de la fiche. | corrections (256) |
 | Regalia Fina | Marque née en 2002 comme shortfiller machine chez August Schuster (Bünde, Allemagne). Une ligne longfiller (Sao Gonçalo, Sao Felipe, relancée en 2015) est roulée à la main au Brésil, mais chez « une petite tabacalera de confiance » que la source ne nomme pas. | tri |
 | Schuster | Manufacture allemande fondée en 1909 à Bünde (Westphalie), toujours familiale ; production majoritairement mécanisée (shortfiller, cigarillos). Au moins une ligne serait roulée à la main au Honduras, mais aucune source ne nomme la fabrique concernée. | tri |
 | Sons of Anarchy | Produit dérivé sous licence de la série télévisée (20th Century Fox), ligne « Sons of Anarchy by Black Crown » distribuée par Meier & Dutch et roulée au Honduras (usine S.T. | tri |
@@ -55,7 +58,7 @@ Plus de cinq ans sans trace datée (règle Ortega), marque arrêtée par son pro
 | Wynwood Hills | derniers textes datés de 2018 et 2019, plus de cinq ans sans trace en octobre 2026 | ajouts (CLE Cigar Company) |
 | XEN by Nish Patel | aucune page datée depuis octobre 2021 : plus de cinq ans sans trace | ajouts (Rocky Patel) |
 
-## Fabrique ou roulage à la main non établis (30)
+## Fabrique ou roulage à la main non établis (34)
 
 La maison ne nomme pas sa fabrique, ou aucune page lue ne dit que la marque est roulée à la main ; sans propriétaire et pays de roulage prouvés, il n'y a pas de fiche qui écrit le silence.
 
@@ -66,13 +69,16 @@ La maison ne nomme pas sa fabrique, ou aucune page lue ne dit que la marque est 
 | Alejandro Lopez | Le pays de roulage tient (République dominicaine, tabac entièrement dominicain revendiqué). | contradiction |
 | Bandera | Gamme créée le 15/10/2003, cigares Totalmente a Mano (roulés main, feuille entière) entièrement produits au Nicaragua ; décrite ailleurs comme faite à partir de chutes de production roulées à la main (bundle bon marché). Aucune source ne nomme la fabrique. | tri |
 | Black Tie | Le propriétaire tient : Jörn Fechner (Black Tie Nedeva 1930 Cigar GmbH & Co. | contradiction |
+| Bottom Shelf | Ligne de Holt's Cigar Company : la page dit des tabacs « rolled in the Dominican Republic » et l'avis du personnel du 30 mai 2025 des artisans qualifiés, jamais la main ; elle sort de la gamme de la fiche, comme Smokin' Sandwich et Winthrop. | corrections (257) |
 | Bucanero | Bucanero (dont la ligne Salsa, sortie en 2003) est décrit comme roulé main à Estelí, Nicaragua, cape nicaraguayenne, sous-cape dominicaine, tripe Nicaragua/République dominicaine ; | tri |
 | Campo Verde | Cigare panaméen totalement à la main (TAM), tripe/sous-cape/cape 100% Panama, positionné « commerce équitable » (petits producteurs des hauts plateaux panaméens rémunérés équitablement) — mais aucune source consultée (revendeurs allemands Cigarworld, Nobleg… | tri |
 | Confidenciaal | La maison elle-même revendique le secret non seulement sur le fabricant mais aussi sur l'origine (Cigar Journal, avril 2022 ; | contradiction |
 | Dominican Supreme | Atlantic Cigar Company est un caviste-détaillant familial (en ligne depuis la fin des années 1990) qui vend Dominican Supreme comme l'une de ses marques de bottes économiques, mais sa propre page produit ne cite que l'origine du tabac de tripe (République d… | contradiction |
 | Gran Ligero | Ligne présente chez cigars.com (catalogue restreint, 2 réf., Nicaragua) et chez des revendeurs tiers (Cigar Smoker Club), sous forme d'un Robusto (cape Habana 2000, sous-cape Connecticut, tripe nicaraguayenne). | tri |
+| Herfdog | Ligne de Holt's Cigar Company : la page dit « Dominican-made boutique bundle » et l'avis du personnel du 22 août 2025 une petite fabrique et des rouleurs, jamais la main ; elle sort de la gamme de la fiche. | corrections (257) |
 | House of Nicaragua | Marque vendue par Cigarworld.de sous la ligne « King of Ashes » (5 formats, dès 6,95 €), classée dans la catégorie Nicaragua du site. | tri |
 | Il Padrino | Le propriétaire tient : Michael Vohwinkel (« Don Michael ») et André Riehl reviennent dans plusieurs sources indépendantes (cigarworld.de, smokersplanet.de, page Facebook) ; | contradiction |
+| Jalopy | Ligne de Holt's Cigar Company : la page dit « Manufactured in the Dominican Republic » et l'avis du personnel du 25 août 2023 des fabriques de petites séries et des chutes de roulage, jamais la main ; elle sort de la gamme de la fiche. | corrections (257) |
 | Kaneda | Le verdict de tri tient et la mention de Vegas de Santiago cède. | contradiction |
 | La Buena Cosecha | Marque vendue par Cigarworld.de (catégorie Nicaragua), tripe H-2000 ligero/viso/seco/volado de la région d'Estelí, gamme Gran Reserva (tabac vieilli plus de 4 ans) ; | tri |
 | La Estrella | La Estrella Cubana est bien lancée par General Cigar Company à l'IPCPR 2016 (deux mélanges, Habano et Connecticut, en boîtes), mais la page de lancement lue porte « Country of Origin: Not Disclosed » : ni l'usine ni le roulage à la main ne se lisent sur une… | ajouts (General Cigar) |
@@ -82,6 +88,7 @@ La maison ne nomme pas sa fabrique, ou aucune page lue ne dit que la marque est 
 | Leonel | Le verdict tient : relue en entier, la page officielle du revendeur ne nomme aucune personne physique ni société précise derrière la marque — seule mention trouvée est « the Leonel Cigars team », avec un simple numéro de hotline suisse. | contradiction |
 | Maria Mancini | La marque est relancée par la maison Schuster (tabac du Honduras selon diostabaco.com), mais le seul fabricant nommé est Nestor Plasencia, dans une page de 2006 ; | ajouts (Plasencia) |
 | My Cuban Wheel Liga | Le nom de vente réel est « My Cuban Wheel » ; | contradiction |
+| Par | Ligne de Holt's Cigar Company : la page ne dit rien du mode de fabrication (« Dominican sandwich tobaccos ») et la maison n'a pas d'avis du personnel pour cette marque ; elle sort de la gamme de la fiche. | corrections (257) |
 | Rebellion | Le propriétaire est prouvé sans ambiguïté (Rebellion Cigars Ltd, société britannique enregistrée au Companies House, n°12668811, depuis 2020), mais le pays de roulage ne se laisse pas ramener à un lieu unique : halfwheel (PCA 2023) parle de trois fabriques … | contradiction |
 | Reserva del Presidente | Le verdict tient, mais reste fragile : la page source elle-même, relue en entier, ne crédite Fidel Olivas, dit Don Fidel, que d'une direction de fabrication, sans jamais le nommer propriétaire ni citer de société. | contradiction |
 | Rosa Cuba | contradiction 15 : propriétaire introuvable ; la fabrique (« Nicaraguan American Tobacco S.A. », Estelí) n'est donnée que par des libellés de détaillants, et son identité avec NACSA n'est pas prouvée | arbitrage |
@@ -122,4 +129,4 @@ Autre nom, autre graphie ou ligne d'une marque qui a sa fiche : ils sont trouvab
 | Paradiso | Paradiso est le nom utilisé hors des États-Unis (Europe notamment) pour San Cristóbal, la gamme nicaraguayenne d'Ashton blend par José « Pepin » Garcia (My Father Cigars) — renommée pour raisons de marque, Habanos S.A. | tri |
 | Rustico Habano | nom sous lequel Atlantic vend Rustico, mention d'Oliva (contradiction 15) | arbitrage |
 
-Total : 92 noms sans fiche.
+Total : 99 noms sans fiche (les 92 du recensement, plus sept lignes sorties des gammes de fiches par les corrections 256 et 257).

@@ -218,11 +218,12 @@ ouvert (252 et 253) ; les ajouts aux fiches existantes sont migrés pour
 les lots 01 à 09 (250, 251 et 254), sans reste. **Recensement terminé** :
 120 fiches, Haïti ouvert, 36 lignes et 23 paragraphes ajoutés, 92 noms sans
 fiche (docs/recensement-8-exclus.md). Livrée en chemin : la 238, les noms que
-les fiches citent deviennent trouvables. À venir : la
-correction des fiches hôtes que les ajouts contredisent (Vegas de
-Santiago, propriété de l'atelier de Puriscal, Ashton, Aging Room, CLE,
-Foundation, General Cigar, Miami Cigar & Co., Ozgener, Rocky Patel,
-Tabacalera Palma, Tabacosta, Villiger, Warped).
+les fiches citent deviennent trouvables. Les fiches hôtes que les
+ajouts contredisaient sont corrigées (255 à 257 : Puriscal, douze
+maisons, Holt's / Helvada / Herr Lehmann). Reste à l'utilisateur, voir
+« En réserve » de `docs/recensement-8.md` : le pays de Rocky Patel,
+d'Ozgener et de Miami Cigar & Co., les lignes d'Ozgener, Costa de
+Tabacosta, Swag.
 
 ### Reste du lot 21 (migration `235`)
 

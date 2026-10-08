@@ -6242,3 +6242,38 @@ Ce qui reste n'est plus du recensement mais de la correction : treize
 fiches déjà en ligne disent encore ce que les ajouts contredisent (la
 propriété de l'atelier de Puriscal dans Vegas de Santiago, l'usine
 d'Ashton, d'Aging Room, de CLE, de Villiger…).
+
+## Huitième recensement — les fiches hôtes corrigées (migrations 255 à 257)
+
+Les treize fiches que les ajouts contredisaient sont relues sur pages
+vivantes, par maison, avant d'être touchées ; seule la phrase fautive change,
+dans les six langues, et les sceaux repassent à `machine`. Trois migrations,
+produites par un générateur (`gen_corr.py`, carnet de session) qui lit la
+fiche en base, remplace de façon gardée et écrit un SELECT de contrôle ; chacune
+a été rejouée à blanc, puis sur une base neuve à l'état du dernier commit, où
+brands et fiche du pays rendent exactement ce que rend la base locale.
+
+La 255 remet d'aplomb l'atelier de Puriscal : Tabacos de Costa Rica S.A.
+appartient à Olman puis Andrés León, non à Marc Niehaus ; la fondation de
+Vegas de Santiago s'écrit en deux versions ; « elle cultive ce qu'elle roule »
+tombe. La 256 corrige douze maisons (Ashton, dont le « William Ashton Taylor »
+n'existait que pour les pipes ; Aging Room ; CLE ; Foundation ; General Cigar ;
+Miami Cigar ; Ozgener ; Rocky Patel ; Tabacalera Palma, dont la maison écrit
+elle-même 1925 et 1936 ; Tabacosta ; Villiger ; Warped). La 257 relit « roulé
+à la main » : quatre lignes de Holt's sortent, deux restent sur un avis du
+personnel ; la 51 d'Helvada reste, la phrase de la machine étant celle d'un
+lecteur de 2020 et non de la maison ; Herr Lehmann reste, nuance écrite.
+
+Trois accrocs de route. Le cliquet des traductions relues (556) est tombé à 555
+quand la 255 a resellé l'anglais des notes du Costa Rica : l'anglais a été relu
+de nouveau et garde `relu`. La médiane arabe, déplacée par ces textes, a fait
+tomber un salon dont le chinois et l'arabe étaient du français semé de
+particules : refait dans la 255, comme la 246. Un détecteur de superlatifs a lu
+« am nächsten Tag » (le lendemain) comme un « plus proche » ; et un détecteur de
+langue, « The Wise Man » deux fois dans un court texte.
+
+Le pays de Rocky Patel, d'Ozgener et de Miami Cigar & Co. n'est pas tranché :
+les pages disent le Honduras, la République dominicaine, et rien de net ; les
+fiches gardent leur pays et le disent. Sept lignes sont sorties des gammes
+(Holt's x4, Costa Platinum, Manuel Alonso Gran Selección, Punch Upper Cut) :
+motifs dans `docs/recensement-8-exclus.md`.

@@ -627,13 +627,140 @@ la 242 étant d'une autre session).
   documenté ; plus de cinq ans sans trace, une marque est éteinte ; une
   divergence s'écrit, elle ne se tranche pas.
 
+## Migration 255 — l'atelier de Puriscal remis d'aplomb (8 octobre)
+
+Le réexamen de Puriscal avait établi que Tabacos de Costa Rica S.A. est
+l'atelier de Vegas de Santiago et qu'il n'appartient pas à Marc Niehaus.
+Relue sur les pages de la maison (cigars-vegasantiago.biz), de ses
+distributeurs et de la presse, la fiche Vegas de Santiago se corrige sur
+quatre points, et les fiches qui citent l'atelier suivent :
+- **Fondateur** : deux versions écrites, attribuées, sans trancher (Marc
+  Niehaus seul selon Casagranda, distributeur allemand ; les familles
+  Niehaus et Guzmán ensemble selon Cigarrspecialisten, détaillant suédois) ;
+  la maison ne nomme aucun fondateur. `founded` : « Non précisée — Guzmán
+  et Niehaus, Puriscal ». 1997 pour la manufacture familiale (Casagranda),
+  1998 pour l'ouverture de la fabrique (un entretien avec Marc Niehaus) ;
+  aucune page ne date la marque.
+- **Propriétaires de l'atelier** : Olman León (La Nación, 2011), Andrés León
+  (Cigar Coop, 2019), chacun avec sa page ; aucune page ne dit leur
+  parenté, et la fiche ne parle donc pas de « famille León Guzmán ».
+- **Feuilles** : « elle cultive ce qu'elle roule » tombe, la maison écrivant
+  elle-même cultiver une part de ses feuilles et importer le reste, et La
+  Nación que la production a cessé à Puriscal en 1997-1998. Les capes « Tabac
+  de Puriscal » étaient fausses (Connecticut d'Équateur pour Chaman et Don
+  Luis, rien de donné pour Reserva) ; El Puro (Red Label), dite entièrement
+  costaricienne par la maison, entre en gamme.
+- **Autour** : Casdagli, Bombay Tobak, Selected Tobacco et ses trois marques
+  (fabrique nommée), Brun del Ré (la comparaison avec « la seule qui
+  cultive ») et la fiche du Costa Rica (deux `desc`, la phrase des notes sur
+  Puriscal, « dix fiches » devenu douze, Selected Tobacco ôté des
+  tabacaleras). L'anglais des notes du pays, relu, a été relu de nouveau
+  (quatre retouches) et garde son statut : le cliquet des 556 relues tient.
+- **Un salon** : la médiane arabe a bougé avec ces textes et fait tomber
+  Arturo Fuente — Boutique Santiago (lounges 182), dont le chinois et
+  l'arabe étaient du français semé de particules : refaits, comme la 246.
+
+Ouvert : les pages de Cigar Inspector répondent 403 (non lues, non citées) ;
+vegassantiago.com présente le certificat d'un autre hôte (ôté de la source) ;
+LH Premium Cigar sort de l'atelier (Cigar Coop, novembre 2024) et n'a pas de
+fiche ; Atabey (« le cigare le plus cher de cet atlas ») et Byron (« des prix
+qui le placent tout en haut du marché ») gardent des mots de prix et de rang.
+
+## Migration 256 — douze maisons hôtes rendues aux faits (8 octobre)
+
+Les fiches que les ajouts des 250, 251 et 254 contredisaient, relues sur
+pages vivantes ; seule la phrase contredite change :
+- **Ashton** : San Cristobal est roulée chez les García (My Father, Estelí), le
+  reste chez Fuente. L'histoire faisait naître la marque d'un « William
+  Ashton Taylor » vendeur de cigares : aucune page ne l'atteste, le nom
+  n'existe que pour les pipes Ashton. Robert Levin (Holt's) la lance en 1985 ;
+  ses premiers cigares sont faits chez Tabadom, puis chez Fuente en 1988 selon
+  lui, « peu après le lancement » selon la maison : les deux s'écrivent.
+- **Aging Room** : La Bohème, la Quattro Nicaragua et la Pelo de Oro sont
+  roulées chez A.J. Fernandez ; « tout sort de la Tabacalera Palma » tombe.
+- **CLE** : la fabrique de Danlí est nommée (« CLE Factory », Havano S.A.) ;
+  les bureaux de Danlí, Estelí et Miami n'avaient aucune page.
+- **Foundation** : El Güegüense était roulé à TABSA (Aganorsa Leaf), non chez
+  A.J. Fernandez ; arrêté en mars 2024, The Wise Man passe à My Father.
+- **General Cigar** : Punch, Cohiba et Havana Honeys passent à l'équipe de
+  vente de Forged en janvier 2026 (fabrication inchangée) ; **Punch Upper Cut
+  sort de la gamme** (aucune trace depuis août 2014, et la fiche ne
+  correspondait à aucune page) ; Cohiba Blue cède sa place dans la dernière
+  phrase ; la chaîne Swedish Match (2005) / STG (2010, Bourse 2016) remplace
+  « a racheté General Cigar en 2016 ».
+- **Miami Cigar & Co.** : La Aurora a repris sa distribution américaine le 1er
+  avril 2023 (annonce du 11 novembre 2022) ; l'article de juillet 2023 n'a pas
+  été retrouvé. Fabriques de la Collection Nestor Miranda, de Don Lino
+  (non communiquée ou El Artista) et d'Africa (A.J. Fernandez) mises à jour.
+- **Ozgener** : Bosphorus est chez La Alianza (Casa Carrillo) depuis novembre
+  2022, Aramas date de mars 2023 ; Karatoba (NACSA), Maracana et World Cup
+  2026 (My Father) sont nommées sans entrer en gamme : aucune page lue ne les
+  dit roulées à la main ligne par ligne.
+- **Rocky Patel** : `factory` TaviCusa (Estelí) et El Paraiso (Danlí) ;
+  Toraño International, que nulle page de 2024-2026 ne nomme, sort du champ.
+- **Tabacalera Palma** : la maison écrit elle-même 1925 (création) et 1936
+  (enregistrement industriel) ; les deux s'écrivent, avec l'arrivée du père de
+  Blanco (milieu du XIXe siècle ou fin des années 1880).
+- **Tabacosta** : la dernière phrase sur Cigarworld.de ne reposait que sur des
+  reliquats que la page ne rattache pas à Tabacosta ; remplacée par le site de
+  la maison (septembre 2025) et Humoytabaco.com (novembre 2024). **Costa
+  Platinum et Manuel Alonso Gran Selección sortent** (plus de cinq ans sans
+  trace datée) ; Costa reste, adossée au site de 2025.
+- **Villiger** : l'usine d'Estelí est une coentreprise avec Joya selon la
+  presse de 2021, « détenue et exploitée par Villiger » selon une page de 2023
+  (les deux s'écrivent) ; ABAM appartient à José Maragoto, non à Villiger ;
+  « Villiger Cuellar Nicaragua » (aucune page) devient la série Cuéllar,
+  dominicaine, de Tabacalera Palma ; La Meridiana est un puro nicaraguayen.
+- **Warped** : Cloud Hopper est le cigare d'Edition One, fait chez TABSA
+  (Aganorsa Leaf, à Estelí) ; sortie en 2016, début 2016 ou août 2017 selon
+  trois pages, écrites toutes les trois.
+
+**Le pays de trois fiches n'est pas tranché** : Ozgener (trois lignes courantes
+sur cinq sont roulées en République dominicaine, la fiche reste au Nicaragua et
+le dit), Rocky Patel (la plus grande part sort d'El Paraiso, au Honduras, selon
+une page de 2024) et Miami Cigar & Co. (Nestor Miranda chez My Father, le
+Lancero 2026 chez La Aurora).
+
+## Migration 257 — « roulé à la main » relu : Holt's, Helvada, Herr Lehmann (8 octobre)
+
+- **Holt's** : quatre lignes sortent faute d'une page qui les dise roulées à la
+  main — Herfdog, Jalopy, Bottom Shelf, Par (motifs dans
+  [recensement-8-exclus.md](recensement-8-exclus.md)) ; deux restent, sur un
+  avis du personnel qui l'affirme, attribué — Bella Cuba (5 août 2021, mis à
+  jour le 30 septembre 2025) et Angry Elf (8 mars 2023). L'histoire passe de
+  vingt-quatre à vingt marques.
+- **Helvada : la 51 reste.** L'hypothèse « la 51 est façonnée à la machine »
+  est infirmée : la phrase vient d'une critique de lecteur de Cigarworld.de
+  (16 août 2020, formulée avec réserve), reprise sous le nom « schwizertrade »
+  sur la page du 51, et non de la maison, qui ne dit rien du roulage.
+  Cigarworld.de classe le 51, le 70, le 04, le 91 et la Dark Line « totalmente a
+  mano » (longfiller) ; la Medio Filler l'est à tripe déchirée. Les trois lignes
+  restent, chaque affirmation attribuée. Corrigés au passage : le 23 mai 2018
+  est une première dégustation, non un lancement ; la maison est à Ammerswil en
+  2026 ; la GmbH n'est pas datée de 2015 (`founded` : « Non précisée »).
+- **Herr Lehmann reste**, nuance écrite : la bande de cuir refermée par une
+  pédale (Netzwerk Südbaden, mars 2022) n'est suivie d'aucun moteur ni courant
+  dans l'article, et trois pages disent « Handarbeit », « von Hand gerollt »,
+  « per Hand gewickelt » ; divergence sur le tabac (feuilles entières selon
+  Cigarworld.de, tabac coupé selon l'article). Le site partenaire s'appelle
+  Dein Dorfleben, non Dein Dorfladen. Reste ouvert : ce que sont « les
+  machines » reprises aux Lehmann.
+
 ## En réserve
 
-- **La fiche Vegas de Santiago.** Le réexamen de Puriscal (voir plus
-  haut) établit que l'atelier de Santiago de Puriscal appartient à la
-  famille León Guzmán et que Vegas de Santiago est un partenariat
-  Guzmán–Niehaus : la fiche, qui attribue l'atelier à Marc Niehaus, est
-  à corriger dans les six langues, avec les fiches qui citent le même
-  atelier.
-- **Holt's Cigar Company.** Fiche de maison ouverte (voir plus haut),
-  en écriture avec West Tampa (lot 26).
+Décisions éditoriales qui restent à l'utilisateur :
+- **Le pays de Rocky Patel, d'Ozgener et de Miami Cigar & Co.** (voir la 256) :
+  la règle « là où le cigare est roulé aujourd'hui » désignerait le Honduras,
+  la République dominicaine, et rien de net ; les fiches gardent leur pays et
+  le disent.
+- **Ozgener** : Firsat, Karatoba, Maracana et World Cup 2026 n'entrent en
+  gamme que si « handcrafted » (la maison, un détaillant) vaut « roulé à la
+  main ».
+- **Tabacosta** : la ligne Costa ne tient que sur un site de 2025 qui ne nomme
+  aucune ligne ; la fiche cite encore Halfwheel (illisible) pour des faits de
+  2016.
+- **Hors de ces lots** : Swag (aucune page de 2024-2026 chez Tabacalera Palma),
+  les 2 000 000 de cigares « machine made » que la page de Tabacalera Palma
+  compte à côté de 7 000 000 faits à la main, les vitolas de Pelo de Oro et la
+  gamme Quattro d'Aging Room, Guardian of the Farm et Flor del Valle (absentes
+  de warpedcigars.com en octobre 2026), Atabey et Byron (mots de prix).
