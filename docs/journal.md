@@ -6229,3 +6229,16 @@ fiche. `coherence_check` a refusé d'abord la zone et les variétés du pays,
 que rien ne place sur la carte : Haïti déclare « aucune zone, aucune
 variété » comme les Bahamas et Porto Rico. Le drapeau a été vérifié à
 l'écran dans l'atlas local.
+
+## Huitième recensement — les ajouts sont finis (migration 254) et le bilan
+
+La 254 écrit les six dernières lignes de gamme (Villiger) et le dernier
+paragraphe (Warped) : les neuf lots d'ajouts sont migrés. Le recensement
+est terminé : 649 noms confrontés à l'atlas, 120 fiches nouvelles, Haïti
+ouvert, 36 lignes de gamme et 23 paragraphes de mention ajoutés à des
+fiches existantes, 92 noms laissés de côté avec leur motif.
+
+Ce qui reste n'est plus du recensement mais de la correction : treize
+fiches déjà en ligne disent encore ce que les ajouts contredisent (la
+propriété de l'atelier de Puriscal dans Vegas de Santiago, l'usine
+d'Ashton, d'Aging Room, de CLE, de Villiger…).

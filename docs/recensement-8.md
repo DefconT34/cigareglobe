@@ -578,6 +578,14 @@ Sept fiches hôtes disent encore ce que les lignes ajoutées contredisent
 Rocky Patel, Tabacalera Palma) : leurs champs seront corrigés avec ceux
 d'Ashton, d'Aging Room, de CLE Cigar Company et de Vegas de Santiago.
 
+## Migration 254 — fin des ajouts aux fiches existantes (8 octobre)
+
+La dernière migration d'ajouts écrit six lignes de gamme chez Villiger
+(Dominico, Casa de Nicaragua, La Libertad, La Capitana, Corrida, Nicaroma,
+toutes sur la page des cigares roulés à la main de la maison en octobre
+2026) et le paragraphe d'Edition One chez Warped. Manuel Alonso est déjà
+dans la gamme de Tabacosta depuis la 244.
+
 ## Haïti entre dans l'atlas — migrations 252 et 253 (8 octobre)
 
 Bohekio (Supreme Tobacco) est roulée à la main en Haïti et vendue en 2024 :
@@ -598,6 +606,26 @@ affiche une adresse à Pétion-Ville et ne cite que Mirebalais pour la
 culture) : le point de la carte est posé sur la région. Population (11,9 M,
 2025), PIB (32,1 Md$, 2025, contre 24,3 Md$ en 2024 selon la même source)
 et superficie (27 750 km², 2023) viennent de la Banque mondiale.
+
+## Bilan du huitième recensement (8 octobre)
+
+Le marché (cigares.com, cigarworld.de, Neptune, Holt's et Atlantic) a été
+confronté à l'atlas : 649 noms, 322 à trier, 188 examinés par un
+contradicteur, puis écrits, traduits et migrés en seize migrations (238 à 254,
+la 242 étant d'une autre session).
+- **Fiches nouvelles** : 120 maisons (239 à 241, 243 à 245, 247 à 249, 253),
+  et Haïti ouvert comme pays (252) ; l'atlas passe de 262 à 382 marques et
+  compte 31 pays producteurs.
+- **Ajouts aux fiches existantes** : 36 lignes de gamme et 23 paragraphes de
+  mention dans 36 fiches (250, 251, 254) ; les noms mentionnés sont
+  trouvables par la recherche (238).
+- **Noms sans fiche** : 92, avec leur motif (voir
+  [recensement-8-exclus.md](recensement-8-exclus.md)) : éteintes ou arrêtées,
+  fabrique ou roulage à la main non établis, introuvables, doublons.
+- **Règles tenues en route** : pas de cigare de machine ; une maison se range
+  où elle roule aujourd'hui ; pas de fiche sans fabrique nommée, sauf silence
+  documenté ; plus de cinq ans sans trace, une marque est éteinte ; une
+  divergence s'écrit, elle ne se tranche pas.
 
 ## En réserve
 

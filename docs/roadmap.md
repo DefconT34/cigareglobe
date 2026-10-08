@@ -215,8 +215,10 @@ pays. Tri : terminé (322 noms) ; contradiction : terminée (188 examinés ;
 réexamen de Puriscal terminé) ; écriture : 120 fiches migrées (239 à
 241, 243 à 245, 247 à 249 et 253, l'atlas à 382 marques) ; Haïti est
 ouvert (252 et 253) ; les ajouts aux fiches existantes sont migrés pour
-les lots 01 à 07 (250 et 251), les lots 08 et 09 suivent. Livrée en chemin :
-la 238, les noms que les fiches citent deviennent trouvables. À venir : la
+les lots 01 à 09 (250, 251 et 254), sans reste. **Recensement terminé** :
+120 fiches, Haïti ouvert, 36 lignes et 23 paragraphes ajoutés, 92 noms sans
+fiche (docs/recensement-8-exclus.md). Livrée en chemin : la 238, les noms que
+les fiches citent deviennent trouvables. À venir : la
 correction des fiches hôtes que les ajouts contredisent (Vegas de
 Santiago, propriété de l'atelier de Puriscal, Ashton, Aging Room, CLE,
 Foundation, General Cigar, Miami Cigar & Co., Ozgener, Rocky Patel,
