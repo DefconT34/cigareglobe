@@ -6290,3 +6290,19 @@ descriptions de marques dans les fiches pays. Ashton Cabinet reste classée en
 Équateur : c'est une fiche de cape voulue, comme Hemingway au Cameroun.
 Le générateur gère désormais `celebrities` ; la 258, rejouée sur une base à
 l'état du dernier commit, rend exactement la base locale.
+
+## Huitième recensement — le pays de trois maisons (migration 259)
+
+Rocky Patel, Ozgener et Miami Cigar & Co., dont le pays restait à trancher, l'ont
+été selon le critère que l'atlas applique déjà aux maisons multi-pays (le lieu
+principal de roulage : volume si une page le donne, puis lignes courantes,
+puis la ligne éponyme), non selon un critère neuf. Rocky Patel passe au
+Honduras (El Paraiso, environ 75 % de la production par jour selon la Premium
+Cigar Association de mars 2024, recoupée par Cigar Aficionado), Ozgener à la
+République dominicaine (Bosphorus, Aramas et Firsat à Casa Carrillo), Miami
+Cigar reste au Nicaragua (quatre marques, deux et deux ; la ligne du fondateur
+chez My Father). Ozgener passe à six lignes de gamme : Firsat, Karatoba et
+Maracana entrent sur des fiches de détaillants qui les disent faites à la main,
+World Cup 2026 va dans `limited_eds`. Le générateur sait désormais déplacer une
+fiche et réécrire les listes de deux fiches pays ; la 259, rejouée sur une base à
+l'état du dernier commit, rend exactement la base locale.

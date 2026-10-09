@@ -779,16 +779,54 @@ Cigars », attribué à rauchr.de), Casagranda, Malekö, Gellis Family Cigars,
 E.P. Carrillo (dit déjà Casa Carrillo), Cohiba USA et Partagás USA, Swag,
 Villiger (limited_eds, pairings sur deux entrées de machine), Asylum, Legado.
 
+## Migration 259 — le pays de trois maisons et la gamme d'Ozgener (9 octobre)
+
+**Le critère n'est pas neuf.** L'atlas range une maison multi-pays par le lieu
+principal de roulage : « l'essentiel de la production » (Rocky Patel),
+« l'essentiel du catalogue » (Nomad), « la ligne qui porte le nom » (La Sirena,
+Miami Cigar), « le lieu où le cigare est fait, pas l'origine de la feuille »
+(Padilla, La Palina). Le volume prime quand une page le donne, puis le nombre de
+lignes courantes ; si rien n'est net, la fiche ne bouge pas.
+- **Rocky Patel : Nicaragua → Honduras.** La Premium Cigar Association (7 mars
+  2024) : la plus grande part sort d'El Paraiso (Danlí), jusqu'à environ 78 000
+  cigares par jour contre 26 000 à 28 000 à TaviCusa (Estelí), soit environ 75 %
+  contre 25 % ; Cigar Aficionado (29 janvier 2024) recoupe (TaviCusa, sept
+  millions par an sur 28 à 29 millions livrés en 2022) ; aucune page plus récente
+  ne contredit. Divergence écrite : les nouveautés de 2025-2026 sortent de
+  TaviCusa (Cigar Coop), le site de la maison range 30 entrées au Nicaragua et 18
+  au Honduras, une usine plus grande est annoncée à Estelí.
+- **Ozgener Family Cigars : Nicaragua → République dominicaine.** Trois des cinq
+  lignes courantes (Bosphorus, la première et la ligne phare, Aramas, Firsat) à
+  Casa Carrillo contre une à NACSA (Karatoba) et une chez My Father au Honduras
+  (Maracana) ; aucune page ne donne de volume par fabrique. Divergence écrite :
+  smokingpipes.com dit encore Bosphorus roulée chez Pichardo.
+- **Miami Cigar & Co. : Nicaragua gardé.** Pas net : sur les quatre marques de
+  octobre 2026, Nestor Miranda (My Father) et Don Lino Africa (A.J. Fernandez) au
+  Nicaragua, Tatiana (La Aurora) et Outcast en République dominicaine ; quatre
+  contre quatre avec les éditions récentes (Grand Reserve 2024, Lancero 2026) ;
+  la ligne au nom du fondateur tranche, comme pour La Sirena. La fiche écrit la
+  répartition.
+- **Gamme d'Ozgener**, norme de la 257 : Firsat, Karatoba et Maracana entrent,
+  sur des fiches de détaillants qui les disent faites à la main (smokingpipes.com
+  « Make: Handmade », Neptune Cigar, Cuenca Cigars, Cigars Direct), attribuées ;
+  Bosphorus, Aramas et Pi Synesthesia restent ; World Cup 2026 (2 026 boîtes) va
+  dans `limited_eds`, la gamme tenant à six lignes. La `source` perd ses
+  clauses périmées (Aramas « mars 2024 », Bosphorus « roulée à Pichardo »).
+- **Les listes des fiches pays** sont relues et réécrites : Nicaragua 120 → 118
+  fiches, Honduras 36 → 37, République dominicaine 97 → 98 ; aucune note ne
+  portait de compteur.
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :
-- **Le pays de Rocky Patel, d'Ozgener et de Miami Cigar & Co.** (voir la 256) :
-  la règle « là où le cigare est roulé aujourd'hui » désignerait le Honduras,
-  la République dominicaine, et rien de net ; les fiches gardent leur pays et
-  le disent.
-- **Ozgener** : Firsat, Karatoba, Maracana et World Cup 2026 n'entrent en
-  gamme que si « handcrafted » (la maison, un détaillant) vaut « roulé à la
-  main ».
+- **Rocky Patel** : si l'usine plus grande d'Estelí ouvre et que la répartition
+  s'inverse, la fiche repassera au Nicaragua ; les pages Vintage 1992 et Fifty de
+  la maison ne correspondent pas aux lignes de la fiche, Indian Tabac est une
+  marque que Phil Zanghi a reprise en 2014, et sa phrase nomme encore « le
+  recensement ».
+- **Miami Cigar & Co.** : Tatiana n'est pas en gamme ; la Collection de 2014 est
+  devenue la Special Selection ; Don Lino Original et la série dominicaine de 2021
+  ne sont plus sur la page de la maison.
 - **Tabacosta** : la ligne Costa ne tient que sur un site de 2025 qui ne nomme
   aucune ligne ; la fiche cite encore Halfwheel (illisible) pour des faits de
   2016.
