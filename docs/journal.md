@@ -6277,3 +6277,16 @@ les pages disent le Honduras, la République dominicaine, et rien de net ; les
 fiches gardent leur pays et le disent. Sept lignes sont sorties des gammes
 (Holt's x4, Costa Platinum, Manuel Alonso Gran Selección, Punch Upper Cut) :
 motifs dans `docs/recensement-8-exclus.md`.
+
+## Huitième recensement — les restes des corrections (migration 258)
+
+Un balayage de toutes les colonnes texte de la base a retrouvé ce que les
+corrections 255 à 257 laissaient debout : l'entrée `celebrities` d'Ashton
+(« William Ashton Taylor, détaillant devenu fabricant »), l'histoire d'Ashton
+Cabinet qui s'ouvrait sur le même Taylor, la fabrique de Boutique Blends, une
+phrase de Luciano Cigars (Ozgener) et de Bock y Ca. (La Libertad), la source de
+Holt's qui citait encore les pages des quatre lignes sorties, et six
+descriptions de marques dans les fiches pays. Ashton Cabinet reste classée en
+Équateur : c'est une fiche de cape voulue, comme Hemingway au Cameroun.
+Le générateur gère désormais `celebrities` ; la 258, rejouée sur une base à
+l'état du dernier commit, rend exactement la base locale.

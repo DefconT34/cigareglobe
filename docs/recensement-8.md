@@ -746,6 +746,39 @@ Lancero 2026 chez La Aurora).
   Dein Dorfleben, non Dein Dorfladen. Reste ouvert : ce que sont « les
   machines » reprises aux Lehmann.
 
+## Migration 258 — les restes des corrections 255 à 257 (9 octobre)
+
+Un balayage de toutes les colonnes texte de la base (histoire, celebrities,
+pairings, limited_eds, scores, factory, source, mentions, fiches pays) a
+cherché ce que les faits des 255 à 257 contredisent encore ; les migrations
+poussées ne se retouchent pas, la 258 corrige :
+- **Ashton** : la colonne `celebrities` portait encore « William Ashton
+  Taylor, détaillant devenu fabricant » (nom attesté pour les seules pipes
+  Ashton) ; elle dit Robert Levin, Holt's, 1985, les premiers cigares chez
+  Tabadom puis chez Fuente (1988 selon lui, « peu après le lancement » selon
+  la maison), dans les six langues.
+- **Ashton Cabinet** : l'histoire commençait par « William Ashton Taylor fonda
+  Ashton Cigars… » ; réécrite sur les mêmes faits. Son pays reste l'**Équateur** :
+  c'est une fiche de cape voulue (sa source le dit ; comme Arturo Fuente
+  Hemingway au Cameroun, Fuente Maduro au Brésil, CAO Black au Mexique), non une
+  maison classée par son roulage.
+- **Boutique Blends** (La Bohème, la Quattro Nicaragua et la Pelo de Oro chez
+  A.J. Fernandez), **Luciano Cigars** (Ozgener y a fait ses premiers cigares en
+  2022, puis La Alianza), **Bock y Ca.** (La Libertad n'est plus roulée à
+  l'ABAM) : une phrase chacune, `factory` et source comprises.
+- **Holt's** : le champ `source` ne cite plus les huit pages (produit et avis
+  du personnel) de Herfdog, Jalopy, Bottom Shelf et Par, ni les tournures qui
+  parlaient de notre lecture ; chacune des vingt lignes restantes garde sa page.
+- **Fiches pays** : descriptions de marques des fiches de la République
+  dominicaine (Boutique Blends, Tabacalera Palma, Aging Room), du Nicaragua
+  (Miami Cigar, Ozgener, Helvada, Tabacosta, Luciano Cigars) et des États-Unis
+  (General Cigar : Punch et Cohiba vendues par Forged).
+
+Examiné et laissé : Skull 77 (Marc Niehaus « propriétaire de Vegas de Santiago
+Cigars », attribué à rauchr.de), Casagranda, Malekö, Gellis Family Cigars,
+E.P. Carrillo (dit déjà Casa Carrillo), Cohiba USA et Partagás USA, Swag,
+Villiger (limited_eds, pairings sur deux entrées de machine), Asylum, Legado.
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :

@@ -387,7 +387,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 111
+            "fiches": 112
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -407,7 +407,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 174
+            "fiches": 175
         },
         "cigarandspirits.com": {
             "dns": "resout",
@@ -1175,7 +1175,7 @@
         },
         "holts.com": {
             "dns": "resout",
-            "fiches": 8
+            "fiches": 9
         },
         "hotel-lutetia.com": {
             "dns": "resout",
