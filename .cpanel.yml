@@ -43,6 +43,12 @@
 #   tests/    Nécessite Playwright et une base dédiée ; rien à y faire en
 #   node_modules/, .github/   production.
 #
+#   CLAUDE.md, README.md, dev/   Notes de travail et configuration d'Apache
+#             de développement : rien à y faire en production, et
+#             /CLAUDE.md, /README.md, /dev/ répondaient 200 au public
+#             (audit du 9 octobre 2026). `--delete` ne retire PAS un
+#             fichier exclu : les copies déjà posées s'effacent à la main.
+#
 # `tools/` RESTE déployé : `prevol.php`, `cle.php`, `deployer.php`,
 # `sauvegarde.php` et `forum_rappels.php` (le cron) s'exécutent sur le
 # serveur. Le dossier porte son propre .htaccess, qui interdit l'accès
@@ -66,6 +72,9 @@ deployment:
       --exclude='.env'
       --exclude='cgi-bin/'
       --exclude='.cpanel.yml'
+      --exclude='/CLAUDE.md'
+      --exclude='/README.md'
+      --exclude='/dev/'
       ./ $DEPLOYPATH
     - /bin/echo "Deploiement termine. Verifier :"
     - /bin/echo "  php $DEPLOYPATH/tools/prevol.php"

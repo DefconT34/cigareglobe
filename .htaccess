@@ -143,7 +143,11 @@
   # base en un fichier (`sql/contenu.sql`, 5 Mo), le schéma, les
   # migrations, et une documentation qui décrit la configuration.
   # `tests/` et `tools/` portent déjà leur propre .htaccess.
-  RewriteRule "^(sql|docs)/" - [R=404,L]
+  RewriteRule "^(sql|docs|dev)/" - [R=404,L]
+
+  # Les notes de travail du dépôt ne sont pas du contenu : /CLAUDE.md et
+  # /README.md répondaient 200 en production (audit du 9 octobre 2026).
+  RewriteRule "^(CLAUDE|README)\.md$" - [R=404,L]
 </IfModule>
 
 <FilesMatch "^(package(-lock)?\.json|composer\.(json|lock)|playwright\.config\.js)$">

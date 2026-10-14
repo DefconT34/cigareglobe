@@ -4670,8 +4670,10 @@ section('Les images des fiches');
           (bool)preg_match('/RewriteRule\s+"\(\^\|\/\)\\\\\.\(\?!well-known/', $ht));
     check('racine web : .well-known reste ouvert au renouvellement TLS',
           str_contains($ht, 'well-known'));
-    check('racine web : sql/ et docs/ sont fermes',
-          (bool)preg_match('/RewriteRule\s+"\^\(sql\|docs\)\//', $ht));
+    check('racine web : sql/, docs/ et dev/ sont fermes',
+          (bool)preg_match('/RewriteRule\s+"\^\(sql\|docs\|dev\)\//', $ht));
+    check('racine web : CLAUDE.md et README.md sont fermes',
+          (bool)preg_match('/RewriteRule\s+"\^\(CLAUDE\|README\)\\\\\.md\$"\s+-\s+\[R=404/', $ht));
 
     // mod_alias n'est pas charge partout : `RedirectMatch` faisait
     // repondre 500 a TOUT le site, page d'accueil comprise — Apache
@@ -5077,6 +5079,33 @@ section('Les mentions legales ne parlent qu\'au visiteur');
     // CONTRE-EPREUVE.
     check('permissions : rien a dire quand tout est lisible',
           prevol_constat_droits([]) === null);
+
+    // ── Un .htaccess VIDE ouvre tout ce qu'il protegeait ─────────────
+    // Le 8 octobre 2026 celui de la racine est reste a 0 octet une demi-
+    // journee : adresses /marque/ en 404, plus d'en-tetes de securite,
+    // sql/ et docs/ lisibles. Le site repondait : rien ne le disait.
+    $tmp = sys_get_temp_dir() . '/prevol_htaccess_' . getmypid();
+    @mkdir($tmp . '/backend', 0777, true);
+    file_put_contents($tmp . '/.htaccess', '');
+    file_put_contents($tmp . '/backend/.htaccess', "Require all denied\n");
+    check('htaccess : un fichier vide est vu, un fichier plein ne l\'est pas',
+          prevol_htaccess_vides($tmp) === ['.htaccess']);
+    check('htaccess : et le constat bloque, avec le remede',
+          (prevol_constat_htaccess_vides(['.htaccess'])['niveau'] ?? '') === 'bloquant'
+          && str_contains(prevol_constat_htaccess_vides(['.htaccess'])['remede'] ?? '', 'cp '));
+    file_put_contents($tmp . '/.htaccess', "RewriteEngine On\n");
+    check('htaccess : rien a dire quand tous sont remplis',
+          prevol_htaccess_vides($tmp) === [] && prevol_constat_htaccess_vides([]) === null);
+    @unlink($tmp . '/.htaccess'); @unlink($tmp . '/backend/.htaccess'); @rmdir($tmp . '/backend'); @rmdir($tmp);
+
+    // ── Ce qui n'est pas du contenu ne part pas en production ────────
+    $cp = file_get_contents(__DIR__ . '/../.cpanel.yml');
+    check('deploiement : CLAUDE.md, README.md et dev/ sont exclus du rsync',
+          str_contains($cp, "--exclude='/CLAUDE.md'") && str_contains($cp, "--exclude='/README.md'")
+          && str_contains($cp, "--exclude='/dev/'"));
+    $ht = file_get_contents(__DIR__ . '/../.htaccess');
+    check('deploiement : et le .htaccess ferme ce qui serait deja en place',
+          str_contains($ht, '(sql|docs|dev)/') && str_contains($ht, '(CLAUDE|README)\.md'));
 }
 
 // ════════════════════════════════════════════════════════

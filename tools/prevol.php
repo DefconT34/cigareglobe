@@ -417,6 +417,35 @@ function prevol_constat_droits(array $fautifs): ?array {
 }
 
 /**
+ * Un `.htaccess` VIDE n'est pas un `.htaccess` absent : il ne ferme rien, il
+ * OUVRE tout ce qu'il protégeait. Le 8 octobre 2026 le fichier de la racine
+ * est resté à 0 octet une demi-journée : plus de réécriture d'URL (toutes les
+ * adresses /marque/, /pays/, /en/ en 404), plus d'en-têtes de sécurité, plus
+ * de blocage de sql/ ni de docs/. Aucune erreur, aucun message : le site
+ * répondait, simplement autrement.
+ *
+ * @return string[] les .htaccess existants dont la taille est nulle
+ */
+function prevol_htaccess_vides(string $racine): array {
+    $vides = [];
+    foreach (['', 'backend', 'tools', 'assets', 'uploads'] as $sous) {
+        $f = $racine . ($sous === '' ? '' : '/' . $sous) . '/.htaccess';
+        if (is_file($f) && filesize($f) === 0) $vides[] = ($sous === '' ? '' : $sous . '/') . '.htaccess';
+    }
+    return $vides;
+}
+
+function prevol_constat_htaccess_vides(array $vides): ?array {
+    if (!$vides) return null;
+    return prevol_constat('bloquant', 'htaccess',
+        implode(', ', $vides) . ' : fichier(s) vide(s). Un .htaccess vide ne ferme rien, il OUVRE : '
+      . 'plus de réécriture d\'URL, plus d\'en-têtes de sécurité, plus de blocage de sql/ ni de docs/ '
+      . '(le 8 octobre 2026, resté à 0 octet une demi-journée).',
+        'Recopier la version du dépôt : cp ~/repositories/cigareglobe/<chemin>/.htaccess '
+      . '<racine>/<chemin>/.htaccess && chmod 644 <racine>/<chemin>/.htaccess — puis le Deploy cPanel.');
+}
+
+/**
  * Le cron des rappels donne-t-il encore signe de vie ?
  *
  * POURQUOI CE CONTRÔLE EXISTE. Un cron qui cesse de tourner n'échoue
@@ -623,6 +652,8 @@ function prevol_controles(array $e): array {
     if (DIRECTORY_SEPARATOR === '/') {
         $dr = prevol_constat_droits(prevol_droits_illisibles(realpath(PREVOL_RACINE) ?: PREVOL_RACINE));
         if ($dr !== null) $c[] = $dr;
+        $hv = prevol_constat_htaccess_vides(prevol_htaccess_vides(realpath(PREVOL_RACINE) ?: PREVOL_RACINE));
+        if ($hv !== null) $c[] = $hv;
     }
 
     // Les drapeaux, sur la base que le serveur sert vraiment.
