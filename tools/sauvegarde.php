@@ -37,6 +37,7 @@
 //   php tools/sauvegarde.php                     archive datée
 //   php tools/sauvegarde.php --vers D:\copies    ailleurs que par défaut
 //   php tools/sauvegarde.php --garder 7          rotation (défaut : 7)
+//   php tools/sauvegarde.php --tout              TOUTE la base, pas seulement ce que Git ne porte pas
 //   php tools/sauvegarde.php --verifier <fich>   ouvre et compte
 //
 // Code de sortie : 0 si l'archive est écrite ET relue, 1 sinon.
@@ -51,9 +52,28 @@ require_once __DIR__ . '/contenu_dump.php';    // apporte aussi backend/config.p
 
 const SAUV_RACINE = __DIR__ . '/..';
 
-/** Les tables à sauvegarder : exactement celles que Git ne porte pas. */
+/**
+ * --tout : toute la base. La production écrit aussi dans des tables que Git porte
+ * (`lounges`, `lounge_photos`, `forum_tags`, `site_languages`…) : après un sinistre,
+ * un `contenu.sql` ancien ne rend pas ce qui s'y est ajouté depuis. La sauvegarde
+ * complète est celle qu'on restaure ; l'autre reste la liste des données des gens.
+ */
+function sauv_tout(?bool $fixer = null): bool {
+    static $tout = false;
+    if ($fixer !== null) $tout = $fixer;
+    return $tout;
+}
+
+/** Les tables à sauvegarder : celles que Git ne porte pas, ou toutes avec --tout. */
 function sauv_tables(): array {
+    if (sauv_tout()) {
+        return array_map(fn($r) => $r[0], getDB()->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM));
+    }
     return array_keys(CONTENU_EXCLUES);
+}
+
+function sauv_prefixe(): string {
+    return sauv_tout() ? 'cigarodyssey-complete-' : 'cigarodyssey-2';
 }
 
 /** mysqldump des tables personnelles. Renvoie le SQL, n'écrit aucun fichier durable. */
@@ -164,7 +184,7 @@ function sauv_ecrire(string $dossier): array {
         exit(2);
     }
     $chemin = rtrim($dossier, '\\/') . DIRECTORY_SEPARATOR
-            . 'cigarodyssey-' . date('Y-m-d') . '.zip';
+            . 'cigarodyssey-' . (sauv_tout() ? 'complete-' : '') . date('Y-m-d') . '.zip';
 
     if ($raison = sauv_destination_risquee($chemin)) {
         fwrite(STDERR, "Refus : $raison\n"
@@ -179,7 +199,7 @@ function sauv_ecrire(string $dossier): array {
         exit(2);
     }
 
-    $zip->addFromString('donnees-personnelles.sql', sauv_dump_sql());
+    $zip->addFromString(sauv_tout() ? 'base-complete.sql' : 'donnees-personnelles.sql', sauv_dump_sql());
 
     $fichiers = sauv_fichiers_uploads();
     foreach ($fichiers as $rel) {
@@ -203,6 +223,10 @@ function sauv_notice(int $nbFichiers): string {
         . "CE QUE CONTIENT CETTE ARCHIVE\n"
         . "  donnees-personnelles.sql   " . count(sauv_tables()) . " tables\n"
         . "  uploads/                   $nbFichiers fichiers\n\n"
+        . (sauv_tout()
+            ? "SAUVEGARDE COMPLETE : toute la base. Pour la remonter, apres le schema, "
+            . "charger base-complete.sql\net PAS contenu.sql (il ferait doublon).\n\n"
+            : '')
         . "C'est tout ce que le depot Git ne porte PAS. Le reste du site —\n"
         . "code, structure de la base, contenu de l'atlas, traductions —\n"
         . "vit dans le depot, et se remonte de la :\n\n"
@@ -228,7 +252,9 @@ function sauv_verifier(string $chemin): int {
     $zip = new ZipArchive();
     if ($zip->open($chemin) !== true) { fwrite(STDERR, "Archive illisible : $chemin\n"); return 1; }
 
-    $sql = $zip->getFromName('donnees-personnelles.sql');
+    // Une archive complète se reconnaît à son nom : la relire avec la bonne liste de tables.
+    sauv_tout(str_starts_with(basename($chemin), 'cigarodyssey-complete-'));
+    $sql = $zip->getFromName(sauv_tout() ? 'base-complete.sql' : 'donnees-personnelles.sql');
     $entrees = $zip->numFiles;
     $images  = 0;
     for ($i = 0; $i < $entrees; $i++) {
@@ -268,7 +294,7 @@ function sauv_verifier(string $chemin): int {
 
 /** Ne garder que les N archives les plus récentes. */
 function sauv_rotation(string $dossier, int $garder): array {
-    $vues = glob(rtrim($dossier, '\\/') . DIRECTORY_SEPARATOR . 'cigarodyssey-*.zip') ?: [];
+    $vues = glob(rtrim($dossier, '\\/') . DIRECTORY_SEPARATOR . sauv_prefixe() . '*.zip') ?: [];
     rsort($vues);                       // le nom porte la date : l'ordre alphabétique suffit
     $trop = array_slice($vues, $garder);
     foreach ($trop as $f) @unlink($f);
@@ -277,7 +303,8 @@ function sauv_rotation(string $dossier, int $garder): array {
 
 // ── Ligne de commande ────────────────────────────────────
 if (PHP_SAPI === 'cli' && !defined('SAUVEGARDE_INCLUDE')) {
-    $opt      = getopt('', ['vers:', 'garder:', 'verifier:']);
+    $opt      = getopt('', ['vers:', 'garder:', 'verifier:', 'tout']);
+    sauv_tout(isset($opt['tout']));
     // Par défaut HORS du dépôt : une sauvegarde rangée dans le dossier
     // qu'elle sauvegarde ne survit pas à ce qui emporte ce dossier.
     $dossier  = $opt['vers'] ?? dirname(realpath(SAUV_RACINE)) . DIRECTORY_SEPARATOR . 'cigarodyssey-sauvegardes';

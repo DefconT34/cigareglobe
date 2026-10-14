@@ -2537,6 +2537,23 @@ section('Les fiches de marques n\'affirment rien d\'invérifiable');
               $refuse ? $raison !== null : $raison === null,
               (string)$raison);
     }
+
+    // ── --tout : la production ecrit aussi dans des tables que Git porte ──
+    // (lounges, lounge_photos, forum_tags, site_languages) : un contenu.sql
+    // ancien ne les restitue pas apres un sinistre.
+    check('sauvegarde : par defaut, les tables que Git porte ne sont pas copiees',
+          !in_array('lounges', sauv_tables(), true));
+    sauv_tout(true);
+    $toutes = sauv_tables();
+    $en_base = array_map(fn($r) => $r[0], test_pdo()->query('SHOW TABLES')->fetchAll(PDO::FETCH_NUM));
+    check('sauvegarde --tout : toutes les tables de la base y sont',
+          array_diff($en_base, $toutes) === [], implode(',', array_diff($en_base, $toutes)));
+    check('sauvegarde --tout : lounges, lounge_photos et forum_tags en font partie',
+          !array_diff(['lounges', 'lounge_photos', 'forum_tags'], $toutes));
+    check('sauvegarde --tout : l\'archive complete a son propre nom, que la rotation sait trier',
+          sauv_prefixe() === 'cigarodyssey-complete-');
+    sauv_tout(false);
+    check('sauvegarde : le mode par defaut est retabli', sauv_prefixe() === 'cigarodyssey-2');
 }
 
 // ── La cle d'administration ─────────────────────────────

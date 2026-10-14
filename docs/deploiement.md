@@ -460,3 +460,27 @@ curl -s "https://thecigarodyssey.com/?_=$(date +%s)" | grep -o 'google-site-veri
 
 Puis, dans Search Console, soumettre le plan de site :
 `https://thecigarodyssey.com/sitemap.xml`
+
+
+## Sauvegarder avant d'agir, et chaque nuit
+
+Les incidents des semaines passées (migration 149 qui vide une colonne lue par l'ancien code,
+`.htaccess` tombé à 0 octet, droits 700) avaient un point commun : aucun retour arrière. Deux
+gestes, une fois pour toutes.
+
+**Avant chaque migration**, un dump daté de toute la base, hors de la racine servie :
+
+```bash
+mkdir -p ~/sauvegardes && mysqldump --single-transaction --no-tablespaces --default-character-set=utf8mb4 -u <user> -p <base> > ~/sauvegardes/avant_$(date +%F_%H%M).sql
+```
+
+**Chaque nuit**, l'archive complète (base entière + `uploads/`), relue aussitôt par l'outil, 7
+exemplaires gardés. À poser dans cPanel → *Cron Jobs* :
+
+```
+15 3 * * * /usr/local/bin/php $HOME/public_html/tools/sauvegarde.php --tout --vers $HOME/sauvegardes --garder 7 >/dev/null 2>&1
+```
+
+Une copie qui reste sur la machine qui la produit n'est pas une sauvegarde : rapatrier l'archive
+de temps en temps hors du serveur (`scp`, ou le gestionnaire de fichiers de cPanel), et vérifier
+qu'elle s'ouvre : `php tools/sauvegarde.php --verifier <archive>`.
