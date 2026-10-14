@@ -459,6 +459,11 @@ if ($db === null) {
     $num = (int)preg_replace('/\D.*$/', '', $id);
     $c = $num > 0 ? page_cave($db, $num, $lang) : null;
     if ($c) {
+        // Ni indexee ni dans le plan de site : 357 fiches de commerce minces, et la
+        // loi Evin (L3512-4) vise la promotion de lieux de vente de tabac. Le
+        // referencement et le droit convergent ici (audit du 9 octobre 2026) ; la
+        // fiche reste servie a qui en suit le lien.
+        $noindex = true;
         $slug = $c['id'] . '-' . page_slug($c['name']);
         $h1    = $c['name'];
         $titre = page_titre($c['name'], (string)$c['city']);
@@ -547,7 +552,8 @@ if ($db === null) {
         // Donnees structurees : un etablissement est un LIEU, et c'est
         // ce que Google attend pour l'afficher autrement qu'en lien bleu.
         $jsonld = array_filter([
-            '@context' => 'https://schema.org', '@type' => 'Store',
+            // Place, et non Store : un lieu, sans horaires ni prix de commerce.
+            '@context' => 'https://schema.org', '@type' => 'Place',
             'name' => $c['name'], 'description' => page_extrait((string)$c['description'], 300),
             'telephone' => $c['phone'] ?: null,
             'address' => array_filter(['@type' => 'PostalAddress',
@@ -558,7 +564,6 @@ if ($db === null) {
             'geo' => ($c['lat'] !== null && $c['lon'] !== null)
                 ? ['@type' => 'GeoCoordinates', 'latitude' => (float)$c['lat'], 'longitude' => (float)$c['lon']]
                 : null,
-            'openingHours' => $c['hours'] ?: null,
             'sameAs' => trim((string)$c['website']) !== '' ? [$c['website']] : null,
             'url' => page_url('cave', $slug, $lang),
         ]);

@@ -809,7 +809,11 @@ eq('forum : la ligne demeure en base',
 
 // ── Rendez-vous (V2) ─────────────────────────────────────
 $r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $anon]);
-eq('forum : l\'agenda est public', 200, $r['status']);
+eq('forum : l\'agenda est reserve aux membres connectes', 401, $r['status']);
+$r = http('GET', $base . '/backend/forum.php?action=lounge_events&id=1', ['jar' => $anon]);
+eq('forum : les rendez-vous d\'un etablissement aussi', 401, $r['status']);
+$r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $alice]);
+eq('forum : un membre voit l\'agenda', 200, $r['status']);
 eq('forum : agenda vide au depart', 0, count($r['json']['events']));
 
 // Organiser demande le statut de confiance : c'est la seule action du
@@ -915,9 +919,9 @@ $r = post_json($base, $bob, '/backend/forum.php?action=attend', ['topic_id' => $
 eq('forum : on ne s\'inscrit plus a un rendez-vous annule', 403, $r['status']);
 eq('forum : code du rendez-vous fige', 'evt_fige', $r['json']['code']);
 
-$r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $anon]);
+$r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $alice]);
 eq('forum : l\'annule quitte l\'agenda a venir', 1, count($r['json']['events']));
-$r = http('GET', $base . '/backend/forum.php?action=agenda&passes=1', ['jar' => $anon]);
+$r = http('GET', $base . '/backend/forum.php?action=agenda&passes=1', ['jar' => $alice]);
 eq('forum : mais reste dans les archives', 1, count($r['json']['events']));
 
 // ── Peremption automatique ───────────────────────────────
@@ -926,7 +930,7 @@ eq('forum : mais reste dans les archives', 1, count($r['json']['events']));
 // d'avant-hier annonces comme « a venir ».
 test_pdo()->exec("UPDATE forum_events SET starts_at = DATE_SUB(UTC_TIMESTAMP(), INTERVAL 3 DAY),
                                           ends_at = NULL, status = 'upcoming' WHERE topic_id = $e_id");
-$r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $anon]);
+$r = http('GET', $base . '/backend/forum.php?action=agenda', ['jar' => $alice]);
 eq('forum : un rendez-vous depasse quitte l\'agenda sans tache planifiee', 0, count($r['json']['events']));
 eq('forum : et passe en archive',
    'past', test_pdo()->query("SELECT status FROM forum_events WHERE topic_id = $e_id")->fetchColumn());
@@ -3073,8 +3077,10 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
     eq('pages : un etablissement repond', 200, $r['status']);
     check('pages : il renvoie vers son pays',
           (bool)preg_match('#href="[^"]*/pays/testland"#', $r['body']));
-    check('pages : et se declare comme un lieu',
-          str_contains($r['body'], '"@type":"Store"'));
+    check('pages : et se declare comme un lieu, non comme un commerce',
+          str_contains($r['body'], '"@type":"Place"') && !str_contains($r['body'], '"@type":"Store"'));
+    check('pages : une fiche d\'etablissement n\'est pas indexee',
+          str_contains($r['body'], '<meta name="robots" content="noindex">'));
 
     $r = $p('type=marque&id=marque-de-test&lang=fr');
     eq('pages : une maison repond', 200, $r['status']);
@@ -3134,13 +3140,14 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
     $r = http('GET', $srv . '/sitemap.php', ['jar' => $anon2]);
     eq('plan : il repond', 200, $r['status']);
     $nbCaves = (int)$pdo->query("SELECT COUNT(*) FROM lounges")->fetchColumn();
-    $attendu = 1 + $nbPays + $nbMarques + $nbCaves;      // l'atlas, puis tout le reste
+    $attendu = 1 + $nbPays + $nbMarques;      // l'atlas, puis les pays et les maisons ; les caves sont en noindex
     $n = preg_match_all('#<loc>#', $r['body']);
     check('plan : il annonce toutes les entites de la base', $n >= $attendu,
           "$n adresses pour $attendu attendues");
-    foreach (['/atlas', '/pays/testland', '/marque/marque-de-test', '/cave/4242-'] as $att) {
+    foreach (['/atlas', '/pays/testland', '/marque/marque-de-test'] as $att) {
         check("plan : il contient $att", str_contains($r['body'], $att));
     }
+    check('plan : il ne contient aucune fiche d\'etablissement (noindex)', !str_contains($r['body'], '/cave/'));
     check('plan : chaque adresse declare ses traductions',
           preg_match_all('#hreflang="en"#', $r['body']) >= $attendu);
 

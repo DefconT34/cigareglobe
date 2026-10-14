@@ -838,6 +838,9 @@ function forum_organisateur(PDO $db): array {
 
 /** GET ?action=agenda[&passes=1][&lang=…] */
 function a_agenda(PDO $db): void {
+    // Reserve aux membres : un agenda public de degustations de tabac, avec lieux et dates,
+    // releve de la promotion que la loi Evin interdit (audit du 9 octobre 2026).
+    if (!current_user($db)) fout(err('auth_required', 'Authentification requise'), 401);
     $passes = !empty($_GET['passes']);
     $evts   = forum_evt_agenda($db, forum_langues_demandees(), $passes);
 
@@ -861,6 +864,7 @@ function a_agenda(PDO $db): void {
  * en attente visible.
  */
 function a_lounge_events(PDO $db): void {
+    if (!current_user($db)) fout(err('auth_required', 'Authentification requise'), 401);   // comme l'agenda
     $ids = [];
     foreach (explode(',', (string)($_GET['ids'] ?? $_GET['id'] ?? '')) as $v) {
         $v = (int)trim($v);

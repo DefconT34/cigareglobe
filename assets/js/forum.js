@@ -777,7 +777,8 @@
 
       var liste = l.length
         ? '<div class="fo-list">' + l.map(ligneEvt).join('') + '</div>'
-        : '<div class="fo-vide">' + t(agendaPasses ? 'forum_agenda_vide_passes' : 'forum_agenda_vide') + '</div>';
+        : '<div class="fo-vide">' + (r.status === 401 ? esc(tErr(r.data))
+            : t(agendaPasses ? 'forum_agenda_vide_passes' : 'forum_agenda_vide')) + '</div>';
 
       // Le droit d'organiser n'est pas ouvert à tous, et le dire vaut
       // mieux que de laisser un bouton absent sans explication.
