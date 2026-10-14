@@ -149,7 +149,7 @@ window.castVote = function(id, vote, btn) {
   if (!_CONTRIB_READY) { btn.disabled = false; return; }
   fetch(API_BASE + '?action=vote', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (window.CGAccount ? window.CGAccount.csrf : '') },
     body: JSON.stringify({ id: id, vote: vote })
   })
   .then(function(r){ return r.json(); })

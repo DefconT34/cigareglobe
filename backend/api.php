@@ -58,7 +58,7 @@ $action = clean($_GET['action'] ?? '', 30);
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Les actions qui écrivent au nom de l'utilisateur exigent un jeton CSRF
-$CSRF_ACTIONS = ['submit','rate','review','review_delete','review_flag','fav_toggle','profile_update'];
+$CSRF_ACTIONS = ['submit','rate','review','review_delete','review_flag','fav_toggle','profile_update','vote'];
 if (in_array($action, $CSRF_ACTIONS, true) && $method === 'POST') {
     csrf_verify();
 }
@@ -97,7 +97,9 @@ function action_list(): void {
     if (!$country) json_out(err('country_required', 'Paramètre country requis'), 400);
 
     $db   = getDB();
-    $ip   = client_ip();
+    // Le vote est celui d'un compte (voir action_vote) : un visiteur anonyme n'a pas voté.
+    $u     = current_user($db);
+    $voter = $u ? 'u' . $u['id'] : null;
 
     $stmt = $db->prepare(
         "SELECT id, name, city, type, phone, description, source_url,
@@ -112,9 +114,12 @@ function action_list(): void {
 
     // Ajouter le vote de l'utilisateur actuel
     foreach ($rows as &$row) {
-        $v = $db->prepare("SELECT vote FROM votes WHERE contribution_id = ? AND voter_ip = ?");
-        $v->execute([$row['id'], $ip]);
-        $row['my_vote'] = (int)($v->fetchColumn() ?: 0);
+        $row['my_vote'] = 0;
+        if ($voter !== null) {
+            $v = $db->prepare("SELECT vote FROM votes WHERE contribution_id = ? AND voter_ip = ?");
+            $v->execute([$row['id'], $voter]);
+            $row['my_vote'] = (int)($v->fetchColumn() ?: 0);
+        }
         $row['votes_up']   = (int)$row['votes_up'];
         $row['votes_down'] = (int)$row['votes_down'];
     }
@@ -268,8 +273,11 @@ function action_vote(): void {
         json_out(err('params_invalid', 'Paramètres invalides'), 400);
     }
 
-    $ip = client_ip();
+    // Un vote est celui d'un compte verifie (et non d'une adresse IP, que trois
+    // visiteurs anonymes suffisaient a multiplier). La cle `u<id>` tient dans
+    // `voter_ip` : l'unicite (contribution, votant) est inchangee.
     $db = getDB();
+    $ip = 'u' . require_verified($db)['id'];
 
     // Contribution existe et est en attente ?
     $c = $db->prepare("SELECT id, votes_up, votes_down FROM contributions WHERE id = ? AND status = 'pending'");
@@ -310,19 +318,11 @@ function action_vote(): void {
     $up   = (int)$counts['votes_up'];
     $down = (int)$counts['votes_down'];
 
-    // Auto-approbation (seuil = 3)
+    // Les votes sont un SIGNAL pour la moderation (la file est triee par votes_up) :
+    // ils ne publient ni ne rejettent plus. Trois comptes suffisaient a publier du
+    // spam sous la marque du site ; la decision reste a un moderateur.
     $approved = false;
-    if ($up >= VOTES_TO_APPROVE) {
-        approve_contribution($db, $id);
-        $approved = true;
-    }
-
-    // Auto-rejet (seuil = 3)
     $rejected = false;
-    if ($down >= VOTES_TO_REJECT) {
-        $db->prepare("UPDATE contributions SET status='rejected' WHERE id=?")->execute([$id]);
-        $rejected = true;
-    }
 
     json_out([
         'success'    => true,

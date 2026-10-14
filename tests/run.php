@@ -142,6 +142,32 @@ eq('mes contributions : en attente de moderation', 'pending', $r['json']['contri
 $row = test_pdo()->query("SELECT contributor_email FROM contributions LIMIT 1")->fetch();
 eq('soumission : email pris sur le compte, pas sur le formulaire', 'alice@test.local', $row['contributor_email']);
 
+// ── Le vote est celui d'un compte verifie, et ne publie rien ─────
+// Avant : identite = adresse IP, aucun CSRF, trois votes « pour » publiaient
+// la contribution. Trois visiteurs anonymes suffisaient a publier du spam.
+$cid = (int)test_pdo()->query("SELECT id FROM contributions WHERE name = 'Nouveau lounge' LIMIT 1")->fetchColumn();
+$r = post_json($base, $anon, '/backend/api.php?action=vote', ['id' => $cid, 'vote' => 1]);
+eq('vote : refuse sans compte', 401, $r['status']);
+$r = post_json($base, $bob, '/backend/api.php?action=vote', ['id' => $cid, 'vote' => 1]);
+eq('vote : refuse tant que l\'email n\'est pas verifie', 403, $r['status']);
+$r = http('POST', $base . '/backend/api.php?action=vote', ['jar' => $alice, 'json' => ['id' => $cid, 'vote' => 1]]);
+eq('vote : exige le jeton CSRF', 419, $r['status']);
+// deux votes deja la, celui d'Alice est le troisieme : il publiait
+test_pdo()->exec("INSERT INTO votes (contribution_id, voter_ip, vote) VALUES ($cid,'u9001',1),($cid,'u9002',1)");
+test_pdo()->exec("UPDATE contributions SET votes_up = 2 WHERE id = $cid");
+$r = post_json($base, $alice, '/backend/api.php?action=vote', ['id' => $cid, 'vote' => 1]);
+eq('vote : un compte verifie peut voter', 200, $r['status']);
+eq('vote : le troisieme vote est compte', 3, $r['json']['votes_up']);
+eq('vote : trois votes ne publient plus', false, $r['json']['approved']);
+eq('vote : la contribution reste en attente de moderation', 'pending',
+   test_pdo()->query("SELECT status FROM contributions WHERE id = $cid")->fetchColumn());
+$r = post_json($base, $alice, '/backend/api.php?action=vote', ['id' => $cid, 'vote' => 1]);
+eq('vote : un compte ne vote pas deux fois', 409, $r['status']);
+eq('vote : la cle du votant est le compte, non l\'adresse IP', 1,
+   (int)test_pdo()->query("SELECT COUNT(*) FROM votes WHERE contribution_id = $cid AND voter_ip LIKE 'u%' AND voter_ip NOT IN ('u9001','u9002')")->fetchColumn());
+test_pdo()->exec("DELETE FROM votes WHERE contribution_id = $cid");
+test_pdo()->exec("UPDATE contributions SET votes_up = 0 WHERE id = $cid");
+
 // ── Position relevee sur place (migration 011) ───────────
 // Elle vient du client : elle doit etre validee, et jamais bloquer un
 // signalement par ailleurs valable. Chaque cas est envoye sous un nom
