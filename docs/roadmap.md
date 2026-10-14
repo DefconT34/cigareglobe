@@ -185,6 +185,32 @@ complètes dans les 6 langues ; le déficit est ailleurs.*
 
 ## En cours
 
+### Vague 1 — avant toute communication de masse (audit du 9 octobre 2026)
+
+Le point existentiel du 9 octobre conclut : mature en partie, pas prêt pour une
+communication de masse (moyenne 2,4/5). Huit bloquants (P0), dont six touchent
+le code. Fait (986 → 1026 assertions, un commit par sujet) :
+- **1.1 Vote** : compte vérifié + CSRF, ne publie plus (signal pour la modération).
+- **1.2 Fichiers internes** : `CLAUDE.md`, `README.md`, `dev/` exclus du rsync et fermés
+  en 404 ; `prevol.php` bloque sur un `.htaccess` vide.
+- **1.3 Sauvegarde** : `sauvegarde.php --tout` (toute la base), cron nocturne et dump avant
+  migration documentés dans `docs/deploiement.md`.
+- **1.4 Juridique** : case des conditions à l'inscription + trace (migration 260), purges
+  réelles (tentatives 1 jour, jetons 1 jour après expiration, audience 25 mois), `legal.php`
+  aligné.
+- **1.5 Tabac** : `/cave/` en noindex et hors plan de site, JSON-LD `Place`, agenda des
+  rendez-vous réservé aux membres.
+- **1.6 Retour** : flux Atom `/atom.xml` (30 dernières maisons), signal `boot_ok`
+  (`backend/boot.php`, appelé quand le globe a ses données).
+
+Reste, côté utilisateur : rapatrier l'archive du 5 septembre, brancher le cron nocturne,
+ticket o2switch (offre, JetBackup, erreurs 429), journaux d'accès du 8 octobre (« /.env »),
+rotation DB_PASS / ADMIN_KEY / MAIL_API_KEY après le déploiement, avocat (loi Évin
+L3512-4, exception « éditeur hors UE ») et juriste d'Abidjan, représentant UE et ARTCI.
+Reste, côté nous : fiches phares fausses (Fuente, Cohiba, Padrón, Davidoff) et page Cuba
+(vague 2, avec l'expert cigare) ; mention sanitaire persistante sur l'accueil du globe ;
+regroupement des 40 requêtes de l'accueil et message de repli si un script échoue (vague 4,
+selon la réponse d'o2switch sur les 429).
 ### La relecture des traductions (migration 234, `tools/i18n_relecture.php`)
 
 Chantier ouvert : 9 220 traductions « machine », relues lot par lot par

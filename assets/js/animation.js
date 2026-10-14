@@ -112,6 +112,12 @@ function startGlobeLoop() {
 }
 // ── Initialisation DOM (overlay + globe) ─────────────────
 function _initDOM() {
+  // « Le site a demarre chez ce visiteur » : une fois par chargement de page. Le document peut repondre
+  // 200 pendant que ses scripts reviennent en 429 ; seule cette ligne le dit (backend/boot.php).
+  if (!window._bootOk) {
+    window._bootOk = true;
+    try { fetch('/backend/boot.php?lang=' + (window.currentLang || 'fr'), { keepalive: true, cache: 'no-store' }); } catch (e) {}
+  }
   // Cacher l'overlay — fonctionne que le DOM soit prêt ou non
   var ov  = document.getElementById('loading-overlay');
   var msg = document.getElementById('loading-msg');

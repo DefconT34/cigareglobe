@@ -228,6 +228,9 @@
 
   # Plan de site : genere, pour que le domaine suive SITE_URL.
   RewriteRule ^sitemap\.xml$ /sitemap.php [L]
+
+  # Les nouvelles fiches, en flux Atom : une raison de revenir sans compte ni lettre.
+  RewriteRule ^atom\.xml$ /atom.php [L]
 </IfModule>
 
 # index.php prime sur index.html : sans cela, Apache servirait le

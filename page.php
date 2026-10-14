@@ -953,6 +953,7 @@ if (empty($noindex)) { cache_public(300); } else { cache_jamais(); }
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e($titre) ?></title>
 <meta name="description" content="<?= e($desc) ?>">
+<link rel="alternate" type="application/atom+xml" title="CigarOdyssey — nouvelles fiches" href="<?= e($racine) ?>/atom.xml">
 <?php if (defined('VERIF_GOOGLE') && VERIF_GOOGLE !== ''): ?>
 <meta name="google-site-verification" content="<?= e(VERIF_GOOGLE) ?>">
 <?php endif; if (defined('VERIF_BING') && VERIF_BING !== ''): ?>

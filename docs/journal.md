@@ -6306,3 +6306,20 @@ Maracana entrent sur des fiches de détaillants qui les disent faites à la main
 World Cup 2026 va dans `limited_eds`. Le générateur sait désormais déplacer une
 fiche et réécrire les listes de deux fiches pays ; la 259, rejouée sur une base à
 l'état du dernier commit, rend exactement la base locale.
+
+## Vague 1 — les bloquants de l'audit du 9 octobre qui touchent le code
+
+Le coordinateur et ses experts ont rendu un point existentiel : « mature en partie, pas prêt
+pour une communication de masse ». Les six bloquants qui se règlent dans le dépôt ont été
+traités un commit par sujet. Le vote communautaire (identité = adresse IP, pas de CSRF, trois
+votes publiaient) exige désormais un compte vérifié et ne publie plus ; `/CLAUDE.md`, `/README.md`
+et `/dev/`, servis en 200, sont exclus du déploiement et fermés ; la sauvegarde sait copier toute
+la base (`--tout`), car la production écrit aussi dans des tables que Git porte ; l'inscription
+exige la case des conditions et garde la date et la version (migration 260, à passer AVANT le
+code), la politique de confidentialité ne promet plus de purges qui n'existaient pas (elles
+existent) ; les fiches d'établissements sortent de l'index et du plan de site, et l'agenda des
+rendez-vous n'est plus public ; un flux Atom et un signal de démarrage (`boot_ok`) donnent
+une raison de revenir et de quoi mesurer. Rien de ce qui est visible n'a été décidé à la place de
+l'éditeur : le texte juridique n'a été aligné que sur le comportement réel du code, et
+l'avis d'un avocat reste à obtenir. Un incident de méthode : un `git stash` lancé par erreur
+pendant un contrôle a mis de côté un lot ; restauré aussitôt, rien perdu.

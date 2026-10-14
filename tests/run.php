@@ -3177,6 +3177,30 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
     check('plan : chaque adresse declare ses traductions',
           preg_match_all('#hreflang="en"#', $r['body']) >= $attendu);
 
+    // -- Le flux Atom : une raison de revenir sans compte ni lettre ------
+    $fa = http('GET', $srv . '/atom.php', ['jar' => $anon2]);
+    eq('flux : il repond', 200, $fa['status']);
+    check('flux : en Atom', str_contains($fa['body'], '<feed xmlns="http://www.w3.org/2005/Atom"'));
+    $xml = @simplexml_load_string($fa['body']);
+    check('flux : le XML est bien forme', $xml !== false);
+    check('flux : il annonce une maison de l\'atlas, avec le lien de sa fiche',
+          str_contains($fa['body'], 'Nouvelle fiche : Marque de test') && str_contains($fa['body'], '/marque/marque-de-test'));
+    check('flux : les adresses ne sont pas doublees', !preg_match('#https?://[^"<]*https?://#', $fa['body']));
+    check('flux : chaque fiche porte une date', $xml !== false && count($xml->entry) > 0
+          && (string)$xml->entry[0]->updated !== '');
+    $pf = $p('type=pays&id=testland&lang=fr')['body'];
+    check('flux : les pages serveur le declarent', str_contains($pf, 'type="application/atom+xml"'));
+
+    // -- Le signal de demarrage --------------------------------------
+    $avant = (int)$pdo->query("SELECT COUNT(*) FROM audience WHERE type = 'boot_ok'")->fetchColumn();
+    $rb = http('GET', $srv . '/backend/boot.php?lang=de', ['jar' => $anon2]);
+    eq('demarrage : le point repond sans contenu', 204, $rb['status']);
+    eq('demarrage : et il compte une ligne', $avant + 1,
+       (int)$pdo->query("SELECT COUNT(*) FROM audience WHERE type = 'boot_ok'")->fetchColumn());
+    http('GET', $srv . '/backend/boot.php?lang=%3Cscript%3E', ['jar' => $anon2]);
+    eq('demarrage : une langue invalide retombe sur le francais', 1,
+       (int)$pdo->query("SELECT COUNT(*) FROM audience WHERE type = 'boot_ok' AND lang = 'fr'")->fetchColumn());
+
     // -- La coquille renvoie vers la page ----------------
     // L'application ecrit « ?country=testland » dans la barre d'adresse
     // des qu'un panneau s'ouvre, et ces adresses se partagent. Sans
