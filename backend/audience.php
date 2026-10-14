@@ -119,6 +119,11 @@ function audience_noter(?PDO $db, string $type, string $chemin, string $lang): v
             audience_robot($ua) ? 1 : 0,
             audience_empreinte($ip, $ua, $jour),
         ]);
+        // Conservation bornee a vingt-cinq mois (plafond CNIL de la mesure d'audience) ; purge
+        // opportuniste, une vue sur deux cents, pour ne rien ajouter a un cron de plus.
+        if (random_int(1, 200) === 1) {
+            $db->exec("DELETE FROM `audience` WHERE `jour` < DATE_SUB(CURDATE(), INTERVAL 25 MONTH)");
+        }
     } catch (Throwable $e) {
         // Silence volontaire. Voir l'en-tête : la mesure ne casse pas
         // la page qu'elle mesure.

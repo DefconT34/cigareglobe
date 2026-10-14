@@ -98,6 +98,10 @@
   transition: border-color .2s;
 }
 .cg-field input:focus { border-color: var(--gold); }
+.cg-field.cg-check label { display: flex; gap: 8px; align-items: flex-start; text-transform: none;
+  letter-spacing: 0; font-size: 12px; line-height: 1.45; cursor: pointer; }
+.cg-field.cg-check input { width: auto; padding: 0; margin-top: 2px; flex: none; }
+.cg-field.cg-check a { color: var(--gold); }
 
 .cg-submit {
   width: 100%; padding: 13px; margin-top: 4px;

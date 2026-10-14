@@ -58,10 +58,36 @@ $r = post_json($base, $alice, '/backend/auth.php?action=register',
                ['email' => 'alice@test.local', 'password' => 'court', 'display_name' => 'Alice']);
 eq('inscription : mot de passe trop court refuse', 400, $r['status']);
 
+// Les conditions sont acceptees EXPLICITEMENT (case cochee), et la preuve est gardee :
+// des conditions que personne n'a acceptees sont inopposables (audit du 9 octobre 2026).
+$r = post_json($base, $alice, '/backend/auth.php?action=register',
+               ['email' => 'alice@test.local', 'password' => 'motdepasse8', 'display_name' => 'Alice',
+                'accept_terms' => false]);
+eq('inscription : refusee sans la case des conditions', 400, $r['status']);
+eq('inscription : le refus a un code stable', 'terms_required', $r['json']['code'] ?? null);
+eq('inscription : et aucun compte n\'est cree', 0,
+   (int)test_pdo()->query("SELECT COUNT(*) FROM users WHERE email = 'alice@test.local'")->fetchColumn());
+
 $r = post_json($base, $alice, '/backend/auth.php?action=register',
                ['email' => 'alice@test.local', 'password' => 'motdepasse8', 'display_name' => 'Alice']);
 eq('inscription : creation du compte', 201, $r['status']);
 eq('inscription : email non verifie au depart', false, $r['json']['user']['email_verified']);
+$cgu = test_pdo()->query("SELECT terms_accepted_at, terms_version FROM users WHERE email = 'alice@test.local'")->fetch();
+check('inscription : la date d\'acceptation des conditions est gardee', !empty($cgu['terms_accepted_at']));
+check('inscription : et leur version', (bool)preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$cgu['terms_version']));
+
+// Ce que la politique de confidentialite annonce comme « purge » l'est reellement.
+$pdo_p = test_pdo();
+$pdo_p->exec("INSERT INTO auth_attempts (ip, action, created_at) VALUES ('203.0.113.7', 'login', DATE_SUB(NOW(), INTERVAL 3 DAY))");
+post_json($base, $anon, '/backend/auth.php?action=login', ['email' => 'inconnu@test.local', 'password' => 'mauvais123']);
+eq('purge : une tentative vieille de trois jours est effacee', 0,
+   (int)$pdo_p->query("SELECT COUNT(*) FROM auth_attempts WHERE ip = '203.0.113.7'")->fetchColumn());
+$aid = (int)$pdo_p->query("SELECT id FROM users WHERE email = 'alice@test.local'")->fetchColumn();
+$pdo_p->exec("INSERT INTO email_tokens (user_id, token_hash, type, expires_at)
+              VALUES ($aid, '" . str_repeat('a', 64) . "', 'reset', DATE_SUB(NOW(), INTERVAL 3 DAY))");
+post_json($base, $anon, '/backend/auth.php?action=forgot', ['email' => 'alice@test.local']);
+eq('purge : un jeton perime depuis trois jours est efface', 0,
+   (int)$pdo_p->query("SELECT COUNT(*) FROM email_tokens WHERE token_hash = '" . str_repeat('a', 64) . "'")->fetchColumn());
 
 // « Derniere visite » doit valoir quelque chose des l'inscription : la
 // personne EST connectee. Sans cela, elle restait « jamais venue » tant

@@ -46,6 +46,8 @@ define('DB_CHARSET', env('DB_CHARSET', 'utf8mb4'));
 
 // ── Seuils de vote ────────────────────────────────────────
 define('VOTES_TO_APPROVE', (int)env('VOTES_TO_APPROVE', '3'));
+// Version des conditions d'utilisation (legal.php) : a changer avec elles. Gardee a l'inscription.
+define('TERMS_VERSION', '2026-10-14');
 define('VOTES_TO_REJECT',  (int)env('VOTES_TO_REJECT',  '3'));
 
 // Nombre de contributions approuvées à partir duquel un membre devient

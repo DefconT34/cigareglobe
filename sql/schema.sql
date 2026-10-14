@@ -913,6 +913,8 @@ CREATE TABLE `users` (
   `last_login_at` datetime DEFAULT NULL,
   `lang` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Langue de correspondance : fr, en, es, de, zh, ar',
   `notify_forum` tinyint(1) NOT NULL DEFAULT '1',
+  `terms_accepted_at` datetime DEFAULT NULL COMMENT 'Acceptation des conditions a l inscription',
+  `terms_version` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Version des conditions acceptee (TERMS_VERSION)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_users_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

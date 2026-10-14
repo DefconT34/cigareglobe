@@ -81,6 +81,8 @@ function action_register(PDO $db): void {
 
     if (!valid_email($email))         respond(err('email_invalid', 'Adresse email invalide.'), 400);
     if ($name === '' || mb_strlen($name) > 80) respond(err('name_required', 'Nom d\'affichage requis (max 80 caractères).'), 400);
+    // Case cochee : l'age legal pour consommer du tabac et les conditions. Sans elle, pas de compte.
+    if (empty($b['accept_terms'])) respond(err('terms_required', 'Acceptez les conditions pour vous inscrire.'), 400);
     if ($err = password_error($pass)) respond(['error' => $err], 400);
 
     // Email déjà utilisé ?
@@ -94,9 +96,10 @@ function action_register(PDO $db): void {
 
     $hash = password_hash($pass, PASSWORD_DEFAULT);
     $ins  = $db->prepare(
-        "INSERT INTO users (email, password_hash, display_name, lang) VALUES (?, ?, ?, ?)"
+        "INSERT INTO users (email, password_hash, display_name, lang, terms_accepted_at, terms_version)
+         VALUES (?, ?, ?, ?, NOW(), ?)"
     );
-    $ins->execute([$email, $hash, mb_substr($name, 0, 80), $lang]);
+    $ins->execute([$email, $hash, mb_substr($name, 0, 80), $lang, TERMS_VERSION]);
     $uid = (int)$db->lastInsertId();
 
     // Connexion immédiate (email non vérifié → gating à la contribution, Étape B)
@@ -385,6 +388,8 @@ function action_resend(PDO $db): void {
 // ── Helpers internes ──────────────────────────────────────
 function create_token(PDO $db, int $uid, string $type, int $ttlSec): string {
     $token = bin2hex(random_bytes(32));
+    // Un jeton perime n'a plus aucune raison d'etre garde : un jour apres son expiration, il part.
+    $db->exec("DELETE FROM email_tokens WHERE expires_at < DATE_SUB(NOW(), INTERVAL 1 DAY)");
     $db->prepare(
         "INSERT INTO email_tokens (user_id, token_hash, type, expires_at)
          VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL ? SECOND))"

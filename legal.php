@@ -194,11 +194,20 @@ $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     <tr><td>Jetons de vérification et de réinitialisation</td>
         <td>À l'inscription, à l'oubli du mot de passe</td>
         <td>Prouver que l'adresse est la vôtre</td>
-        <td>Expirent, puis sont effacés</td></tr>
+        <td>Expirent ; effacés au plus tard un jour après leur expiration</td></tr>
+    <tr><td>Date et version des conditions acceptées</td>
+        <td>À l'inscription</td>
+        <td>Pouvoir établir que les conditions ont été acceptées</td>
+        <td>Jusqu'à suppression du compte</td></tr>
+    <tr><td>Mesure d'audience du site : page vue, langue, domaine d'où vous venez, empreinte
+            quotidienne non réversible — <strong>ni adresse IP, ni cookie, ni identifiant</strong></td>
+        <td>À chaque page servie</td>
+        <td>Savoir si le site est lu, sans suivre personne</td>
+        <td>Vingt-cinq mois, puis effacées</td></tr>
     <tr><td>Adresse IP des tentatives de connexion</td>
         <td>À chaque connexion, inscription ou demande d'envoi</td>
         <td>Empêcher les essais de mots de passe en série</td>
-        <td>Sans valeur au-delà de l'heure ; purgées</td></tr>
+        <td>Sans valeur au-delà de l'heure ; effacées au plus tard après vingt-quatre heures</td></tr>
     <tr><td>Décisions de modération, avec le nom de qui les a prises</td>
         <td>Quand un contenu est approuvé, rejeté, retiré ou masqué</td>
         <td>Pouvoir relire ce qui a été décidé, et par qui</td>
@@ -257,7 +266,9 @@ $h   = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
   <h3>Accès réservé aux majeurs</h3>
   <p>Ce site traite du cigare, un produit du tabac. Son accès est
   réservé aux personnes ayant l'âge légal pour consommer du tabac dans
-  leur pays — 18 ans en France. Le site ne vend rien, ne propose rien à
+  leur pays — 18 ans en France. À l'inscription, vous déclarez avoir cet
+  âge et acceptez ces conditions et la politique de confidentialité en
+  cochant une case ; la date et la version acceptées sont conservées. Le site ne vend rien, ne propose rien à
   la vente et n'a pas de vocation promotionnelle : il documente une
   culture, ses terroirs et ses maisons.</p>
 

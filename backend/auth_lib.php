@@ -312,6 +312,9 @@ function user_public(array $u): array {
 function rate_limit(PDO $db, string $action, int $max, int $windowSec): void {
     $ip = client_ip();
     try {
+        // Les adresses IP des tentatives n'ont aucune valeur au-dela de la fenetre du quota : on
+        // les efface au plus tard au bout d'un jour (la politique de confidentialite le dit).
+        $db->exec("DELETE FROM auth_attempts WHERE created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)");
         $c = $db->prepare(
             "SELECT COUNT(*) FROM auth_attempts
              WHERE ip = ? AND action = ? AND created_at > DATE_SUB(NOW(), INTERVAL ? SECOND)"

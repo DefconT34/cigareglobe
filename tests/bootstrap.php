@@ -432,6 +432,11 @@ function csrf(string $base, string $jar): string {
 
 /** POST JSON authentifie par la session, avec jeton CSRF. */
 function post_json(string $base, string $jar, string $path, array $body, array $headers = []): array {
+    // Une inscription exige la case des conditions (vague 1.4) : les tests qui ne portent pas sur
+    // elle la cochent ; celui qui la teste la passe explicitement (true ou false).
+    if (str_ends_with($path, 'action=register') && !array_key_exists('accept_terms', $body)) {
+        $body['accept_terms'] = true;
+    }
     return http('POST', $base . $path, [
         'jar' => $jar, 'json' => $body,
         'headers' => array_merge(['X-CSRF-Token: ' . csrf($base, $jar)], $headers),

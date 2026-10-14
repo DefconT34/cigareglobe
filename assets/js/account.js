@@ -157,6 +157,8 @@
             '<div class="cg-field"><label>' + t('acc_display_name') + '</label><input type="text" name="display_name" autocomplete="nickname" maxlength="80" required></div>' +
             '<div class="cg-field"><label>' + t('acc_email') + '</label><input type="email" name="email" autocomplete="email" required></div>' +
             '<div class="cg-field"><label>' + t('acc_password_min') + '</label><input type="password" name="password" autocomplete="new-password" minlength="8" required></div>' +
+            '<div class="cg-field cg-check"><label><input type="checkbox" name="accept_terms" required> ' + t('acc_terms_pre') +
+              ' <a href="/legal.php#conditions" target="_blank" rel="noopener">' + t('acc_terms_link') + '</a></label></div>' +
             '<button type="submit" class="cg-submit">' + t('acc_create') + '</button>' +
           '</form>' +
           // Mot de passe oublié
@@ -235,7 +237,7 @@
     var form = e.currentTarget;
     var kind = form.getAttribute('data-form');
     var data = {};
-    form.querySelectorAll('input').forEach(function (i) { data[i.name] = i.value; });
+    form.querySelectorAll('input').forEach(function (i) { data[i.name] = i.type === 'checkbox' ? i.checked : i.value; });
     var submit = form.querySelector('.cg-submit');
     submit.disabled = true;
 
