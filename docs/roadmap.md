@@ -202,6 +202,10 @@ le code. Fait (986 → 1026 assertions, un commit par sujet) :
   rendez-vous réservé aux membres.
 - **1.6 Retour** : flux Atom `/atom.xml` (30 dernières maisons), signal `boot_ok`
   (`backend/boot.php`, appelé quand le globe a ses données).
+- **1.7 Lieux non relus** : badge « non vérifié » (globe, explorateur, page) sur les 204 fiches
+  publiées sans lecture datée dans `source` ; aucune dépublication. Les ~10 offres
+  invraisemblables de l'audit (Paris Yacht Marina, Port of Southampton, Savoy American Bar…)
+  restent à trancher par l'éditeur (dépublier ou relire).
 
 Reste, côté utilisateur : rapatrier l'archive du 5 septembre, brancher le cron nocturne,
 ticket o2switch (offre, JetBackup, erreurs 429), journaux d'accès du 8 octobre (« /.env »),

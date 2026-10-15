@@ -407,6 +407,13 @@ html, body {
   background:var(--gold-p); border:1px solid var(--gold);
   color:var(--gold); font-weight:700; letter-spacing:.2em; margin-right:6px;
 }
+/* « Non vérifié » : la fiche n'a pas de lecture datée dans sa source. Contour en
+   tirets, couleur de texte du thème : une réserve, pas une décoration. */
+.lc-nv {
+  display:inline-block; padding:0 6px; border-radius:2px; white-space:nowrap;
+  border:1px dashed var(--text2); color:var(--text2);
+  font-size:9px; letter-spacing:.04em; line-height:15px; margin-inline-start:6px;
+}
 .lc-grid { display:flex; flex-direction:column; gap:8px; }
 .lc-card {
   background:var(--bg2); border:1px solid var(--panel-border);

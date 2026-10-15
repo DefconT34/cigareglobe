@@ -3925,6 +3925,29 @@ section('La fiche dit d ou elle vient');
           str_contains($r['body'], 'exemple-officiel.test 2024'));
     check('source : sous un libelle, pas nue',
           (bool)preg_match('~class="pg-source">\s*Source\s*:~u', $r['body']));
+    // Un domaine ne confirme rien : sans lecture datee, la fiche est « non
+    // verifiee » et la reserve se voit AU-DESSUS de la citation, qui reste.
+    check('non verifie : un domaine seul porte la reserve ET la citation',
+          str_contains($r['body'], 'pg-reserve') && str_contains($r['body'], 'pg-source'));
+    $rj = http('GET', $srvS . '/backend/data.php?action=lounges&id=testland', ['jar' => $cliS]);
+    eq('non verifie : l\'API le dit', true, $rj['json']['static'][0]['non_verifie'] ?? null);
+
+    // La lecture datee leve la reserve — sur la page et dans l'API.
+    $pdo->exec("UPDATE lounges SET source = 'exemple-officiel.test, lu le 17 septembre 2026' WHERE id = 1");
+    $rl = http('GET', $srvS . '/page.php?type=cave&id=1-lounge-de-test&lang=fr', ['jar' => $cliS]);
+    check('non verifie : une lecture datee leve la reserve',
+          !str_contains($rl['body'], 'pg-reserve') && str_contains($rl['body'], 'pg-source'));
+    $rj = http('GET', $srvS . '/backend/data.php?action=lounges&id=testland', ['jar' => $cliS]);
+    check('non verifie : et l\'API ne porte plus la cle', !array_key_exists('non_verifie', $rj['json']['static'][0]));
+    $pdo->exec("UPDATE lounges SET source = 'exemple-officiel.test 2024' WHERE id = 1");
+
+    // Le helper, cas limites : « relu le », « lue le », domaine nu, vide, reserve datee.
+    foreach ([['relu le 17 septembre 2026', false], ['Relu le 3 mai', false],
+              ['page lue le 4 juin 2026', false], ['arturo-fuente.com', true],
+              ['tripadvisor.com avis vérifiés', true], ['', true], [null, true],
+              ['à vérifier — relu le 18 septembre 2026', true], ['valu le 3', true]] as [$s, $att]) {
+        eq('lounge_non_verifie : ' . var_export($s, true), $att, lounge_non_verifie($s));
+    }
 
     // Une citation NE SE TRADUIT PAS — c'est une reference. Seul le
     // libelle suit la langue.
@@ -3958,8 +3981,8 @@ section('La fiche dit d ou elle vient');
     // ── Cas 3 : pas de source, pas de ligne ─────────────
     $pdo->exec("UPDATE lounges SET source = '' WHERE id = 1");
     $rv = http('GET', $srvS . '/page.php?type=cave&id=1-lounge-de-test&lang=fr', ['jar' => $cliS]);
-    check('source : vide, aucune ligne n est posee',
-          !str_contains($rv['body'], 'pg-source') && !str_contains($rv['body'], 'pg-reserve'));
+    check('source : vide, aucune citation n est inventee, mais la reserve se voit',
+          !str_contains($rv['body'], 'pg-source') && str_contains($rv['body'], 'pg-reserve'));
 
     // ── LA MEME REGLE, SUR LA FICHE DE MAISON ───────────
     //

@@ -6343,3 +6343,15 @@ d'une chaîne se lit désormais `CHAR(13)` (le client mysql de Windows l'avale s
 refusé la première version : « crée en 1992 » sur la fiche Fuente se lisait comme sa fondation
 (`founded` 1912) ; la phrase dit maintenant « fonde en 1912 ». Rejouées sur une base à l'état du
 dernier commit, 261 et 262 rendent exactement la base locale.
+
+## Les lieux que personne n'a relus portent un badge
+
+L'audit du 9 octobre relevait que l'annuaire des lieux promettait plus qu'il ne savait : 357 fiches
+publiées, dont la plupart posées en mars avec pour seule source le domaine du lieu, qui ne confirme
+rien. Plutôt que de dépublier, on dit l'état : une fiche dont la `source` ne date aucune lecture
+(« lu le 17 septembre 2026 », « relu le … ») affiche « Non vérifié » sur la carte du globe et dans
+l'explorateur, et sa page rend la réserve « information non recoupée » au-dessus de la citation, qui
+reste. Le critère se lit dans le texte de `source`, sans colonne ni migration : 204 fiches sur 357
+(192 sans lecture datée, 12 portant déjà « à vérifier »). Un lieu relu perd son badge dès que sa
+lecture est écrite dans `source`. Un seul helper (`lounge_non_verifie`, `backend/config.php`), le
+drapeau `non_verifie` dans l'API, une clé de traduction dans les six langues.

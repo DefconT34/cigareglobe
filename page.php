@@ -538,12 +538,18 @@ if ($db === null) {
         //    On rend donc la RÉSERVE, traduite, et non la note française
         //    qui la détaille : le lecteur allemand doit lire « nicht
         //    bestätigte Angabe », pas une phrase française.
+        //
+        // 3. UN LIEU SANS LECTURE DATÉE (octobre 2026). Le domaine du lieu
+        //    est une citation, mais il ne confirme rien : la réserve se voit
+        //    AUSSI, au-dessus de la citation, qui reste. Même règle que le
+        //    badge « non vérifié » du globe (lounge_non_verifie).
         $src = trim((string)($c['source'] ?? ''));
-        if ($src !== '') {
-            $reserve = (bool)preg_match('/^\s*(à|a)\s+v[ée]rifier\b/iu', $src);
-            $corps .= $reserve
-                ? '<p class="pg-reserve">⚠ ' . e(L('pg_source_reserve')) . '</p>'
-                : '<p class="pg-source">' . e(L('pg_source')) . ' : ' . e($src) . '</p>';
+        $aVerifier = (bool)preg_match('/^\s*(à|a)\s+v[ée]rifier\b/iu', $src);
+        if (lounge_non_verifie($src)) {
+            $corps .= '<p class="pg-reserve">⚠ ' . e(L('pg_source_reserve')) . '</p>';
+        }
+        if ($src !== '' && !$aVerifier) {
+            $corps .= '<p class="pg-source">' . e(L('pg_source')) . ' : ' . e($src) . '</p>';
         }
 
         $corps .= '<p class="pg-retour"><a href="' . e(page_url('pays', $c['country_id'], $lang)) . '">'

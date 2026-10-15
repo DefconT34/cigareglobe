@@ -282,6 +282,8 @@ function lounge_carte(array $r): array {
     $r['maps_url'] = carte_lien(
         (string)($r['name'] ?? ''), (string)($r['city'] ?? ''),
         $r['lat'] ?? null, $r['lon'] ?? null);
+    // Clé posée seulement quand elle est vraie : le front lit `l.non_verifie`.
+    if (lounge_non_verifie($r['source'] ?? null)) $r['non_verifie'] = true;
     return $r;
 }
 

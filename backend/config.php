@@ -36,6 +36,19 @@ function env(string $key, ?string $default = null): ?string {
     return ($v === false || $v === null || $v === '') ? $default : $v;
 }
 
+// ── Fiche de lieu non vérifiée ────────────────────
+// Une fiche de lieu est VÉRIFIÉE quand sa `source` date une lecture de page
+// (« lu le 17 septembre 2026 », « relu le … ») : les lots de mars 2026 n'ont
+// posé que le domaine du lieu, qui ne confirme rien (192 fiches sur 357 au
+// 15 octobre 2026). La réserve « à vérifier » la retire, même datée. Une
+// migration qui relit un lieu n'a qu'à écrire la lecture dans `source` : le
+// badge tombe sans autre geste.
+function lounge_non_verifie(?string $source): bool {
+    $s = (string)$source;
+    if (preg_match('/^\s*(à|a)\s+v[ée]rifier\b/iu', $s)) return true;
+    return !preg_match('/(?<!\p{L})(?:re)?lue? le \d/iu', $s);
+}
+
 // ── Base de données ───────────────────────────────────────
 define('DB_HOST',    env('DB_HOST', 'localhost'));
 define('DB_PORT',    env('DB_PORT', '3306'));

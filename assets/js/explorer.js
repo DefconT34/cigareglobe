@@ -91,6 +91,7 @@ function buildAllLounges() {
         phone:    l.phone || '',
         maps_url: l.maps_url || null,
         instagram:l.instagram || null,
+        nv:       !!l.non_verifie,
       });
     });
   });
@@ -147,6 +148,7 @@ function renderList() {
             '<span class="exp-city">'+l.city+'</span>'+
             '<span class="exp-type-dot" style="background:'+color+'"></span>'+
             '<span class="exp-type-lbl" style="color:'+color+'">'+typeLabel(l.normType)+'</span>'+
+            (l.nv ? '<span class="lc-nv" title="'+t('pg_source_reserve')+'">'+t('lc_non_verifie')+'</span>' : '')+
           '</div>'+
         '</div>'+
         '<div class="exp-card-right">'+

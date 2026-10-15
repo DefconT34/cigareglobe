@@ -94,6 +94,11 @@ fait », vérifier les pages en production avec curl.
   bars** sans salon cigares dément la fiche (155) ; le silence seul ne
   retire rien (Afrique de l'Ouest). Une fiche relue s'écrit
   « à vérifier — relu le JJ mois AAAA : … » (classe `relue`, dix-huit mois).
+- **Badge « non vérifié »** (octobre 2026) : une fiche de lieu dont la `source` ne date aucune
+  lecture (`lu le JJ mois AAAA`, `relu le …`) porte le badge sur le globe, dans l'explorateur et
+  sur sa page, avec la réserve « information non recoupée » ; « à vérifier » la porte aussi. Relire
+  un lieu = écrire la lecture datée dans `source` : le badge tombe seul
+  (`lounge_non_verifie()`, `backend/config.php`). Aucune colonne, aucune migration.
 - Prose : pas de superlatifs en zh (最, 第一) ni en ar (أفضل, أكثر, أندر,
   أشهر — « mois » = شهور) ; pas de cyrillique ; pas de parole rapportée
   entre guillemets ; une fiche « à vérifier » ne décrit **aucune offre**

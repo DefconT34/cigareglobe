@@ -420,6 +420,7 @@ function _renderLoungeCards(c, list, body, opts) {
         '<div class="lc-meta">' +
           '<span class="lc-city">📍 ' + _escHtml(l.city||'') + '</span>' +
           '<span class="lc-type" style="color:' + clr + '">· ' + _escHtml(_tr(l.type)||'') + '</span>' +
+          (l.non_verifie ? '<span class="lc-nv" title="' + _escAttr(t('pg_source_reserve')) + '">' + _escHtml(t('lc_non_verifie')) + '</span>' : '') +
         '</div>' +
         hours +
         '<div class="lc-desc">' + desc + '</div>' +
