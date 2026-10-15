@@ -6323,3 +6323,23 @@ une raison de revenir et de quoi mesurer. Rien de ce qui est visible n'a été d
 l'éditeur : le texte juridique n'a été aligné que sur le comportement réel du code, et
 l'avis d'un avocat reste à obtenir. Un incident de méthode : un `git stash` lancé par erreur
 pendant un contrôle a mis de côté un lot ; restauré aussitôt, rien perdu.
+
+## Vague 2, lot 1 — les fiches qu'on ouvre d'abord, la page Cuba, le méta-texte (migrations 261 et 262)
+
+Les cinq fiches que l'amateur ouvre en premier portaient des récits romancés de mars : Arturo
+Fuente un incendie d'Ybor City en 1980 qui n'a pas eu lieu, Padrón un Dámaso « fils du fondateur »
+et une citation anglaise inventée, Cohiba une Serie D qui est une gamme Partagás et des cadeaux à
+Mandela, Davidoff un accord « Château Pétrus — non, de l'eau Evian » publié tel quel. Chaque piste de
+l'audit a été revérifiée sur des pages lues le 14 octobre (arturofuente.com, padron.com, habanos.com,
+oettingerdavidoff.com, cohiba.com, presse datée) ; la fiche Cohiba USA, que l'audit jugeait sans
+reproche, avait elle aussi une chronologie de procès fausse (2004 était une victoire de Cubatabaco).
+La page Cuba disait « Volumes non publiés par Habanos » et contredisait ses 27 fiches six fois :
+elle dit maintenant ce que Habanos publie (le chiffre d'affaires de 2024), l'objectif 2025 de
+Tabacuba, les fabriques mères comme les fiches les écrivent et 27 marques ; le Festival del Habano
+2026 y est annulé. Le méta-texte (« le recensement de cet atlas la prenait pour une maison ») part
+de 51 fiches de maison, 4 notes de pays et 6 feuilles dans la 262. Les outils ont appris à écrire
+les paires, les littéraux de table, le dictionnaire des textes libres, et un retour chariot
+d'une chaîne se lit désormais `CHAR(13)` (le client mysql de Windows l'avale sinon). Un test a
+refusé la première version : « crée en 1992 » sur la fiche Fuente se lisait comme sa fondation
+(`founded` 1912) ; la phrase dit maintenant « fonde en 1912 ». Rejouées sur une base à l'état du
+dernier commit, 261 et 262 rendent exactement la base locale.

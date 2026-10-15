@@ -207,10 +207,34 @@ Reste, côté utilisateur : rapatrier l'archive du 5 septembre, brancher le cron
 ticket o2switch (offre, JetBackup, erreurs 429), journaux d'accès du 8 octobre (« /.env »),
 rotation DB_PASS / ADMIN_KEY / MAIL_API_KEY après le déploiement, avocat (loi Évin
 L3512-4, exception « éditeur hors UE ») et juriste d'Abidjan, représentant UE et ARTCI.
-Reste, côté nous : fiches phares fausses (Fuente, Cohiba, Padrón, Davidoff) et page Cuba
-(vague 2, avec l'expert cigare) ; mention sanitaire persistante sur l'accueil du globe ;
+Fait (vague 2, lot 1, migrations 261 et 262) : fiches phares (Fuente, Cohiba et Cohiba USA, Padrón,
+Davidoff et Oettinger Davidoff), page Cuba, méta-texte des maisons, pays et feuilles. Reste, côté
+nous : les lots 2 à 8 de la vague 2 (ci-dessous) ; mention sanitaire persistante sur l'accueil du globe ;
 regroupement des 40 requêtes de l'accueil et message de repli si un script échoue (vague 4,
 selon la réponse d'o2switch sur les 429).
+### Vague 2 — relire les fiches suivantes (expert cigare, un lot de huit à la fois)
+
+Ordre, d'après l'audit du 9 octobre et un balayage des phrases à risque (superlatifs, citations,
+chiffres) ; chaque lot = vérification page par page, traduction, migration :
+- **Lot 2** — Cuba, marques globales et de valeur : Montecristo, Partagás, Romeo y Julieta, H. Upmann,
+  Hoyo de Monterrey, Bolívar, Punch, Trinidad. **Lot 3** — Ramón Allones, Vegas Robaina, Vegueros,
+  Quintero, José L. Piedra, Diplomáticos, Cuaba, El Rey del Mundo. **Lot 4** — Por Larrañaga, La Gloria
+  Cubana, Juan López, Rafael González, Sancho Panza, Saint Luis Rey, Quai d'Orsay, San Cristóbal, La
+  Flor de Cano, Fonseca. La page Cuba a relevé les contradictions internes de ces fiches (Partagás
+  « n'a jamais déménagé », Montecristo à Romeo y Julieta, Quintero Vuelta Arriba / Abajo, José L. Piedra
+  « feuilles entières », le compte « vingt et une marques »).
+- **Lot 5** — New World, les plus ouvertes : Drew Estate (« Marvin Samuels » pour Samel, rachat par
+  Swisher de 2014 absent), Liga Privada, My Father, Oliva, Perdomo, Plasencia, Alec Bradley, CAO.
+  **Lot 6** — Camacho, Joya de Nicaragua, La Flor Dominicana, Avo, Macanudo, Zino Platinum, Excalibur,
+  Santa Damiana. **Lot 7** — les fiches « ligne » classées par pays de cape (Arturo Fuente Hemingway et
+  Maduro, CAO Cameroon / Black / America, Oliva Serie G et Connecticut Reserve, Perdomo Ecuador ;
+  Ashton Cabinet est tranchée). **Lot 8** — Partagás USA, Romeo y Julieta USA, Dannemann, Te Amo,
+  Tabacalera, La Flor de la Isabela, General Cigar, Villiger.
+- Hors lots : Toscano (Classico et Toscanello à la machine selon les importateurs), le classement de
+  Villiger / Oettinger Davidoff / Burger Söhne en Suisse, les paragraphes doublés de Villiger Söhne en
+  zh et ar, « shared with H. Upmann » dans l'anglais de Punch. Détail et phrases à risque : fichier de
+  travail `lots_vague2.md` du carnet de session.
+
 ### La relecture des traductions (migration 234, `tools/i18n_relecture.php`)
 
 Chantier ouvert : 9 220 traductions « machine », relues lot par lot par

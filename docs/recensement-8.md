@@ -816,14 +816,76 @@ lignes courantes ; si rien n'est net, la fiche ne bouge pas.
   fiches, Honduras 36 → 37, République dominicaine 97 → 98 ; aucune note ne
   portait de compteur.
 
+## Migration 261 — vague 2, lot 1 : les fiches qu'on ouvre d'abord et la page Cuba (14-15 octobre)
+
+L'audit du 9 octobre (expert cigare) avait trouvé des faits faux dans les fiches « graine » de
+mars 2026. Chaque piste a été revérifiée page par page le 14 octobre (relecteur, puis
+contradicteur) ; trois sont infirmées ou nuancées, une (Cohiba USA) n'était pas signalée et
+était fausse. Les corrections ne reposent que sur des pages lues, citées dans `source`.
+- **Arturo Fuente.** Faux : « incendie d'Ybor City en 1980 » (arturofuente.com : West Tampa
+  1924, Nicaragua 1978, Honduras 1979 ; Fuente Ltd ouvre à Santiago le 4 septembre 1980,
+  Ybor City ne reste qu'en distribution), « Tampa 1902 » (Key West 1906, West Tampa 1910,
+  fondation 1912 à West Tampa), Carlos Sr. « hérita » (rachat de la part de son frère en 1956),
+  Cynthia « fille de Carlito » (fille de Carlos Sr., sœur de Carlito), Château « emplacement
+  secret » (région de Bonao, visites ProCigar), Añejo 1999 (2000). `limited_eds` : 2 noms sur 4
+  étaient des formats. Divergences écrites : 1902 / 1906, Hemingway 1981 / 1983.
+- **Padrón.** Faux : Dámaso « fils du fondateur, 2014 » (premier Padrón arrivé à Cuba, ligne
+  de juillet 2015), « bombardée deux fois pour avoir roulé du tabac nicaraguayen » (trois
+  bombardements des locaux de Miami 1979-1983, motif et auteurs attribués : Holt's, UPI/Omega 7,
+  padron.com), « Jalapa, meilleures terres du monde » (fermes autour d'Estelí), « Serie 1000 »
+  (Padrón Series), Danlí n'est plus usine de cigares depuis 2007. La citation anglaise inventée
+  (« I don't sell cigars. I sell time. ») et les quatre résumés de deux phrases d'es / de / zh / ar
+  sont remplacés : les cinq langues disent la même histoire.
+- **Cohiba.** Faux : « Serie D » (gamme Partagás), Behike « 30 à 50 € » et « la plus chère de
+  l'histoire cubaine » (retirés ; BHK 58 ajouté), cadeaux « Brandt, Mitterrand, Kadhafi, Mandela »
+  (aucune page ; Tito, Nasser, Echeverría, Torrijos, Kissinger 1974 selon la presse du métier),
+  « fûts de cèdre » (deux types de feuilles en fermentation supplémentaire, dit la maison),
+  Línea 1492 / Clásica confondues (gamme refaite sur la page officielle), « première maduro »,
+  Che Guevara (anachronisme), « torcedoras les mieux payées », « un rebut sur cinq ». Le Talismán
+  (Londres, 7 octobre 2026) est écrit. Divergences : El Laguito 1966 / 1967, Miramar / Siboney /
+  Cubanacán, origine du cigare (Castro 1994, Rivera 1995).
+- **Cohiba USA.** Faux : « décision favorable à General Cigar en 2004 … appel en 2007 » (mars 2004 :
+  le juge Sweet donne raison à Cubatabaco ; 2005 : le 2e circuit renverse), « Habanos S.A. contesta »
+  (Cubatabaco, 1997), « quarante ans » / « plus de 20 ans, trois cours ». Chronologie 1997-2025
+  réécrite (refus de la Cour suprême en 2015, annulation par le TTAB en 2022, Virginie orientale en
+  2025, appel au 4e circuit), blends corrigés, Riviera ajoutée, marque passée à Forged Cigar Co.
+- **Davidoff et Oettinger Davidoff.** Faux : l'accord « Château Pétrus — non, de l'eau Evian »
+  (fuite d'auteur, parole inventée), « Zino annonça la rupture de 1990 » (trois versions
+  attribuées), « Anniversario lancés à Cuba en 1968 » (Aniversario : 1986), Churchill « 2013 »
+  (mai 2008), Nicaragua « 2016 » (2013), lignes Cusano (méta-texte) et Colorado (absente de
+  davidoff.com) retirées, stock d'un détaillant retiré, « 500 millions de francs » (aucun chiffre
+  publié), « Max Oettinger achète en 1970 » (le groupe Oettinger).
+- **Page Cuba.** `production` (« Volumes non publiés par Habanos ») dit désormais que Habanos
+  publie son chiffre d'affaires (827 M$ en 2024) et non ses volumes, et donne l'objectif 2025 de
+  Tabacuba (plus de 80 M de cigares, 70 M à l'export). Le bloc Habanos S.A. est aligné sur les 27
+  fiches (fabriques mères reconstruites, 17 → 27 marques officielles dont Hoyo de Monterrey, un seul
+  chiffre d'affaires, coprésidents, propriété avec la situation de la part d'Allied, Festival 2026
+  annulé, distributeurs étrangers retirés). Les 27 descriptions de marque sont alignées sur les
+  fiches ; 42 chaînes entrent au dictionnaire des textes libres. Ouvert : volume réel 2024-2025,
+  `soil`, `varieties`, `harvest`, années de quatre fabriques.
+- Reste ouvert (aussi dans l'en-tête de la migration) : Back2Back, Aniversario No.2, qui annonce la
+  rupture avec Cuba, l'appel au 4e circuit, la manufacture d'Estelí des Fuente. Chaque fiche touchée
+  est resellée `machine` en cinq langues ; l'anglais relu de la page Cuba est relu de nouveau.
+
+## Migration 262 — le méta-texte retiré (15 octobre)
+
+Un balayage des colonnes narratives (six langues) a cherché les phrases qui parlent de notre
+recherche. Corrigées : « le recensement de cet atlas la prenait pour une maison » (14 lignes de
+gamme), « l'atlas l'écrivait chez … et se corrige » et les récits de l'état antérieur de l'atlas
+(58 passages dans 51 fiches de maison), 4 notes de pays (Brésil, Équateur, Mexique, Philippines),
+7 textes de 6 feuilles, et le jargon interne du champ `source` (« lot 5 : », « requalification : »,
+« corrigé par la migration 196 » : 46 remplacements dans 39 fiches, plus la source d'une feuille). Relevé sans correction : la voix
+éditoriale au présent (« l'atlas classe cette fiche… », « dont l'atlas porte la fiche »), qui énonce
+une règle ou un renvoi, et la datation des sources (« page lue le … »), qui est une convention ; les
+établissements ne sont pas touchés. Le détail est dans `cat8\corr\meta_texte.md` (carnet de session).
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :
 - **Rocky Patel** : si l'usine plus grande d'Estelí ouvre et que la répartition
   s'inverse, la fiche repassera au Nicaragua ; les pages Vintage 1992 et Fifty de
   la maison ne correspondent pas aux lignes de la fiche, Indian Tabac est une
-  marque que Phil Zanghi a reprise en 2014, et sa phrase nomme encore « le
-  recensement ».
+  marque que Phil Zanghi a reprise en 2014 (sa phrase sur « le recensement » est retirée par la 262).
 - **Miami Cigar & Co.** : Tatiana n'est pas en gamme ; la Collection de 2014 est
   devenue la Special Selection ; Don Lino Original et la série dominicaine de 2021
   ne sont plus sur la page de la maison.
