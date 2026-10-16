@@ -919,6 +919,39 @@ paragraphes ; les cinq traductions gardent à la lettre les phrases que le fran�
   La Gloria Cubana, Ramón Allones, Quai d'Orsay ; La Corona « 1889 » (Cuaba, Por Larrañaga, San Cristóbal, La Flor de Cano) ;
   Carlos Baliño (El Rey del Mundo, Saint Luis Rey, José L. Piedra) ; Vegueros et Quai d'Orsay (portefeuille 2026).
 
+## Migration 264 — vague 2, lot 3 : huit marques cubaines du portefeuille (16 octobre)
+
+Ramón Allones, Vegas Robaina, Vegueros, Quintero, José L. Piedra, Diplomáticos, Cuaba et El Rey del Mundo
+relues page par page le 16 octobre (habanos.com, communiqués datés, presse du métier, Wikipédia, Origin of
+Cigar, détaillants), puis contredites. Histoire remplacée par paragraphes, traductions conservées là où le
+français n'a pas bougé. Aucun rang mondial, même attribué.
+- **Ramón Allones.** Faux : « immigré galicien », « premier à décorer ses caisses de lithographies dorées »
+  (1837 pour habanos.com, 1845 pour Wikipédia, frères Ramón et Antonio Allones), « Francisco Pérez Germán qui a
+  quitté en 2010 » (Partagás mère selon la presse ; départ d'Industria 2011, 2 janvier 2012 ou 2010), « vingt et
+  une marques » (octobre 2026 : cinq de valeur).
+- **Vegas Robaina.** Faux : cotes de gamme (Wikipédia : Único 6 1/8 × 52, Famoso 5 × 48, Familiar 5 5/8 × 42,
+  Don Alejandro 7 5/8 × 49), « que des feuilles familiales » (Robaina disait que la marque ne contenait pas de
+  son tabac), « seule marque au nom d'un veguero », accord Santiago de Cuba, trois éditions sans page ; fabrique
+  (Donatien ou ancienne H. Upmann) en divergence.
+- **Vegueros.** Faux : 1997 (habanos.com : 1996), vitolas « Petit Edmundo » et « Petit » (Tapados 46 × 120,
+  Entretiempos 52 × 110, Mañanitas 46 × 100, Centrofinos 50 × 130), boîtes rondes ; Donatién confirmée.
+- **Quintero.** Faux : « Vuelta Arriba » (habanos.com : Vuelta Abajo), Benítez, « presque exclusivement
+  l'Espagne », Medias Coronas / Brevas / Churchill (gamme : Favoritos, Petit Quintero), édition limitée Favoritos.
+- **José L. Piedra.** Faux : « feuilles entières » (tripe courte), fabrique de Holguín, « le plus fumé à Cuba »,
+  prix, « Villa Clara » / « Vuelta Arriba ».
+- **Diplomáticos.** Faux : « née d'une commande du monopole français », notes de goût, « distribuée en Europe » ;
+  années 1960 (habanos.com) ou 1966 (presse) ; fabrique en divergence ; Cancilleres ajouté.
+- **Cuaba.** Faux : La Corona « née en 1889 », forme « abandonnée depuis les années 1940 », écorce taïno, notes ;
+  style de la fin du XIXe siècle relancé en 1996 (habanos.com).
+- **El Rey del Mundo.** Faux : 1848 comme fait (habanos.com : 1882), « l'une des plus chères », durées de fumée,
+  « Carlos Baliño = ancienne El Rey del Mundo » (infirmé) ; fabrique en trois versions.
+- **Page Cuba.** Six descriptions de marque réécrites ; les fabriques « de Cienfuegos » et « de Holguín » (aucune
+  page) disparaissent ; Quintero, José L. Piedra, Vegas Robaina et El Rey del Mundo rejoignent les fabriques non
+  nommées par Habanos ; 6 chaînes au dictionnaire.
+- Outils : le générateur accepte une rubrique `celebrities` vidée ; la revue à notes dans `source` seulement.
+  Garde-fous verts ; `sources.php` : lefagot, trabucul, zirahotel et espinashotel (lieu hors lot). Ouvert : fabrique
+  mère de Quintero, José L. Piedra, Vegas Robaina, Diplomáticos, Cuaba, El Rey del Mundo.
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :

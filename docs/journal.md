@@ -6367,3 +6367,13 @@ générateur, avants gelés) pour garder les traductions existantes là où le f
 refusé la première version : un rang mondial attribué (« le plus vendu au monde ») compte comme un rang, « fondée en
 1905 » se lisait comme la fondation de Trinidad, une inscription entre guillemets comme une parole prêtée. Rejouée sur
 base neuve, la 263 rend exactement la base locale ; 1039 assertions, 0 échec.
+
+## Vague 2, lot 3 — huit marques cubaines du portefeuille (migration 264)
+
+Quintero disait « Vuelta Arriba » quand la page de la maison écrit Vuelta Abajo, José L. Piedra une tripe
+« de feuilles entières » quand elle est courte, Vegueros des vitolas « Petit Edmundo » qui n'existent pas, El Rey
+del Mundo une fabrique « Carlos Baliño » que la presse place ailleurs. Les huit fiches sont relues sur
+habanos.com et la presse datée ; les fabriques mères que seule une page illisible affirmait (Cienfuegos, Holguín)
+quittent la page Cuba. Un rédacteur avait écrit « Cigar Journal » dans le récit d'El Rey del Mundo : le contrôle
+de langue l'a refusé, la presse du métier le remplace dans les cinq langues. Rejouée sur base neuve, la 264 rend
+exactement la base locale ; 1039 assertions, 0 échec.

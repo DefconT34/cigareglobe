@@ -81,6 +81,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "alchetron.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "alecbradley.com": {
             "dns": "resout",
             "fiches": 1
@@ -261,6 +265,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "blog.puroexpress.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "bocachicaabidjan.com": {
             "dns": "resout",
             "fiches": 1
@@ -403,7 +411,11 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 117
+            "fiches": 119
+        },
+        "cigar-keep.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "cigar-review.com": {
             "dns": "resout",
@@ -491,7 +503,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 98
+            "fiches": 99
         },
         "cigarkings.de": {
             "dns": "resout",
@@ -603,7 +615,7 @@
         },
         "cigarsunlimited.co.uk": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "cigarwars.net": {
             "dns": "resout",
@@ -687,7 +699,7 @@
         },
         "cubancigarwebsite.com": {
             "dns": "resout",
-            "fiches": 23
+            "fiches": 15
         },
         "cubanstockcigars.com": {
             "dns": "resout",
@@ -923,7 +935,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 54
+            "fiches": 58
         },
         "enciclopedia.cat": {
             "dns": "resout",
@@ -1839,7 +1851,7 @@
         },
         "origin-of-cigar.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "ortegacigars.com": {
             "dns": "resout",
@@ -1955,7 +1967,7 @@
         },
         "prensa-latina.cu": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "presidencia.gob.do": {
             "dns": "resout",
@@ -2179,7 +2191,7 @@
         },
         "simplycigars.co.uk": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "sindicatocigars.com": {
             "dns": "resout",
@@ -2623,7 +2635,7 @@
         },
         "www.habanos.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 8
         },
         "www.padron.com": {
             "dns": "resout",
