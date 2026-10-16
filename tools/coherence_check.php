@@ -675,8 +675,6 @@ const COHER_DATES_ASSUMEES = [
         '1963 est la fondation de la HATSA par Frank Llaneza, pas celle de la marque',
     'Menendez Amerino' =>
         '1980 est la creation de la gamme Alonso Menendez, pas celle de la fabrique',
-    'Montecristo' =>
-        '1992 date une ligne du catalogue, pas la marque de 1935',
     'Avo' =>
         '1984 ne date pas la maison, qui parait en 1988',
     'De Los Reyes Cigars' =>

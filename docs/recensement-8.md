@@ -879,6 +879,46 @@ gamme), « l'atlas l'écrivait chez … et se corrige » et les récits de l'ét
 une règle ou un renvoi, et la datation des sources (« page lue le … »), qui est une convention ; les
 établissements ne sont pas touchés. Le détail est dans `cat8\corr\meta_texte.md` (carnet de session).
 
+## Migration 263 — vague 2, lot 2 : les huit grandes marques cubaines (15-16 octobre)
+
+H. Upmann, Montecristo, Partagás, Bolívar, Hoyo de Monterrey, Punch, Romeo y Julieta et Trinidad
+ont été relues page par page le 15 octobre (habanos.com, communiqués datés, presse du métier,
+Wikipédia, EcuRed, portail de La Havane), puis contredites. L'histoire est remplacée par
+paragraphes ; les cinq traductions gardent à la lettre les phrases que le français n'a pas changées.
+- **Contradictions de la page Cuba.** Partagás « n'a jamais déménagé » (elle a quitté Industria 520 :
+  2011, 2 janvier 2012 ou 2010 selon la source, divergence écrite ; « Francisco Pérez Germán » retiré
+  faute de page) ; Montecristo « à la manufacture Romeo y Julieta » (habanos.com : née à H. Upmann) ;
+  Punch « partagée avec H. Upmann » (habanos.com : La Corona, avec Hoyo depuis 1931) ; « vingt et une
+  marques » / « groupe de quatre » remplacés par octobre 2026 (27 marques, 6 globales, 5 de valeur,
+  3 de volume, 13 autres), le classement de 2019 attribué à la presse du métier.
+- **H. Upmann.** Faux : « représentant d'une banque hambourgeoise » (1840 / 1843 / 1844, Brême selon
+  Wikipédia), premier tube d'aluminium et boîte de cèdre « inventés » par lui (tube de 1933, J. Frankau),
+  nationalisation 1959, Magnum 46 « 155 mm », Half Corona « 94 mm », limited_eds qui n'en sont pas.
+- **Montecristo.** Faux : Línea 1492 (celle de Cohiba), No. 2 « 162 mm », Línea 1935 « quatre vitolas »,
+  Supremos « annuel espagnol 54 × 185 » ; Línea Open ajoutée ; fondateurs et lieu de naissance en divergence.
+- **Partagás.** Faux : premier lector du monde (EcuRed : El Fígaro 1865, Partagás 1866), Zola / Marx, 8-9-8
+  « panetela 33 × 170 » (dalia, cepo 43), Gran Reserva « 2014 » (Cosecha 2007) ; trois morts de Jaime Partagás écrites.
+- **Bolívar.** Faux : « le plus puissant des grands cubains », Royal Corona « petit robusto 42 × 127 »
+  (124 mm sur cepo 50), éditions « 120 Aniversario » et « Gran Reserva 2014 » ; fondation 1901 / 1902 écrite.
+- **Hoyo de Monterrey.** Faux : 1865 « fondation » (enregistrement ; porte de la plantation « 1860 »),
+  Scandinavie, Churchill, Epicure « années 1970 », Epicure No. 1 « Laguito 38 × 175 », Double Epicure, Epicure de Luxe
+  « 2005 » (2012, Casas del Habano), La Corona « née en 1889 » (cigares depuis 2000).
+- **Punch.** Faux : « 1840, l'année même du magazine » (1841), clubs et maisons royales, Punch « Mareva robusto »
+  (Corona Gorda 46 × 143), Serie D No.4 ; Short de Punch (Zurich, 2019) ajouté.
+- **Romeo y Julieta.** Faux : médailles d'Amsterdam, Churchill « 1895 … soixante-dix ans », Blitz et sous-marins,
+  Wide Churchill « 2008, 178 mm » (2010, 130 mm), Exhibición et éditions régionales annuelles ; fabrique en quatre versions.
+- **Trinidad.** Faux : « liste des cadeaux de Fidel Castro » (attribué à la presse du métier, démenti de Castro écrit),
+  Mandela, dîner Davidoff de novembre 1998 (octobre 1994, vente en février 1998), Coloniales « 52 × 110 » (44 × 132),
+  transfert d'El Laguito « début des années 2000 » (non établi).
+- **Page Cuba.** Six descriptions de marque et trois fabriques alignées (Partagás sans « Francisco Pérez Germán »
+  ni 2010, Romeo y Julieta sans « Briones Montoto », La Corona sans 1889) ; 10 chaînes au dictionnaire.
+- Garde-fous : plus aucun rang mondial dans `brands` (même attribué : « le plus vendu au monde » du No. 4 retiré), l'exception
+  Montecristo de `coherence_check` supprimée, une entrée ajoutée au cliquet `i18n_divergence` (Abuja zh, seuil franchi par
+  la médiane). Ouvert : fabrique mère de Romeo y Julieta et de Trinidad (aucune page de la maison), statut du Magnum 46,
+  cotes de plusieurs Montecristo, date du transfert Trinidad. À reporter aux lots 3-4 : « Francisco Pérez Germán » dans
+  La Gloria Cubana, Ramón Allones, Quai d'Orsay ; La Corona « 1889 » (Cuaba, Por Larrañaga, San Cristóbal, La Flor de Cano) ;
+  Carlos Baliño (El Rey del Mundo, Saint Luis Rey, José L. Piedra) ; Vegueros et Quai d'Orsay (portefeuille 2026).
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :

@@ -220,8 +220,8 @@ selon la réponse d'o2switch sur les 429).
 
 Ordre, d'après l'audit du 9 octobre et un balayage des phrases à risque (superlatifs, citations,
 chiffres) ; chaque lot = vérification page par page, traduction, migration :
-- **Lot 2** — Cuba, marques globales et de valeur : Montecristo, Partagás, Romeo y Julieta, H. Upmann,
-  Hoyo de Monterrey, Bolívar, Punch, Trinidad. **Lot 3** — Ramón Allones, Vegas Robaina, Vegueros,
+- **Lot 2 — FAIT (migration 263, 16 octobre)** : H. Upmann, Montecristo, Partagás, Bolívar, Hoyo de Monterrey,
+  Punch, Romeo y Julieta, Trinidad. **Lot 3** — Ramón Allones, Vegas Robaina, Vegueros,
   Quintero, José L. Piedra, Diplomáticos, Cuaba, El Rey del Mundo. **Lot 4** — Por Larrañaga, La Gloria
   Cubana, Juan López, Rafael González, Sancho Panza, Saint Luis Rey, Quai d'Orsay, San Cristóbal, La
   Flor de Cano, Fonseca. La page Cuba a relevé les contradictions internes de ces fiches (Partagás

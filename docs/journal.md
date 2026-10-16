@@ -6355,3 +6355,15 @@ reste. Le critère se lit dans le texte de `source`, sans colonne ni migration :
 (192 sans lecture datée, 12 portant déjà « à vérifier »). Un lieu relu perd son badge dès que sa
 lecture est écrite dans `source`. Un seul helper (`lounge_non_verifie`, `backend/config.php`), le
 drapeau `non_verifie` dans l'API, une clé de traduction dans les six langues.
+
+## Vague 2, lot 2 — les huit grandes marques cubaines (migration 263)
+
+La page Cuba avait révélé que ses fiches se contredisaient : Partagás « n'a jamais déménagé », Montecristo à
+la manufacture Romeo y Julieta, Punch partagée avec H. Upmann. Les huit fiches ont été relues sur habanos.com et
+la presse datée ; Hoyo de Monterrey n'a plus de fondateur en 1865 (c'est l'année de l'enregistrement, la porte de
+la plantation dit 1860), Trinidad n'a plus ses cadeaux de Fidel Castro affirmés (la maison ne le nomme pas), Romeo y
+Julieta n'a plus de Blitz ni de sous-marins. Les histoires sont remplacées paragraphe par paragraphe (nouveau mode du
+générateur, avants gelés) pour garder les traductions existantes là où le français n'a pas bougé. Les garde-fous ont
+refusé la première version : un rang mondial attribué (« le plus vendu au monde ») compte comme un rang, « fondée en
+1905 » se lisait comme la fondation de Trinidad, une inscription entre guillemets comme une parole prêtée. Rejouée sur
+base neuve, la 263 rend exactement la base locale ; 1039 assertions, 0 échec.
