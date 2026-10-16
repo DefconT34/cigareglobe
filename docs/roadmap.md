@@ -222,7 +222,7 @@ Ordre, d'après l'audit du 9 octobre et un balayage des phrases à risque (super
 chiffres) ; chaque lot = vérification page par page, traduction, migration :
 - **Lot 2 — FAIT (migration 263, 16 octobre)** : H. Upmann, Montecristo, Partagás, Bolívar, Hoyo de Monterrey,
   Punch, Romeo y Julieta, Trinidad. **Lot 3** — Ramón Allones, Vegas Robaina, Vegueros,
-  Quintero, José L. Piedra, Diplomáticos, Cuaba, El Rey del Mundo (**lot 3 FAIT, migration 264, 16 octobre**). **Lot 4** — Por Larrañaga, La Gloria
+  Quintero, José L. Piedra, Diplomáticos, Cuaba, El Rey del Mundo (**lot 3 FAIT, migration 264, 16 octobre**). **Lot 4 — FAIT (migration 265, 16 octobre)** : Por Larrañaga, La Gloria
   Cubana, Juan López, Rafael González, Sancho Panza, Saint Luis Rey, Quai d'Orsay, San Cristóbal, La
   Flor de Cano, Fonseca. La page Cuba a relevé les contradictions internes de ces fiches (Partagás
   « n'a jamais déménagé », Montecristo à Romeo y Julieta, Quintero Vuelta Arriba / Abajo, José L. Piedra

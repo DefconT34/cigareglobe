@@ -223,7 +223,7 @@
         },
         "bespokeunit.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "bestcigarprices.com": {
             "dns": "resout",
@@ -251,7 +251,7 @@
         },
         "blindmanspuff.com": {
             "dns": "resout",
-            "fiches": 19
+            "fiches": 20
         },
         "blog.cigarworld.de": {
             "dns": "resout",
@@ -411,7 +411,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 119
+            "fiches": 121
         },
         "cigar-keep.com": {
             "dns": "resout",
@@ -487,7 +487,7 @@
         },
         "cigarguide.simplycigars.co.uk": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "cigarindonesia.id": {
             "dns": "resout",
@@ -591,7 +591,7 @@
         },
         "cigarslover.com": {
             "dns": "resout",
-            "fiches": 9
+            "fiches": 12
         },
         "cigarsmokerclub.com": {
             "dns": "resout",
@@ -615,7 +615,7 @@
         },
         "cigarsunlimited.co.uk": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 8
         },
         "cigarwars.net": {
             "dns": "resout",
@@ -699,7 +699,7 @@
         },
         "cubancigarwebsite.com": {
             "dns": "resout",
-            "fiches": 15
+            "fiches": 8
         },
         "cubanstockcigars.com": {
             "dns": "resout",
@@ -935,7 +935,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 58
+            "fiches": 60
         },
         "enciclopedia.cat": {
             "dns": "resout",
@@ -1363,7 +1363,7 @@
         },
         "jjfox.co.uk": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 6
         },
         "journal.unnes.ac.id": {
             "dns": "resout",
@@ -1410,6 +1410,10 @@
             "fiches": 1
         },
         "kinix-cigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "kiplingsociety.co.uk": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1967,7 +1971,7 @@
         },
         "prensa-latina.cu": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "presidencia.gob.do": {
             "dns": "resout",
@@ -2191,7 +2195,7 @@
         },
         "simplycigars.co.uk": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 4
         },
         "sindicatocigars.com": {
             "dns": "resout",
@@ -2207,7 +2211,7 @@
         },
         "smoke-king.co.uk": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "smokeinn.com": {
             "dns": "resout",
@@ -2667,7 +2671,7 @@
         },
         "zigarren.zone": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 8
         },
         "zigarrenclub.at": {
             "dns": "resout",

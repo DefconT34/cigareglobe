@@ -6377,3 +6377,13 @@ habanos.com et la presse datée ; les fabriques mères que seule une page illisi
 quittent la page Cuba. Un rédacteur avait écrit « Cigar Journal » dans le récit d'El Rey del Mundo : le contrôle
 de langue l'a refusé, la presse du métier le remplace dans les cinq langues. Rejouée sur base neuve, la 264 rend
 exactement la base locale ; 1039 assertions, 0 échec.
+
+## Vague 2, lot 4 — dix marques cubaines et restes du lot 2 (migration 265)
+
+La Gloria Cubana prenait un Palmita pour un Dalia, Quai d'Orsay un 110 × 50 pour un Robusto, San Cristóbal ses vitolas pour
+d'autres, et plusieurs fiches répétaient une fabrique que seul un site illisible affirmait. Les dix fiches sont relues
+sur pages datées ; les restes du lot 2 sont écrits quand une page les établit (Francisco Donatién pour Trinidad, communiqué
+de 2017) et laissés au silence sinon. Les garde-fous ont refusé une première version : « créée en 1932 » se lisait comme la
+fondation de La Flor de Cano (1884), et « 满分 », « größtenteils », « más bien » comme des superlatifs ou des notes. Rejouée
+sur base neuve, la 265 rend exactement la base locale ; 1039 assertions, 0 échec. La vague 2 a traité 36 fiches cubaines
+en quatre lots ; restent les lots 5 à 8 (New World et fiches de ligne).

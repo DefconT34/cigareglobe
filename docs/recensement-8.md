@@ -952,6 +952,31 @@ français n'a pas bougé. Aucun rang mondial, même attribué.
   Garde-fous verts ; `sources.php` : lefagot, trabucul, zirahotel et espinashotel (lieu hors lot). Ouvert : fabrique
   mère de Quintero, José L. Piedra, Vegas Robaina, Diplomáticos, Cuaba, El Rey del Mundo.
 
+## Migration 265 — vague 2, lot 4 : les dix dernières marques cubaines et les restes du lot 2 (16 octobre)
+
+Por Larrañaga, La Gloria Cubana, Juan López, Rafael González, Sancho Panza, Saint Luis Rey, Quai d'Orsay,
+San Cristóbal de La Habana, La Flor de Cano et Fonseca relues page par page le 16 octobre (habanos.com,
+communiqués datés, presse du métier, Wikipédia, détaillants), puis contredites ; histoire remplacée par
+paragraphes. Aucun rang mondial, aucun nom de revue à notes.
+- **Por Larrañaga.** Faux : « la plus ancienne marque cubaine encore produite » et les comparaisons (habanos.com : 1834),
+  La Corona « née en 1889 », « 52 de cépage » ; Kipling daté de 1886 ou de 1888 (divergence écrite).
+- **La Gloria Cubana.** Faux : le No.4 « Dalia » (Palmita 6 × 32 ; la Dalia est le No.2), ligne « Tapados », « 2010 »,
+  « bâtiment jaune », effondrement de 2020 ; « Francisco Pérez Germán » ramené à l'ancienne fabrique d'Industria.
+- **Juan López.** Faux : notes de goût, cotes (No. 2 Robusto 4 7/8 × 50), cape « Habano Colorado » ; années 1870 chez
+  habanos.com, 1876 chez Wikipédia ; Selección Especial ajoutée.
+- **Rafael González.** Faux : 1928 (années 1930), avis du couvercle, « seule marque », marquis britannique ; gamme d'après la presse.
+- **Sancho Panza.** Faux : 1848 comme fondation (premier enregistrement), l'Espagne premier marché, lien du Molino avec le roman.
+- **Saint Luis Rey.** Faux : 1940 comme date établie (habanos.com : avant la Seconde Guerre mondiale), fabrique « ex-Carlos Baliño »
+  sans page, Regios « Robusto » (Hermoso No. 4).
+- **Quai d'Orsay.** Faux : « Francisco Pérez Germán », 2010, effondrement de 2020, No. 50 « Robusto » (110 × 50) ; valeur en 2026, autres en 2019.
+- **San Cristóbal.** Faux : « 480e anniversaire », noms de vitola (El Príncipe = Minuto, El Morro = Paco), notes de goût.
+- **La Flor de Cano, Fonseca.** Notes de goût et cotes retirées ou attribuées ; 1884 (habanos.com) ou 1932 (détaillants) ; Lázaro Peña seulement chez Wikipédia.
+- **Restes du lot 2.** H. Upmann : cotes du Magnum 54 et du Connossieur B attribuées ; Montecristo : cotes des A, No. 1, No. 3, No. 5 et des Churchills
+  Añejados (une seule vient d'habanos.com) ; Trinidad : Francisco Donatién nommée par un communiqué de habanos.com du 14 novembre 2017,
+  transfert d'El Laguito non daté, Robustos Extra de retour en 2024 ; Romeo y Julieta inchangée (aucune page ne nomme sa fabrique) ; Magnum 46 : rien d'établi.
+- **Page Cuba.** Huit descriptions de marque réalignées ; Saint Luis Rey passe aux fabriques non nommées par Habanos ; 8 chaînes au dictionnaire.
+- Garde-fous verts ; `sources.php` : lefagot, trabucul, zirahotel, espinashotel (lieu hors lot). Ouvert : fabrique mère de chaque marque du lot.
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :
