@@ -227,7 +227,7 @@ chiffres) ; chaque lot = vérification page par page, traduction, migration :
   Flor de Cano, Fonseca. La page Cuba a relevé les contradictions internes de ces fiches (Partagás
   « n'a jamais déménagé », Montecristo à Romeo y Julieta, Quintero Vuelta Arriba / Abajo, José L. Piedra
   « feuilles entières », le compte « vingt et une marques »).
-- **Lot 5** — New World, les plus ouvertes : Drew Estate (« Marvin Samuels » pour Samel, rachat par
+- **Lot 5 — FAIT (migration 266, 17 octobre)** — New World : Drew Estate (« Marvin Samuels » pour Samel, rachat par
   Swisher de 2014 absent), Liga Privada, My Father, Oliva, Perdomo, Plasencia, Alec Bradley, CAO.
   **Lot 6** — Camacho, Joya de Nicaragua, La Flor Dominicana, Avo, Macanudo, Zino Platinum, Excalibur,
   Santa Damiana. **Lot 7** — les fiches « ligne » classées par pays de cape (Arturo Fuente Hemingway et

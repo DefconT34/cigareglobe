@@ -6387,3 +6387,11 @@ de 2017) et laissés au silence sinon. Les garde-fous ont refusé une première 
 fondation de La Flor de Cano (1884), et « 满分 », « größtenteils », « más bien » comme des superlatifs ou des notes. Rejouée
 sur base neuve, la 265 rend exactement la base locale ; 1039 assertions, 0 échec. La vague 2 a traité 36 fiches cubaines
 en quatre lots ; restent les lots 5 à 8 (New World et fiches de ligne).
+
+## Vague 2, lot 5 — huit marques du Nouveau Monde (migration 266)
+
+Les premières fiches « graine » non cubaines portaient la même prose romancée que les cubaines : la genèse de Liga Privada
+(quinze amis, 45 minutes à Denver), l'histoire de Rubin (matériel médical au lieu d'une quincaillerie), Cano Ozgener mort en 2007 au lieu de 2018, Pinar del Río
+chez Perdomo et Oliva. Elles sont relues sur pages datées, un vérificateur par fiche, sans coordinateur ; ce qui n'a pas de page est retiré, les divergences
+sont écrites (début de Drew Estate, départ de Cuba de Pepín García, intégration verticale de Perdomo). Les garde-fous ont refusé 第一 en chinois, et
+deux domaines (community.apan.org, mort ; elementvape.com) sont sortis des sources avant scellage. La 266 appliquée ; 1039 assertions, 0 échec. Restent les lots 6 à 8.

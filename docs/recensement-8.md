@@ -977,6 +977,23 @@ paragraphes. Aucun rang mondial, aucun nom de revue à notes.
 - **Page Cuba.** Huit descriptions de marque réalignées ; Saint Luis Rey passe aux fabriques non nommées par Habanos ; 8 chaînes au dictionnaire.
 - Garde-fous verts ; `sources.php` : lefagot, trabucul, zirahotel, espinashotel (lieu hors lot). Ouvert : fabrique mère de chaque marque du lot.
 
+## Migration 266 — vague 2, lot 5 : huit marques du Nouveau Monde (17 octobre)
+
+Drew Estate, Liga Privada, My Father, Oliva, Perdomo, Plasencia, Alec Bradley et CAO relues page par page le 17 octobre
+(pages des maisons, presse du métier datée, Wikipédia, détaillants cités comme tels), puis traduites ; histoire remplacée
+par paragraphes. Aucun rang mondial, aucun nom de revue à notes.
+- **Drew Estate.** Faux : « Samuels » (Samel), fabrique 1999 et Estelí 2000 sans page, No. 9 de 2008 (2007), superlatifs et prix du Flying Pig ;
+  ajouté : rachat par Swisher (20 octobre 2014) ; début 1995 ou 1996 en divergence.
+- **Liga Privada.** Faux : genèse « pour une quinzaine d'amis », liste d'attente, 45 minutes à Denver ; Papas Fritas 115 × 44 ; cape du T52.
+- **My Father.** Faux : « torcedor le plus célébré », exploit de 2012 (Flor de las Antillas, non El Centurión), départ de Cuba en divergence.
+- **Oliva.** Faux : Vuelta Abajo, Jalapa 1968, approvisionnements de Davidoff, Padrón et Ashton ; Serie V, Serie G, Nub (dernier tiers) ; ajouté : 1995 et rachat de 2016.
+- **Perdomo.** Faux : Pinar del Río et terres familiales, 20th Anniversary (cape, « Toro 54 × 152 »), Nick's Sticks ; intégration verticale en divergence.
+- **Plasencia.** Faux : Alma Fuerte 2016, acres, 4e génération, Cosecha 146, fournitures de feuille ; 1865 et cinq générations confirmés.
+- **Alec Bradley.** Faux : parcours de Rubin, dates et blends de la gamme ; ajouté : rachat par STG (1er mars 2023).
+- **CAO.** Faux : Cano Ozgener mort en 2018, rachat de 2007 par Henri Wintermans / ST Tobacco, capes de la gamme, Flathead, Harley-Davidson.
+- Domaines : community.apan.org (mort) et elementvape.com retirés des sources avant scellage. Garde-fous verts ; `sources.php` : lefagot, trabucul, zirahotel, espinashotel (hors lot).
+  Ouvert : propriétaire de Drew Estate, vitolas de plusieurs lignes, Tempus, pays de classement de CAO, lien Ozgener / République dominicaine (259).
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :
