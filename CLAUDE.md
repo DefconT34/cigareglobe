@@ -131,6 +131,16 @@ fait », vérifier les pages en production avec curl.
   fabriquent sur le serveur ; la sauvegarde (B4b2) est le seul point
   bloquant de la roadmap.
 
+## Lire les fichiers sans gaspiller
+
+Fichier de plus de 300 lignes et recherche ciblée (`journal.md`,
+`sql/contenu.sql`, `roadmap.md`, `i18n.js`) : `grep`, puis lecture partielle
+(`offset`/`limit`) autour des résultats. Lecture complète pour un fichier court,
+un fichier à comprendre ou à modifier en profondeur, et toujours pour ce
+`CLAUDE.md` et les consignes de lot (règles éditoriales). Un `grep` vide ne
+prouve pas l'absence : essayer des variantes (nom, année, synonyme) avant de
+conclure. Avant de toucher à une fonction, chercher tous ses appelants.
+
 ## Travail et réponses
 
 Concision stricte : pas de préambule, pas de résumé narratif, pas de
