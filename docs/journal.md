@@ -6395,3 +6395,10 @@ Les premières fiches « graine » non cubaines portaient la même prose romanc�
 chez Perdomo et Oliva. Elles sont relues sur pages datées, un vérificateur par fiche, sans coordinateur ; ce qui n'a pas de page est retiré, les divergences
 sont écrites (début de Drew Estate, départ de Cuba de Pepín García, intégration verticale de Perdomo). Les garde-fous ont refusé 第一 en chinois, et
 deux domaines (community.apan.org, mort ; elementvape.com) sont sortis des sources avant scellage. La 266 appliquée ; 1039 assertions, 0 échec. Restent les lots 6 à 8.
+
+## Vague 2, lot 6 — huit marques du Nouveau Monde (migration 267)
+
+Même prose romancée, mêmes inventions : le fondateur de La Flor Dominicana (Jochy Blanco au lieu de Litto Gómez), Somoza fondateur de Joya,
+l'orchestre de Sinatra et les parents rescapés d'Avo, la citation de Blumenthal chez Excalibur. Les vérificateurs travaillaient en français cette
+fois, un par fiche : 56 000 jetons par fiche contre 66 000 en anglais au lot 5. Deux classements, même attribués, sont sortis (« le plus vendu » de Macanudo,
+« pas le meilleur cigare non cubain » d'Excalibur), et un « tripe » écrit pour le liant a été corrigé avant traduction. La 267 appliquée ; 1039 assertions, 0 échec. Restent les lots 7 et 8.

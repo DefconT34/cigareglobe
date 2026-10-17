@@ -229,7 +229,7 @@ chiffres) ; chaque lot = vérification page par page, traduction, migration :
   « feuilles entières », le compte « vingt et une marques »).
 - **Lot 5 — FAIT (migration 266, 17 octobre)** — New World : Drew Estate (« Marvin Samuels » pour Samel, rachat par
   Swisher de 2014 absent), Liga Privada, My Father, Oliva, Perdomo, Plasencia, Alec Bradley, CAO.
-  **Lot 6** — Camacho, Joya de Nicaragua, La Flor Dominicana, Avo, Macanudo, Zino Platinum, Excalibur,
+  **Lot 6 — FAIT (migration 267, 17 octobre)** : Camacho, Joya de Nicaragua, La Flor Dominicana, Avo, Macanudo, Zino Platinum, Excalibur,
   Santa Damiana. **Lot 7** — les fiches « ligne » classées par pays de cape (Arturo Fuente Hemingway et
   Maduro, CAO Cameroon / Black / America, Oliva Serie G et Connecticut Reserve, Perdomo Ecuador ;
   Ashton Cabinet est tranchée). **Lot 8** — Partagás USA, Romeo y Julieta USA, Dannemann, Te Amo,

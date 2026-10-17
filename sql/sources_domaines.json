@@ -223,7 +223,7 @@
         },
         "bespokeunit.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "bestcigarprices.com": {
             "dns": "resout",
@@ -251,7 +251,7 @@
         },
         "blindmanspuff.com": {
             "dns": "resout",
-            "fiches": 20
+            "fiches": 21
         },
         "blog.cigarworld.de": {
             "dns": "resout",
@@ -331,7 +331,7 @@
         },
         "camachocigars.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 1
         },
         "caocigars.com": {
             "dns": "resout",
@@ -411,7 +411,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 127
+            "fiches": 131
         },
         "cigar-keep.com": {
             "dns": "resout",
@@ -435,7 +435,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 175
+            "fiches": 179
         },
         "cigarandspirits.com": {
             "dns": "resout",
@@ -471,7 +471,7 @@
         },
         "cigardojo.com": {
             "dns": "resout",
-            "fiches": 37
+            "fiches": 40
         },
         "cigarengineers.com": {
             "dns": "resout",
@@ -499,11 +499,11 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 11
+            "fiches": 13
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 99
+            "fiches": 97
         },
         "cigarkings.de": {
             "dns": "resout",
@@ -523,7 +523,7 @@
         },
         "cigarpage.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 1
         },
         "cigarpassion.ch": {
             "dns": "resout",
@@ -575,7 +575,7 @@
         },
         "cigarsdirect.com": {
             "dns": "resout",
-            "fiches": 14
+            "fiches": 13
         },
         "cigarseedcompany.eu": {
             "dns": "resout",
@@ -851,7 +851,7 @@
         },
         "drewestate.prezly.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "drunkchickencigars.com": {
             "dns": "resout",
@@ -935,7 +935,7 @@
         },
         "en.wikipedia.org": {
             "dns": "resout",
-            "fiches": 64
+            "fiches": 66
         },
         "enciclopedia.cat": {
             "dns": "resout",
@@ -1003,7 +1003,7 @@
         },
         "famous-smoke.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 5
         },
         "feriotego.com": {
             "dns": "resout",
@@ -1369,6 +1369,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "joyacigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "jpb.ro": {
             "dns": "resout",
             "fiches": 2
@@ -1509,6 +1513,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "laflordominicana.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "lagalana.de": {
             "dns": "resout",
             "fiches": 1
@@ -1620,6 +1628,10 @@
         "luxurycigarclub.com": {
             "dns": "resout",
             "fiches": 7
+        },
+        "macanudo.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "maisondelatruffe.com": {
             "dns": "resout",
@@ -1967,13 +1979,17 @@
         },
         "premiumcigars.org": {
             "dns": "resout",
-            "fiches": 20
+            "fiches": 19
         },
         "prensa-latina.cu": {
             "dns": "resout",
             "fiches": 4
         },
         "presidencia.gob.do": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "presseportal.ch": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2247,7 +2263,7 @@
         },
         "st-group.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "starkezigarren.de": {
             "dns": "resout",
@@ -2267,7 +2283,7 @@
         },
         "stogiephile.blog": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 3
         },
         "stogiepress.com": {
             "dns": "resout",
@@ -2275,7 +2291,7 @@
         },
         "stogiereview.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 4
         },
         "stolenthronecigars.com": {
             "dns": "resout",
@@ -2441,6 +2457,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "timecigar.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "timeout.com": {
             "dns": "resout",
             "fiches": 3
@@ -2538,10 +2558,6 @@
             "fiches": 1
         },
         "us.dalayzigarren.de": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "us.davidoffgeneva.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2700,6 +2716,10 @@
         "zino.ci": {
             "dns": "resout",
             "fiches": 2
+        },
+        "zino.oettingerdavidoff.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "zirahotel.com": {
             "dns": "resout",

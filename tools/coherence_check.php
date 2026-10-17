@@ -675,8 +675,6 @@ const COHER_DATES_ASSUMEES = [
         '1963 est la fondation de la HATSA par Frank Llaneza, pas celle de la marque',
     'Menendez Amerino' =>
         '1980 est la creation de la gamme Alonso Menendez, pas celle de la fabrique',
-    'Avo' =>
-        '1984 ne date pas la maison, qui parait en 1988',
     'De Los Reyes Cigars' =>
         '1961 est la creation de la ferme de Navarrete par Leo Reyes ; la fabrique, elle, ouvre en 1995',
 ];

@@ -994,6 +994,21 @@ par paragraphes. Aucun rang mondial, aucun nom de revue à notes.
 - Domaines : community.apan.org (mort) et elementvape.com retirés des sources avant scellage. Garde-fous verts ; `sources.php` : lefagot, trabucul, zirahotel, espinashotel (hors lot).
   Ouvert : propriétaire de Drew Estate, vitolas de plusieurs lignes, Tempus, pays de classement de CAO, lien Ozgener / République dominicaine (259).
 
+## Migration 267 — vague 2, lot 6 : huit marques du Nouveau Monde (17 octobre)
+
+Camacho, Joya de Nicaragua, La Flor Dominicana, Avo, Macanudo, Zino Platinum, Excalibur et Santa Damiana relues page par page
+le 17 octobre, puis traduites ; histoire remplacée par paragraphes. Aucun rang, aucun nom de revue à notes.
+- **Camacho.** Faux : récit du corojo en Vuelta Abajo, « Cigars Gone Loud », Davidoff « fin 2008 » (1er octobre 2008), BXP (versions pressées), Barrel-Aged (République dominicaine) ; fondation 1961 ou 1962 en divergence.
+- **Joya de Nicaragua.** Faux : Somoza fondateur en 1968 (Bermejo et Camacho ; Somoza entre au capital en 1971-1974), Cuatro Décadas, paragraphes Black Swan et CigarPage (aucune page) ; Cabinetta Mild ; Black Swan retiré de `mentions`.
+- **La Flor Dominicana.** Faux : fondateur « Jochy Blanco » (Litto Gómez), Double Ligero 75 × 184 mm, « moule », Mystery Ligero ; 1994 ou 1996 en divergence.
+- **Avo.** Faux : Uvezian mort à 91 ans, orchestre de Sinatra, parents rescapés, « XO la plus demandée » ; Strangers in the Night en deux versions attribuées ; jalons datés ajoutés.
+- **Macanudo.** Faux : 1868 / Temple Hall (rachat de 1968 par General Cigar), Café (Connecticut Shade, liant mexicain), Inspirado, Gold Label en édition limitée.
+- **Zino Platinum.** Faux : années 1980 et 2002 (Zino 1978, Platinum 2003), capes d'Équateur ; relance nicaraguayenne de 2021 ajoutée.
+- **Excalibur.** Faux : citation de Blumenthal, Dark Knight en Broadleaf du Connecticut ; divergences sur la naissance, la vente de Villazon, HATSA.
+- **Santa Damiana.** Faux : 1993 (1992), Kelner créateur, accords ; gamme réduite à une ligne (Classic).
+- Garde-fous verts ; `coherence_check` : Avo sort des dates assumées. `sources.php` : lefagot, trabucul, zirahotel, espinashotel (hors lot).
+  Ouvert : propriétaire de plusieurs marques, vitolas, pays de roulage de Zino Platinum, Black Swan dans Oliva, Rocky Patel et E.P. Carrillo.
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :
