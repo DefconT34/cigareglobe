@@ -6416,3 +6416,11 @@ Dannemann, Te Amo, Tabacalera et Villiger restent où elles sont, confirmées pa
 et les lignes dont aucune page ne dit qu'elles sont roulées à la main restent hors gamme (Premium No. 6, Export et cigarillos de Villiger, 1875 et Reserve Maduro de Romeo y Julieta USA). Un « fondée en 1989 » de Villiger,
 qui se lisait comme la date de la maison, est devenu « de 1989 ». La Flor de la Isabela s'est révélée être la marque phare rebaptisée Tabacalera : sa fusion dans Tabacalera est traitée à part (migration 270).
 Vérificateurs : 457 000 jetons (plus 38 000 perdus : une passe de Te Amo sans accès web, refaite), traductions 252 000 et retouche de cinq phrases 66 000, contre 389 000 et 273 000 au lot 7 ; 1039 assertions, 0 échec.
+
+## Vague 2, fin — fusion Isabela, quinze établissements dépubliés, Perdomo renommé (migrations 270 à 272)
+
+**270** : La Flor de la Isabela est fusionnée dans Tabacalera (Philstar, 2011 : la marque phare rebaptisée). La ligne `brands` et ses 15 sceaux disparaissent ; la phrase « a sa propre fiche » est retirée de Tabacalera, les renvois d'Alhambra et de Tabaqueria de Filipinas aussi, dans six langues ; la page Philippines passe de quatre à trois fiches.
+**271** : quinze offres de l'audit sont dépubliées (golfs, marinas, hôtels, port : aucune page n'atteste un espace à cigares ; noms d'espace inventés à Wentworth, Kansai, Aberdeen, Southampton). Réversible. Quatre restent à corriger de nom (Hanoi, Monaco, Hotel Nacional, Raffles) et trois à vérifier sur le site du lieu (Churchill Bar, One°15, Alvear).
+**272** : « Perdomo Ecuador » devient « Perdomo Legacy Connecticut » (clé, sceaux, listes de pages Nicaragua et Équateur ; cigar-coop, 12 octobre 2025).
+Questions ouvertes relues par l'expert cigare : la fabrique de Te Amo, la fusion Gemstone de Tabacalera USA (29 octobre 2020), le propriétaire de CAO et General Cigar sont déjà dans les fiches ; rien à changer. Restent non établis : usine de CAO Black, ligne de São Félix, fabrique actuelle de Tabacalera Philippines.
+« annuaire dans 92 pays » devient « sélection » (méta-descriptions, six langues). 1039 assertions, 0 échec.

@@ -1045,3 +1045,8 @@ Décisions éditoriales qui restent à l'utilisateur :
   compte à côté de 7 000 000 faits à la main, les vitolas de Pelo de Oro et la
   gamme Quattro d'Aging Room, Guardian of the Farm et Flor del Valle (absentes
   de warpedcigars.com en octobre 2026), Atabey et Byron (mots de prix).
+
+## Migrations 270 à 272 — fin de la vague 2 (21 octobre)
+
+270 fusionne La Flor de la Isabela dans Tabacalera ; 271 dépublie quinze établissements sans page (réversible) ; 272 renomme la fiche Perdomo Ecuador en Perdomo Legacy Connecticut.
+Ouvert : usine de CAO Black et de CAO America (source indirecte), ligne de São Félix de Dannemann, usine actuelle de Tabacalera Philippines, rendu de/zh/ar du lot 7 en prod ; établissements à renommer (Hanoi, Monaco, Hotel Nacional, Raffles) ou à vérifier (Churchill Bar, One°15, Alvear) ; `habanos_presence` Philippines (usine « La Flor de la Isabela », marques officielles) non relu.

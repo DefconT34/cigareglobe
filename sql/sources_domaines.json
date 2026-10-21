@@ -21,15 +21,7 @@
             "dns": "resout",
             "fiches": 1
         },
-        "aberdeenmarinaclub.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "abg-net.de": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "abports.co.uk": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1003,7 +995,7 @@
         },
         "fairmont.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 1
         },
         "falkum.de": {
             "dns": "resout",
@@ -1077,10 +1069,6 @@
             "dns": "resout",
             "fiches": 1
         },
-        "gc-eichenried.de": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "gcbc.com": {
             "dns": "resout",
             "fiches": 1
@@ -1126,10 +1114,6 @@
             "fiches": 2
         },
         "godoffire.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "golf-national.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1412,10 +1396,6 @@
         "kempinski.com": {
             "dns": "resout",
             "fiches": 3
-        },
-        "kgc.jp": {
-            "dns": "resout",
-            "fiches": 1
         },
         "kingfahdpalacehotels.com": {
             "dns": "resout",
@@ -1913,10 +1893,6 @@
             "dns": "resout",
             "fiches": 1
         },
-        "parisyachtmarina.fr": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "pasionpuro.com": {
             "dns": "resout",
             "fiches": 1
@@ -1949,10 +1925,6 @@
             "dns": "resout",
             "fiches": 1
         },
-        "pebblebeach.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "perdomocigars.com": {
             "dns": "resout",
             "fiches": 2
@@ -1963,7 +1935,7 @@
         },
         "philstar.com": {
             "dns": "resout",
-            "fiches": 3
+            "fiches": 2
         },
         "pindula.co.zw": {
             "dns": "resout",
@@ -2034,10 +2006,6 @@
             "fiches": 1
         },
         "ptpn10.co.id": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "puertobanus.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2121,14 +2089,6 @@
             "dns": "resout",
             "fiches": 1
         },
-        "royalgolfmarrakech.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "royalmelbourne.com.au": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "rpaxtian.com": {
             "dns": "resout",
             "fiches": 1
@@ -2178,10 +2138,6 @@
             "fiches": 4
         },
         "semana.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "sentosagolf.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2285,10 +2241,6 @@
             "dns": "resout",
             "fiches": 1
         },
-        "steenberghotel.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "stogieguys.com": {
             "dns": "resout",
             "fiches": 2
@@ -2355,7 +2307,7 @@
         },
         "tabacalera.com.ph": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 3
         },
         "tabacalerapalma.com": {
             "dns": "resout",
@@ -2454,10 +2406,6 @@
             "fiches": 1
         },
         "theritzlondon.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "thesavoylondon.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2634,10 +2582,6 @@
             "fiches": 2
         },
         "webull.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "wentworthclub.com": {
             "dns": "resout",
             "fiches": 1
         },
