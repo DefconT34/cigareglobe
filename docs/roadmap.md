@@ -233,8 +233,9 @@ chiffres) ; chaque lot = vérification page par page, traduction, migration :
   Santa Damiana.
   **Lot 7 — FAIT (migration 268, 21 octobre)** : fiches « ligne » classées par pays de roulage (Arturo Fuente Hemingway et
   Maduro, CAO Cameroon / Black / America, Oliva Serie G et Connecticut Reserve, Perdomo Ecuador ;
-  le renommage de Perdomo Ecuador reste à faire). **Lot 8** — Partagás USA, Romeo y Julieta USA, Dannemann, Te Amo,
-  Tabacalera, La Flor de la Isabela, General Cigar, Villiger.
+  le renommage de Perdomo Ecuador reste à faire).
+  **Lot 8 — FAIT (migration 269, 21 octobre)** : Partagás USA, Romeo y Julieta USA, Dannemann, Te Amo, Tabacalera, General Cigar, Villiger ;
+  La Flor de la Isabela (marque phare rebaptisée Tabacalera) : fusion dans Tabacalera à faire (migration 270).
 - Hors lots : Toscano (Classico et Toscanello à la machine selon les importateurs), le classement de
   Villiger / Oettinger Davidoff / Burger Söhne en Suisse, les paragraphes doublés de Villiger Söhne en
   zh et ar, « shared with H. Upmann » dans l'anglais de Punch. Détail et phrases à risque : fichier de

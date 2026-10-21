@@ -6408,3 +6408,11 @@ fois, un par fiche : 56 000 jetons par fiche contre 66 000 en anglais au lot 5. 
 La doctrine des fiches « de cape » a été tranchée pour le pays de roulage, fiche par fiche : cinq vont au Nicaragua, deux en République dominicaine, une au Honduras. Les pistes ne se sont pas
 toutes confirmées : CAO Cameroon n'est pas hondurien (STG Estelí), Arturo Fuente Maduro n'a pas de cape brésilienne. Le renommage de Perdomo Ecuador est reporté (clé de la table). Vérificateurs : 389 000 jetons, traductions 273 000,
 contre 447 000 et 307 000 au lot 6. Restent le lot 8 et les pages Cuba (sol, variétés, récolte).
+
+## Vague 2, lot 8 — sept fiches graine et homonymes (migration 269)
+
+Trois fiches changent de pays : Partagás USA, Romeo y Julieta USA et General Cigar passent en République dominicaine (arbitrage du 21 octobre pour les deux dernières, qui se roulent dans plusieurs pays).
+Dannemann, Te Amo, Tabacalera et Villiger restent où elles sont, confirmées par page. Les récits sans page tombent (Tampa et Ybor City, Philip Morris, « Altadis depuis 2000 », monopole des manufactures privées),
+et les lignes dont aucune page ne dit qu'elles sont roulées à la main restent hors gamme (Premium No. 6, Export et cigarillos de Villiger, 1875 et Reserve Maduro de Romeo y Julieta USA). Un « fondée en 1989 » de Villiger,
+qui se lisait comme la date de la maison, est devenu « de 1989 ». La Flor de la Isabela s'est révélée être la marque phare rebaptisée Tabacalera : sa fusion dans Tabacalera est traitée à part (migration 270).
+Vérificateurs : 457 000 jetons (plus 38 000 perdus : une passe de Te Amo sans accès web, refaite), traductions 252 000 et retouche de cinq phrases 66 000, contre 389 000 et 273 000 au lot 7 ; 1039 assertions, 0 échec.

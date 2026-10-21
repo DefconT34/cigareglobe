@@ -1019,6 +1019,14 @@ contre la règle « roulé aujourd'hui ». Relues page par page le 21 octobre, p
 - Garde-fous verts, 1039 assertions, 0 échec. Perdomo Ecuador : aucune page de la maison ne nomme la ligne ; le renommage touche la clé `brands.name` et n'est pas fait ici.
   Ouvert : fabrique actuelle de CAO Black, CAO America et Serie G ; propriétaire de CAO ; renommage de Perdomo Ecuador.
 
+## Migration 269 — vague 2, lot 8 : sept fiches graine et homonymes (21 octobre)
+
+Partagás USA, Romeo y Julieta USA, Dannemann, Te Amo, Tabacalera, General Cigar, Villiger : relues page par page le 21 octobre ; pays de roulage décidé fiche par fiche.
+- **Classement.** Partagás USA : République dominicaine (General Cigar Dominicana, Santiago). Romeo y Julieta USA : République dominicaine, avec trois pays de roulage écrits (150th Anniversary, Reserve au Honduras, 1875 Nicaragua). General Cigar : République dominicaine (Macanudo), Flathead à Estelí, répartition non établie. Dannemann (Brésil), Te Amo (Mexique), Tabacalera (Philippines), Villiger (Nicaragua) : inchangées. Listes de marques : dominicaine +3, États-Unis −3.
+- **Faux.** « Marque la plus vendue » et Serie D USA de Partagás USA ; cape et gamme de Romeo y Julieta USA ; statue, esclavage, « quatre générations » de Dannemann ; « Altadis depuis 2000 » de Te Amo ; récit des manufactures privées de Tabacalera ; Tampa, Philip Morris et « assemblage jamaïcain » de General Cigar ; « retraite en 2020 », « quatrième génération » de Villiger.
+- Garde-fous verts, 1039 assertions, 0 échec. `coherence_check` : « fondée en 1989 » de Villiger retiré. `sources.php` : lefagot, trabucul, zirahotel, espinashotel (hors lot).
+  Ouvert : fabrique actuelle de Te Amo et de Tabacalera, clôture de la vente de Tabacalera USA, nom de la ligne de São Félix (Dannemann), sites de General Cigar et Macanudo illisibles. La Flor de la Isabela : fusion dans Tabacalera, migration 270.
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :
