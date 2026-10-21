@@ -1009,6 +1009,16 @@ le 17 octobre, puis traduites ; histoire remplacée par paragraphes. Aucun rang,
 - Garde-fous verts ; `coherence_check` : Avo sort des dates assumées. `sources.php` : lefagot, trabucul, zirahotel, espinashotel (hors lot).
   Ouvert : propriétaire de plusieurs marques, vitolas, pays de roulage de Zino Platinum, Black Swan dans Oliva, Rocky Patel et E.P. Carrillo.
 
+## Migration 268 — vague 2, lot 7 : huit fiches « ligne » classées par pays de roulage (21 octobre)
+
+Arturo Fuente Hemingway et Maduro, CAO Cameroon, Black et America, Oliva Serie G et Connecticut Reserve, Perdomo Ecuador : classées jusque-là par le pays de leur cape,
+contre la règle « roulé aujourd'hui ». Relues page par page le 21 octobre, pays de roulage décidé fiche par fiche, cape écrite dans l'histoire ; accords « même pays que la cape » retirés.
+- **Classement.** Arturo Fuente Hemingway et Maduro : République dominicaine. CAO Cameroon, CAO America, Oliva Serie G, Oliva Connecticut Reserve, Perdomo Ecuador : Nicaragua. CAO Black : Honduras (état daté, fabrique actuelle non établie par une page).
+  CAO America : Honduras (2007) ou Nicaragua (2021-2022) en divergence, classée Nicaragua. Les listes de marques des pays suivent (dominicaine, Honduras, Nicaragua ; Brésil, Mexique, États-Unis perdent les descriptions fausses).
+- **Faux.** Récit brésilien d'Arturo Fuente Maduro (cape du Connecticut Broadleaf) ; récit de l'écrivain d'Arturo Fuente Hemingway ; cape San Andrés de CAO Black (Connecticut d'Équateur) ; « 100 % tabac américain » de CAO America (lancée en 2007, liant brésilien) ; « General Cigar à Danlí » de CAO Cameroon ; corps de Serie G ; Andes d'Oliva Connecticut Reserve ; altitude de Perdomo Ecuador.
+- Garde-fous verts, 1039 assertions, 0 échec. Perdomo Ecuador : aucune page de la maison ne nomme la ligne ; le renommage touche la clé `brands.name` et n'est pas fait ici.
+  Ouvert : fabrique actuelle de CAO Black, CAO America et Serie G ; propriétaire de CAO ; renommage de Perdomo Ecuador.
+
 ## En réserve
 
 Décisions éditoriales qui restent à l'utilisateur :

@@ -6402,3 +6402,9 @@ Même prose romancée, mêmes inventions : le fondateur de La Flor Dominicana (J
 l'orchestre de Sinatra et les parents rescapés d'Avo, la citation de Blumenthal chez Excalibur. Les vérificateurs travaillaient en français cette
 fois, un par fiche : 56 000 jetons par fiche contre 66 000 en anglais au lot 5. Deux classements, même attribués, sont sortis (« le plus vendu » de Macanudo,
 « pas le meilleur cigare non cubain » d'Excalibur), et un « tripe » écrit pour le liant a été corrigé avant traduction. La 267 appliquée ; 1039 assertions, 0 échec. Restent les lots 7 et 8.
+
+## Vague 2, lot 7 — huit fiches « ligne » par pays de roulage (migration 268)
+
+La doctrine des fiches « de cape » a été tranchée pour le pays de roulage, fiche par fiche : cinq vont au Nicaragua, deux en République dominicaine, une au Honduras. Les pistes ne se sont pas
+toutes confirmées : CAO Cameroon n'est pas hondurien (STG Estelí), Arturo Fuente Maduro n'a pas de cape brésilienne. Le renommage de Perdomo Ecuador est reporté (clé de la table). Vérificateurs : 389 000 jetons, traductions 273 000,
+contre 447 000 et 307 000 au lot 6. Restent le lot 8 et les pages Cuba (sol, variétés, récolte).
