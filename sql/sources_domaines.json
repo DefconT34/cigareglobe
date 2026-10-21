@@ -431,7 +431,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 176
+            "fiches": 177
         },
         "cigarandspirits.com": {
             "dns": "resout",
@@ -1159,7 +1159,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 180
+            "fiches": 181
         },
         "hacico.de": {
             "dns": "resout",
@@ -1226,10 +1226,6 @@
             "fiches": 1
         },
         "hoteldulac-benin.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "hotelnacionaldecuba.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1358,6 +1354,10 @@
             "fiches": 6
         },
         "journal.unnes.ac.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "journaldespalaces.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1833,10 +1833,6 @@
             "dns": "resout",
             "fiches": 1
         },
-        "one15marina.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "oneandonlyresorts.com": {
             "dns": "resout",
             "fiches": 2
@@ -2035,7 +2031,7 @@
         },
         "raffles.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 1
         },
         "rauchr.de": {
             "dns": "resout",
@@ -2206,10 +2202,6 @@
             "fiches": 5
         },
         "smokintabacco.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "sofitel-legend-metropole-hanoi.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2621,7 +2613,7 @@
             "dns": "resout",
             "fiches": 1
         },
-        "ycm.org": {
+        "yacht-club-monaco.mc": {
             "dns": "resout",
             "fiches": 1
         },

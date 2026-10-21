@@ -956,6 +956,30 @@ function note_plausible(string $extrait): bool {
 const REVUES_ADMISES_HORS_MARQUES = [
     'lounges|Elite Cigar Abidjan|description|zh'
         => '雪茄爱好者聚集地 = « lieu de rassemblement des amateurs de cigares », pas la revue',
+    'producer_countries|Cuba|notes|fr'
+        => 'cite Cigar Aficionado (2000) pour DATER la liste des variétés cubaines, au lieu de la reprendre à son compte',
+    'producer_countries|Cuba|notes|en'
+        => 'cite Cigar Aficionado (2000) pour DATER la liste des variétés cubaines, au lieu de la reprendre à son compte',
+    'producer_countries|Cuba|notes|es'
+        => 'cite Cigar Aficionado (2000) pour DATER la liste des variétés cubaines, au lieu de la reprendre à son compte',
+    'producer_countries|Cuba|notes|de'
+        => 'cite Cigar Aficionado (2000) pour DATER la liste des variétés cubaines, au lieu de la reprendre à son compte',
+    'producer_countries|Cuba|notes|zh'
+        => 'cite Cigar Aficionado (2000) pour DATER la liste des variétés cubaines, au lieu de la reprendre à son compte',
+    'producer_countries|Cuba|notes|ar'
+        => 'cite Cigar Aficionado (2000) pour DATER la liste des variétés cubaines, au lieu de la reprendre à son compte',
+    'lounges|Hotel Nacional de Cuba — bar à cigares à l\'étage|description|fr'
+        => 'attribue à Cigar Aficionado (mai/juin 2024) la description du bar de l\'étage, seule page lue, au lieu de la reprendre à son compte',
+    'lounges|Hotel Nacional de Cuba — bar à cigares à l\'étage|description|en'
+        => 'attribue à Cigar Aficionado (mai/juin 2024) la description du bar de l\'étage, seule page lue, au lieu de la reprendre à son compte',
+    'lounges|Hotel Nacional de Cuba — bar à cigares à l\'étage|description|es'
+        => 'attribue à Cigar Aficionado (mai/juin 2024) la description du bar de l\'étage, seule page lue, au lieu de la reprendre à son compte',
+    'lounges|Hotel Nacional de Cuba — bar à cigares à l\'étage|description|de'
+        => 'attribue à Cigar Aficionado (mai/juin 2024) la description du bar de l\'étage, seule page lue, au lieu de la reprendre à son compte',
+    'lounges|Hotel Nacional de Cuba — bar à cigares à l\'étage|description|zh'
+        => 'attribue à Cigar Aficionado (mai/juin 2024) la description du bar de l\'étage, seule page lue, au lieu de la reprendre à son compte',
+    'lounges|Hotel Nacional de Cuba — bar à cigares à l\'étage|description|ar'
+        => 'attribue à Cigar Aficionado (mai/juin 2024) la description du bar de l\'étage, seule page lue, au lieu de la reprendre à son compte',
 ];
 
 
