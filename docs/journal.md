@@ -1,5 +1,9 @@
 
 
+## Migration 281 — trois domaines morts : lefagot.com, zirahotel.com, espinashotel.com
+
+`sources.php --verifier` a vu trois domaines résolus en septembre devenir inexistants. expert-cigare a relu les trois fiches (recherches en langue locale et en anglais), puis un contradicteur a lu les pages de chaque salon de l'Espinas Palace. Fagot Cigare (#11, Abidjan) et Zira Hotel (#935, Belgrade) restent « à vérifier », leur description ramenée à ce qui est sourcable ; l'Espinas Palace (#950, Téhéran) est retiré, l'hôtel publiant la liste de ses salons sans salon cigares (règle de la 155) ; son adresse était aussi fausse. La marque Le Fagot Cigar et les feuilles de Didiévi et de Tiébissou ne citent plus le domaine. Sceau des domaines refait (666). Cliquet des relues : 4 225 → 4 221, car la réécriture des descriptions de #11 et #935 remet leurs quatre traductions zh et ar au statut machine. Reste ouvert : lire la page officielle du Zira (403) ou appeler l'hôtel ; la sonde `lounges_sondes.json` notait encore lefagot.com « ok » en septembre.
+
 ## Migrations 279 et 280 — relecture des 859 textes `gamme`, `celebrities`, `pairings` et éditions limitées, chinois et arabe
 
 Suite des 277-278 : 26 morceaux par langue relus par expert-traduction. zh : 358 corrigés, 501 validés ; ar : 447 corrigés, 412 validés ; 0 refus. Coût mesuré : 73 000 à 99 000 jetons par agent, environ 4,5 millions pour les 52 agents. Cliquet des relues : 2 507 → 4 225 (zh 1 821, ar 1 817). Trois noms de gammes en lettres latines (« The Man », Arturo Fuente et Holt's) entrent à la référence de `i18n_langue_check`. Non relu : le de, l'es, et le reste des fiches de marques. Alerte hors lot : `sources.php --verifier` voit désormais espinashotel.com, lefagot.com et zirahotel.com inexistants au DNS (6 fiches) ; le sceau n'a pas été refait, la règle « domaine mort ne se cite pas » reste à appliquer.
