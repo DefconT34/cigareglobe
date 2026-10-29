@@ -214,7 +214,7 @@ L3512-4, exception « éditeur hors UE ») et juriste d'Abidjan, représentant U
 Fait (vague 2, lot 1, migrations 261 et 262) : fiches phares (Fuente, Cohiba et Cohiba USA, Padrón,
 Davidoff et Oettinger Davidoff), page Cuba, méta-texte des maisons, pays et feuilles. Reste, côté
 nous : les lots 2 à 8 de la vague 2 (ci-dessous) ; mention sanitaire persistante sur l'accueil du globe (FAITE : ligne fixée en bas du globe) ;
-regroupement des 40 requêtes de l'accueil et message de repli si un script échoue (vague 4,
+message de repli de l'accueil FAIT (15 s sans démarrage : « Recharger la page ») ; regroupement des 40 requêtes de l'accueil (vague 4,
 selon la réponse d'o2switch sur les 429).
 ### Vague 2 — relire les fiches suivantes (expert cigare, un lot de huit à la fois)
 
@@ -293,7 +293,7 @@ Tabacosta, Swag.
 
 ### Reste du lot 21 (migration `235`)
 
-- Trois caves Zino sans rue : Cosmos, Sofitel, Plateau.
+- Trois caves Zino sans rue : Cosmos, Sofitel, Plateau (zino.ci ne publie que e-mail et téléphone ; relu le 29 octobre 2026, rien d'établi).
 
 ### Reste de la 242 — autour des salons de C.Gars Ltd
 

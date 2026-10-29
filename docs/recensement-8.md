@@ -696,6 +696,15 @@ pages vivantes ; seule la phrase contredite change :
   2022, Aramas date de mars 2023 ; Karatoba (NACSA), Maracana et World Cup
   2026 (My Father) sont nommées sans entrer en gamme : aucune page lue ne les
   dit roulées à la main ligne par ligne.
+- **Rocky Patel** : Vintage 2006 et Sapphire roulés au Nicaragua (rockypatel.com) ; Vintage 1992 existe, Vintage 1990 sans pays de roulage publié (Cigar Aficionado, ancien : Honduras) ; Fifty Years introuvable sur le site ; Indian Tabac : cession à Rocky Patel en 1997 (Cigar Authority) ou 2002 (Cigar Coop), rachat par Phil Zanghi en 2014.
+- **Miami Cigar & Co.** : La Aurora a repris sa distribution américaine le 1er
+  avril 2023 (annonce du 11 novembre 2022) ; l'article de juillet 2023 n'a pas
+  été retrouvé. Fabriques de la Collection Nestor Miranda, de Don Lino
+  (non communiquée ou El Artista) et d'Africa (A.J. Fernandez) mises à jour.
+- **Ozgener** : Bosphorus est chez La Alianza (Casa Carrillo) depuis novembre
+  2022, Aramas date de mars 2023 ; Karatoba (NACSA), Maracana et World Cup
+  2026 (My Father) sont nommées sans entrer en gamme : aucune page lue ne les
+  dit roulées à la main ligne par ligne.
 - **Rocky Patel** : `factory` TaviCusa (Estelí) et El Paraiso (Danlí) ;
   Toraño International, que nulle page de 2024-2026 ne nomme, sort du champ.
 - **Tabacalera Palma** : la maison écrit elle-même 1925 (création) et 1936
@@ -1033,10 +1042,10 @@ Vérifiées le 29 octobre 2026 (migration 290) ; ce qui reste est non établi et
 - **Rocky Patel** : le site montre Vintage 1990, 2006 et Sapphire, ni 1992 ni Fifty ; le pays
   de roulage actuel n'est pas vérifiable ; Indian Tabac : rachat par Phil Zanghi en 2014, cession
   datée de 1997 ou 2002 selon les sources.
-- **Miami Cigar & Co.** : la série dominicaine de Don Lino est écrite comme annoncée en 2021 et
+- **Miami Cigar & Co.** : miamicigar.com liste Tatiana, Nestor Miranda, Outcast et Don Lino, sans sous-ligne ; la série dominicaine de Don Lino est écrite comme annoncée en 2021 et
   absente de la page de la maison (290) ; Don Lino Original reste non vérifiable.
 - **Tabacosta** : rien à changer, la fiche lit Halfwheel.
-- **Hors de ces lots** : Swag (aucune page de 2024-2026), les 2 000 000 de cigares « machine made »
+- **Hors de ces lots** : Swag (Oliveros / Habana Cuba, 2010, roulée en République dominicaine ; aucune page de 2024-2026), les 2 000 000 de cigares « machine made »
   de Tabacalera Palma, les vitolas de Pelo de Oro, Guardian of the Farm, Flor del Valle, Atabey et
   Byron : non vérifiables ; la gamme Quattro d'Aging Room se compose d'Original, Maduro, Connecticut
   et Nicaragua.
