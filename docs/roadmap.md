@@ -287,6 +287,13 @@ Tabacosta, Swag.
 - Chester (fiche 50) et Soho (fiche 283) : **réglés, migration 289** (Chester au 32 Watergate Street, « célèbre » retiré ; Soho retiré, aucune boutique à Old Compton Street). Knutsford : la Casa de C.Gars (10 Minshull Street) n'est pas confirmée, pas de fiche. Trois caves Zino : Cosmos = Boulevard Principal, Yopougon (habanos.com), sans numéro, non écrit ; Sofitel et Plateau : aucune rue publiée.
 - Zira Hotel, Belgrade (fiche 935) : **retiré, migration 288** (hôtel non-fumeur hors terrasse, aucun cigar bar décrit) ; à rétablir si l'hôtel (+381 11 331 4800) en confirme un.
 
+### Audit n° 2 (29 octobre 2026) et pilote États-Unis
+
+Moyenne 3,1/5 (2,4 le 9 octobre). Pas d'annonce large avant : regroupement des scripts déployé (commit 3c222cc), cron nocturne, sonde d'uptime et certificat (échéance 30 novembre), ticket 429 o2switch, rotation de DB_PASS / ADMIN_KEY / MAIL_API_KEY après lecture des journaux du 8 octobre, polices Google hébergées en local, page légale refaite (statut de l'éditeur, représentant UE, ARTCI), avis d'avocat sur la loi Évin. Dépôt GitHub public : à trancher.
+- Contenu à corriger : chiffres d'export contradictoires des pays (`producer_countries.revenue` / `habanos_presence.revenue`), titre « Habanos S.A. » des pays non cubains, superlatifs.
+- États-Unis : 21 fiches relues (migration 292 : 4 fermetures). Reste 17 fiches : 10 à corriger, 6 à vérifier, 1 confirmée ; fiche 151 à relire à la main. Coût mesuré ≈ 5 000 jetons par fiche (sans contradicteur). Étendre aux autres pays si le pilote convainc : États-Unis, France, Royaume-Uni, Espagne, Allemagne d'abord.
+- Données à vendre (plan de l'agent monétisation, hypothèses de prix non fondées sur le marché) : export CSV par pays, veille mensuelle ; base réelle 336 lieux publiés, dont 166 datés.
+
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → ~~B1~~ → ~~F3/F4/F6~~ → ~~**B4b2**~~ → D6/C1b (optionnels)
 

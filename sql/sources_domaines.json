@@ -1,10 +1,6 @@
 {
     "fige_le": "2026-10-29",
     "domaines": {
-        "21club.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "262cigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -126,10 +122,6 @@
             "fiches": 1
         },
         "artlyst.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "arturo-fuente.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -436,10 +428,6 @@
         "cigarcentury.com": {
             "dns": "resout",
             "fiches": 11
-        },
-        "cigarcitybrewing.com": {
-            "dns": "resout",
-            "fiches": 1
         },
         "cigarconexion.com": {
             "dns": "resout",
@@ -1752,10 +1740,6 @@
         "nacion.com": {
             "dns": "resout",
             "fiches": 2
-        },
-        "natsherman.com": {
-            "dns": "resout",
-            "fiches": 1
         },
         "neptunecigar.com": {
             "dns": "resout",
