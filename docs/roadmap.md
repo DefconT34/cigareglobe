@@ -255,10 +255,19 @@ ne reculent pas. Chaque lot = une migration (`--importer`).
 - **237** — anglais des feuilles : 186 relus, 20 corrigés (glossaire :
   *cigar cellars*, *sun-grown*, *factory*, *moho azul* gardé ; « douceur »
   rendue *mildness* comme partout ailleurs ; calques).
-- Suite : établissements (357 fiches publiées sur 522 — les dépubliées
-  ne se relisent pas ; lot exporté en trois parts), maisons (histoire,
-  célébrités, accords — 611 k caractères, `gamme` en JSON à traiter par
-  structure), puis es, de, zh, ar.
+- **274 à 280** — zh et ar, par morceaux de 28 000 caractères français, les
+  agents ne rendant que leurs corrections : 275-276 (883 textes par langue : pays, marchés,
+  zones, arômes, lexique, feuilles, établissements), 277-278 (historique de 67 fiches de
+  marques), 279-280 (859 textes `gamme`, `celebrities`, `pairings`, éditions limitées :
+  zh 358 corrigés, ar 447 corrigés, 0 refus). Environ 4,5 M de jetons pour 279-280.
+  État : 4 221 relues sur 10 500 (zh 1 821, ar 1 817, en 555, de 16, es 16).
+- Suite : zh et ar, ~280 textes chacun (fiches de marques restantes, douze refusés pour
+  superlatif en 275-276), à faire en premier ; puis en (1 545 restants), de et es
+  (2 084 chacun), le plus coûteux (plusieurs millions de jetons par langue).
+- **281** — trois domaines morts (lefagot.com, zirahotel.com, espinashotel.com) : Fagot
+  Cigare et Zira en « à vérifier », Espinas Palace retiré. Reste ouvert : lire la page
+  officielle du Zira (403) ou appeler l'hôtel ; la sonde `lounges_sondes.json` notait
+  lefagot.com « ok » en septembre (page de registraire ?).
 
 ### Huitième recensement — les marques des catalogues (`docs/recensement-8.md`)
 
