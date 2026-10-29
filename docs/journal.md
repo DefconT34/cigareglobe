@@ -1,3 +1,7 @@
+## Migration 287 — relecture des données générales des pays
+
+Les 184 lounges restés « machine » sont exactement les fiches dépubliées : l'exporteur les écarte à dessein, rien à relire. Les `producer_geo` (devise, langue, indépendance) n'étaient pas dans le plan de l'exporteur ; je ne l'ai pas étendu (une dizaine d'outils s'y appuient) et j'ai écrit la migration à la main, avec l'empreinte du français dans le WHERE. 80 textes × 5 langues relus par expert-traduction (≈27 000 jetons), 1 corrigé : « Part of the Kingdom of the Netherlands since 1986 ». Piège : ma première version dépassait le `varchar(50)` et MySQL l'a coupée sans erreur ; le test « aucune valeur pile à 50 » l'a vu. Cliquet : 9 522 relues. Tests 1039 / 0.
+
 ## Migration 286 — relecture de l'espagnol, tout le reste
 
 1 808 textes espagnols relus par `expert-traduction`, 36 morceaux : 233 corrigés, 1 575 validés, 0 refus (surtout *cigarro* → *puro*, *vitola* pour bague → *anilla*, *torcer* → *liar*, accords). Quelques agents avaient rendu `texto`/`motivo` au lieu de `texte`/`motif` : clés normalisées avant la fusion. « 1500 » du lounge 146 repris en « 1 500+ » comme le français ; trois noms de gammes (Arturo Fuente, Davidoff, Holt's) figés dans la référence de langue. 1039 réussites / 0 échec ; cliquet à 9 122 relues. Coût : 36 agents, ≈2,6 M de jetons. **La relecture des traductions est terminée.**
