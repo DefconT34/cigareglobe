@@ -105,6 +105,7 @@ function action_register(PDO $db): void {
     // Connexion immédiate (email non vérifié → gating à la contribution, Étape B)
     session_regenerate_id(true);
     $_SESSION['uid'] = $uid;
+    $_SESSION['pwh'] = empreinte_mdp($hash);
 
     // `last_login_at` dès l'inscription : la personne EST connectée, et
     // c'est bien sa dernière visite. Sans cette ligne, elle restait
@@ -162,6 +163,14 @@ function action_login(PDO $db): void {
     $email = strtolower(trim($b['email'] ?? ''));
     $pass  = (string)($b['password'] ?? '');
 
+    // Plafond PAR COMPTE visé, en plus de l'IP : un bourrage réparti sur
+    // de nombreuses adresses bute ici. Plafond généreux (30 / 15 min, soit
+    // trois IP saturées) pour qu'un tiers ne verrouille pas un compte
+    // d'un geste ; vaut aussi pour un email inconnu (rien n'est révélé).
+    // ponytail: un tiers à 3+ IP peut encore bloquer un compte 15 min ;
+    // exempter les appareils déjà connectés si cela arrive.
+    rate_limit($db, 'login_compte', 30, 900, 'c:' . substr(hash('sha256', $email), 0, 40));
+
     $stmt = $db->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
     $stmt->execute([$email]);
     $u = $stmt->fetch();
@@ -175,13 +184,15 @@ function action_login(PDO $db): void {
     }
 
     // Ré-hachage si l'algorithme par défaut a changé
-    if (password_needs_rehash($u['password_hash'], PASSWORD_DEFAULT)) {
-        $nh = password_hash($pass, PASSWORD_DEFAULT);
-        $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?")->execute([$nh, $u['id']]);
+    $hash = $u['password_hash'];
+    if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
+        $hash = password_hash($pass, PASSWORD_DEFAULT);
+        $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?")->execute([$hash, $u['id']]);
     }
 
     session_regenerate_id(true);
     $_SESSION['uid'] = (int)$u['id'];
+    $_SESSION['pwh'] = empreinte_mdp($hash);
     $db->prepare("UPDATE users SET last_login_at = NOW() WHERE id = ?")->execute([$u['id']]);
 
     respond(['success' => true, 'user' => user_public($u), 'csrf' => csrf_get()]);
@@ -364,6 +375,8 @@ function action_reset(PDO $db): void {
     $row = $stmt->fetch();
     if (!$row) respond(err('token_invalid', 'Lien invalide ou expiré.'), 400);
 
+    // Le nouveau hachage change l'empreinte gardée en session : toutes
+    // les sessions ouvertes du compte tombent (current_user()).
     $nh = password_hash($pass, PASSWORD_DEFAULT);
     $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?")->execute([$nh, $row['user_id']]);
     $db->prepare("UPDATE email_tokens SET used_at = NOW() WHERE id = ?")->execute([$row['id']]);

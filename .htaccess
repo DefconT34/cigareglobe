@@ -158,6 +158,12 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # www → domaine nu, en un seul saut (http ou https) : deux hôtes, c'étaient
+  # deux sessions distinctes et deux URL pour chaque page (audit sécurité
+  # n° 2). Hôte exact : localhost, les IP privées et les tests n'y passent pas.
+  RewriteCond %{HTTP_HOST} ^www\.thecigarodyssey\.com(:\d+)?$ [NC]
+  RewriteRule ^ https://thecigarodyssey.com%{REQUEST_URI} [L,R=301]
+
   # HTTPS d'abord — sauf en local, où il n'y a pas de certificat.
   #
   # Sans ces exceptions, un Apache de développement redirige vers

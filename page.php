@@ -78,7 +78,7 @@ function page_libelles(): array {
               'fe_emploi','fe_feuille','fe_genese','fe_culture','fe_caracteres',
               'fe_notes','fe_pairings','fe_cigares',
               'mkt_consumption','mkt_share','mkt_trend','mkt_lex_volume','mkt_world_rank',
-              's_habanos','hab_no_rep','hab_founded','hab_ownership','hab_hq',
+              's_habanos','s_industrie_locale','hab_no_rep','hab_founded','hab_ownership','hab_hq',
               'hab_revenue','hab_employees','hab_factories','hab_official_brands',
               'hab_distribution','hab_festival','hab_certifications',
               // Les données générales : huit champs par pays, servis par
@@ -363,7 +363,7 @@ if ($db === null) {
         // Fina, l'Équateur pour ses capes. Le statut le dit en toutes
         // lettres, et le libellé `hab_no_rep` existe pour les seconds.
         if ($hab = page_habanos($db, (string)$p['id'], $lang)) {
-            $corps .= '<section class="pg-bloc"><h2>' . e(L('s_habanos')) . '</h2>';
+            $corps .= '<section class="pg-bloc"><h2>' . e(L((string)$p['id'] === 'cuba' ? 's_habanos' : 's_industrie_locale')) . '</h2>';
             if (trim((string)$hab['status']) !== '') {
                 $corps .= '<p class="pg-rang">' . e((string)$hab['status']) . '</p>';
             } elseif (!(int)$hab['present']) {
@@ -1008,7 +1008,7 @@ if ($vignette !== null): ?>
 <link rel="stylesheet" href="<?= e(page_actif('assets/css/agegate.css')) ?>">
 <script>try{if(localStorage.getItem('cg_age18')==='1')document.documentElement.className+=' age-ok';}catch(e){document.documentElement.className+=' age-ok';}</script>
 <?php if ($jsonld): ?>
-<script type="application/ld+json"><?= json_encode($jsonld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?></script>
+<script type="application/ld+json"><?= json_encode($jsonld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 <?php endif; ?>
 </head>
 <body class="pg-body">

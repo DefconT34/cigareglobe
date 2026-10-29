@@ -585,11 +585,11 @@ window.addEventListener('DOMContentLoaded', function() {
 
   var leafletCSS = document.createElement('link');
   leafletCSS.rel  = 'stylesheet';
-  leafletCSS.href = 'assets/vendor/leaflet/leaflet.css?v=' + VERSION;
+  leafletCSS.href = '/assets/vendor/leaflet/leaflet.css?v=' + VERSION;
   document.head.appendChild(leafletCSS);
 
   var leafletJS = document.createElement('script');
-  leafletJS.src  = 'assets/vendor/leaflet/leaflet.js?v=' + VERSION;
+  leafletJS.src  = '/assets/vendor/leaflet/leaflet.js?v=' + VERSION;
   document.head.appendChild(leafletJS);
 
   // Bouton Explorer (dans la colonne gauche, au-dessus de la recherche)

@@ -103,12 +103,14 @@ function renderHabanos(countryId) {
       '</div>';
   }
 
-  return '\n<div class="sec">Habanos S.A.</div>\n' +
+  // Habanos S.A. est l'entité cubaine : ailleurs le bloc décrit l'industrie locale.
+  var titreHab = countryId === 'cuba' ? 'Habanos S.A.' : t('s_industrie_locale');
+  return '\n<div class="sec">' + titreHab + '</div>\n' +
     '<div class="habanos-block">' +
       '<div class="habanos-header">' +
         '<div class="habanos-logo">🏛</div>' +
         '<div class="habanos-title">' +
-          '<div class="habanos-name">Habanos S.A.</div>' +
+          '<div class="habanos-name">' + titreHab + '</div>' +
           '<div class="habanos-status" style="color:' + (h.statusColor||h.status_color||'var(--gold)') + '">' + _tr(h.status||'') + '</div>' +
         '</div>' +
       '</div>' +

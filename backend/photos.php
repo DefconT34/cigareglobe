@@ -78,6 +78,10 @@ function is_admin(): bool {
 $action = trim($_GET['action'] ?? $_POST['action'] ?? '');
 $db     = getDB();
 
+// Toutes les actions sauf `list` écrivent : jeton CSRF de session, comme
+// api.php et forum.php (SameSite=Lax ne couvre pas un sous-domaine).
+if (in_array($action, ['upload', 'delete', 'primary', 'approve', 'hide'], true)) csrf_verify();
+
 try {
     switch ($action) {
         case 'upload':  action_upload($db); break;
@@ -86,7 +90,7 @@ try {
         case 'primary': action_primary($db); break;
         case 'approve': action_approve($db); break;
         case 'hide':    action_hide($db);    break;
-        default: jout(['error' => 'Action inconnue: ' . $action], 404);
+        default: jout(err('unknown_action', 'Action inconnue'), 404);
     }
 } catch (PDOException $e) {
     error_log('[photos.php] SQL ' . $e->getMessage());

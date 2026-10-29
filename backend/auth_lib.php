@@ -160,17 +160,38 @@ function csrf_verify(): void {
 }
 
 // ── Utilisateur courant ───────────────────────────────────
+/**
+ * Empreinte du hachage de mot de passe, gardée en session à la connexion.
+ *
+ * Une réinitialisation change le hachage, donc l'empreinte : toutes les
+ * sessions ouvertes avant elle (une session volée comprise) tombent à
+ * la requête suivante (audit sécurité n° 2, P1-1). Sans colonne ni
+ * migration. On garde un condensé, pas le hachage lui-même, dans les
+ * fichiers de session.
+ */
+function empreinte_mdp(string $hash): string {
+    return substr(hash('sha256', $hash), 0, 32);
+}
+
 function current_user(PDO $db): ?array {
     if (empty($_SESSION['uid'])) return null;
     $stmt = $db->prepare(
         "SELECT id, email, display_name, role, email_verified, avatar_url, bio, lang,
-                notify_forum, status, created_at, last_login_at
+                notify_forum, status, created_at, last_login_at, password_hash
          FROM users WHERE id = ? AND status = 'active'"
     );
     $stmt->execute([(int)$_SESSION['uid']]);
     $u = $stmt->fetch();
-    if ($u) marquer_visite($db, $u);
-    return $u ?: null;
+    // Session sans empreinte (ouverte avant ce contrôle) ou empreinte
+    // périmée : on la ferme.
+    if ($u && !hash_equals((string)($_SESSION['pwh'] ?? ''), empreinte_mdp((string)$u['password_hash']))) {
+        unset($_SESSION['uid'], $_SESSION['pwh']);
+        return null;
+    }
+    if (!$u) return null;
+    unset($u['password_hash']);
+    marquer_visite($db, $u);
+    return $u;
 }
 
 /**
@@ -309,8 +330,16 @@ function user_public(array $u): array {
 }
 
 // ── Limitation de débit (anti-brute-force) ────────────────
-function rate_limit(PDO $db, string $action, int $max, int $windowSec): void {
-    $ip = client_ip();
+/**
+ * Plafond de tentatives par clé — l'adresse IP par défaut, ou une autre
+ * clé (`$cle`, ex. le compte visé à la connexion), rangée dans la même
+ * colonne `ip` (VARCHAR 45) et purgée avec elle au bout d'un jour.
+ *
+ * Si la base ne répond pas, on REFUSE (503) : laisser passer revenait à
+ * lever le plafond exactement quand on ne peut plus le vérifier.
+ */
+function rate_limit(PDO $db, string $action, int $max, int $windowSec, ?string $cle = null): void {
+    $ip = $cle ?? client_ip();
     try {
         // Les adresses IP des tentatives n'ont aucune valeur au-dela de la fenetre du quota : on
         // les efface au plus tard au bout d'un jour (la politique de confidentialite le dit).
@@ -325,7 +354,8 @@ function rate_limit(PDO $db, string $action, int $max, int $windowSec): void {
         }
         $db->prepare("INSERT INTO auth_attempts (ip, action) VALUES (?, ?)")->execute([$ip, $action]);
     } catch (Throwable $e) {
-        // Table absente → ne pas bloquer l'utilisateur légitime
+        error_log('[auth] rate_limit indisponible (' . $action . ') : ' . $e->getMessage());
+        respond(err('rate_limit_unavailable', 'Service momentanément indisponible. Réessayez dans quelques minutes.'), 503);
     }
 }
 

@@ -479,7 +479,7 @@ $html = preg_replace_callback(
         $d['description'] = $desc;
         $d['inLanguage']  = $lang;
         return '<script type="application/ld+json">'
-             . json_encode($d, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+             . json_encode($d, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP)
              . '</script>';
     },
     $html, 1

@@ -2234,6 +2234,7 @@ html{transition:background .25s,color .25s}
 <script>
 var PHOTOS_API = '<?= rtrim(dirname($_SERVER["SCRIPT_NAME"]), "/") ?>/photos.php';
 var LOUNGE_ID  = <?= $selected_lounge_id ?>;
+var CSRF       = <?= json_encode(csrf_get()) ?>;   // exigé par photos.php
 var _file      = null;
 
 // ── Drag & Drop ───────────────────────────────────────
@@ -2278,6 +2279,7 @@ function doUpload(){
   if(!_file){alert('Sélectionnez une photo');return}
   var fd=new FormData();
   fd.append('photo',_file);
+  fd.append('_csrf',CSRF);
   fd.append('lounge_id',LOUNGE_ID);
   fd.append('caption',document.getElementById('photoCaption').value);
   fd.append('is_primary',document.getElementById('photoIsPrimary').checked?'1':'0');
@@ -2318,7 +2320,7 @@ function doUpload(){
 }
 
 function photoAction(id,action){
-  var fd=new FormData();fd.append('photo_id',id);
+  var fd=new FormData();fd.append('photo_id',id);fd.append('_csrf',CSRF);
   fetch(PHOTOS_API+'?action='+action,{method:'POST',body:fd})
   .then(function(r){return r.json()})
   .then(function(d){if(d.success)location.reload();else alert('Erreur: '+(d.error||'inconnue'))});
@@ -2326,7 +2328,7 @@ function photoAction(id,action){
 
 function photoDelete(id,lid){
   if(!confirm('Supprimer définitivement cette photo ?'))return;
-  var fd=new FormData();fd.append('photo_id',id);
+  var fd=new FormData();fd.append('photo_id',id);fd.append('_csrf',CSRF);
   fetch(PHOTOS_API+'?action=delete',{method:'POST',body:fd})
   .then(function(r){return r.json()})
   .then(function(d){

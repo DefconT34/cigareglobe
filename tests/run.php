@@ -1510,6 +1510,20 @@ check('seo : le plan de site annonce le sujet',
 check('seo : avec sa date de derniere reponse',
       (bool)preg_match('#<lastmod>\d{4}-\d{2}-\d{2}</lastmod>#', $plan['body']));
 
+// Audit securite n° 2 : la description du JSON-LD vient du premier
+// message ; JSON_HEX_TAG | JSON_HEX_AMP l'empeche de casser le <script>.
+$vieillirF();
+$r = post_json($base, $alice, '/backend/forum.php?action=topic_create', [
+    'section' => 'debutants', 'title' => 'Balises dans un sujet',
+    'body'    => 'Essai </script><!--<script> & fin du message.', 'lang' => 'fr',
+]);
+$t_bal = (int)($r['json']['id'] ?? 0);
+$page  = http('GET', $base . "/?sujet=$t_bal", ['jar' => $anon]);
+preg_match('#<script type="application/ld\+json">(.*?)</script>#s', $page['body'], $m);
+check('seo : le JSON-LD n\'emet ni < ni & bruts', isset($m[1]) && !preg_match('/[<&]/', $m[1]));
+check('seo : et reste du JSON valide', is_array(json_decode($m[1] ?? '', true)));
+test_pdo()->exec("DELETE FROM forum_topics WHERE id = $t_bal");
+
 // ════════════════════════════════════════════════════════
 section('Une seule recherche');
 
@@ -1941,6 +1955,53 @@ eq('adresse : les maillons connus sont sautes', '203.0.113.7', $derniere());
 test_pdo()->exec("DELETE FROM auth_attempts");
 
 // ════════════════════════════════════════════════════════
+section('Sessions et plafonds par compte (audit securite n° 2)');
+
+// P1-1 : une reinitialisation ferme TOUTES les sessions ouvertes du compte.
+$rose1 = new_client('rose1');
+$rose2 = new_client('rose2');
+post_json($base, $rose1, '/backend/auth.php?action=register',
+          ['email' => 'rose@test.local', 'password' => 'motdepasse8', 'display_name' => 'Rose']);
+post_json($base, $rose2, '/backend/auth.php?action=login',
+          ['email' => 'rose@test.local', 'password' => 'motdepasse8']);
+$moi = fn(string $jar) => http('GET', $base . '/backend/auth.php?action=me', ['jar' => $jar])['json']['user'] ?? null;
+check('reset : deux sessions ouvertes au depart', $moi($rose1) !== null && $moi($rose2) !== null);
+post_json($base, $anon, '/backend/auth.php?action=forgot', ['email' => 'rose@test.local']);
+$r = post_json($base, $anon, '/backend/auth.php?action=reset',
+               ['token' => last_token('reset'), 'password' => 'nouveaumdp9']);
+eq('reset : nouveau mot de passe accepte', 200, $r['status']);
+eq('reset : la premiere session est fermee', null, $moi($rose1));
+eq('reset : la seconde aussi', null, $moi($rose2));
+$r = post_json($base, $rose2, '/backend/auth.php?action=login',
+               ['email' => 'rose@test.local', 'password' => 'nouveaumdp9']);
+check('reset : une session ouverte APRES tient', $r['status'] === 200 && $moi($rose2) !== null);
+
+// P1-2 : plafond par compte (30 / 15 min), meme quand chaque essai vient
+// d'une adresse differente (proxy declare : une IP par essai).
+test_pdo()->exec("DELETE FROM auth_attempts");
+$bourreur = new_client('bourreur');
+$bornee_a = 0;
+for ($i = 1; $i <= 35; $i++) {
+    $r = post_json($derriere, $bourreur, '/backend/auth.php?action=login',
+        ['email' => 'rose@test.local', 'password' => 'mauvais' . $i],
+        ['X-Forwarded-For: 198.51.100.' . $i]);
+    if ($r['status'] === 429) { $bornee_a = $i; break; }
+}
+eq('compte : le plafond par compte mord au 31e essai reparti', 31, $bornee_a);
+$r = post_json($derriere, $bourreur, '/backend/auth.php?action=login',
+    ['email' => 'bob@test.local', 'password' => 'mauvais'], ['X-Forwarded-For: 198.51.100.200']);
+eq('compte : un autre compte n\'est pas touche', 401, $r['status']);
+
+// Base indisponible : rate_limit() refuse au lieu de laisser passer.
+test_pdo()->exec("RENAME TABLE auth_attempts TO auth_attempts_hs");
+$r = post_json($base, $anon, '/backend/auth.php?action=login',
+               ['email' => 'rose@test.local', 'password' => 'nouveaumdp9']);
+test_pdo()->exec("RENAME TABLE auth_attempts_hs TO auth_attempts");
+eq('plafond : sans table, la connexion est refusee (503)', 503, $r['status']);
+test_pdo()->exec("DELETE FROM users WHERE email = 'rose@test.local'");
+test_pdo()->exec("DELETE FROM auth_attempts");
+
+// ════════════════════════════════════════════════════════
 section('Portee de la moderation');
 
 // CE QUE CE BLOC PROUVE
@@ -2085,7 +2146,16 @@ test_pdo()->exec(
 );
 $photo = fn(string $jar, string $act, array $h = []) => http('POST',
     $base . '/backend/photos.php?action=' . $act,
-    ['jar' => $jar, 'headers' => $h, 'form' => ['photo_id' => 900]]);
+    ['jar' => $jar, 'headers' => array_merge(['X-CSRF-Token: ' . csrf($base, $jar)], $h),
+     'form' => ['photo_id' => 900]]);
+
+// Audit securite n° 2 (P1-5) : sans jeton CSRF, aucune action d'ecriture,
+// meme pour l'administration ; et l'action recue n'est plus renvoyee.
+$r = http('POST', $base . '/backend/photos.php?action=hide',
+    ['jar' => $admincli, 'headers' => $CLE, 'form' => ['photo_id' => 900]]);
+eq('photos : une action d\'administration sans jeton CSRF est refusee', 419, $r['status']);
+$r = http('GET', $base . '/backend/photos.php?action=%3Csvg%3E', ['jar' => $anon]);
+check('photos : l\'action inconnue n\'est pas renvoyee', !str_contains($r['body'], 'svg'));
 
 $r = $photo($mireille, 'delete');
 eq('moderation : la suppression definitive est refusee', 403, $r['status']);
