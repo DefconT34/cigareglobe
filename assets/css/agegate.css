@@ -88,3 +88,15 @@
   .ag-box { padding: 26px 22px 20px; }
   .ag-titre { font-size: 21px; }
 }
+
+/* La mention sanitaire reste lisible après le portail : une ligne fixée en bas
+   du globe, montrée seulement une fois la réponse donnée (le portail porte la sienne). */
+#sante-bandeau {
+  display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 44;
+  margin: 0; padding: 4px 16px; text-align: center;
+  font-family: Lato, sans-serif; font-size: 10.5px; line-height: 1.4;
+  color: var(--text2); background: var(--hdr-bg);
+  border-top: 1px solid var(--panel-border);
+}
+.age-ok #sante-bandeau { display: block; }
+body.mobile-mode #sante-bandeau { bottom: 56px; }

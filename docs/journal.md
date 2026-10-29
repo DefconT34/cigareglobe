@@ -1,3 +1,7 @@
+## Mention sanitaire persistante sur l'accueil
+
+Sur l'accueil du globe, la mention n'existait que dans le portail d'âge : une fois la réponse donnée, elle disparaissait (les pages marque et pays, le forum et les mentions légales l'avaient déjà). `#sante-bandeau` : une ligne fixée en bas, montrée seulement sous `.age-ok`, traduite par `data-i18n="age_sante"` (six langues, clé existante), au-dessus de la barre mobile (`body.mobile-mode`). Vérifiée en local : bureau, mobile 375 px, en/ar/zh. Tests 1039 / 0. Pas de migration : `git pull` suffit.
+
 ## Migration 288 — Zira Hotel retiré
 
 La fiche 935 restait « à vérifier » depuis la 281 : page officielle en 403, aucun cigar bar décrit. Nouvelle pièce : l'hôtel écrit lui-même, en réponse à un avis TripAdvisor, qu'il est non-fumeur et que sa seule zone fumeurs est la terrasse du restaurant ; Booking et Agoda ne décrivent qu'un bar / lounge. Retirée (`is_verified = 0`), comme la fiche 950. À rétablir si l'hôtel confirme un cigar bar. Tests 1039 / 0.
