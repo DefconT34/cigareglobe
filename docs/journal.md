@@ -1,3 +1,7 @@
+## Migration 286 — relecture de l'espagnol, tout le reste
+
+1 808 textes espagnols relus par `expert-traduction`, 36 morceaux : 233 corrigés, 1 575 validés, 0 refus (surtout *cigarro* → *puro*, *vitola* pour bague → *anilla*, *torcer* → *liar*, accords). Quelques agents avaient rendu `texto`/`motivo` au lieu de `texte`/`motif` : clés normalisées avant la fusion. « 1500 » du lounge 146 repris en « 1 500+ » comme le français ; trois noms de gammes (Arturo Fuente, Davidoff, Holt's) figés dans la référence de langue. 1039 réussites / 0 échec ; cliquet à 9 122 relues. Coût : 36 agents, ≈2,6 M de jetons. **La relecture des traductions est terminée.**
+
 ## Migration 285 — relecture de l'allemand, tout le reste
 
 1 808 textes allemands (pays, marchés, zones, arômes, lexique, feuilles, établissements, marques) relus par `expert-traduction`, 36 morceaux : 169 corrigés, 1 639 validés, 0 refus de l'importeur. Trois accrocs aux garde-fous, réglés à la main : l'année « 1500 » du lounge 146 (le français écrit « 1 500+ » ; repris tel quel), le slogan « Luxury without the pretense » (Cohiba USA) remis en allemand comme le reste de la colonne, et « am besten » chez PDR Cigars, fidèle au « le mieux » du français et figé au cliquet des superlatifs. 1039 réussites / 0 échec ; cliquet à 7 314 relues. Coût : 36 agents, ≈2,7 M de jetons.
