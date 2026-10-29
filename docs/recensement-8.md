@@ -1029,28 +1029,14 @@ Partagás USA, Romeo y Julieta USA, Dannemann, Te Amo, Tabacalera, General Cigar
 
 ## En réserve
 
-Décisions éditoriales qui restent à l'utilisateur :
-- **Rocky Patel** : si l'usine plus grande d'Estelí ouvre et que la répartition
-  s'inverse, la fiche repassera au Nicaragua ; les pages Vintage 1992 et Fifty de
-  la maison ne correspondent pas aux lignes de la fiche, Indian Tabac est une
-  marque que Phil Zanghi a reprise en 2014 (sa phrase sur « le recensement » est retirée par la 262).
-- **Miami Cigar & Co.** : Tatiana n'est pas en gamme ; la Collection de 2014 est
-  devenue la Special Selection ; Don Lino Original et la série dominicaine de 2021
-  ne sont plus sur la page de la maison.
-- **Tabacosta** : la ligne Costa ne tient que sur un site de 2025 qui ne nomme
-  aucune ligne ; la fiche cite encore Halfwheel (illisible) pour des faits de
-  2016.
-- **Hors de ces lots** : Swag (aucune page de 2024-2026 chez Tabacalera Palma),
-  les 2 000 000 de cigares « machine made » que la page de Tabacalera Palma
-  compte à côté de 7 000 000 faits à la main, les vitolas de Pelo de Oro et la
-  gamme Quattro d'Aging Room, Guardian of the Farm et Flor del Valle (absentes
-  de warpedcigars.com en octobre 2026), Atabey et Byron (mots de prix).
-
-## Migrations 270 à 272 — fin de la vague 2 (21 octobre)
-
-270 fusionne La Flor de la Isabela dans Tabacalera ; 271 dépublie quinze établissements sans page (réversible) ; 272 renomme la fiche Perdomo Ecuador en Perdomo Legacy Connecticut.
-Ouvert : usine de CAO Black et de CAO America (source indirecte), ligne de São Félix de Dannemann, usine actuelle de Tabacalera Philippines, rendu de/zh/ar du lot 7 en prod ; établissements à renommer (Hanoi, Monaco, Hotel Nacional, Raffles) ou à vérifier (Churchill Bar, One°15, Alvear) ; `habanos_presence` Philippines (usine « La Flor de la Isabela », marques officielles) non relu.
-
-## Migration 273 — Cuba et sept établissements (21 octobre)
-
-Sol, récolte, climat et variétés de Cuba relus sur pages lues ; trois établissements corrigés (Hanoi, Hotel Nacional, Monaco), trois dépubliés (Raffles, One°15, Alvear), Churchill Bar laissé publié. Détail dans `docs/journal.md`.
+Vérifiées le 29 octobre 2026 (migration 290) ; ce qui reste est non établi et revient à l'utilisateur :
+- **Rocky Patel** : le site montre Vintage 1990, 2006 et Sapphire, ni 1992 ni Fifty ; le pays
+  de roulage actuel n'est pas vérifiable ; Indian Tabac : rachat par Phil Zanghi en 2014, cession
+  datée de 1997 ou 2002 selon les sources.
+- **Miami Cigar & Co.** : la série dominicaine de Don Lino est écrite comme annoncée en 2021 et
+  absente de la page de la maison (290) ; Don Lino Original reste non vérifiable.
+- **Tabacosta** : rien à changer, la fiche lit Halfwheel.
+- **Hors de ces lots** : Swag (aucune page de 2024-2026), les 2 000 000 de cigares « machine made »
+  de Tabacalera Palma, les vitolas de Pelo de Oro, Guardian of the Farm, Flor del Valle, Atabey et
+  Byron : non vérifiables ; la gamme Quattro d'Aging Room se compose d'Original, Maduro, Connecticut
+  et Nicaragua.

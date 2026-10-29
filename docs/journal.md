@@ -1,3 +1,7 @@
+## Migration 290 — Miami Cigar & Co., la série dominicaine de Don Lino
+
+Vérification par `expert-cigare` (≈46 000 jetons, lecture de `contenu.sql`, pas de la base). Seule correction sûre : la gamme disait « Depuis 2021, la marque compte aussi une série dominicaine » alors que la page de la maison (octobre 2026) ne montre que Don Lino Africa ; la phrase dit maintenant ce que Cigar Coop a annoncé en 2021 et que la maison ne la montre plus. Cinq traductions réécrites à la main, remises en « machine ». Tabacosta : rien à changer, la fiche lit déjà Halfwheel. Non établis, donc laissés tels quels : Rocky Patel (le site montre Vintage 1990, 2006 et Sapphire ; pays de roulage actuel non vérifiable), Swag, Indian Tabac (cession en 1997 ou 2002, rachat par Zanghi en 2014). Cliquet 9 512. Tests 1039 / 0.
+
 ## Migration 289 — Chester corrigé, Soho retiré
 
 Vérification par `expert-cigare` (≈31 000 jetons ; page de C.Gars en 403, lue par résumés de recherche). Chester : la Casa del Habano est au 32 Watergate Street, le 34 est la boutique Turmeaus voisine (même exploitant) ; « célèbre » retiré dans les six langues, sceaux remis en « machine » (le français a changé). Soho (283) : aucune boutique à Old Compton Street ni chez Selfridges, fiche retirée. Knutsford : pas de fiche, la Casa de C.Gars n'est pas confirmée. Cliquet 9 517 (cinq sceaux de Chester redevenus machine). Tests 1039 / 0.
