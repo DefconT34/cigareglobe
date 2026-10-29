@@ -233,7 +233,7 @@ chiffres) ; chaque lot = vérification page par page, traduction, migration :
   Santa Damiana.
   **Lot 7 — FAIT (migration 268, 21 octobre)** : fiches « ligne » classées par pays de roulage (Arturo Fuente Hemingway et
   Maduro, CAO Cameroon / Black / America, Oliva Serie G et Connecticut Reserve, Perdomo Ecuador ;
-  le renommage de Perdomo Ecuador reste à faire).
+  renommage de Perdomo Ecuador en Perdomo Legacy Connecticut : fait, migration 272).
   **Lot 8 — FAIT (migration 269, 21 octobre)** : Partagás USA, Romeo y Julieta USA, Dannemann, Te Amo, Tabacalera, General Cigar, Villiger ;
   La Flor de la Isabela fusionnée dans Tabacalera (migration 270, FAIT). **Vague 2 close** : 271 (quinze établissements dépubliés), 272 (Perdomo Legacy Connecticut).
 - Hors lots : Toscano (Classico et Toscanello à la machine selon les importateurs), le classement de
