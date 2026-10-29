@@ -1040,3 +1040,12 @@ Vérifiées le 29 octobre 2026 (migration 290) ; ce qui reste est non établi et
   de Tabacalera Palma, les vitolas de Pelo de Oro, Guardian of the Farm, Flor del Valle, Atabey et
   Byron : non vérifiables ; la gamme Quattro d'Aging Room se compose d'Original, Maduro, Connecticut
   et Nicaragua.
+
+## Migrations 270 à 272 — fin de la vague 2 (21 octobre)
+
+270 fusionne La Flor de la Isabela dans Tabacalera ; 271 dépublie quinze établissements sans page (réversible) ; 272 renomme la fiche Perdomo Ecuador en Perdomo Legacy Connecticut.
+Ouvert : usine de CAO Black et de CAO America (source indirecte), ligne de São Félix de Dannemann, usine actuelle de Tabacalera Philippines, rendu de/zh/ar du lot 7 en prod ; établissements à renommer (Hanoi, Monaco, Hotel Nacional, Raffles) ou à vérifier (Churchill Bar, One°15, Alvear) ; `habanos_presence` Philippines (usine « La Flor de la Isabela », marques officielles) non relu.
+
+## Migration 273 — Cuba et sept établissements (21 octobre)
+
+Sol, récolte, climat et variétés de Cuba relus sur pages lues ; trois établissements corrigés (Hanoi, Hotel Nacional, Monaco), trois dépubliés (Raffles, One°15, Alvear), Churchill Bar laissé publié. Détail dans `docs/journal.md`.
