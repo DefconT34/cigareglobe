@@ -1,3 +1,7 @@
+## Migration 288 — Zira Hotel retiré
+
+La fiche 935 restait « à vérifier » depuis la 281 : page officielle en 403, aucun cigar bar décrit. Nouvelle pièce : l'hôtel écrit lui-même, en réponse à un avis TripAdvisor, qu'il est non-fumeur et que sa seule zone fumeurs est la terrasse du restaurant ; Booking et Agoda ne décrivent qu'un bar / lounge. Retirée (`is_verified = 0`), comme la fiche 950. À rétablir si l'hôtel confirme un cigar bar. Tests 1039 / 0.
+
 ## Migration 287 — relecture des données générales des pays
 
 Les 184 lounges restés « machine » sont exactement les fiches dépubliées : l'exporteur les écarte à dessein, rien à relire. Les `producer_geo` (devise, langue, indépendance) n'étaient pas dans le plan de l'exporteur ; je ne l'ai pas étendu (une dizaine d'outils s'y appuient) et j'ai écrit la migration à la main, avec l'empreinte du français dans le WHERE. 80 textes × 5 langues relus par expert-traduction (≈27 000 jetons), 1 corrigé : « Part of the Kingdom of the Netherlands since 1986 ». Piège : ma première version dépassait le `varchar(50)` et MySQL l'a coupée sans erreur ; le test « aucune valeur pile à 50 » l'a vu. Cliquet : 9 522 relues. Tests 1039 / 0.

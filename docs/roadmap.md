@@ -304,8 +304,7 @@ Tabacosta, Swag.
 - Londres, Soho (fiche 283) : même source `cgars.co.uk` que les deux
   fiches corrigées, et un type « Cave Premium Selfridges » pour une
   adresse d'Old Compton Street — à relire.
-- Zira Hotel, Belgrade (fiche 935) : `zirahotel.com`, sa seule source,
-  ne résout plus depuis le 25 septembre 2026.
+- Zira Hotel, Belgrade (fiche 935) : **retiré, migration 288** (hôtel non-fumeur hors terrasse, aucun cigar bar décrit) ; à rétablir si l'hôtel (+381 11 331 4800) en confirme un.
 
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → ~~B1~~ → ~~F3/F4/F6~~ → **B4b2** (sauvegarde, bloquant) → D6/C1b (optionnels)
