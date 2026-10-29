@@ -289,7 +289,7 @@ $i18njs  = __DIR__ . '/assets/js/i18n.js';
 // page mise en cache, donc pas le « ?v= », et le cache-busting ne
 // busterait rien. Deux globs et quelques stat() par requête — négligeable
 // devant la lecture d'index.html qu'ils évitent.
-$empreinte = max(filemtime($gabarit), filemtime($i18njs));
+$empreinte = max(filemtime($gabarit), filemtime($i18njs), filemtime(__FILE__), filemtime(__DIR__ . '/backend/bundle.php'));
 foreach (array_merge(glob(__DIR__ . '/assets/js/*.js') ?: [],
                      glob(__DIR__ . '/assets/css/*.css') ?: []) as $f) {
     $empreinte = max($empreinte, filemtime($f));
@@ -375,6 +375,16 @@ $html = preg_replace_callback(
     },
     $html
 );
+// Les modules JS partent en une seule requête (backend/bundle.php) : une
+// rafale de ~32 fichiers peut revenir en 429 chez l'hébergeur. Le paquet est
+// posé en fin de page, où se trouvait le dernier module : tous voient le DOM.
+require_once __DIR__ . '/backend/bundle.php';
+$modules = bundle_liste($html);
+if ($modules) {
+    $html = preg_replace('#[ \t]*<script src="/assets/js/[A-Za-z0-9._-]+\.js(?:\?v=[0-9a-f]+)?"></script>\R?#', '', $html);
+    $html = str_replace('</body>',
+        '<script src="/backend/bundle.php?v=' . bundle_empreinte($modules) . '"></script>' . "\n</body>", $html);
+}
 // Le manifeste garde son URL nue : certains outils PWA n'acceptent pas
 // de chaîne de requête, et il ne change presque jamais.
 $html = str_replace('href="manifest.json"', 'href="/manifest.json"', $html);

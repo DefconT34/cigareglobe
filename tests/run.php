@@ -3201,6 +3201,19 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
     eq('demarrage : une langue invalide retombe sur le francais', 1,
        (int)$pdo->query("SELECT COUNT(*) FROM audience WHERE type = 'boot_ok' AND lang = 'fr'")->fetchColumn());
 
+    // -- Les modules JS en une requete (429 de l'hebergeur) --------
+    $ra = http('GET', $srv . '/index.php?lang=fr', ['jar' => $anon2]);
+    eq('paquet : la page ne nomme plus aucun module', 0, preg_match_all('#<script src="/assets/js/#', $ra['body']));
+    preg_match('#<script src="(/backend/bundle\.php\?v=[0-9a-f]+)"></script>\s*</body>#', $ra['body'], $mb);
+    check('paquet : une balise unique, en fin de page', !empty($mb[1]));
+    $rj = http('GET', $srv . ($mb[1] ?? '/backend/bundle.php'), ['jar' => $anon2]);
+    eq('paquet : il repond', 200, $rj['status']);
+    require_once PROJECT_ROOT . '/backend/bundle.php';
+    $noms = bundle_liste((string)file_get_contents(PROJECT_ROOT . '/index.html'));
+    $manque = array_filter($noms, fn($n) => !str_contains($rj['body'], "\n/* $n */\n"));
+    eq('paquet : il contient chaque module de la page', [], array_values($manque));
+    check('paquet : et la page en nomme assez', count($noms) > 25, count($noms) . ' module(s)');
+
     // -- La coquille renvoie vers la page ----------------
     // L'application ecrit « ?country=testland » dans la barre d'adresse
     // des qu'un panneau s'ouvre, et ces adresses se partagent. Sans

@@ -128,8 +128,8 @@ fait », vérifier les pages en production avec curl.
 - Le Deploy HEAD Commit de cPanel peut ne rien copier sans le dire : le
   `diff -rq` après déploiement n'est pas facultatif (`docs/deploiement.md`).
 - `uploads/` n'est ni versionné ni déployé : cartes et photos se
-  fabriquent sur le serveur ; la sauvegarde (B4b2) est le seul point
-  bloquant de la roadmap.
+  fabriquent sur le serveur ; la sauvegarde (B4b2) est rapatriée (29 octobre 2026) ;
+  reste à poser le cron nocturne.
 
 ## Lire les fichiers sans gaspiller
 

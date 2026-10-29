@@ -58,20 +58,7 @@ Effort : P = Petit · M = Moyen · G = Gros.
 - [x] ~~**B7** — Le contrôle d'avant-vol~~ ✅
 - [x] ~~**B4a** — Le contenu de l'atlas entre dans le dépôt~~ ✅
 - [x] ~~**B4b1** — Sauvegarde de ce que Git ne portera jamais~~ ✅
-- [ ] **B4b2** — **La sauvegarde tient sur un seul disque** · **bloquant** · P
-  - ~~`git remote -v` ne renvoie rien~~ → **réglé** : `origin` pointe sur
-    `github.com/DefconT34/cigareglobe`, et le serveur en tire ses déploiements. Le code et le
-    contenu versionné sont à deux endroits
-  - **Ce qui reste, et qui est le vrai sujet** : `uploads/` (4 507 fichiers, 28 Mo) et les
-    20 tables personnelles ne sont dans aucun dépôt, par construction
-  - **L'archive a été fabriquée sur le serveur** (5 sept. 2026), dans
-    `/home2/koko6788/cigarodyssey-sauvegardes/`, hors de la racine servie — vérifié depuis
-    l'extérieur : dix chemins plausibles testés, tous en `404`
-  - ⚠ **Elle n'a pas encore été rapatriée.** Tant qu'elle reste sur o2switch elle ne protège
-    de rien : elle disparaîtra avec ce qu'elle sauvegarde. Le point reste donc ouvert
-  - Une fois le fichier descendu, `php tools/sauvegarde.php --verifier <fichier>` le rouvre
-    et le recompte ; le `.env` en est absent par construction (mot de passe de la base et clé
-    d'administration ne voyagent pas dans un fichier fait pour être copié ailleurs)
+- [x] ~~**B4b2** — La sauvegarde tient sur un seul disque~~ ✅ (29 octobre 2026) : l'archive du 14 octobre (18,4 Mo, 80 814 INSERT, 4 863 fichiers) est rouverte par `sauvegarde.php --verifier` et copiée sur un disque dur externe ; `uploads/` du serveur compte 4 863 fichiers, soit exactement ceux de l'archive. **Reste** : poser le cron nocturne (`docs/deploiement.md`, « Sauvegarder avant d'agir, et chaque nuit ») et rapatrier de temps en temps une archive fraîche ; l'archive contient les comptes : disque gardé en lieu sûr, ou chiffrée.
 - [x] ~~**B5a** — Le droit à l'effacement (RGPD art. 17)~~ ✅
 - [x] ~~**B5b** — Mentions légales, confidentialité, conditions~~ ✅ *(partiel — voir B5c)*
 - [x] ~~**B5c** — Les faits que seul l'éditeur connaît~~ ✅
@@ -207,7 +194,7 @@ le code. Fait (986 → 1026 assertions, un commit par sujet) :
   invraisemblables de l'audit (Paris Yacht Marina, Port of Southampton, Savoy American Bar…) sont
   **tranchées : retirées** (migration 271 et suivantes, fiches `is_verified = 0`, motif dans `source`).
 
-Reste, côté utilisateur : rapatrier l'archive du 5 septembre, brancher le cron nocturne,
+Reste, côté utilisateur : brancher le cron nocturne (l'archive du 14 octobre est rapatriée, B4b2),
 ticket o2switch (offre, JetBackup, erreurs 429), journaux d'accès du 8 octobre (« /.env »),
 rotation DB_PASS / ADMIN_KEY / MAIL_API_KEY après le déploiement, avocat (loi Évin
 L3512-4, exception « éditeur hors UE ») et juriste d'Abidjan, représentant UE et ARTCI.
@@ -301,7 +288,7 @@ Tabacosta, Swag.
 - Zira Hotel, Belgrade (fiche 935) : **retiré, migration 288** (hôtel non-fumeur hors terrasse, aucun cigar bar décrit) ; à rétablir si l'hôtel (+381 11 331 4800) en confirme un.
 
 ## Ordre suggéré
-~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → ~~B1~~ → ~~F3/F4/F6~~ → **B4b2** (sauvegarde, bloquant) → D6/C1b (optionnels)
+~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → ~~B1~~ → ~~F3/F4/F6~~ → ~~**B4b2**~~ → D6/C1b (optionnels)
 
 ---
 
