@@ -1,4 +1,8 @@
 
+## Migrations 282 à 284 — relecture du reste, chinois, arabe et anglais
+
+Dernier reliquat des entités (pays, marchés, zones, arômes, lexique, feuilles, établissements, marques) relu par `expert-traduction`, un agent par morceau de 28 000 caractères : zh 6 textes (4 corrigés, 282), ar 10 (7 corrigés, 283), en 1 269 (88 corrigés, 284 : « cepo » → *ring gauge*, *plant* → *factory*, *softness* → *mildness*, *caviste* ≠ *tobacconist*, superlatifs absents du français retirés). Un seul refus, zh « 最低消费 » (contient le caractère interdit) : reformulé « 消费不低于 30 欧元 ». Garde-fous verts, 1039 réussites / 0 échec ; cliquet à 5 506 relues. Coût : 36 agents, ≈2,2 M de jetons.
+
 
 ## Migration 281 — trois domaines morts : lefagot.com, zirahotel.com, espinashotel.com
 

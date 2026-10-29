@@ -260,10 +260,8 @@ ne reculent pas. Chaque lot = une migration (`--importer`).
   zones, arômes, lexique, feuilles, établissements), 277-278 (historique de 67 fiches de
   marques), 279-280 (859 textes `gamme`, `celebrities`, `pairings`, éditions limitées :
   zh 358 corrigés, ar 447 corrigés, 0 refus). Environ 4,5 M de jetons pour 279-280.
-  État : 4 221 relues sur 10 500 (zh 1 821, ar 1 817, en 555, de 16, es 16).
-- Suite : zh et ar, ~280 textes chacun (fiches de marques restantes, douze refusés pour
-  superlatif en 275-276), à faire en premier ; puis en (1 545 restants), de et es
-  (2 084 chacun), le plus coûteux (plusieurs millions de jetons par langue).
+  État : 5 506 relues sur 10 500 (zh 1 825, ar 1 825, en 1 824, de 16, es 16) ; 282-284 = reliquat zh/ar et tout l'anglais.
+- Suite : de (1 808 restants, 36 morceaux) puis es (1 808), ≈2,2 M de jetons par langue.
 - **281** — trois domaines morts (lefagot.com, zirahotel.com, espinashotel.com) : Fagot
   Cigare et Zira en « à vérifier », Espinas Palace retiré. Reste ouvert : lire la page
   officielle du Zira (403) ou appeler l'hôtel ; la sonde `lounges_sondes.json` notait
