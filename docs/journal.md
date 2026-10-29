@@ -1,3 +1,7 @@
+## Migration 289 — Chester corrigé, Soho retiré
+
+Vérification par `expert-cigare` (≈31 000 jetons ; page de C.Gars en 403, lue par résumés de recherche). Chester : la Casa del Habano est au 32 Watergate Street, le 34 est la boutique Turmeaus voisine (même exploitant) ; « célèbre » retiré dans les six langues, sceaux remis en « machine » (le français a changé). Soho (283) : aucune boutique à Old Compton Street ni chez Selfridges, fiche retirée. Knutsford : pas de fiche, la Casa de C.Gars n'est pas confirmée. Cliquet 9 517 (cinq sceaux de Chester redevenus machine). Tests 1039 / 0.
+
 ## Mention sanitaire persistante sur l'accueil
 
 Sur l'accueil du globe, la mention n'existait que dans le portail d'âge : une fois la réponse donnée, elle disparaissait (les pages marque et pays, le forum et les mentions légales l'avaient déjà). `#sante-bandeau` : une ligne fixée en bas, montrée seulement sous `.age-ok`, traduite par `data-i18n="age_sante"` (six langues, clé existante), au-dessus de la barre mobile (`body.mobile-mode`). Vérifiée en local : bureau, mobile 375 px, en/ar/zh. Tests 1039 / 0. Pas de migration : `git pull` suffit.

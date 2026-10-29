@@ -297,13 +297,7 @@ Tabacosta, Swag.
 
 ### Reste de la 242 — autour des salons de C.Gars Ltd
 
-- Chester (fiche 50) : la fiche écrit 34 Watergate Street, habanos.com
-  et lcdhcigars.uk écrivent 32 ; « célèbre tobacconist » est un éloge.
-- Knutsford : la Casa de C.Gars Ltd (10 Minshull Street) n'a pas de
-  fiche.
-- Londres, Soho (fiche 283) : même source `cgars.co.uk` que les deux
-  fiches corrigées, et un type « Cave Premium Selfridges » pour une
-  adresse d'Old Compton Street — à relire.
+- Chester (fiche 50) et Soho (fiche 283) : **réglés, migration 289** (Chester au 32 Watergate Street, « célèbre » retiré ; Soho retiré, aucune boutique à Old Compton Street). Knutsford : la Casa de C.Gars (10 Minshull Street) n'est pas confirmée, pas de fiche. Trois caves Zino : Cosmos = Boulevard Principal, Yopougon (habanos.com), sans numéro, non écrit ; Sofitel et Plateau : aucune rue publiée.
 - Zira Hotel, Belgrade (fiche 935) : **retiré, migration 288** (hôtel non-fumeur hors terrasse, aucun cigar bar décrit) ; à rétablir si l'hôtel (+381 11 331 4800) en confirme un.
 
 ## Ordre suggéré
