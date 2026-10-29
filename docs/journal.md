@@ -1,3 +1,7 @@
+## Migration 285 — relecture de l'allemand, tout le reste
+
+1 808 textes allemands (pays, marchés, zones, arômes, lexique, feuilles, établissements, marques) relus par `expert-traduction`, 36 morceaux : 169 corrigés, 1 639 validés, 0 refus de l'importeur. Trois accrocs aux garde-fous, réglés à la main : l'année « 1500 » du lounge 146 (le français écrit « 1 500+ » ; repris tel quel), le slogan « Luxury without the pretense » (Cohiba USA) remis en allemand comme le reste de la colonne, et « am besten » chez PDR Cigars, fidèle au « le mieux » du français et figé au cliquet des superlatifs. 1039 réussites / 0 échec ; cliquet à 7 314 relues. Coût : 36 agents, ≈2,7 M de jetons.
+
 
 ## Migrations 282 à 284 — relecture du reste, chinois, arabe et anglais
 
