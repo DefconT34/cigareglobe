@@ -4162,7 +4162,9 @@ section('La fiche dit d ou elle vient');
         foreach ($pdoR->query(
             "SELECT id, description FROM lounges
               WHERE " . PAGE_FICHE_PUBLIABLE . " AND source LIKE 'à vérifier%'") as $r) {
-            if (preg_match($offre, (string)$r['description'], $m)) {
+            // « Cohiba Atmosphere » est une enseigne de Habanos S.A., pas une ambiance.
+            $texte = str_ireplace('Cohiba Atmosphere', 'Cohiba', (string)$r['description']);
+            if (preg_match($offre, $texte, $m)) {
                 $bavardes[] = (int)$r['id'] . ' (« ' . $m[0] . ' »)';
             }
         }
