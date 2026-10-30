@@ -39,8 +39,8 @@ $pdo->exec("SET FOREIGN_KEY_CHECKS = 0;\n" . $sql . "\nSET FOREIGN_KEY_CHECKS = 
 // rendu du serveur et pas seulement une chaine.
 $pdo->exec(
     "INSERT INTO users (id, email, password_hash, display_name, email_verified)
-     VALUES (900, 'forum@test.local', 'x', 'Aficionado', 1)
-     ON DUPLICATE KEY UPDATE display_name = VALUES(display_name)"
+     VALUES (900, 'forum@test.local', '" . password_hash('motdepasse-test-900', PASSWORD_DEFAULT) . "', 'Aficionado', 1)
+     ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), password_hash = VALUES(password_hash)"
 );
 $sec = (int)$pdo->query("SELECT id FROM forum_sections WHERE slug = 'conservation'")->fetchColumn();
 if ($sec) {

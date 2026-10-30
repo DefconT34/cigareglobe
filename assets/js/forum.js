@@ -1054,7 +1054,7 @@
   var evtsCharges = false;
 
   function chargerEvtsGlobe() {
-    if (evtsCharges) return;
+    if (evtsCharges || !(window.CGAccount && window.CGAccount.user)) return;   // agenda réservé aux membres (401 sinon)
     evtsCharges = true;
     // Toutes langues : sur le globe, un point est un point. Filtrer par
     // langue masquerait un rendez-vous qui se tient à côté de chez soi.

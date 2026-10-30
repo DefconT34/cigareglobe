@@ -43,9 +43,9 @@ test.describe('Accessibilite', () => {
 
   test('les boutons flottants portent une etiquette', async ({ page }) => {
     await ouvrir(page, '/');
-    // Quatre sur grand ecran : Explorer, Recherche, Rotation, Contribuer.
+    // Cinq sur grand ecran : Explorer, Recherche, Rotation, Contribuer, Suggestion.
     // Le gyroscope s'y ajoute sur un appareil tactile.
-    await expect(page.locator('#side-fabs .side-fab')).toHaveCount(4);
+    await expect(page.locator('#side-fabs .side-fab')).toHaveCount(5);
 
     const sans = await page.evaluate(() =>
       [...document.querySelectorAll('#side-fabs .side-fab')]

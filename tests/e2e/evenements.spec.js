@@ -25,7 +25,7 @@ test.describe('Rendez-vous', () => {
   // Dans cette rubrique le tri utile n'est pas la derniere reponse mais
   // la date qui vient : d'ou la pastille de date en tete de ligne.
   test('la rubrique Rencontres affiche un agenda', async ({ page }) => {
-    await ouvrir(page, '/');
+    await ouvrir(page, '/', { connecte: true });
     await ouvrirAgenda(page);
 
     await expect(page.locator('.fo-evt-date')).toHaveCount(1);
@@ -46,7 +46,7 @@ test.describe('Rendez-vous', () => {
   });
 
   test('la bascule « archives » cache et remontre, dans les deux sens', async ({ page }) => {
-    await ouvrir(page, '/');
+    await ouvrir(page, '/', { connecte: true });
     await ouvrirAgenda(page);
 
     const titres = () => page.locator('.fo-t-title').allTextContents();
@@ -80,7 +80,7 @@ test.describe('Rendez-vous', () => {
   });
 
   test('un visiteur ne peut pas organiser, et on lui dit pourquoi', async ({ page }) => {
-    await ouvrir(page, '/');
+    await ouvrir(page, '/', { connecte: true });
     await ouvrirAgenda(page);
     await expect(page.locator('.fo-new-evt')).toHaveCount(0);
     await expect(page.locator('.fo-evt-note')).toContainText(/confiance|trusted/i);
@@ -92,7 +92,7 @@ test.describe('Rendez-vous', () => {
   // peinte sur le canvas. On appelle donc la fonction de dessin avec un
   // contexte espion, et on compte ce qu'elle trace.
   test('un rendez-vous pose un marqueur sur le globe', async ({ page }) => {
-    await ouvrir(page, '/');
+    await ouvrir(page, '/', { connecte: true });
     // La couche se charge en differe, apres l'atlas.
     await expect
       .poll(async () => page.evaluate(() => typeof window.dessinerEvenements),
@@ -152,7 +152,7 @@ test.describe('Rendez-vous', () => {
   // C'est ce qui empeche la communaute d'etre une ile : on apprend
   // qu'on se retrouve ici sans avoir jamais ouvert le forum.
   test('la fiche d\'un etablissement annonce son prochain rendez-vous', async ({ page }) => {
-    await ouvrir(page, '/');
+    await ouvrir(page, '/', { connecte: true });
     const trouve = await page.evaluate(async () => {
       const pause = (ms) => new Promise((r) => setTimeout(r, ms));
       const r = await (await fetch('/backend/forum.php?action=agenda&lang=all')).json();

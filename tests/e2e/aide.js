@@ -30,10 +30,24 @@ async function ouvrir(page, url = '/', opts = {}) {
   // addInitScript s'execute AVANT les scripts de la page, donc avant le
   // court script d'en-tete qui lit le drapeau : c'est la seule fenetre
   // ou le poser serve a quelque chose.
+  // Le tutoriel de premier passage voile l'ecran et intercepte les clics.
+  await page.addInitScript(() => {
+    try { localStorage.setItem('cg_tuto', '1'); } catch (e) {}
+  });
   if (opts.portail !== false) {
     await page.addInitScript(() => {
       try { localStorage.setItem('cg_age18', '1'); } catch (e) {}
     });
+  }
+
+  // Compte du jeu de donnees (setup_front_db.php), pour les parcours reserves aux membres.
+  if (opts.connecte) {
+    const me = await (await page.request.get('/backend/auth.php?action=me')).json();
+    const r = await page.request.post('/backend/auth.php?action=login', {
+      headers: { 'X-CSRF-Token': me.csrf },
+      data: { email: 'forum@test.local', password: 'motdepasse-test-900' },
+    });
+    expect(r.ok(), 'connexion du compte de test').toBe(true);
   }
 
   await page.goto(url);
@@ -60,10 +74,10 @@ async function ouvrir(page, url = '/', opts = {}) {
   // le test echouait alors sur un « element introuvable » indechiffrable.
   await expect(page.locator('#side-fabs .side-fab'),
     'les modules du front n\'ont pas tous ete charges')
-    // La colonne compte le bouton de rotation automatique, present
-    // partout, plus le gyroscope sur les seuls appareils tactiles.
+    // La colonne compte suggestion et signalement (HTML), rotation,
+    // explorateur, recherche, plus le gyroscope sur les appareils tactiles.
     .toHaveCount(await page.evaluate(() =>
-      ('ontouchstart' in window || navigator.maxTouchPoints) ? 5 : 4),
+      ('ontouchstart' in window || navigator.maxTouchPoints) ? 6 : 5),
       { timeout: 20_000 });
 
   return page;

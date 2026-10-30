@@ -50,9 +50,9 @@ test.describe('Globe', () => {
       const colonne = page.locator('#side-fabs');
       await expect(colonne).toBeVisible();
       // Les boutons 🔍, 🗺 et ⟳ sont injectes par leurs modules. Le
-      // gyroscope, lui, n'apparait que sur un appareil tactile : quatre
-      // boutons ici, cinq sur le projet mobile.
-      await expect(colonne.locator('.side-fab')).toHaveCount(4);
+      // gyroscope, lui, n'apparait que sur un appareil tactile : cinq
+      // boutons ici, six sur le projet mobile.
+      await expect(colonne.locator('.side-fab')).toHaveCount(5);
 
       const boutons = await page.evaluate(() => {
         const els = [...document.querySelectorAll('#side-fabs .side-fab')];
@@ -79,7 +79,7 @@ test.describe('Globe', () => {
 
     test('les quatre boutons sont cliquables', async ({ page }) => {
       await ouvrir(page, '/');
-      await expect(page.locator('#side-fabs .side-fab')).toHaveCount(4);
+      await expect(page.locator('#side-fabs .side-fab')).toHaveCount(5);
 
       const masques = await page.evaluate(() => {
         return [...document.querySelectorAll('#side-fabs .side-fab')]

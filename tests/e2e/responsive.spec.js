@@ -30,12 +30,12 @@ test.describe('Mobile', () => {
   test('le bouton gyroscope s\'ajoute a la colonne sur appareil tactile', async ({ page }) => {
     await ouvrir(page, '/');
     await expect(page.locator('#side-fabs #gyro-btn')).toHaveCount(1, { timeout: 20_000 });
-    // De haut en bas : Explorer, Recherche, Gyroscope, Rotation, Contribuer.
+    // De haut en bas : Explorer, Recherche, Gyroscope, Rotation, Contribuer, Suggestion.
     const ordre = await page.evaluate(() =>
       [...document.querySelectorAll('#side-fabs .side-fab')]
         .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)
         .map((el) => el.id));
-    expect(ordre).toEqual(['explorer-btn', 'search-btn', 'gyro-btn', 'rotate-btn', 'contrib-btn']);
+    expect(ordre).toEqual(['explorer-btn', 'search-btn', 'gyro-btn', 'rotate-btn', 'contrib-btn', 'sugg-btn']);
   });
 
   test('la colonne de boutons reste alignee et au-dessus de la barre', async ({ page }) => {
