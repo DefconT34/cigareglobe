@@ -1365,6 +1365,7 @@ html{transition:background .25s,color .25s}
   </div>
 </div>
 
+<div class="dashboard" style="overflow-y:auto;flex:1;">
 <?php if (!$adr_global || !$adr_global['n']): ?>
 <div class="empty-state">
   <div class="empty-icon">◉</div>
@@ -1433,6 +1434,7 @@ html{transition:background .25s,color .25s}
 </form>
 <?php endforeach; ?>
 <?php endif; ?>
+</div>
 
 <?php elseif ($tab === 'photos'): ?>
 <div class="photos-layout">
