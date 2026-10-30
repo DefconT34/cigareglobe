@@ -658,25 +658,3 @@ document.addEventListener('keydown', function(e) {
     closeMobileMenu();
   }
 });
-
-// ── Auto-detect browser language ──────────────────────
-(function() {
-  var supported = ['fr','en','es','de','zh','ar'];
-  var nav = (navigator.language || 'fr').slice(0,2).toLowerCase();
-  if (supported.indexOf(nav) >= 0 && nav !== 'fr' && typeof window.applyLang === 'function') {
-    window.applyLang(nav);
-  }
-})();
-
-
-
-
-
-
-
-
-
-
-
-
-
