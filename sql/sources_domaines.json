@@ -71,7 +71,7 @@
         },
         "all.accor.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "allsaintscigars.com": {
             "dns": "resout",
@@ -399,7 +399,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 138
+            "fiches": 137
         },
         "cigar-keep.com": {
             "dns": "resout",
@@ -491,7 +491,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 99
+            "fiches": 97
         },
         "cigarkings.de": {
             "dns": "resout",
@@ -807,7 +807,7 @@
         },
         "diariolibre.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 1
         },
         "diexmexico.com": {
             "dns": "resout",
@@ -1033,6 +1033,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "financialafrik.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "finetobacconyc.com": {
             "dns": "resout",
             "fiches": 1
@@ -1183,7 +1187,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 155
+            "fiches": 154
         },
         "hacico.de": {
             "dns": "resout",
@@ -1252,6 +1256,10 @@
         "holts.com": {
             "dns": "resout",
             "fiches": 12
+        },
+        "hospitalitynet.org": {
+            "dns": "resout",
+            "fiches": 2
         },
         "hoteldericci.com": {
             "dns": "resout",
@@ -1507,7 +1515,7 @@
         },
         "lacasadelhabano.com": {
             "dns": "resout",
-            "fiches": 103
+            "fiches": 102
         },
         "lacasadelhabano.kn": {
             "dns": "resout",
@@ -2087,7 +2095,11 @@
         },
         "radissonblu.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 1
+        },
+        "radissonhotels.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "raffles.com": {
             "dns": "resout",
@@ -2339,7 +2351,7 @@
         },
         "strandarcade.com.au": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 1
         },
         "suaramerdeka.com": {
             "dns": "resout",
