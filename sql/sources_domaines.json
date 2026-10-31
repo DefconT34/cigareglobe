@@ -633,10 +633,6 @@
             "dns": "resout",
             "fiches": 1
         },
-        "cohiba-atmosphere.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "cohiba-atmosphere.jp": {
             "dns": "resout",
             "fiches": 1
@@ -747,7 +743,7 @@
         },
         "davidoff.com": {
             "dns": "resout",
-            "fiches": 42
+            "fiches": 44
         },
         "davidoffcigarbarlv.com": {
             "dns": "resout",
@@ -1183,7 +1179,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 162
+            "fiches": 163
         },
         "hacico.de": {
             "dns": "resout",
