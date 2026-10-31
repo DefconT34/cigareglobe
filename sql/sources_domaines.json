@@ -57,6 +57,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "alacivette.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "aladinocigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -1306,6 +1310,10 @@
             "fiches": 1
         },
         "iirsanorte.com.pe": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "ilgiornale.it": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2670,6 +2678,10 @@
             "fiches": 1
         },
         "waldrausch-magazin.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "wantedinrome.com": {
             "dns": "resout",
             "fiches": 1
         },
