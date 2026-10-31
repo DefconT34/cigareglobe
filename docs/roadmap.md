@@ -305,6 +305,7 @@ Moyenne 3,1/5 (2,4 le 9 octobre). Pas d'annonce large avant : regroupement des s
 - En cours : lots 8 (Asie-Pacifique) et 9 (Amériques, Caraïbes) confiés à des agents ; viendront Afrique, Golfe, Europe de l'Est, villes américaines (Los Angeles, Chicago, Dallas, Boston, Washington, San Francisco, Seattle, La Nouvelle-Orléans, Denver).
 - À trancher par vous : Mapamba House (ville, pays, graphie) ; doublons Padrón #179/#1571 ; « Le Club Fumoir » (Grand Hôtel du Bois de Boulogne) à instruire.
 - Mis de côté à votre demande : corrections de design (audit : focus, contrastes `--gold-text` / `--on-gold`, cibles tactiles 44 px, badges, polices auto-hébergées).
+- Lexique : 20 → 56 termes (migration 315) ; reste 25 à 45 termes pour viser 80-100, puis conservation (moisissure, remise en état), authenticité, variétés de tabac, fabrication pas à pas.
 - Issus des audits de fonctionnalités et de contenu, du moins au plus coûteux : « Près de moi » dans l'Explorer, manifeste PWA, JSON-LD manquants, export .ics des événements, export des données du compte (RGPD art. 20), mode hors ligne, filtres partageables ; puis glossaire (20 → 80 termes), conservation, authenticité, variétés de tabac ; carnet de dégustation et humidor personnel (7 à 11 jours). Aucune fonction de vente (loi Évin).
 
 ## Ordre suggéré
