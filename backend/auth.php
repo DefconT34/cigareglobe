@@ -11,6 +11,7 @@
 //   POST ?action=forgot     { email }
 //   POST ?action=reset      { token, password }
 //   POST ?action=resend     (renvoi de vérification, connecté)
+//   POST ?action=export_data (export JSON du compte, RGPD art. 20)
 // Toutes les requêtes POST exigent l'en-tête X-CSRF-Token
 // (obtenu via GET ?action=me).
 // ════════════════════════════════════════════════════════
@@ -34,7 +35,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $db     = getDB();
 
 // Les POST modifiant l'état exigent un CSRF valide
-$POST_ACTIONS = ['register','login','logout','forgot','reset','resend','delete_account'];
+$POST_ACTIONS = ['register','login','logout','forgot','reset','resend','delete_account','export_data'];
 if (in_array($action, $POST_ACTIONS, true)) {
     if ($method !== 'POST') respond(err('method_not_allowed', 'Méthode non autorisée'), 405);
     csrf_verify();
@@ -51,6 +52,7 @@ try {
         case 'reset':    action_reset($db);    break;
         case 'resend':   action_resend($db);   break;
         case 'delete_account': action_delete_account($db); break;
+        case 'export_data': action_export_data($db); break;
         default:         respond(err('unknown_action', 'Action inconnue'), 404);
     }
 } catch (Throwable $e) {
@@ -321,6 +323,50 @@ function action_delete_account(PDO $db): void {
     }
 
     action_logout();   // détruit la session et répond success
+}
+
+// ════════════════════════════════════════════════════════
+// POST export_data — le droit à la portabilité (RGPD art. 20)
+// ────────────────────────────────────────────────────────
+// Un JSON téléchargeable de ce que le site détient sur la personne
+// connectée. Ni hash de mot de passe, ni jeton (email_tokens, session) :
+// ce sont des secrets, pas ses données. Les tables sont celles que
+// action_delete_account efface ou détache, plus le forum (qui reste).
+// ════════════════════════════════════════════════════════
+function action_export_data(PDO $db): void {
+    $u = require_auth($db);
+    rate_limit($db, 'export_data', 5, 3600);
+    $id  = (int)$u['id'];
+    $all = function (string $sql) use ($db, $id): array {
+        $st = $db->prepare($sql);
+        $st->execute([$id]);
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    };
+    $st = $db->prepare('SELECT id, email, display_name, role, email_verified, avatar_url, bio, status,
+                               created_at, last_login_at, lang, notify_forum, terms_accepted_at, terms_version
+                          FROM users WHERE id = ?');
+    $st->execute([$id]);
+    $data = [
+        'exporte_le'    => gmdate('c'),
+        'profil'        => $st->fetch(PDO::FETCH_ASSOC),
+        'notes_avis'    => $all('SELECT * FROM reviews WHERE user_id = ?'),
+        'favoris'       => $all('SELECT target_type, target_id, list, created_at FROM favorites WHERE user_id = ?'),
+        'contributions' => $all('SELECT * FROM contributions WHERE user_id = ?'),
+        'suggestions'   => $all('SELECT id, texte, email, page, lang, created_at FROM suggestions WHERE user_id = ?'),
+        'forum_sujets'  => $all('SELECT id, title, lang, status, created_at FROM forum_topics WHERE user_id = ?'),
+        'forum_messages' => $all('SELECT id, topic_id, body, status, edited_at, created_at FROM forum_posts WHERE user_id = ?'),
+        'photos'        => $all('SELECT id, post_id, file, w, h, created_at FROM forum_post_images WHERE user_id = ?'),
+        'forum_suivis'  => $all('SELECT * FROM forum_follows WHERE user_id = ?'),
+        'forum_presences' => $all('SELECT * FROM forum_attendance WHERE user_id = ?'),
+        'forum_reactions' => $all('SELECT * FROM forum_reactions WHERE user_id = ?'),
+    ];
+    $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE);
+    http_response_code(200);
+    header('Content-Type: application/json; charset=utf-8');
+    header('Content-Disposition: attachment; filename="cigarodyssey-mes-donnees.json"');
+    cache_jamais();
+    echo $json;
+    exit;
 }
 
 // ════════════════════════════════════════════════════════

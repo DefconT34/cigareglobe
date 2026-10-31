@@ -147,6 +147,8 @@
       // et ce qui reste avant de demander le mot de passe — un
       // avertissement qui arrive apres le clic n'en est plus un.
       '<div class="cg-prof-danger">' +
+        '<div class="cg-hint">' + esc(t('prof_export_hint')) + '</div>' +
+        '<button type="button" class="cg-prof-export">' + esc(t('prof_export_btn')) + '</button>' +
         '<div class="cg-prof-danger-title">' + esc(t('prof_delete_title')) + '</div>' +
         '<div class="cg-hint">' + esc(t('prof_delete_what')) + '</div>' +
         '<button type="button" class="cg-prof-delete">' + esc(t('prof_delete_btn')) + '</button>' +
@@ -164,6 +166,24 @@
 
     var zone    = box.querySelector('.cg-prof-danger');
     var confirm = zone.querySelector('.cg-prof-delete-confirm');
+    zone.querySelector('.cg-prof-export').addEventListener('click', function () {
+      var A = window.CGAccount, btn = this, msg = document.getElementById('cgProfMsg');
+      btn.disabled = true;
+      fetch((window.CG_BACKEND_BASE || '/backend') + '/auth.php?action=export_data', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': (A ? A.csrf : '') },
+        body: '{}'
+      })
+        .then(function (r) { return r.ok ? r.blob() : r.json().then(function (d) { throw d; }); })
+        .then(function (b) {
+          btn.disabled = false;
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(b); a.download = 'cigarodyssey-mes-donnees.json';
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+        })
+        .catch(function (d) { btn.disabled = false; msg.className = 'cg-msg err'; msg.textContent = (d && d.error) ? tErr(d) : t('acc_net_error'); });
+    });
     zone.querySelector('.cg-prof-delete').addEventListener('click', function () {
       confirm.classList.remove('hidden');
       this.classList.add('hidden');

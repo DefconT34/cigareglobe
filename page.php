@@ -934,6 +934,16 @@ if ($h1 === '') {
 $connu  = isset(PAGE_INDEX[$type]) || isset(PAGE_SEGMENTS[$type]);
 $urlIci = $connu ? page_url($type, $slug, $lang) : page_url('atlas', '', $lang);
 $racine = page_racine();
+// Fil d'Ariane structuré : le fil visible (hors page courante) + la page courante.
+// Bloc séparé de $jsonld (Place) : deux types, pas de doublon. Rien sur une page introuvable.
+$ariane = null;
+if ($connu && $h1 !== '' && empty($noindex)) {
+    $items = [];
+    foreach (array_merge($filAriane, [[$h1, $urlIci]]) as $i => [$nom, $href]) {
+        $items[] = ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $nom, 'item' => $href];
+    }
+    $ariane = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $items];
+}
 
 // Le .htaccess garde le HTML UNE HEURE dans le navigateur
 // (ExpiresByType text/html). Pour ces pages c'est trop : une fiche
@@ -1009,6 +1019,9 @@ if ($vignette !== null): ?>
 <script>try{if(localStorage.getItem('cg_age18')==='1')document.documentElement.className+=' age-ok';}catch(e){document.documentElement.className+=' age-ok';}</script>
 <?php if ($jsonld): ?>
 <script type="application/ld+json"><?= json_encode($jsonld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+<?php endif; ?>
+<?php if ($ariane): ?>
+<script type="application/ld+json"><?= json_encode($ariane, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 <?php endif; ?>
 </head>
 <body class="pg-body">

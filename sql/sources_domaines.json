@@ -127,7 +127,7 @@
         },
         "arturofuente.com": {
             "dns": "resout",
-            "fiches": 5
+            "fiches": 4
         },
         "arubaconventionbureau.com": {
             "dns": "resout",
@@ -499,7 +499,7 @@
         },
         "cigardojo.com": {
             "dns": "resout",
-            "fiches": 44
+            "fiches": 43
         },
         "cigarengineers.com": {
             "dns": "resout",
@@ -531,11 +531,11 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 18
+            "fiches": 19
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 95
+            "fiches": 96
         },
         "cigarkings.de": {
             "dns": "resout",
@@ -1299,7 +1299,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 109
+            "fiches": 110
         },
         "hall4d21.com": {
             "dns": "resout",
@@ -1448,6 +1448,10 @@
         "inquirer.com": {
             "dns": "resout",
             "fiches": 3
+        },
+        "instagram.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "intercigar.com": {
             "dns": "resout",

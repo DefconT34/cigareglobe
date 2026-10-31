@@ -1854,6 +1854,31 @@ eq('effacement : et il est toujours la', 1,
 test_pdo()->exec("DELETE FROM users WHERE email = 'chef@test.local'");
 test_pdo()->exec("DELETE FROM auth_attempts");
 
+// ── L'export (RGPD art. 20) ──────────────────────────────
+test_pdo()->exec("DELETE FROM auth_attempts");
+$exp = new_client('export');
+post_json($base, $exp, '/backend/auth.php?action=register',
+          ['email' => 'export@test.local', 'password' => 'motdepasse8', 'display_name' => 'Export']);
+force_verified('export@test.local');
+post_json($base, $exp, '/backend/auth.php?action=login',
+          ['email' => 'export@test.local', 'password' => 'motdepasse8']);
+$eid = (int)test_pdo()->query("SELECT id FROM users WHERE email='export@test.local'")->fetchColumn();
+test_pdo()->exec("INSERT INTO reviews (user_id, lounge_id, rating, title, body, status)
+                  VALUES ($eid, 1, 5, 'Avis exporte', 'Corps.', 'published')");
+$r = post_json($base, $anon, '/backend/auth.php?action=export_data', []);
+eq('export : un visiteur anonyme est econduit', 401, $r['status']);
+$r = post_json($base, $exp, '/backend/auth.php?action=export_data', []);
+eq('export : accepte', 200, $r['status']);
+check('export : telechargement (Content-Disposition)', stripos($r['headers'], 'Content-Disposition: attachment') !== false);
+eq('export : le profil est la', 'export@test.local', $r['json']['profil']['email'] ?? null);
+eq('export : l\'avis est la', 'Avis exporte', $r['json']['notes_avis'][0]['title'] ?? null);
+check('export : ni hash de mot de passe ni jeton',
+      !str_contains($r['body'], 'password_hash') && !str_contains($r['body'], 'token_hash'));
+$r = http('POST', $base . '/backend/auth.php?action=export_data', ['jar' => $exp]);
+eq('export : sans CSRF, refuse', 419, $r['status']);
+test_pdo()->exec("DELETE FROM users WHERE id = $eid");
+test_pdo()->exec("DELETE FROM auth_attempts");
+
 // ════════════════════════════════════════════════════════
 section('L\'adresse du visiteur');
 
@@ -3175,6 +3200,10 @@ require_once PROJECT_ROOT . '/backend/pages_lib.php';
           (bool)preg_match('#href="[^"]*/pays/testland"#', $r['body']));
     check('pages : et se declare comme un lieu, non comme un commerce',
           str_contains($r['body'], '"@type":"Place"') && !str_contains($r['body'], '"@type":"Store"'));
+    eq('pages : un seul fil d\'Ariane structure (BreadcrumbList)', 1,
+       substr_count($p('type=pays&id=testland&lang=fr')['body'], '"@type":"BreadcrumbList"'));
+    eq('pages : pas de fil d\'Ariane structure sur une fiche non indexee', 0,
+       substr_count($r['body'], '"@type":"BreadcrumbList"'));
     check('pages : une fiche d\'etablissement n\'est pas indexee',
           str_contains($r['body'], '<meta name="robots" content="noindex">'));
 

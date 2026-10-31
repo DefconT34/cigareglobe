@@ -2,11 +2,12 @@
 // Stratégie : Network First partout — données toujours fraîches
 // ════════════════════════════════════════════════════════
 
+// v8 : icones PNG du manifeste (assets/icons).
 // v7 : Leaflet passe d'unpkg a assets/vendor, et la CSP ne tolere plus
 // d'origine tierce pour les scripts. Un visiteur dont le cache garde
 // l'ancien explorer.js demanderait unpkg, que la nouvelle CSP refuse —
 // d'ou le changement de nom, qui purge a l'activation.
-var CACHE_NAME  = 'cigar-odyssey-v7';
+var CACHE_NAME  = 'cigar-odyssey-v8';
 var CACHE_SHELL = ['/', '/index.html'];
 
 // ── Installation ──────────────────────────────────────────

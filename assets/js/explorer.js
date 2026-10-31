@@ -57,6 +57,7 @@ var _filtered     = [];
 var _map          = null; // Leaflet map instance
 var _markers      = [];
 var _filters      = { region: 'all', type: 'all', search: '', sort: 'country' };
+var _near         = false; // tri « près de moi » actif (window.positionUtilisateur)
 var _loaded       = {};   // countryId → true (lounges loaded)
 
 // ── Construire la liste complète ─────────────────────────
@@ -81,6 +82,8 @@ function buildAllLounges() {
         lat:      parseFloat(lc.lat) || 0,
         lon:      parseFloat(lc.lon) || 0,
         region:   region,
+        llat:     l.lat != null ? parseFloat(l.lat) : NaN,
+        llon:     l.lon != null ? parseFloat(l.lon) : NaN,
         name:     l.name,
         city:     l.city || '',
         type:     l.type || 'Cave & Lounge',
@@ -109,8 +112,17 @@ function applyFilters() {
     return true;
   });
 
+  // Distance (km) au visiteur ; coordonnées du lieu, à défaut celles du pays.
+  var P = _near && window.positionUtilisateur;
+  if (P && window.distanceKm) _filtered.forEach(function(l) {
+    var la = isNaN(l.llat) ? l.lat : l.llat, lo = isNaN(l.llon) ? l.lon : l.llon;
+    l.dist = (la || lo) ? window.distanceKm(P.lat, P.lon, la, lo) : Infinity;
+  });
+  else _filtered.forEach(function(l) { l.dist = null; });
+
   // Tri
   _filtered.sort(function(a, b) {
+    if (a.dist != null && a.dist !== b.dist) return a.dist - b.dist;
     if (_filters.sort === 'rating') {
       var ra = a.rating || 0, rb = b.rating || 0;
       if (rb !== ra) return rb - ra;
@@ -146,6 +158,7 @@ function renderList() {
           '<div class="exp-card-name">'+l.name+'</div>'+
           '<div class="exp-card-meta">'+
             '<span class="exp-city">'+l.city+'</span>'+
+            (l.dist != null && isFinite(l.dist) ? '<span class="lc-dist">↔ '+window.formateKm(l.dist, window.currentLang || 'fr')+'</span>' : '')+
             '<span class="exp-type-dot" style="background:'+color+'"></span>'+
             '<span class="exp-type-lbl" style="color:'+color+'">'+typeLabel(l.normType)+'</span>'+
             (l.nv ? '<span class="lc-nv" title="'+t('pg_source_reserve')+'">'+t('lc_non_verifie')+'</span>' : '')+
@@ -477,6 +490,7 @@ window.addEventListener('DOMContentLoaded', function() {
       letter-spacing:.05em; cursor:pointer; outline:none;
     }
     .exp-select:focus { border-color:var(--gold); }
+    #exp-near[aria-pressed="true"] { background:var(--gold); color:var(--bg); }
 
     /* Stats */
     #exp-stats {
@@ -635,6 +649,7 @@ window.addEventListener('DOMContentLoaded', function() {
         <option value="Cave & Lounge">${t('type_cave')}</option>
         <option value="Festival">${t('type_festival')}</option>
       </select>
+      <button type="button" class="exp-select" id="exp-near" aria-pressed="false" onclick="expNear()">${t('explorer_near')}</button>
       <select class="exp-select" id="exp-sort" onchange="expFilter()">
         <option value="country">${t('explorer_sort_country')}</option>
         <option value="rating">${t('explorer_sort_rating')}</option>
@@ -682,6 +697,8 @@ window.expRefreshLang = function() {
       type.options[i].text = (v === 'Davidoff') ? '💎 Davidoff' : typeLabel(v);
     }
   }
+  var near = document.getElementById('exp-near');
+  if (near) near.textContent = t('explorer_near');
   var tri = document.getElementById('exp-sort');
   if (tri && tri.options.length >= 2) {
     tri.options[0].text = t('explorer_sort_country');
@@ -690,6 +707,27 @@ window.expRefreshLang = function() {
 
   // Re-rendu : cartes, compteur et etiquettes de type.
   applyFilters();
+};
+
+// ── Près de moi : bascule le tri par distance (géoloc. au premier appui) ──
+window.expNear = function() {
+  var b = document.getElementById('exp-near');
+  function fin(on) {
+    _near = on; b.disabled = false; b.textContent = t('explorer_near');
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    applyFilters();
+  }
+  if (_near) return fin(false);
+  if (window.positionUtilisateur) return fin(true);
+  if (!navigator.geolocation) { b.textContent = t('contrib_geo_echec'); return; }
+  b.disabled = true; b.textContent = t('contrib_geo_encours');
+  navigator.geolocation.getCurrentPosition(function(p) {
+    window.positionUtilisateur = { lat: p.coords.latitude, lon: p.coords.longitude };
+    fin(true);
+  }, function(err) {
+    b.disabled = false;
+    b.textContent = (err && err.code === 1) ? t('contrib_geo_refus') : t('contrib_geo_echec');
+  }, { timeout: 12000, maximumAge: 300000 });
 };
 
 // ── Filter handler ────────────────────────────────────────
