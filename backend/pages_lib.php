@@ -46,7 +46,7 @@ const PAGE_SEGMENTS = ['pays' => 'pays', 'cave' => 'cave', 'marque' => 'marque',
  */
 const PAGE_INDEX = ['atlas'    => 'atlas',   'feuilles' => 'feuilles',
                     'lexique'  => 'lexique', 'aromes'   => 'aromes',
-                    'marches'  => 'marches'];
+                    'marches'  => 'marches', 'conserver' => 'conserver'];
 
 /**
  * Un nom propre réduit à une adresse.

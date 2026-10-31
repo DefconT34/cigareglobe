@@ -70,7 +70,8 @@ try {
     // d'aucune ligne de base pour exister.
     $entrees = [['atlas', '', null, '0.8'],
                 ['feuilles', '', null, '0.7'], ['lexique', '', null, '0.6'],
-                ['aromes', '', null, '0.6'],   ['marches', '', null, '0.6']];
+                ['aromes', '', null, '0.6'],   ['marches', '', null, '0.6'],
+                ['conserver', '', null, '0.6']];
     // Pas de `cave` : les fiches d'etablissements sont en noindex (page.php) ; les annoncer
     // au plan de site dirait aux moteurs l'inverse de ce que la page leur demande.
     foreach (['pays' => '0.7', 'marque' => '0.6', 'feuille' => '0.6'] as $type => $prio) {

@@ -1,3 +1,7 @@
+## 31 octobre 2026 — Page « Conserver ses cigares »
+
+Nouveau type de page rendu côté serveur (`/conserver`, six langues), sur le modèle d'`aromes` : chapô, six sections (humidor et cèdre, humidité et température, acclimatation et quarantaine, vieillissement, moisissure/plume/insectes, remise en état d'un cigare sec), renvois vers les termes du lexique, BreadcrumbList, sitemap, porte depuis l'atlas. Textes écrits par l'agent expert-cigare ; chiffres : congélation 48-72 h vérifiée sur sources de détaillants, autres valeurs (65-72 %, 16-21 °C, test du sel) d'usage courant. Aucune migration ni donnée : code seul. 16 assertions ajoutées.
+
 ## 31 octobre 2026 — Migration 318 : la Hongrie et trois fiches
 
 Deux agents ont instruit 29 pistes précises ; trois lieux entrent (#2641 à #2643, photos #551 à #553). Budapest Cigar Lounge (ouvert fin 2024 : site du salon et Cigar Journal du 17 avril 2025) est confirmé et la Hongrie est créée (drapeau dessiné, région Europe, amorce régénérée : 98 pays de lieux). The Cigar Bar du Fairmont Dubai et The Cigar Lounge d'Address Downtown restent « à vérifier » (Engel & Völkers du 24 février 2026 plus page de l'hôtel ou annuaire ; horaires divergents laissés vides). Écartés faute de deux sources lues dont une de 2024-2026 : Nairobi, Varsovie, Doha, Vienne, Oslo (le site ne mentionne aucun salon), Amman, Johannesburg (profil rédigé par l'entreprise), Curaçao, Bahamas, Nouvelle-Zélande, Singapour, Istanbul, Le Cap, Marrakech.

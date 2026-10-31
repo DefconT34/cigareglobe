@@ -75,6 +75,9 @@ function page_libelles(): array {
               // présence d'Habanos sur les pages de pays.
               'pg_feuilles_t','pg_feuilles_d','pg_lexique_t','pg_lexique_d',
               'pg_aromes_t','pg_aromes_d','pg_marches_t','pg_marches_d',
+              'pg_conserver_t','pg_conserver_d',
+              'pg_conserver_s1_h','pg_conserver_s2_h','pg_conserver_s3_h','pg_conserver_s4_h','pg_conserver_s5_h','pg_conserver_s6_h',
+              'pg_conserver_s1_p','pg_conserver_s2_p','pg_conserver_s3_p','pg_conserver_s4_p','pg_conserver_s5_p','pg_conserver_s6_p',
               'fe_emploi','fe_feuille','fe_genese','fe_culture','fe_caracteres',
               'fe_notes','fe_pairings','fe_cigares',
               'mkt_consumption','mkt_share','mkt_trend','mkt_lex_volume','mkt_world_rank',
@@ -220,7 +223,8 @@ if ($db === null) {
     foreach ([['feuilles', 'pg_feuilles_t', 'pg_feuilles_d'],
               ['lexique',  'pg_lexique_t',  'pg_lexique_d'],
               ['aromes',   'pg_aromes_t',   'pg_aromes_d'],
-              ['marches',  'pg_marches_t',  'pg_marches_d']] as [$t3, $kt, $kd]) {
+              ['marches',  'pg_marches_t',  'pg_marches_d'],
+              ['conserver', 'pg_conserver_t', 'pg_conserver_d']] as [$t3, $kt, $kd]) {
         $corps .= '<a href="' . e(page_url($t3, '', $lang)) . '">'
                 . '<strong>' . e(L($kt)) . '</strong>'
                 . '<span>' . e(page_extrait(L($kd), 90)) . '</span></a>';
@@ -867,6 +871,29 @@ if ($db === null) {
         }
         $corps .= '</ul></section>';
     }
+
+} elseif ($type === 'conserver') {
+    $titre = page_titre(L('pg_conserver_t'));
+    $desc  = L('pg_conserver_d');
+    $h1    = L('pg_conserver_t');
+    $filAriane = [[L('pg_atlas_t'), page_url('atlas', '', $lang)]];
+    $corps .= '<p class="pg-chapo">' . e(L('pg_conserver_d')) . '</p>';
+
+    // Prose pure : un chapô et six sections, sans table derrière.
+    for ($n = 1; $n <= 6; $n++) {
+        $corps .= '<section class="pg-bloc"><h2>' . e(L("pg_conserver_s{$n}_h")) . '</h2>'
+                . '<p>' . nl2br(e(L("pg_conserver_s{$n}_p"))) . '</p></section>';
+    }
+
+    // Renvois vers le lexique (termes déjà traduits en base), ancres lex-<id>.
+    $voir = [];
+    foreach (page_lexique_liste($db, $lang) as $t) {
+        if (in_array($t['id'], ['moisissure', 'plume', 'humidificateur'], true)) {
+            $voir[] = '<a href="' . e(page_url('lexique', '', $lang)) . '#lex-' . e((string)$t['id']) . '">'
+                    . e((string)$t['terme']) . '</a>';
+        }
+    }
+    if ($voir) $corps .= '<p class="pg-retour">' . implode(' · ', $voir) . '</p>';
 
 } elseif ($type === 'marches') {
     $titre = page_titre(L('pg_marches_t'));

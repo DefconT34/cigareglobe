@@ -4336,6 +4336,21 @@ section('Cinq contenus qui n avaient aucune adresse');
     check('sans adresse : notes et accords sont separes',
           (bool)preg_match('~Notes.*Note de test\..*Accords.*Accord de test\.~s', $ra['body']));
 
+    // ── /conserver : prose i18n, sans table derriere
+    foreach (['fr' => '/conserver', 'en' => '/en/conserver'] as $lg => $chemin) {
+        $rc = http('GET', $srvN . '/page.php?type=conserver&lang=' . $lg, ['jar' => $cliN]);
+        eq("conserver [$lg] : repond", 200, $rc['status']);
+        check("conserver [$lg] : titre", (bool)preg_match('~<title>[^<]+ — CigarOdyssey</title>~u', $rc['body']));
+        check("conserver [$lg] : un h1", substr_count($rc['body'], '<h1') === 1);
+        check("conserver [$lg] : six h2 de section", substr_count($rc['body'], '<section class="pg-bloc"><h2>') === 6);
+        check("conserver [$lg] : canonical", str_contains($rc['body'], '<link rel="canonical" href="') && str_contains($rc['body'], $chemin . '">'));
+        check("conserver [$lg] : hreflang x6 + x-default",
+              substr_count($rc['body'], 'hreflang="') >= 7 && str_contains($rc['body'], 'hreflang="x-default"'));
+        check("conserver [$lg] : BreadcrumbList", str_contains($rc['body'], '"BreadcrumbList"'));
+    }
+    $rsm = http('GET', $srvN . '/sitemap.php', ['jar' => $cliN]);
+    check('conserver : present dans le plan de site', str_contains($rsm['body'], '/conserver</loc>'));
+
     // ── La fiche de feuille
     $rf = http('GET', $srvN . '/page.php?type=feuille&id=feuille-de-test&lang=fr', ['jar' => $cliN]);
     eq('sans adresse : la fiche de feuille repond', 200, $rf['status']);
@@ -4387,7 +4402,7 @@ section('Cinq contenus qui n avaient aucune adresse');
     // defaut sous une autre forme : atteignables en theorie, ignorees en
     // pratique.
     $rat = http('GET', $srvN . '/page.php?type=atlas&lang=fr', ['jar' => $cliN]);
-    foreach (['feuilles', 'lexique', 'aromes', 'marches'] as $t6) {
+    foreach (['feuilles', 'lexique', 'aromes', 'marches', 'conserver'] as $t6) {
         check('sans adresse : l atlas mene a /' . $t6,
               (bool)preg_match('~href="[^"]*/' . $t6 . '"~', $rat['body']));
     }

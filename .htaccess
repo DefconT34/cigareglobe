@@ -230,6 +230,7 @@
   RewriteRule ^(?:(en|es|de|zh|ar)/)?lexique/?$      /page.php?lang=$1&type=lexique [L,QSA,E=PRETTY:1]
   RewriteRule ^(?:(en|es|de|zh|ar)/)?aromes/?$       /page.php?lang=$1&type=aromes [L,QSA,E=PRETTY:1]
   RewriteRule ^(?:(en|es|de|zh|ar)/)?marches/?$      /page.php?lang=$1&type=marches [L,QSA,E=PRETTY:1]
+  RewriteRule ^(?:(en|es|de|zh|ar)/)?conserver/?$    /page.php?lang=$1&type=conserver [L,QSA,E=PRETTY:1]
   RewriteRule ^(?:(en|es|de|zh|ar)/)?feuille/([a-z0-9-]{1,60})/?$ /page.php?lang=$1&type=feuille&id=$2 [L,QSA,E=PRETTY:1]
 
   # Plan de site : genere, pour que le domaine suive SITE_URL.
