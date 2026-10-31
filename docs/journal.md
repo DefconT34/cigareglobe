@@ -1,3 +1,7 @@
+## 31 octobre 2026 — Migration 310 : douze lieux dans le monde
+
+Trois agents (Asie-Pacifique, Moyen-Orient et Europe, Amériques) ont rendu 16 lieux, limités par le quota de session et des sites en 403. Douze ajoutés (#2614 à #2625, photos #524 à #535), tous « à vérifier » : Connoisseur Divan (Singapour), Red Chamber et Pacific Cigar Divan (Hong Kong), Siglo (Melbourne), Havana Club (Kuala Lumpur), Le Fumoir Çırağan (Istanbul), Vintage Cigar Lounge (Dubaï), La Casa Cubana (Riyad), Joseph's (Houston), BURN by Rocky Patel (Atlanta), Byron Lounge (Nashville), Arturo Fuente Cigar Club (Santo Domingo). Quatre lieux attendent la création des pays : The Oak Lounge et Sigari Maja (Tallinn), Oak Lounge / LCDH (Riga), Cigarrummet (Stockholm). Restent à explorer : Japon, Chine, Taïwan, Corée, Thaïlande, Vietnam, Inde, Afrique, Brésil, Pérou, Panama, Caraïbes, Irlande, Pologne, Grèce, Égypte, Golfe, villes américaines (Los Angeles, Chicago, Dallas, Boston, Washington…).
+
 ## 31 octobre 2026 — Migration 309 : trois lieux allemands
 
 Kempinski Cigar Lounge (Munich, ouvert en 2018), Breidenbacher Hof (Düsseldorf, hôtel devenu Capella) et Handelshof (Leipzig, source de 2022) : #2611 à #2613, tous « à vérifier ». Le numéro de rue du Kempinski n'a pas été lu sur une page : non inscrit. Mephisto Bar (Leipzig) écartée, plus bar que salon cigares. Photos #521 à #523 : espaces réservés à téléverser.

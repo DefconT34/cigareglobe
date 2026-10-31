@@ -145,6 +145,10 @@
             "dns": "resout",
             "fiches": 8
         },
+        "atly.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "azalai.com": {
             "dns": "resout",
             "fiches": 2
@@ -301,6 +305,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "broadsheet.com.au": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "browardcigarboard.com": {
             "dns": "resout",
             "fiches": 1
@@ -315,7 +323,7 @@
         },
         "burnbyrockypatel.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "c-cigars.de": {
             "dns": "resout",
@@ -427,7 +435,7 @@
         },
         "cigar-coop.com": {
             "dns": "resout",
-            "fiches": 137
+            "fiches": 138
         },
         "cigar-keep.com": {
             "dns": "resout",
@@ -451,7 +459,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 216
+            "fiches": 221
         },
         "cigarandspirits.com": {
             "dns": "resout",
@@ -487,7 +495,7 @@
         },
         "cigardojo.com": {
             "dns": "resout",
-            "fiches": 43
+            "fiches": 44
         },
         "cigarengineers.com": {
             "dns": "resout",
@@ -515,7 +523,7 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 17
+            "fiches": 18
         },
         "cigarjournal.com": {
             "dns": "resout",
@@ -603,7 +611,7 @@
         },
         "cigarslover.com": {
             "dns": "resout",
-            "fiches": 13
+            "fiches": 14
         },
         "cigarsmokerclub.com": {
             "dns": "resout",
@@ -651,7 +659,7 @@
         },
         "citynomads.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "clubdelhabano.blogspot.com": {
             "dns": "resout",
@@ -863,7 +871,7 @@
         },
         "diffordsguide.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "diplomatic.zenithoteles.com": {
             "dns": "resout",
@@ -1023,7 +1031,7 @@
         },
         "enprimeurclub.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "enthusiastreport.com": {
             "dns": "resout",
@@ -1247,7 +1255,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 165
+            "fiches": 166
         },
         "hacico.de": {
             "dns": "resout",
@@ -1369,6 +1377,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "igafencu.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "igmcigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -1477,6 +1489,10 @@
             "dns": "resout",
             "fiches": 6
         },
+        "josephscigar.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "journal.unnes.ac.id": {
             "dns": "resout",
             "fiches": 1
@@ -1519,7 +1535,7 @@
         },
         "kempinski.com": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "kingfahdpalacehotels.com": {
             "dns": "resout",
@@ -1891,7 +1907,7 @@
         },
         "moodiedavittreport.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 5
         },
         "mosi.it": {
             "dns": "resout",
@@ -2036,6 +2052,10 @@
         "ozfamilycigars.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "pacificcigar.com": {
+            "dns": "resout",
+            "fiches": 3
         },
         "padillacigars.com": {
             "dns": "resout",
@@ -2275,7 +2295,7 @@
         },
         "robbreport.com.my": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 3
         },
         "rockypatel.com": {
             "dns": "resout",
@@ -2637,6 +2657,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "thepeak.com.my": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "therake.com": {
             "dns": "resout",
             "fiches": 1
@@ -2659,7 +2683,7 @@
         },
         "timeout.com": {
             "dns": "resout",
-            "fiches": 6
+            "fiches": 7
         },
         "timeout.es": {
             "dns": "resout",
