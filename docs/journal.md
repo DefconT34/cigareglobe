@@ -1,3 +1,7 @@
+## 31 octobre 2026 — Migration 307 : Black Lotus Cigar Club (Douala)
+
+Nouvelle fiche #2581 (Cameroun) : habanos.com (Habanos Specialist, Rue Tokoto, Bonapriso) + annuaire cameroun-plus.com non daté. Une seule source officielle, ouverture non confirmée : entrée « à vérifier ». Description en six langues, sceaux « machine » remis. Photo : espace réservé `uploads/lounges/2581/placeholder_2581.jpg` à téléverser sur le serveur (dossier ignoré par Git).
+
 ## 31 octobre 2026 — Migration 306 : doublon Drew Estate
 
 Trois agents ont repris les pistes restantes (sans accès à la base : verdicts web seuls). Retenu : #1570 (Drew Estate Factory — Lounge & Tour) retirée, doublon de #180 (La Gran Fabrica, Estelí). Non retenu, faute de deux sources : Padrón #179/#1571 (aucune boutique ni Sala VIP publique attestée), Gimeno #31 → Domingo Cigars (annuaire tiers seul), Altamira Suites #1107 (aucun salon cigares attesté, pas de preuve de fermeture), Cava de Magallanes #33 (renommage Bohío annoncé en 2018, non confirmé). Black Lotus Cigar Club (Douala) : habanos.com + annuaire, fiche à créer en six langues, non faite.

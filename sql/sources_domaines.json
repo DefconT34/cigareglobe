@@ -317,6 +317,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "cameroun-plus.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "caocigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -1187,7 +1191,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 164
+            "fiches": 165
         },
         "hacico.de": {
             "dns": "resout",
