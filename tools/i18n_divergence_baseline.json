@@ -1,6 +1,6 @@
 {
     "volumes": {
-        "feuilles.culture|Connecticut Broadleaf|zh": 0.5,
+        "feuilles.culture|Connecticut Broadleaf|zh": 0.49,
         "feuilles.culture|Ecuador Connecticut|zh": 0.43,
         "lounges.description|Cigar & Whisky Lounge — Masa Square Hotel|ar": 0.17,
         "lounges.description|Cohiba Atmosphere — Shenzhen|ar": 0.46,
@@ -9,7 +9,8 @@
         "lounges.description|La Casa del Habano — Alexandrie|ar": 0.23,
         "lounges.description|La Casa del Habano — Calgary|ar": 0.15,
         "lounges.description|La Casa del Habano — Istanbul (Ritz-Carlton)|ar": 0.23,
-        "lounges.description|La Casa del Habano — Lima (La Encalada)|zh": 2.16,
+        "lounges.description|La Casa del Habano — Lima (La Encalada)|zh": 2.15,
+        "lounges.description|Puerto Banús Marina — Cigar Lounge|zh": 0.5,
         "lounges.description|The Arusha Hotel — Hemingway Bar|ar": 0.24,
         "lounges.description|The Arusha Hotel — Hemingway Bar|zh": 0.22,
         "producer_countries.production|Açores|zh": 0.49

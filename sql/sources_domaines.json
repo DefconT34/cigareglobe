@@ -459,9 +459,13 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 223
+            "fiches": 225
         },
         "cigarandspirits.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarbarnola.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -986,6 +990,14 @@
             "fiches": 1
         },
         "elgauchocigars.co.id": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "elitecigarcafe.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "elitetraveler.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2255,7 +2267,7 @@
         },
         "raffles.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "rauchr.de": {
             "dns": "resout",
@@ -2481,6 +2493,10 @@
             "dns": "resout",
             "fiches": 3
         },
+        "stanzadeisigari.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "starkezigarren.de": {
             "dns": "resout",
             "fiches": 13
@@ -2667,7 +2683,7 @@
         },
         "thegentlemansjournal.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "thegeorgetowndish.com": {
             "dns": "resout",
@@ -2681,9 +2697,13 @@
             "dns": "resout",
             "fiches": 1
         },
-        "themanual.com": {
+        "thekingcigarlounge.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "themanual.com": {
+            "dns": "resout",
+            "fiches": 2
         },
         "theoaklounge.com": {
             "dns": "resout",
@@ -2715,7 +2735,7 @@
         },
         "timeout.com": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 8
         },
         "timeout.es": {
             "dns": "resout",
