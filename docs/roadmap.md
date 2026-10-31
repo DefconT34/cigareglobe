@@ -306,7 +306,7 @@ Moyenne 3,1/5 (2,4 le 9 octobre). Pas d'annonce large avant : regroupement des s
 - À trancher par vous : Mapamba House (ville, pays, graphie) ; doublons Padrón #179/#1571 ; « Le Club Fumoir » (Grand Hôtel du Bois de Boulogne) à instruire.
 - Mis de côté à votre demande : corrections de design (audit : focus, contrastes `--gold-text` / `--on-gold`, cibles tactiles 44 px, badges, polices auto-hébergées).
 - Lexique : 20 → 86 termes (migrations 315 et 316, conservation, authenticité, variétés de tabac, fabrication) ; objectif 80-100 atteint. Reste en contenu : pages « conserver ses cigares » et « fabrication pas à pas », calendrier, marchés 10 → 25.
-- Fonctions faites (31 octobre 2026) : « Près de moi », icônes PWA, JSON-LD BreadcrumbList, export RGPD art. 20. Restent, du moins au plus coûteux : export .ics (il faut d'abord un calendrier d'événements structuré), mode hors ligne, filtres partageables ; puis glossaire (20 → 80 termes), conservation, authenticité, variétés de tabac ; carnet de dégustation et humidor personnel (7 à 11 jours). Aucune fonction de vente (loi Évin).
+- Fonctions faites (31 octobre 2026) : « Près de moi », icônes PWA, JSON-LD BreadcrumbList, export RGPD art. 20. Restent, du moins au plus coûteux : export .ics (il faut d'abord un calendrier d'événements structuré), mode hors ligne ; filtres partageables faits (hash d'URL) ; puis glossaire (20 → 80 termes), conservation, authenticité, variétés de tabac ; carnet de dégustation et humidor personnel (7 à 11 jours). Aucune fonction de vente (loi Évin).
 
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → ~~B1~~ → ~~F3/F4/F6~~ → ~~**B4b2**~~ → D6/C1b (optionnels)

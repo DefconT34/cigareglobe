@@ -102,6 +102,7 @@ function buildAllLounges() {
 
 // ── Appliquer les filtres ────────────────────────────────
 function applyFilters() {
+  expSyncUrl();
   var q = _filters.search.toLowerCase().trim();
   _filtered = _allLounges.filter(function(l) {
     if (_filters.region !== 'all' && l.region !== _filters.region) return false;
@@ -369,6 +370,59 @@ function _loadAllFromDB(onDone) {
     });
 }
 
+// ── Filtres <-> hash d'URL : #explorer&q=..&r=..&t=..&s=rating ──
+// Hash (pas query) : deeplinks.js, indice.js et le tutoriel lisent la query ;
+// le hash n'atteint ni le serveur, ni .htaccess, ni le cache de sw.js.
+// « Près de moi » reste hors du lien : il dépend de la position du visiteur.
+var _URL_KEYS = { q: 'exp-search', r: 'exp-region', t: 'exp-type', s: 'exp-sort' };
+function expSyncUrl() {
+  if (!_explorerOpen || !window.history || !history.replaceState) return;
+  var p = new URLSearchParams(), d = { q: '', r: 'all', t: 'all', s: 'country' };
+  for (var k in _URL_KEYS) {
+    var el = document.getElementById(_URL_KEYS[k]);
+    if (el && el.value && el.value !== d[k]) p.set(k, el.value);
+  }
+  try { history.replaceState(null, '', location.pathname + location.search + '#explorer' + (p.toString() ? '&' + p : '')); } catch (e) {}
+}
+// Lit le hash ; seules les valeurs présentes dans les <select> sont admises,
+// la recherche n'entre que par .value (jamais en HTML).
+function expReadUrl() {
+  if (!/^#explorer(&|$)/.test(location.hash)) return false;
+  var p = new URLSearchParams(location.hash.slice(9));
+  for (var k in _URL_KEYS) {
+    var el = document.getElementById(_URL_KEYS[k]), v = p.get(k);
+    if (!el || v == null) continue;
+    if (el.tagName === 'SELECT') {
+      if (![].some.call(el.options, function(o) { return o.value === v; })) continue;
+    } else v = v.slice(0, 100);
+    el.value = v;
+  }
+  _filters.search = document.getElementById('exp-search').value;
+  _filters.region = document.getElementById('exp-region').value;
+  _filters.type   = document.getElementById('exp-type').value;
+  _filters.sort   = document.getElementById('exp-sort').value;
+  return true;
+}
+
+window.expCopyLink = function() {
+  var b = document.getElementById('exp-copy'), url = location.href;
+  function ok() {
+    b.textContent = t('explorer_link_copied');
+    setTimeout(function() { b.textContent = t('explorer_copy_link'); }, 2000);
+  }
+  function repli() {
+    var ta = document.createElement('textarea');
+    ta.value = url; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    var done = false;
+    try { done = document.execCommand('copy'); } catch (e) {}
+    ta.remove();
+    if (done) ok(); else window.prompt(t('explorer_copy_link'), url);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(ok, repli);
+  else repli();
+};
+
 function openExplorer() {
   var overlay = document.getElementById('exp-overlay');
   if (!overlay) return;
@@ -409,6 +463,7 @@ function closeExplorer() {
   var overlay = document.getElementById('exp-overlay');
   if (!overlay) return;
   _explorerOpen = false;
+  if (/^#explorer/.test(location.hash)) try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
   overlay.classList.remove('open');
   document.body.style.overflow = '';
   setTimeout(function(){ autoRot = true; }, 1500);
@@ -654,6 +709,7 @@ window.addEventListener('DOMContentLoaded', function() {
         <option value="country">${t('explorer_sort_country')}</option>
         <option value="rating">${t('explorer_sort_rating')}</option>
       </select>
+      <button type="button" class="exp-select" id="exp-copy" onclick="expCopyLink()">${t('explorer_copy_link')}</button>
     </div>
     <div id="exp-stats">198 établissements · 75 pays</div>
     <div id="exp-body">
@@ -662,6 +718,7 @@ window.addEventListener('DOMContentLoaded', function() {
     </div>
   `;
   document.body.appendChild(overlay);
+  if (expReadUrl()) openExplorer();
 
   // Fermer sur Escape
   document.addEventListener('keydown', function(e) {
@@ -699,6 +756,8 @@ window.expRefreshLang = function() {
   }
   var near = document.getElementById('exp-near');
   if (near) near.textContent = t('explorer_near');
+  var cp = document.getElementById('exp-copy');
+  if (cp) cp.textContent = t('explorer_copy_link');
   var tri = document.getElementById('exp-sort');
   if (tri && tri.options.length >= 2) {
     tri.options[0].text = t('explorer_sort_country');

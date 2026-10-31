@@ -1,3 +1,7 @@
+## 31 octobre 2026 — Filtres partageables de l'Explorer
+
+L'état de l'Explorer (recherche, région, type, tri par note) s'écrit dans le hash de l'URL (`/#explorer&q=…&r=…&t=…&s=rating`) et se relit à l'ouverture ; bouton « Copier le lien » en six langues. Le hash plutôt que la query : il n'atteint ni `.htaccess` ni le cache du service worker. Valeurs de région, type et tri admises seulement si elles figurent dans les listes ; la recherche n'entre que par `.value`. « Près de moi » reste hors du lien (dépend de la position). Essai en local : lien ouvert filtré, lien piégé ignoré.
+
 ## 31 octobre 2026 — Migration 316 : le lexique passe de 56 à 86 termes
 
 Trente termes de plus, en six langues : conservation (moisissure, remise en état, acclimatation, humidificateur, humidité relative, quarantaine, vieillissement), authenticité (code de boîte, numéro de série, contrefaçon), variétés de tabac (Corojo, Criollo, Habano 2000, Connecticut shade, Sumatra, Havana Seed, Cubano, Pelo de Oro) et fabrication (palillo, escogida, curado, rezago, ligada). Écrits par l'agent expert-cigare, contrôlés par script (ids, longueurs, variantes) et par les garde-fous de langue. À relire en priorité : rezago, ligada, pelo de oro, dont le sens varie selon les sources. « galera » existait déjà.
