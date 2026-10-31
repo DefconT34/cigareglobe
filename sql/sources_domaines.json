@@ -1,5 +1,5 @@
 {
-    "fige_le": "2026-10-30",
+    "fige_le": "2026-10-31",
     "domaines": {
         "262cigars.com": {
             "dns": "resout",
@@ -1183,7 +1183,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 139
+            "fiches": 162
         },
         "hacico.de": {
             "dns": "resout",
