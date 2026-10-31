@@ -1,3 +1,7 @@
+## 31 octobre 2026 — Migration 322 : Estelí (Padrón, Drew Estate)
+
+Deux agents ont relu #179, #1571, #180, #232 et #278 : aucune confirmation. #179 et #1571 renvoient à la même usine (Tabacos Cubanica S.A.), doublon non prouvé, rien retiré ; #180 : visites et Cigar Safari attestés, lounge public non. Descriptions de #179 (« éditions limitées directes ») et #180 (« réservation requise ») ramenées à ce qui est attesté, six langues, source « à vérifier » datée. #232 et #278 inchangées : le renommage « Club Viñales » ne repose que sur une page de 2018.
+
 ## 31 octobre 2026 — Migration 321 : coquille de la 320
 
 Vérifiée en production, la description française de #2588 gardait un espace avant le point (« cigares . ») ; corrigée, traductions rescellées.
