@@ -53,6 +53,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "airelles.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "ajfernandezcigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -173,6 +177,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "barristercigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "beautiful-aruba.nl": {
             "dns": "resout",
             "fiches": 1
@@ -241,11 +249,19 @@
             "dns": "resout",
             "fiches": 1
         },
+        "blog.sothebysrealty.co.uk": {
+            "dns": "resout",
+            "fiches": 3
+        },
         "bluebellgroup.com": {
             "dns": "resout",
             "fiches": 1
         },
         "bocachicaabidjan.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "boisdale.co.uk": {
             "dns": "resout",
             "fiches": 1
         },
@@ -290,6 +306,10 @@
             "fiches": 1
         },
         "brundelrecigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "burgenstockresort.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -431,7 +451,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 210
+            "fiches": 216
         },
         "cigarandspirits.com": {
             "dns": "resout",
@@ -483,7 +503,7 @@
         },
         "cigarguide.simplycigars.co.uk": {
             "dns": "resout",
-            "fiches": 2
+            "fiches": 5
         },
         "cigarindonesia.id": {
             "dns": "resout",
@@ -543,7 +563,7 @@
         },
         "cigars-connect.com": {
             "dns": "resout",
-            "fiches": 7
+            "fiches": 11
         },
         "cigars-vegasantiago.biz": {
             "dns": "resout",
@@ -621,6 +641,10 @@
             "dns": "resout",
             "fiches": 82
         },
+        "circalasvegas.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "circolodellunione.it": {
             "dns": "resout",
             "fiches": 1
@@ -677,6 +701,10 @@
             "dns": "resout",
             "fiches": 5
         },
+        "countryandtownhouse.com": {
+            "dns": "resout",
+            "fiches": 3
+        },
         "crownedheads.com": {
             "dns": "resout",
             "fiches": 1
@@ -722,6 +750,10 @@
             "fiches": 2
         },
         "dalmoroshop.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "dangleterrehotel.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -909,6 +941,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "eightloungelv.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "el-unico.ro": {
             "dns": "resout",
             "fiches": 1
@@ -981,6 +1017,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "enprimeurclub.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "enthusiastreport.com": {
             "dns": "resout",
             "fiches": 1
@@ -1006,6 +1046,10 @@
             "fiches": 1
         },
         "etwasgenuss.de": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "euronews.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1054,6 +1098,10 @@
             "fiches": 1
         },
         "finetobacconyc.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "finews.ch": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1345,6 +1393,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "inquirer.com": {
+            "dns": "resout",
+            "fiches": 3
+        },
         "intercigar.com": {
             "dns": "resout",
             "fiches": 2
@@ -1382,6 +1434,10 @@
             "fiches": 1
         },
         "jakewyattcigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "jamiescigarbar.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1693,6 +1749,10 @@
             "dns": "resout",
             "fiches": 7
         },
+        "ma.to": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "macanudo.com": {
             "dns": "resout",
             "fiches": 1
@@ -1781,6 +1841,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "miamichamber.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "miamicigar.com": {
             "dns": "resout",
             "fiches": 2
@@ -1834,6 +1898,10 @@
             "fiches": 1
         },
         "mystarluxury.pt": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "myswitzerland.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2177,6 +2245,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "ribnreef.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "richner-cigars.com": {
             "dns": "resout",
             "fiches": 1
@@ -2277,6 +2349,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "silverleafcigarlounge.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "simplycigars.co.uk": {
             "dns": "resout",
             "fiches": 5
@@ -2288,6 +2364,10 @@
         "sirlouiscigars.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "slman.com": {
+            "dns": "resout",
+            "fiches": 5
         },
         "smallbatchcigar.com": {
             "dns": "resout",
@@ -2301,6 +2381,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "smokemanayunk.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "smokersplanet.de": {
             "dns": "resout",
             "fiches": 14
@@ -2308,6 +2392,10 @@
         "smokingpipes.com": {
             "dns": "resout",
             "fiches": 5
+        },
+        "smokinsilverbackscigarlounge.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "smokintabacco.com": {
             "dns": "resout",
@@ -2355,13 +2443,17 @@
         },
         "stogiepress.com": {
             "dns": "resout",
-            "fiches": 18
+            "fiches": 19
         },
         "stogiereview.com": {
             "dns": "resout",
             "fiches": 6
         },
         "stolenthronecigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "storchen.ch": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2481,6 +2573,10 @@
             "dns": "resout",
             "fiches": 2
         },
+        "thealpinagstaad.ch": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "thebreakers.com": {
             "dns": "resout",
             "fiches": 1
@@ -2488,6 +2584,10 @@
         "thecigarauthority.com": {
             "dns": "resout",
             "fiches": 6
+        },
+        "thecigarcode.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "thecigarguys.com": {
             "dns": "resout",
@@ -2500,6 +2600,10 @@
         "thedailypour.com": {
             "dns": "resout",
             "fiches": 1
+        },
+        "thedigestonline.com": {
+            "dns": "resout",
+            "fiches": 2
         },
         "thegentlemansjournal.com": {
             "dns": "resout",
@@ -2539,7 +2643,7 @@
         },
         "timeout.com": {
             "dns": "resout",
-            "fiches": 4
+            "fiches": 6
         },
         "timeout.es": {
             "dns": "resout",
@@ -2612,6 +2716,10 @@
         "tripadvisor.com": {
             "dns": "resout",
             "fiches": 3
+        },
+        "tslv.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "tugujatim.id": {
             "dns": "resout",
@@ -2689,6 +2797,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "visittampabay.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "waldrausch-magazin.de": {
             "dns": "resout",
             "fiches": 1
@@ -2714,6 +2826,18 @@
             "fiches": 1
         },
         "westtampatobacco.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "whatnow.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "whiskyadvocate.com": {
+            "dns": "resout",
+            "fiches": 7
+        },
+        "whiskycafe.com": {
             "dns": "resout",
             "fiches": 1
         },
