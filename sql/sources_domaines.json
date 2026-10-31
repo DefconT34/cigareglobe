@@ -427,7 +427,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 209
+            "fiches": 210
         },
         "cigarandspirits.com": {
             "dns": "resout",
@@ -736,6 +736,10 @@
         "dannemann-group.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "danspapers.com": {
+            "dns": "resout",
+            "fiches": 1
         },
         "dappercigars.com": {
             "dns": "resout",
@@ -1788,6 +1792,10 @@
         "momentohumo.com": {
             "dns": "resout",
             "fiches": 2
+        },
+        "monacolife.net": {
+            "dns": "resout",
+            "fiches": 1
         },
         "monsooncigar.com": {
             "dns": "resout",
