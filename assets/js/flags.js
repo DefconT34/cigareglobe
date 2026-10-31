@@ -264,6 +264,10 @@ var FLAGS_SPEC = {
                 o:[['croissant','#FFFFFF',0.35,0.5,0.22],['etoile','#FFFFFF',0.545,0.5,0.10,0.041]]},
   azerbaijan:  {h:['#0092BC','#E4002B','#00AF66'],
                 o:[['croissant','#FFFFFF',0.47,0.5,0.15],['etoile','#FFFFFF',0.585,0.5,0.075,0.031]]},
+  estonia:     {h:['#0072CE','#000000','#FFFFFF']},
+  latvia:      {hp:[['#9E3039',2],['#FFFFFF',1],['#9E3039',2]]},
+  sweden:      {h:['#006AA7'],
+                o:[['bande','#FECC02',0.3125,0.4375,0,1],['bande','#FECC02',0,1,0.4,0.6]]},
   india:       {h:['#FF9933','#FFFFFF','#138808'], o:[['chakra','#000080',0.5,0.5,0.145]]},
   thailand:    {hp:[['#A51931',1],['#F4F5F8',1],['#2D2A4A',2],['#F4F5F8',1],['#A51931',1]]},
   cambodia:    {hp:[['#032EA1',1],['#E00025',2],['#032EA1',1]],
@@ -1185,7 +1189,8 @@ var FLAGS_DESSINES = [
                       'stkitts','stmartin','switz_mkt','switzerland','taiwan',
                       'tanzania','thailand','togo','turkey','uae',
                       'uae_mkt','uk','uk_mkt','ukraine','usa',
-                      'usa_mkt','venezuela','vietnam','zimbabwe'];
+                      'usa_mkt','venezuela','vietnam','zimbabwe',
+                      'estonia','latvia','sweden'];
 
 /**
  * Arrete les trois boucles et efface les canvas.

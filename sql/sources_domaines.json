@@ -459,7 +459,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 221
+            "fiches": 222
         },
         "cigarandspirits.com": {
             "dns": "resout",
@@ -512,6 +512,10 @@
         "cigarguide.simplycigars.co.uk": {
             "dns": "resout",
             "fiches": 5
+        },
+        "cigarhouse.ee": {
+            "dns": "resout",
+            "fiches": 1
         },
         "cigarindonesia.id": {
             "dns": "resout",
@@ -566,6 +570,10 @@
             "fiches": 1
         },
         "cigarrspecialisten.se": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "cigarrummet.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1255,7 +1263,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 166
+            "fiches": 167
         },
         "hacico.de": {
             "dns": "resout",
@@ -1431,7 +1439,7 @@
         },
         "inyourpocket.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 3
         },
         "irishcentral.com": {
             "dns": "resout",
@@ -2657,6 +2665,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "theoaklounge.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "thepeak.com.my": {
             "dns": "resout",
             "fiches": 1
@@ -2974,6 +2986,10 @@
             "fiches": 2
         },
         "zino.oettingerdavidoff.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "zl.lv": {
             "dns": "resout",
             "fiches": 1
         }
