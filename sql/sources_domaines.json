@@ -261,10 +261,6 @@
             "dns": "resout",
             "fiches": 2
         },
-        "bluebellgroup.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "bocachicaabidjan.com": {
             "dns": "resout",
             "fiches": 1
@@ -467,7 +463,7 @@
         },
         "cigaraficionado.com": {
             "dns": "resout",
-            "fiches": 225
+            "fiches": 221
         },
         "cigarandspirits.com": {
             "dns": "resout",
@@ -539,11 +535,11 @@
         },
         "cigarinspector.com": {
             "dns": "resout",
-            "fiches": 18
+            "fiches": 17
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 98
+            "fiches": 96
         },
         "cigarkings.de": {
             "dns": "resout",
@@ -761,10 +757,6 @@
             "dns": "resout",
             "fiches": 1
         },
-        "cubaplusmagazine.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
         "cuencacigars.com": {
             "dns": "resout",
             "fiches": 5
@@ -811,7 +803,7 @@
         },
         "davidoff.com": {
             "dns": "resout",
-            "fiches": 44
+            "fiches": 50
         },
         "davidoffcigarbarlv.com": {
             "dns": "resout",
@@ -1303,7 +1295,7 @@
         },
         "habanos.com": {
             "dns": "resout",
-            "fiches": 168
+            "fiches": 174
         },
         "hacico.de": {
             "dns": "resout",
@@ -1319,7 +1311,7 @@
         },
         "halfwheel.com": {
             "dns": "resout",
-            "fiches": 110
+            "fiches": 109
         },
         "hall4d21.com": {
             "dns": "resout",
@@ -1671,7 +1663,7 @@
         },
         "lacasadelhabano.com": {
             "dns": "resout",
-            "fiches": 110
+            "fiches": 114
         },
         "lacasadelhabano.kn": {
             "dns": "resout",
@@ -2554,10 +2546,6 @@
             "fiches": 1
         },
         "storiesfromdeli.com": {
-            "dns": "resout",
-            "fiches": 1
-        },
-        "strandarcade.com.au": {
             "dns": "resout",
             "fiches": 1
         },
