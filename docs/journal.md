@@ -1,3 +1,7 @@
+## 31 octobre 2026 — Migration 321 : coquille de la 320
+
+Vérifiée en production, la description française de #2588 gardait un espace avant le point (« cigares . ») ; corrigée, traductions rescellées.
+
 ## 31 octobre 2026 — Migration 320 : Hotel d'Angleterre, le salon n'est pas le Leopard Bar
 
 Les fiches #646, #1566 et #1575, données pour « à réécrire », l'étaient déjà en six langues : retirées de la liste. #2588 (confirmée par la 319) portait « (Leopard Bar) » dans son nom alors que ses deux sources disent le salon distinct du bar : nom corrigé, description réécrite en six langues avec la date de 2024. Le garde-fou `marques_check` a refusé la revue nommée dans une description : la source de 2019 reste dans la colonne `source`.
