@@ -837,6 +837,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "develop.cigarjournal.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "diakonie-th.de": {
             "dns": "resout",
             "fiches": 1
@@ -1019,7 +1023,7 @@
         },
         "enprimeurclub.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "enthusiastreport.com": {
             "dns": "resout",
@@ -1158,6 +1162,10 @@
             "fiches": 1
         },
         "gamberorosso.it": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "gcb.de": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1322,6 +1330,10 @@
             "fiches": 1
         },
         "hotelnacionaldecuba.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "hotelsmag.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -1507,7 +1519,7 @@
         },
         "kempinski.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "kingfahdpalacehotels.com": {
             "dns": "resout",
@@ -1738,6 +1750,10 @@
             "fiches": 1
         },
         "lovelofb.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "luxaterra.com": {
             "dns": "resout",
             "fiches": 1
         },
@@ -2790,6 +2806,10 @@
             "fiches": 3
         },
         "virtualglobetrotting.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "visitduesseldorf.de": {
             "dns": "resout",
             "fiches": 1
         },
