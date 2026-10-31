@@ -298,6 +298,15 @@ Moyenne 3,1/5 (2,4 le 9 octobre). Pas d'annonce large avant : regroupement des s
 - Sécurité P1 faits (voir journal) ; reste à votre charge : rotation des secrets, dépôt GitHub public, polices Google (téléchargement à autoriser).
 - Données à vendre (plan de l'agent monétisation, hypothèses de prix non fondées sur le marché) : export CSV par pays, veille mensuelle ; base réelle 336 lieux publiés, dont 166 datés.
 
+### Enrichissement des lieux, tous pays (migrations 306 à 311, 31 octobre 2026)
+
+- Fait : 306-307 (suites de la relecture), 308 (29 fiches : France, Suisse, États-Unis, Canada, Royaume-Uni, Portugal), 309 (3 en Allemagne), 310 (12 dans le monde), 311 (Estonie, Lettonie, Suède créées + 4 fiches). Fiches #2582 à #2629, la plupart « à vérifier ». Base : 572 lieux.
+- Photos : après chaque import, lancer `cd ~/public_html && php tools/placeholders.php --tout` (pas depuis `~/repositories`, qui n'a ni la base ni le dossier servi).
+- En cours : lots 8 (Asie-Pacifique) et 9 (Amériques, Caraïbes) confiés à des agents ; viendront Afrique, Golfe, Europe de l'Est, villes américaines (Los Angeles, Chicago, Dallas, Boston, Washington, San Francisco, Seattle, La Nouvelle-Orléans, Denver).
+- À trancher par vous : Mapamba House (ville, pays, graphie) ; doublons Padrón #179/#1571 ; « Le Club Fumoir » (Grand Hôtel du Bois de Boulogne) à instruire.
+- Mis de côté à votre demande : corrections de design (audit : focus, contrastes `--gold-text` / `--on-gold`, cibles tactiles 44 px, badges, polices auto-hébergées).
+- Issus des audits de fonctionnalités et de contenu, du moins au plus coûteux : « Près de moi » dans l'Explorer, manifeste PWA, JSON-LD manquants, export .ics des événements, export des données du compte (RGPD art. 20), mode hors ligne, filtres partageables ; puis glossaire (20 → 80 termes), conservation, authenticité, variétés de tabac ; carnet de dégustation et humidor personnel (7 à 11 jours). Aucune fonction de vente (loi Évin).
+
 ## Ordre suggéré
 ~~C2+C3~~ → ~~C1~~ → ~~D3+D5~~ → ~~B2~~ → ~~B3~~ → ~~A2~~ → ~~F7~~ → ~~F1~~ → ~~F2~~ → ~~F6+F3+F5~~ → ~~B1~~ → ~~F3/F4/F6~~ → ~~**B4b2**~~ → D6/C1b (optionnels)
 
