@@ -893,6 +893,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "domingocigars.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "don-collins.com": {
             "dns": "resout",
             "fiches": 1
@@ -1738,6 +1742,10 @@
             "fiches": 2
         },
         "le-diplomate.fr": {
+            "dns": "resout",
+            "fiches": 1
+        },
+        "leadstal.com": {
             "dns": "resout",
             "fiches": 1
         },
