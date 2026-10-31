@@ -1,3 +1,7 @@
+## 31 octobre 2026 — Migration 316 : le lexique passe de 56 à 86 termes
+
+Trente termes de plus, en six langues : conservation (moisissure, remise en état, acclimatation, humidificateur, humidité relative, quarantaine, vieillissement), authenticité (code de boîte, numéro de série, contrefaçon), variétés de tabac (Corojo, Criollo, Habano 2000, Connecticut shade, Sumatra, Havana Seed, Cubano, Pelo de Oro) et fabrication (palillo, escogida, curado, rezago, ligada). Écrits par l'agent expert-cigare, contrôlés par script (ids, longueurs, variantes) et par les garde-fous de langue. À relire en priorité : rezago, ligada, pelo de oro, dont le sens varie selon les sources. « galera » existait déjà.
+
 ## 31 octobre 2026 — Migration 317 et trois fonctions
 
 Mapamba House (#2640, Douala, Bonapriso) entre « à vérifier » : l'adresse vient de la recherche Google et de publications de réseaux sociaux, aucune seconde source indépendante. Trois fiches confirmées par deux sources (141 Angelina Hanoï, 182 Arturo Fuente Cigar Club Santiago, 184 Festival de Danlí). Lot D de relecture : 30 fiches, 5 confirmées par l'agent, 3 « introuvables » (129, 143, 196) non retirées faute de contradicteur suffisant.
