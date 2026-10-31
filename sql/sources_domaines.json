@@ -321,6 +321,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "budapestcigarlounge.com": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "burgenstockresort.com": {
             "dns": "resout",
             "fiches": 1
@@ -535,7 +539,7 @@
         },
         "cigarjournal.com": {
             "dns": "resout",
-            "fiches": 96
+            "fiches": 97
         },
         "cigarkings.de": {
             "dns": "resout",
@@ -949,6 +953,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "eatapp.co": {
+            "dns": "resout",
+            "fiches": 1
+        },
         "ebony.com": {
             "dns": "resout",
             "fiches": 1
@@ -1053,6 +1061,10 @@
             "dns": "resout",
             "fiches": 1
         },
+        "engelvoelkers.com": {
+            "dns": "resout",
+            "fiches": 2
+        },
         "enprimeurclub.com": {
             "dns": "resout",
             "fiches": 3
@@ -1111,7 +1123,7 @@
         },
         "fairmont.com": {
             "dns": "resout",
-            "fiches": 1
+            "fiches": 2
         },
         "falkum.de": {
             "dns": "resout",

@@ -265,6 +265,7 @@ var FLAGS_SPEC = {
   azerbaijan:  {h:['#0092BC','#E4002B','#00AF66'],
                 o:[['croissant','#FFFFFF',0.47,0.5,0.15],['etoile','#FFFFFF',0.585,0.5,0.075,0.031]]},
   estonia:     {h:['#0072CE','#000000','#FFFFFF']},
+  hungary:     {h:['#CD2A3E','#FFFFFF','#436F4D']},
   latvia:      {hp:[['#9E3039',2],['#FFFFFF',1],['#9E3039',2]]},
   sweden:      {h:['#006AA7'],
                 o:[['bande','#FECC02',0.3125,0.4375,0,1],['bande','#FECC02',0,1,0.4,0.6]]},
@@ -1190,7 +1191,7 @@ var FLAGS_DESSINES = [
                       'tanzania','thailand','togo','turkey','uae',
                       'uae_mkt','uk','uk_mkt','ukraine','usa',
                       'usa_mkt','venezuela','vietnam','zimbabwe',
-                      'estonia','latvia','sweden'];
+                      'estonia','latvia','sweden','hungary'];
 
 /**
  * Arrete les trois boucles et efface les canvas.

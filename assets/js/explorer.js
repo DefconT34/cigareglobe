@@ -43,7 +43,7 @@ var TYPE_COLORS = {
 
 var REGIONS = {
   'Afrique':      ['ivorycoast','southafrica','kenya','morocco','egypt','nigeria','ghana','ethiopia','tanzania','botswana','mali','cameroon'],
-  'Europe':       ['france','spain','germany','switzerland','uk','belgium','netherlands','italy','portugal','russia','ukraine','czech','austria','poland','romania','serbia','croatia','greece','turkey','luxembourg','andorra','gibraltar','albania','bulgaria','cyprus','estonia','latvia','sweden'],
+  'Europe':       ['france','spain','germany','switzerland','uk','belgium','netherlands','italy','portugal','russia','ukraine','czech','austria','poland','romania','serbia','croatia','greece','turkey','luxembourg','andorra','gibraltar','albania','bulgaria','cyprus','estonia','latvia','sweden','hungary'],
   'Moyen-Orient': ['armenia','iran','uae','qatar','kuwait','bahrain','lebanon','israel','oman','saudiarabia','azerbaijan'],
   'Asie':         ['japan','china','hongkong','taiwan','southkorea','singapore','malaysia','thailand','cambodia','vietnam','india','indonesia','philippines'],
   'Amériques':    ['canada','argentina','brazil_c','chile','colombia','peru','venezuela','costarica','guatemala','paraguay','jamaica','aruba','barbados','stkitts','stmartin','caymanisles','cuba','nicaragua','dominicanrep','honduras','ecuador','usa','mexico','panama'],
